@@ -6848,6 +6848,12 @@ doc_cref
 		module.DocumentationBuilder.ParsedParameters = (List<DocumentationParameter>)$2;
 		$$ = null;
 	  }
+	| VOID opt_doc_method_sig
+	  {
+		module.DocumentationBuilder.ParsedBuiltinType = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
+		module.DocumentationBuilder.ParsedParameters = (List<DocumentationParameter>)$2;
+		$$ = null;
+	  }
 	| builtin_types DOT IDENTIFIER opt_doc_method_sig
 	  {
 		module.DocumentationBuilder.ParsedBuiltinType = (TypeExpression)$1;

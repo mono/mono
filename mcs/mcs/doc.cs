@@ -438,7 +438,10 @@ namespace Mono.CSharp
 
 					int parameters_match = -1;
 					do {
-						var members = MemberCache.FindMembers (type, member_name, true);
+						//
+						// Include base type search only for interface types
+						//
+						var members = MemberCache.FindMembers (type, member_name, !(type.IsInterface && ParsedName.Left == null));
 						if (members != null) {
 							foreach (var m in members) {
 								if (ParsedName != null && m.Arity != ParsedName.Arity)
