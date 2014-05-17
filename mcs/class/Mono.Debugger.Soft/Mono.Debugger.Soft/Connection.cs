@@ -1463,15 +1463,17 @@ namespace Mono.Debugger.Soft
 			else
 				encoded_packet = EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset);
 
-			lock (reply_packets_monitor) {
-				reply_cbs [id] = delegate (int packet_id, byte[] p) {
-					if (EnableConnectionLogging)
-						LogPacket (packet_id, encoded_packet, p, command_set, command, watch);
-					/* Run the callback on a tp thread to avoid blocking the receive thread */
-					PacketReader r = new PacketReader (p);
-					cb.BeginInvoke (r, null, null);
-				};
-				reply_cb_counts [id] = count;
+			if (cb != null) {
+				lock (reply_packets_monitor) {
+					reply_cbs [id] = delegate (int packet_id, byte[] p) {
+						if (EnableConnectionLogging)
+							LogPacket (packet_id, encoded_packet, p, command_set, command, watch);
+						/* Run the callback on a tp thread to avoid blocking the receive thread */
+						PacketReader r = new PacketReader (p);
+						cb.BeginInvoke (r, null, null);
+					};
+					reply_cb_counts [id] = count;
+				}
 			}
 
 			if (buffer_packets)
@@ -1480,6 +1482,11 @@ namespace Mono.Debugger.Soft
 				WritePacket (encoded_packet);
 
 			return id;
+		}
+
+		// Send a request without waiting for an answer
+		void Send (CommandSet command_set, int command) {
+			Send (command_set, command, null, null, 0);
 		}
 
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
@@ -1731,11 +1738,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal void VM_StartBuffering () {
-			SendReceive (CommandSet.VM, (int)CmdVM.START_BUFFERING);
+			Send (CommandSet.VM, (int)CmdVM.START_BUFFERING);
 		}
 
 		internal void VM_StopBuffering () {
-			SendReceive (CommandSet.VM, (int)CmdVM.STOP_BUFFERING);
+			Send (CommandSet.VM, (int)CmdVM.STOP_BUFFERING);
 		}
 
 		/*
