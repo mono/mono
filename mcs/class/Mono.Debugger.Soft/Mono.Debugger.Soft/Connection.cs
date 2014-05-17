@@ -1172,6 +1172,22 @@ namespace Mono.Debugger.Soft
 			TransportSend (packet, 0, packet.Length);
 		}
 
+		internal void WritePackets (List<byte[]> packets) {
+			// FIXME: Throw ClosedConnectionException () if the connection is closed
+			// FIXME: Throw ClosedConnectionException () if another thread closes the connection
+			// FIXME: Locking
+			int len = 0;
+			for (int i = 0; i < packets.Count; ++i)
+				len += packets [i].Length;
+			byte[] data = new byte [len];
+			int pos = 0;
+			for (int i = 0; i < packets.Count; ++i) {
+				Buffer.BlockCopy (packets [i], 0, data, pos, packets [i].Length);
+				pos += packets [i].Length;
+			}
+			TransportSend (data, 0, data.Length);
+		}
+
 		internal void Close () {
 			closed = true;
 		}
@@ -1406,6 +1422,33 @@ namespace Mono.Debugger.Soft
 			LoggingStream.Flush ();
 		}
 
+		bool buffer_packets;
+		List<byte[]> buffered_packets = new List<byte[]> ();
+
+		//
+		// Start buffering request/response packets on both the client and the debuggee side.
+		// Packets sent between StartBuffering ()/StopBuffering () must be async, i.e. sent
+		// using Send () and not SendReceive ().
+		//
+		public void StartBuffering () {
+			buffer_packets = true;
+			if (Version.AtLeast (3, 34))
+				VM_StartBuffering ();
+		}
+
+		public void StopBuffering () {
+			if (Version.AtLeast (3, 34))
+				VM_StopBuffering ();
+			buffer_packets = false;
+
+			WritePackets (buffered_packets);
+			if (EnableConnectionLogging) {
+				LoggingStream.WriteLine (String.Format ("Sent {1} packets.", buffered_packets.Count));
+				LoggingStream.Flush ();
+			}
+			buffered_packets.Clear ();
+		}
+
 		/* Send a request and call cb when a result is received */
 		int Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb, int count) {
 			int id = IdGenerator;
@@ -1431,7 +1474,10 @@ namespace Mono.Debugger.Soft
 				reply_cb_counts [id] = count;
 			}
 
-			WritePacket (encoded_packet);
+			if (buffer_packets)
+				buffered_packets.Add (encoded_packet);
+			else
+				WritePacket (encoded_packet);
 
 			return id;
 		}
