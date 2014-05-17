@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceContractGenerationContext" FullName="System.ServiceModel.Description.ServiceContractGenerationContext">
+  <TypeSignature Language="C#" Value="public class ServiceContractGenerationContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceContractGenerationContext extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.ServiceContractGenerationContext" /> object passed to the <see cref="M:System.ServiceModel.Description.IServiceContractGenerationExtension.GenerateContract(System.ServiceModel.Description.ServiceContractGenerationContext)" /> method to modify the code document object model prior to the generation of code. Typically, the <see cref="T:System.ServiceModel.Description.IServiceContractGenerationExtension" /> interface is implemented on a custom <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> implementation that is used to import custom WSDL elements or otherwise modify the code at the service or operation level. To modify the code at the operation level, see <see cref="T:System.ServiceModel.Description.IOperationContractGenerationExtension" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Passed to the <see cref="M:System.ServiceModel.Description.IServiceContractGenerationExtension.GenerateContract(System.ServiceModel.Description.ServiceContractGenerationContext)" /> method to enable the modification of a service contract and its context prior to generating code.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceContractGenerationContext (System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, System.ServiceModel.Description.ContractDescription contract, System.CodeDom.CodeTypeDeclaration contractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, class System.ServiceModel.Description.ContractDescription contract, class System.CodeDom.CodeTypeDeclaration contractType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="serviceContractGenerator" Type="System.ServiceModel.Description.ServiceContractGenerator" />
+        <Parameter Name="contract" Type="System.ServiceModel.Description.ContractDescription" />
+        <Parameter Name="contractType" Type="System.CodeDom.CodeTypeDeclaration" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceContractGenerationContext" /> class using the specified contract generator, contract description, and contract code type declaration. </para>
+        </summary>
+        <param name="serviceContractGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The generator that generates the code for the contract.</param>
+        <param name="contract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract description for the contract to be generated.</param>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the contract code to be generated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceContractGenerationContext (System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, System.ServiceModel.Description.ContractDescription contract, System.CodeDom.CodeTypeDeclaration contractType, System.CodeDom.CodeTypeDeclaration duplexCallbackType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Description.ServiceContractGenerator serviceContractGenerator, class System.ServiceModel.Description.ContractDescription contract, class System.CodeDom.CodeTypeDeclaration contractType, class System.CodeDom.CodeTypeDeclaration duplexCallbackType) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="serviceContractGenerator" Type="System.ServiceModel.Description.ServiceContractGenerator" />
+        <Parameter Name="contract" Type="System.ServiceModel.Description.ContractDescription" />
+        <Parameter Name="contractType" Type="System.CodeDom.CodeTypeDeclaration" />
+        <Parameter Name="duplexCallbackType" Type="System.CodeDom.CodeTypeDeclaration" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceContractGenerationContext" /> class using the specified contract generator, contract description, and contract code type declaration. </para>
+        </summary>
+        <param name="serviceContractGenerator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The generator that generates the code for the contract.</param>
+        <param name="contract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract description for the contract to be generated.</param>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the contract code to be generated.</param>
+        <param name="duplexCallbackType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the duplex contract code to be generated.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Contract">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ContractDescription Contract { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ContractDescription Contract" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ContractDescription</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceContractGenerationContext.Contract" /> property to examine the <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the current contract.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the current contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ContractType">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeDeclaration ContractType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeDeclaration ContractType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeTypeDeclaration</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceContractGenerationContext.ContractType" /> property to examine or modify the <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the current contract before the code is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the current contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DuplexCallbackType">
+      <MemberSignature Language="C#" Value="public System.CodeDom.CodeTypeDeclaration DuplexCallbackType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeTypeDeclaration DuplexCallbackType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.CodeDom.CodeTypeDeclaration</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceContractGenerationContext.DuplexCallbackType" /> property to examine or modify the <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the duplex callback contract on the service contract prior to generating code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.CodeDom.CodeTypeDeclaration" /> for the duplex callback contract on the service contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Operations">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.OperationContractGenerationContext&gt; Operations { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.OperationContractGenerationContext&gt; Operations" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.OperationContractGenerationContext&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceContractGenerationContext.Operations" /> property to examine or modify the <see cref="T:System.ServiceModel.Description.OperationContractGenerationContext" /> objects that represent the contract operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Description.OperationContractGenerationContext" /> objects that represent the contract operations.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ServiceContractGenerator">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceContractGenerator ServiceContractGenerator { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ServiceContractGenerator ServiceContractGenerator" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceContractGenerator</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.ServiceContractGenerationContext.ServiceContractGenerator" /> property to examine or modify the code generator that is to create the contract code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> that is to generate the contract.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

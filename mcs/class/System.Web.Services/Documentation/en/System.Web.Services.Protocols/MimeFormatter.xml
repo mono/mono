@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MimeFormatter" FullName="System.Web.Services.Protocols.MimeFormatter">
   <TypeSignature Language="C#" Value="public abstract class MimeFormatter" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Web service writers and readers serialize and deserialize, respectively, between the parameter or return objects of Web methods and the HTTP request or response streams. The <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> class establishes a common interface and functionality for reader and writer classes, in both client and service-side .</para>
+      <para>The <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> class supports the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. In HTTP-GET operations request parameters are encoded in the HTTP request's Uniform Resource Locator (URL). In HTTP-POST operations, request parameters are encoded in the HTTP request body, as with an HTML form. With both implementations, the return value appears in the HTTP response body as a non-SOAP XML document.</para>
+      <para>A developer typically does not need to directly use <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> or its descendant classes. Instead, when the Wsdl.exe tool generates client proxy code according to the HTTP-GET or HTTP-POST implementations, it applies the <see cref="T:System.Web.Services.Protocols.HttpMethodAttribute" /> to each Web method and sets the attribute's <see cref="P:System.Web.Services.Protocols.HttpMethodAttribute.ParameterFormatter" /> and <see cref="P:System.Web.Services.Protocols.HttpMethodAttribute.ReturnFormatter" /> properties to the appropriate type derived from the <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> class. On the server, the appropriate derived types are used according to settings in an ASP.NET configuration file (Web.config). On the client the appropriate derived types are determined from the WSDL.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an abstract base class for all readers and writers for Web services and clients implemented using HTTP but without SOAP.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,11 +54,23 @@
         <Parameter Name="initializer" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="initializer">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'MimeFormatter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.MimeFormatter.CreateInstance(System.Type,System.Object)" /> method creates an instance of the derived class and invokes the derived class's implementation of the abstract <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method. The <see cref="M:System.Web.Services.Protocols.MimeFormatter.CreateInstance(System.Type,System.Object)" /> method is invoked at the time a request or response is processed.</para>
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method. The initializer passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.CreateInstance(System.Type,System.Object)" /> method is obtained from another instance of the derived class, by invoking the <see cref="Overload:System.Web.Services.Protocols.MimeFormatter.GetInitializer" /> method during client or service initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and initializes an instance of a concrete class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> object.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Type, derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />, of which to create an instance.</param>
+        <param name="initializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object used to initialize the instance obtained earlier through the derived class's implementation of the <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,10 +87,21 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <param name="methodInfo">To be added: an object of type 'LogicalMethodInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
+          <para>A derived class's implementation of the <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> instance method is invoked during client or service initialization. Later, at the time a request or response is processed, the initializer object is passed to the static <see cref="M:System.Web.Services.Protocols.MimeFormatter.CreateInstance(System.Type,System.Object)" /> method, which creates an instance of another object of the derived class, and then to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method to initialize it. The other object performs the actual reading or writing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns an initializer for the specified method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the initializer for the specified method.</para>
+        </returns>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,11 +119,23 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="methodInfo">To be added: an object of type 'LogicalMethodInfo'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
+          <para>The static <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Type,System.Web.Services.Protocols.LogicalMethodInfo)" /> method invokes the derived class's <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method, implicitly creating an instance of the derived class. At the time a request or response is processed, the initializer object is passed to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method of another instance of the derived class. The latter object performs the actual reading or writing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an initializer for the specified method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> object that contains the initializer for the specified method.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Type, derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />,- for which an initializer is obtained.</param>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,10 +152,21 @@
         <Parameter Name="methodInfos" Type="System.Web.Services.Protocols.LogicalMethodInfo[]" />
       </Parameters>
       <Docs>
-        <param name="methodInfos">To be added: an object of type 'LogicalMethodInfo []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
+          <para>The <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializers(System.Web.Services.Protocols.LogicalMethodInfo[])" /> instance method invokes the <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> instance method for each input Web method. This means an instance of a class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> has already been created. At the time a request or response is processed, the initializer is passed to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method of another instance of the derived class. The latter object performs the actual reading or writing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns an array of initializer objects corresponding to an input array of method definitions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of initializer objects corresponding to the input array of method definitions.</para>
+        </returns>
+        <param name="methodInfos">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of Web methods where, for each method, the object of the corresponding index in the returned initializer array is obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,11 +184,23 @@
         <Parameter Name="methodInfos" Type="System.Web.Services.Protocols.LogicalMethodInfo[]" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="methodInfos">To be added: an object of type 'LogicalMethodInfo []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
+          <para>The static <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializers(System.Type,System.Web.Services.Protocols.LogicalMethodInfo[])" /> method causes the invocation of the <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method belonging to the derived class specified by the <paramref name="type" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of initializer objects corresponding to an input array of method definitions for a specified class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of initializer objects corresponding to the input array of method definitions for a specified class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Type, derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />, for which initializers are obtained.</param>
+        <param name="methodInfos">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web methods for which the initializers are obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -147,9 +217,16 @@
         <Parameter Name="initializer" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="initializer">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method is invoked at the time a request or response is processed; however, the initializer is obtained by calling the <see cref="M:System.Web.Services.Protocols.MimeFormatter.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method on another instance during client or service initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, initializes an instance.</para>
+        </summary>
+        <param name="initializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object of a type appropriate to the particular class that is implementing the method. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

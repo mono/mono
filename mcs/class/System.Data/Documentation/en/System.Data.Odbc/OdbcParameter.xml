@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcParameter" FullName="System.Data.Odbc.OdbcParameter">
   <TypeSignature Language="C#" Value="public sealed class OdbcParameter : System.Data.Common.DbParameter, ICloneable" />
   <AssemblyInfo>
@@ -19,8 +20,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Parameter names are not case sensitive.</para>
+      <para>When querying an Oracle database using the Microsoft OLE DB Provider for Oracle (MSDAORA) and the ODBC .NET Framework Data Provider, using the LIKE clause to query values in fixed-length fields might not return all expected matches. The reason is that when Oracle matches values for fixed-length fields in a LIKE clause, it matches the entire length of the string, including any padding trailing spaces. For example, if a table in an Oracle database contains a field named "Field1" that is defined as char(3), and you enter the value "a" into a row of that table, the following code will not return the row.</para>
+      <code>Dim queryString As String = "SELECT * FROM Table1 WHERE Field1 LIKE ?"
+Dim command As OleDbCommand = New OleDbCommand(queryString, connection)
+command.Parameters.Add("@p1", OleDbType.Char, 3).Value = "a"
+Dim reader As OleDbDataReader = command.ExecuteReader()</code>
+      <code>string queryString = "SELECT * FROM Table1 WHERE Field1 LIKE ?";
+OleDbCommand command = new OleDbCommand(queryString, connection);
+command.Parameters.Add("@p1", OleDbType.Char, 3).Value = "a";
+OleDbDataReader reader = command.ExecuteReader();</code>
+      <para>This is because Oracle stores the column value as "a  " (padding "a", with trailing spaces, to the fixed field length of 3), which Oracle does not treat as a match for the parameter value of "a" in the case of a LIKE comparison of fixed-length fields. </para>
+      <para>To resolve this problem, append a percentage ("%") wildcard character to the parameter value ("a%"), or use an SQL = comparison instead.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter to an <see cref="T:System.Data.Odbc.OdbcCommand" /> and optionally, its mapping to a <see cref="T:System.Data.DataColumn" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +46,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base constructor initializes all fields to their default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcParameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,10 +68,15 @@
         <Parameter Name="type" Type="System.Data.Odbc.OdbcType" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcParameter" /> class that uses the parameter name and data type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Odbc.OdbcType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,10 +91,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use caution when you are using this overload of the <see cref="T:System.Data.Odbc.OdbcParameter" /> constructor to specify integer parameter values. Because this overload takes a <paramref name="value" /> of type <see cref="T:System.Object" />, you must convert the integral value to an <see cref="T:System.Object" /> type when the value is zero, as the following C# example demonstrates.</para>
+          <code>Parameter = new OdbcParameter("@pname", Convert.ToInt32(0));</code>
+          <para>If you do not perform this conversion, the compiler assumes that you are trying to call the <see cref="M:System.Data.Odbc.OdbcParameter.#ctor(System.String,System.Data.Odbc.OdbcType)" /> constructor overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcParameter" /> class that uses the parameter name and an <see cref="T:System.Data.Odbc.OdbcParameter" /> object.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Data.Odbc.OdbcParameter" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,11 +120,17 @@
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="size">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcParameter" /> class that uses the parameter name, data type, and length.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Odbc.OdbcType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,12 +147,19 @@
         <Parameter Name="sourcecolumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="size">To be added.</param>
-        <param name="sourcecolumn">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcParameter" /> class that uses the parameter name, data type, length, and source column name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Odbc.OdbcType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="sourcecolumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,18 +187,31 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="odbcType">To be added.</param>
-        <param name="size">To be added.</param>
-        <param name="parameterDirection">To be added.</param>
-        <param name="isNullable">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
-        <param name="srcColumn">To be added.</param>
-        <param name="srcVersion">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcParameter" /> class that uses the parameter name, data type, length, source column name, parameter direction, numeric precision, and other properties.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="odbcType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.Odbc.OdbcType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="parameterDirection">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.ParameterDirection" /> values. </param>
+        <param name="isNullable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the value of the field can be null; otherwise false. </param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> is resolved. </param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of decimal places to which <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> is resolved. </param>
+        <param name="srcColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column. </param>
+        <param name="srcVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.Odbc.OdbcParameter" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -160,9 +225,20 @@
         <ReturnType>System.Data.DbType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> and <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> changes the <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> to a supporting <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" />.</para>
+          <para>For a list of the supported data types, see the appropriate <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> member. For more information, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="F:System.Data.DbType.Object" /> is not supported by the Microsoft .NET Framework Data Provider for ODBC.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DbType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +257,16 @@
         <ReturnType>System.Data.ParameterDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Data.ParameterDirection" /> is Output, and execution of the associated <see cref="T:System.Data.Odbc.OdbcCommand" /> does not return a value, the <see cref="T:System.Data.Odbc.OdbcParameter" /> will contain a null value. Null values are handled using the <see cref="T:System.DBNull" /> class.</para>
+          <para>Output, InputOut, and ReturnValue parameters returned by calling <see cref="M:System.Data.Odbc.OdbcCommand.ExecuteReader" /> cannot be accessed until you call <see cref="M:System.Data.Odbc.OdbcDataReader.Close" /> or Dispose on the <see cref="T:System.Data.Odbc.OdbcDataReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the parameter is input-only, output-only, bidirectional, or a stored procedure return value parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +280,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null values are handled using the <see cref="T:System.DBNull" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the parameter accepts null values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -224,10 +313,17 @@
         <ReturnType>System.Data.Odbc.OdbcType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> and <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> changes the <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> to a supporting <see cref="T:System.Data.Odbc.OdbcType" />.</para>
+          <para>For a list of the supported data types, see the appropriate <see cref="T:System.Data.Odbc.OdbcType" /> member. For more information, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.Odbc.OdbcType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -241,9 +337,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instead of named parameters, the ODBC .NET Provider uses positional parameters that are marked with a question mark (?) in the syntax of the command text. Parameter objects in the <see cref="T:System.Data.Odbc.OdbcParameterCollection" /> and the actual parameters accepted by the stored procedure or parameterized SQL statement correspond to each other based on the order in which the <see cref="T:System.Data.Odbc.OdbcParameter" /> objects are inserted into the collection instead of by parameter name. Parameter names can be supplied, but will be ignored during parameter object binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Data.Odbc.OdbcParameter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -262,10 +364,20 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to a value other than the value in the database depends on the implementation of the data provider and may return an error code, truncate, or round data.</para>
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.Precision" /> property only affects parameters whose <see cref="T:System.Data.Odbc.OdbcType" /> is Decimal or Numeric. For other data types, <see cref="P:System.Data.Odbc.OdbcParameter.Precision" /> is ignored. </para>
+          <block subset="none" type="note">
+            <para>Use of this property to coerce data passed to the database is not supported. To round, truncate, or otherwise coerce data before passing it to the database, use the <see cref="T:System.Math" /> class that is part of the System namespace prior to assigning a value to the parameter's Value property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of digits used to represent the <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -280,9 +392,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value. Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter. Calling this method affects both the <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> and <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> properties of the <see cref="T:System.Data.Odbc.OdbcParameter" />.</para>
+          <para>Calling <see cref="M:System.Data.Odbc.OdbcParameter.ResetDbType" /> resets <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> to its default value (String).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the type associated with this <see cref="T:System.Data.Odbc.OdbcParameter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -299,8 +418,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value. Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter. Calling this method affects both the <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> and <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> properties of the <see cref="T:System.Data.Odbc.OdbcParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the type associated with this <see cref="T:System.Data.Odbc.OdbcParameter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scale">
@@ -315,10 +440,25 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.Scale" /> property is used only for decimal and numeric input parameters.</para>
+          <para>The effect of setting this property to a value other than the value in the database depends on the implementation of the data provider and may return an error code, or truncate or round data.</para>
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.Scale" /> property only affects parameters whose <see cref="T:System.Data.Odbc.OdbcType" /> is Decimal or Numeric. For other data types, <see cref="P:System.Data.Odbc.OdbcParameter.Scale" /> is ignored. </para>
+          <para>When using SQL Server Native Client 10 (or later) to bind a parameter whose type is Decimal, Numeric, VarNumeric, DBDate, or DBTimeStamp, you must manually specify an appropriate Scale value.</para>
+          <block subset="none" type="note">
+            <para>Use of this property to coerce data passed to the database is not supported. To round, truncate, or otherwise coerce data before passing it to the database, use the <see cref="T:System.Math" /> class that is part of the System namespace prior to assigning a value to the parameter's Value property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>.NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the scale of <see cref="T:System.Decimal" /> parameter values. This can cause modified data being inserted at the data source. If you are using .NET Framework version 1.0, validate the scale of decimal values before setting the parameter value. When you use .NET Framework version 1.1 or later versions, scale values that exceed the decimal parameter scale might only be truncated in scale, if that is the behavior of the underlying ODBC driver.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to which <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> is resolved.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -332,9 +472,23 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.Size" /> property is used for binary and string types.</para>
+          <para>For nonstring data types and ANSI string data, the <see cref="P:System.Data.Odbc.OdbcParameter.Size" /> property refers to the number of bytes. For Unicode string data, <see cref="P:System.Data.Odbc.OdbcParameter.Size" /> refers to the number of characters. The count for strings does not include the terminating character.</para>
+          <para>For variable-length data types, Size describes the maximum amount of data to transmit to the server. For example, for a Unicode string value, Size could be used to limit the amount of data sent to the server to the first one hundred characters.</para>
+          <para>For bidirectional and output parameters, and return values, you must set the value of Size. This is not required for input parameters, and if not explicitly set, the value of is inferred from the actual size of the specified parameter when a parameterized statement is executed.</para>
+          <para>The <see cref="P:System.Data.Common.DbParameter.DbType" />, <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" />, and <see cref="P:System.Data.Odbc.OdbcParameter.Size" /> properties of a parameter can be inferred by setting <see cref="P:System.Data.Odbc.OdbcParameter.Value" />. Therefore, you are not required to specify them. However, they are not exposed in <see cref="T:System.Data.Odbc.OdbcParameter" /> property settings. For example, if the size of the parameter has been inferred, Size does not contain inferred value after statement execution.</para>
+          <block subset="none" type="note">
+            <para>For an OdbcParameter with a <see cref="P:System.Data.Odbc.OdbcParameter.Direction" /> of ParameterDirection.Output, ParameterDirection.InputOutput, or ParameterDirection.ReturnValue, an exception is thrown when the command is executed if the size of the value returned by the data source exceeds the specified Size of the <see cref="T:System.Data.Odbc.OdbcParameter" />.</para>
+          </block>
+          <para>For fixed-length data types, the value of Size is ignored. It can be retrieved for informational purposes, and returns the maximum amount of bytes the provider uses when transmitting the value of the parameter to the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size of the data within the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -348,9 +502,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Data.Odbc.OdbcParameter.SourceColumn" /> is set to anything other than an empty string, the value of the parameter is retrieved from the column with the SourceColumn name. If <see cref="P:System.Data.Odbc.OdbcParameter.Direction" /> is set to Input, the value is taken from the <see cref="T:System.Data.DataSet" />. If Direction is set to Output, the value is taken from the data source. A Direction of InputOutput is a combination of both.</para>
+          <para>For more information about how to use the <see cref="P:System.Data.Odbc.OdbcParameter.SourceColumn" /> property, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format> and <format type="text/html"><a href="d1bd9a8c-0e29-40e3-bda8-d89176b72fb1">Updating the Database with a DataAdapter and the DataSet</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the source column mapped to the <see cref="T:System.Data.DataSet" /> and used for loading or returning the <see cref="P:System.Data.Odbc.OdbcParameter.Value" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,10 +525,24 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.Odbc.OdbcParameter.SourceColumnNullMapping" /> is used by the <see cref="T:System.Data.Common.DbCommandBuilder" /> to correctly generate update commands when dealing with nullable columns. Generally, use of <see cref="P:System.Data.Odbc.OdbcParameter.SourceColumnNullMapping" /> is limited to developers inheriting from <see cref="T:System.Data.Common.DbCommandBuilder" />.</para>
+          <para>
+            <see cref="T:System.Data.Common.DbCommandBuilder" /> uses this property to determine whether the source column is nullable, and sets this property to true if it is nullable, and false if it is not. When <see cref="T:System.Data.Common.DbCommandBuilder" /> is generating its Update statement, it examines the <see cref="P:System.Data.Odbc.OdbcParameter.SourceColumnNullMapping" /> for each parameter. If the property is true, <see cref="T:System.Data.Common.DbCommandBuilder" /> generates a WHERE clauses like the following example. In this query expression, "FieldName" represents the name of the field:</para>
+          <code>((@IsNull_FieldName = 1 AND FieldName IS NULL) OR 
+  (FieldName = @Original_FieldName))</code>
+          <para>If <see cref="P:System.Data.Odbc.OdbcParameter.SourceColumnNullMapping" /> for the field is false, <see cref="T:System.Data.Common.DbCommandBuilder" /> generates the following WHERE clause:</para>
+          <code>FieldName = @OriginalFieldName</code>
+          <para>In addition, @IsNull_FieldName contains 1 if the source field contains null, and 0 if it does not. This mechanism allows for a performance optimization in SQL Server, and provides for common code that works across multiple providers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets or gets a value which indicates whether the source column is nullable. This lets <see cref="T:System.Data.Common.DbCommandBuilder" /> correctly generate Update statements for nullable columns.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -380,9 +555,16 @@
         <ReturnType>System.Data.DataRowVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SourceVersion is used by <see cref="P:System.Data.Odbc.OdbcDataAdapter.UpdateCommand" /> during an <see cref="M:System.Data.DbDataAdapter.Common.Update" /> operation to determine whether the parameter value is set to Current or Original. This allows primary keys to be updated.</para>
+          <para>This property is set to the version of the <see cref="T:System.Data.DataRow" /> used by either the Item property (DataRow indexer), or the <see cref="M:System.Data.DataRow.GetChildRows(System.Data.DataRelation)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DataRowVersion" /> to use when you load <see cref="P:System.Data.Odbc.OdbcParameter.Value" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -401,9 +583,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Odbc.OdbcParameter" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Object" /> that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -414,9 +605,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the <see cref="P:System.Data.Odbc.OdbcParameter.ParameterName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the <see cref="P:System.Data.Odbc.OdbcParameter.ParameterName" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -438,9 +635,19 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For input parameters, the value is bound to the <see cref="T:System.Data.Odbc.OdbcCommand" /> that is sent to the server. For output and return-value parameters, the value is set on completion of the <see cref="T:System.Data.Odbc.OdbcCommand" /> and after the <see cref="T:System.Data.Odbc.OdbcDataReader" /> is closed.</para>
+          <para>When you send a null parameter value to the server, the user must specify <see cref="T:System.DBNull" />, not null. A null value in the system is an empty object that has no value. <see cref="T:System.DBNull" /> is used to represent null values. If the parameter is used to call a stored procedure with parameters that have default values, setting <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> to null causes the default value to be used.</para>
+          <para>If the application specifies the database type, the bound value is converted to that type when the provider sends the data to the server. The provider tries to convert any type of value if it supports the <see cref="T:System.IConvertible" /> interface. Conversion errors may result if the specified type is not compatible with the value.</para>
+          <para>Both the <see cref="P:System.Data.Odbc.OdbcParameter.DbType" /> and <see cref="P:System.Data.Odbc.OdbcParameter.OdbcType" /> properties can be inferred by setting <see cref="P:System.Data.Odbc.OdbcParameter.Value" />. If applicable, the size, precision, and scale is also inferred from <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> when the parameterized statement is executed. However, inferred values are not exposed to the user.</para>
+          <para>The <see cref="P:System.Data.Odbc.OdbcParameter.Value" /> property is overwritten by the Update method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

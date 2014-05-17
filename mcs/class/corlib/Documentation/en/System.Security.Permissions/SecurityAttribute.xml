@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityAttribute" FullName="System.Security.Permissions.SecurityAttribute" FullNameSP="System_Security_Permissions_SecurityAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable SecurityAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public abstract class SecurityAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit SecurityAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -23,126 +25,128 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> This is the base class for attributes used by the
- security system.</para>
-    </summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the base attribute class for declarative security from which <see cref="T:System.Security.Permissions.CodeAccessSecurityAttribute" /> is derived.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
       <MemberSignature Language="C#" Value="protected SecurityAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">A <see cref="T:System.Security.Permissions.SecurityAction" /> value.</param>
-        <summary>
-          <para> Constructs and initializes a new instance of <see cref="T:System.Security.Permissions.SecurityAttribute" />
-with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
-        </summary>
-        <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of this class. You must inherit from this class to make use of its functionality. The value of <paramref name="action" /> is used to set the <see cref="P:System.Security.Permissions.SecurityAttribute.Action" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Permissions.SecurityAttribute" /> with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityAction Action { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.SecurityAction Action" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Action">
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityAction Action { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.SecurityAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is inherited by all classes implementing custom attributes for declarative security.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a security action.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Security.IPermission CreatePermission()" />
+      <MemberSignature Language="C#" Value="public abstract System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.IPermission CreatePermission() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreatePermission">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Security.IPermission CreatePermission()" />
-      <MemberSignature Language="C#" Value="public abstract System.Security.IPermission CreatePermission ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission that this method returns that corresponds to this attribute.</para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.Security.IPermission" /> object that contains the security information of the
-   current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, creates a permission object that can then be serialized into binary form and persistently stored along with the <see cref="T:System.Security.Permissions.SecurityAction" /> in an assembly's metadata.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.Security.IPermission" /> object.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A serializable permission object.</para>
         </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">Returns an instance of
-      the permission type that corresponds to the current attribute. The
-      returned object contains the security information of the current attribute.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">Override this
-      method to create an instance of the permission type that corresponds to the
-      current attribute. For example, the <see langword="CreatePermission" />
-      implementation of <see cref="T:System.Security.Permissions.SecurityPermissionAttribute" /> creates an instance of the
-   <see cref="T:System.Security.Permissions.SecurityPermission" />
-   class.</block>
-          </para>
-          <block subset="none" type="usage">
-            <para> Security information specified
-      using attributes is stored in metadata. The security information in the metadata is created using the permission object returned by
-      this method.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Unrestricted">
+      <MemberSignature Language="ILASM" Value=".property bool Unrestricted { public hidebysig specialname instance bool get_Unrestricted() public hidebysig specialname instance void set_Unrestricted(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Unrestricted { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Unrestricted" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unrestricted">
-      <MemberSignature Language="ILASM" Value=".property bool Unrestricted { public hidebysig specialname instance bool get_Unrestricted() public hidebysig specialname instance void set_Unrestricted(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool Unrestricted { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets
-      full (unrestricted) permission to the resource protected by the current instance.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if full access
    to the protected resource
    is declared or is being set; otherwise, <see langword="false" />.</para>
         </value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is inherited by all classes implementing custom attributes for declarative security.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether full (unrestricted) permission to the resource protected by the attribute is declared.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

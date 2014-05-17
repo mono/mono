@@ -1,17 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISafeSerializationData" FullName="System.Runtime.Serialization.ISafeSerializationData">
   <TypeSignature Language="C#" Value="public interface ISafeSerializationData" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISafeSerializationData" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In versions previous to.NET Framework 4.0, serialization of custom user data in a security transparent code was accomplished using the <see cref="M:System.Exception.GetObjectData" /> method. Starting with .NET Framework 4.0, that method is marked with the <see cref="T:System.Security.SecurityCriticalAttribute" /> attribute which prevents execution in security-transparent code. To work around this condition, implement the <see cref="T:System.Runtime.Serialization.ISafeSerializationData interface" /> and add custom data as shown in the example below. </para>
+      <para>The <see cref="M:System.Runtime.Serialization.ISafeSerializationData.CompleteDeserialization" /> method is called after serialization, and uses the <see cref="T:System.Runtime.Serialization.SafeSerializationEventArgs" /> to restore the custom data.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables serialization of custom exception data in security-transparent code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompleteDeserialization">
       <MemberSignature Language="C#" Value="public void CompleteDeserialization (object deserialized);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CompleteDeserialization(object deserialized) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,9 +33,16 @@
         <Parameter Name="deserialized" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="deserialized">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state object is stored in a private variable defined in the implementation of the <see cref="T:System.Runtime.Serialization.ISafeSerializationData" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when the instance is deserialized. </para>
+        </summary>
+        <param name="deserialized">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains the state of the instance.</param>
       </Docs>
     </Member>
   </Members>

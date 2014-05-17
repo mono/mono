@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DBDataPermissionAttribute" FullName="System.Data.Common.DBDataPermissionAttribute">
   <TypeSignature Language="C#" Value="public abstract class DBDataPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" Maintainer="auto" />
   <AssemblyInfo>
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Associates a security action with a custom security attribute. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +34,13 @@
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added: an object of type 'Security.Permissions.SecurityAction'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.DBDataPermissionAttribute" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the security action values representing an action that can be performed by declarative security.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +56,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a blank password is allowed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,9 +79,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiple connection strings may be identified. You may also provide additional connection string restrictions using KeyRestrictions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a permitted connection string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyRestrictionBehavior">
@@ -84,9 +101,12 @@
         <ReturnType>System.Data.KeyRestrictionBehavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies whether the list of connection string parameters identified by the <see cref="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictions" /> property are the only connection string parameters allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyRestrictions">
@@ -100,9 +120,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Connection string parameters are identified in the form &lt;parameter name&gt;=. Multiple parameters can be specified, delimited using a semicolon (;). The connection string parameters listed may be identified as either the only additional parameters allowed or additional parameters that are not allowed using the <see cref="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictionBehavior" /> property.</para>
+          <para>If no key restrictions are specified, and the <see cref="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictionBehavior" /> property is set to AllowOnly, no additional connection string parameters are allowed.</para>
+          <para>If no key restrictions are specified, and the <see cref="P:System.Data.Common.DBDataPermissionAttribute.KeyRestrictionBehavior" /> property is set to PreventUsage, additional connection string parameters are allowed. If more than one rule is set for the same connection string, the more restrictive rule is selected during the permission check.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets connection string parameters that are allowed or disallowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerializeConnectionString">
@@ -121,9 +149,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies whether the attribute should serialize the connection string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute should serialize the connection string; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerializeKeyRestrictions">
@@ -142,9 +176,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies whether the attribute should serialize the set of key restrictions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute should serialize the set of key restrictions; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

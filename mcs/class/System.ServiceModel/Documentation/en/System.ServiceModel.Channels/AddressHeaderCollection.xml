@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AddressHeaderCollection" FullName="System.ServiceModel.Channels.AddressHeaderCollection">
+  <TypeSignature Language="C#" Value="public sealed class AddressHeaderCollection : System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ServiceModel.Channels.AddressHeader&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AddressHeaderCollection extends System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.ServiceModel.Channels.AddressHeader&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ServiceModel.Channels.AddressHeader&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.ServiceModel.Channels.AddressHeader</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.AddressHeaderCollection" /> can be initialized with an <see cref="T:System.Collections.Generic.IEnumerable`1" /> set of <see cref="T:System.ServiceModel.Channels.AddressHeader" /> objects and then searched for a header with a specific qualified name using the <see cref="M:System.ServiceModel.Channels.AddressHeaderCollection.FindHeader(System.String,System.String)" /> method. To find all of the headers with a specific qualified name, use the <see cref="M:System.ServiceModel.Channels.AddressHeaderCollection.FindAll(System.String,System.String)" /> method. The <see cref="M:System.ServiceModel.Channels.AddressHeaderCollection.AddHeadersTo(System.ServiceModel.Channels.Message)" /> method is used to add headers to the headers of a specified message.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a thread-safe, read-only collection of address headers.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AddressHeaderCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.AddressHeaderCollection" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AddressHeaderCollection (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Channels.AddressHeader&gt; headers);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Channels.AddressHeader&gt; headers) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="headers" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Channels.AddressHeader&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="headers">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.AddressHeaderCollection" /> class from an enumerable set of address headers.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="AddHeadersTo">
+      <MemberSignature Language="C#" Value="public void AddHeadersTo (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddHeadersTo(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This inserts the headers from the current collection into the <see cref="T:System.ServiceModel.Channels.MessageHeaders" /> associated with the <see cref="T:System.ServiceModel.Channels.Message" /> and accessible through the <see cref="P:System.ServiceModel.Channels.Message.Headers" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the headers in the collection to the headers of a specified message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to which the headers are added.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FindAll">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.AddressHeader[] FindAll (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.AddressHeader[] FindAll(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.AddressHeader[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds all the address headers in the collection with the specified name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> of type <see cref="T:System.ServiceModel.Channels.AddressHeader" /> that contains all the headers in the collection with the specified name and namespace.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the address header to be found.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the address header to be found.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="FindHeader">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.AddressHeader FindHeader (string name, string ns);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.AddressHeader FindHeader(string name, string ns) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.AddressHeader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ns" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you need to find all the address headers in the collection with the specified name and namespace, use the <see cref="M:System.ServiceModel.Channels.AddressHeaderCollection.FindAll(System.String,System.String)" /> method instead.</para>
+          <para>
+            <see cref="T:System.ArgumentException" /> is not the ideal exception type when there is more than one header in the collection. Callers of this method should take care to handle this exception when the collection contains multiple entries with the same name and namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the first address header in the collection with a specified name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.AddressHeader" /> in the collection with the specified name and namespace.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the address header to be found.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the address header to be found.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

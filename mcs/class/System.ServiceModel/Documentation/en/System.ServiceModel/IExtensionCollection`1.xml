@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IExtensionCollection&lt;T&gt;" FullName="System.ServiceModel.IExtensionCollection&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public interface IExtensionCollection&lt;T&gt; : System.Collections.Generic.ICollection&lt;System.ServiceModel.IExtension&lt;T&gt;&gt;, System.Collections.Generic.IEnumerable&lt;System.ServiceModel.IExtension&lt;T&gt;&gt; where T : IExtensibleObject&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IExtensionCollection`1&lt;(class System.ServiceModel.IExtensibleObject`1&lt;!T&gt;) T&gt; implements class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.IExtension`1&lt;!T&gt;&gt;, class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.IExtension`1&lt;!T&gt;&gt;, class System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T">
+      <Constraints>
+        <InterfaceName>System.ServiceModel.IExtensibleObject&lt;T&gt;</InterfaceName>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;System.ServiceModel.IExtension&lt;T&gt;&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;System.ServiceModel.IExtension&lt;T&gt;&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection of the <see cref="T:System.ServiceModel.IExtension`1" /> objects that allow for retrieving the <see cref="T:System.ServiceModel.IExtension`1" /> by its type.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Find&lt;E&gt;">
+      <MemberSignature Language="C#" Value="public E Find&lt;E&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !!E Find&lt;E&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>E</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="E" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.ServiceModel.IExtensionCollection`1.Find``1" /> returns an extension that implements (is or derives from) the specified type. If more than one extension implements the specified type, one is returned. The indigo2 implementation returns the most recently added, but this is not required of implementations. If no extension implements the specified type, <see cref="M:System.ServiceModel.IExtensionCollection`1.Find``1" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the specified extension object in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The extension object that was found.</para>
+        </returns>
+        <typeparam name="E">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of extension object.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="FindAll&lt;E&gt;">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;E&gt; FindAll&lt;E&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ObjectModel.Collection`1&lt;!!E&gt; FindAll&lt;E&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;E&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="E" />
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds all extension object in the collection specified by <paramref name="E" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all extension objects in the collection that implement the specified type.</para>
+        </returns>
+        <typeparam name="E">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of extension object.</typeparam>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

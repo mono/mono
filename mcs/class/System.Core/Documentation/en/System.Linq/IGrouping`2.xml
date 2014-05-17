@@ -1,12 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IGrouping&lt;TKey,TElement&gt;" FullName="System.Linq.IGrouping&lt;TKey,TElement&gt;">
-  <TypeSignature Language="C#" Value="public interface IGrouping&lt;TKey,TElement&gt; : System.Collections.Generic.IEnumerable&lt;TElement&gt;" />
+  <TypeSignature Language="C#" Value="public interface IGrouping&lt;out TKey,out TElement&gt; : System.Collections.Generic.IEnumerable&lt;out TElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IGrouping`2&lt;+ TKey, + TElement&gt; implements class System.Collections.Generic.IEnumerable`1&lt;!TElement&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="TKey" />
-    <TypeParameter Name="TElement" />
+    <TypeParameter Name="TKey">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+    <TypeParameter Name="TElement">
+      <Constraints>
+        <ParameterAttribute>Covariant</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
   </TypeParameters>
   <Interfaces>
     <Interface>
@@ -16,23 +27,39 @@
   <Docs>
     <typeparam name="TKey">To be added.</typeparam>
     <typeparam name="TElement">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Linq.IGrouping`2" /> is an <see cref="T:System.Collections.Generic.IEnumerable`1" /> that additionally has a key. The key represents the attribute that is common to each value in the <see cref="T:System.Linq.IGrouping`2" />.</para>
+      <para>The values of an <see cref="T:System.Linq.IGrouping`2" /> are accessed much as the elements of an <see cref="T:System.Collections.Generic.IEnumerable`1" /> are accessed. For example, you can access the values by using a foreach in csprcs or For Each in vbprvb loop to iterate through the <see cref="T:System.Linq.IGrouping`2" /> object. The Example section contains a code example that shows you how to access both the key and the values of an <see cref="T:System.Linq.IGrouping`2" /> object.</para>
+      <para>The <see cref="T:System.Linq.IGrouping`2" /> type is used by the <see cref="Overload:System.Linq.Enumerable.GroupBy" /> standard query operator methods, which return a sequence of elements of type <see cref="T:System.Linq.IGrouping`2" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of objects that have a common key.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Key">
       <MemberSignature Language="C#" Value="public TKey Key { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !TKey Key" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key of an <see cref="T:System.Linq.IGrouping`2" /> represents the attribute that is common to each value in the <see cref="T:System.Linq.IGrouping`2" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key of the <see cref="T:System.Linq.IGrouping`2" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

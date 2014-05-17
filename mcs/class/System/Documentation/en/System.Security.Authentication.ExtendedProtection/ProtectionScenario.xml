@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ProtectionScenario" FullName="System.Security.Authentication.ExtendedProtection.ProtectionScenario">
+  <TypeSignature Language="C#" Value="public enum ProtectionScenario" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ProtectionScenario extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Authentication.ExtendedProtection.ProtectionScenario" /> enumeration specifies the protection scenario enforced by the policy.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="TransportSelected">
+      <MemberSignature Language="C#" Value="TransportSelected" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario TransportSelected = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ProtectionScenario</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport will select between a secure and standard protection scenario depending on the type of channel used. For secure protection, integrated Windows authentication is wrapped in a secure channel and has an exactly matching channel binding token with no Service Provider Name (SPN) validation. For standard protection, integrated Windows authentication is optionally wrapped in a secure channel with an optional channel binding token and SPN validation is required. So if the request comes through a secure channel, the channel binding token (CBT) is checked, otherwise the SPN is checked.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TrustedProxy">
+      <MemberSignature Language="C#" Value="TrustedProxy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario TrustedProxy = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ProtectionScenario</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Integrated Windows authentication is wrapped in a secure channel terminated by a trusted proxy and has a channel binding token with SPN validation required. This requires the presence of a CBT, but the CBT is not checked while the SPN is checked.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

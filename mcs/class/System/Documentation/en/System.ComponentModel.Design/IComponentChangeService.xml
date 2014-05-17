@@ -1,11 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComponentChangeService" FullName="System.ComponentModel.Design.IComponentChangeService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IComponentChangeService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IComponentChangeService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
@@ -15,125 +18,229 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> provides an interface that can be used to indicate the methods that handle the following events: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentAdded" />, raised when a component is added.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentAdding" />, raised when a component is about to be added.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" />, raised when a component is changed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanging" />, raised when a component is about to be changed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRemoved" />, raised when a component is removed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRemoving" />, raised when a component is about to be removed.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRename" />, raised when a component is renamed.</para>
+        </item>
+      </list>
+      <para>Typically, the design environment raises these component add, change, remove, or rename events. Designers should call the methods of this interface when using <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> objects to provide undo and redo functionality for design-time actions that affect components. More information is available in the documentation for <see cref="T:System.ComponentModel.Design.DesignerTransaction" />. Generally, only the root designer handles these change notifications.</para>
+      <para>This service also provides methods that raise a component changed event or component changing event. A <see cref="T:System.ComponentModel.PropertyDescriptor" /> or a component can indicate that a component has changed or is changing with the <see cref="M:System.ComponentModel.Design.IComponentChangeService.OnComponentChanged(System.Object,System.ComponentModel.MemberDescriptor,System.Object,System.Object)" /> and <see cref="M:System.ComponentModel.Design.IComponentChangeService.OnComponentChanging(System.Object,System.ComponentModel.MemberDescriptor)" /> methods, respectively.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface to add and remove the event handlers for events that add, change, remove or rename components, and provides methods to raise a <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> or <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanging" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ComponentAdded">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentEventHandler ComponentAdded;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentEventHandler ComponentAdded" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs during load and when new components are created by the user, after the component has been sited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component has been added.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComponentAdding">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentEventHandler ComponentAdding;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentEventHandler ComponentAdding" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs during load and when the user creates a new component. You can cancel the process of adding a component by throwing an exception here.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component is in the process of being added.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComponentChanged">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentChangedEventHandler ComponentChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentChangedEventHandler ComponentChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentChangedEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs when any component on the form changes. This event will not occur during form load and unload, because changes are expected at this time.</para>
+          <block subset="none" type="note">
+            <para>A <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> can raise multiple <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> events. Some <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event handlers can interfere with expected sequences of events, such as if your code alters the values of properties while a transaction is occurring. A <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event handler can also impair performance if it draws after each change while a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> is in progress. In order to allow a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> in process to complete without interruption or interference by your <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event handler, you can test the state of the <see cref="P:System.ComponentModel.Design.IDesignerHost.InTransaction" /> property, and defer handling the change events until the completion of the transaction by adding a <see cref="T:System.ComponentModel.Design.DesignerTransactionCloseEventHandler" /> which will raise your <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event handler and remove itself upon completion of the transaction.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component has been changed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComponentChanging">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentChangingEventHandler ComponentChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentChangingEventHandler ComponentChanging" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentChangingEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs before the component is actually changed, and gives the designer a chance to abort the change or perform any pre-change processing. This event does not occur during form load and unload, because changes are expected at this time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component is in the process of being changed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComponentRemoved">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentEventHandler ComponentRemoved;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentEventHandler ComponentRemoved" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs during unload and when a component is deleted by the user. The event occurs before the site has been removed from the component.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component has been removed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComponentRemoving">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentEventHandler ComponentRemoving;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentEventHandler ComponentRemoving" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs during unload and when the user deletes a component. You can cancel the process of removing a component by throwing an exception here.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component is in the process of being removed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ComponentRename">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.Design.ComponentRenameEventHandler ComponentRename;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.Design.ComponentRenameEventHandler ComponentRename" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.ComponentRenameEventHandler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs after the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event when a component has been renamed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a component is renamed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnComponentChanged">
       <MemberSignature Language="C#" Value="public void OnComponentChanged (object component, System.ComponentModel.MemberDescriptor member, object oldValue, object newValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void OnComponentChanged(object component, class System.ComponentModel.MemberDescriptor member, object oldValue, object newValue) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -144,21 +251,35 @@
         <Parameter Name="newValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="member">To be added: an object of type 'ComponentModel.MemberDescriptor'</param>
-        <param name="oldValue">To be added: an object of type 'object'</param>
-        <param name="newValue">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event.</para>
+          <para>Most designers that ship with the winsdklong, as well as the Visual Studio design-time environment, typically raise this event for you when a component in a project is changed, so most of the time you do not need to explicitly call this method. The appropriate <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> events are automatically raised when a <see cref="T:System.ComponentModel.PropertyDescriptor" /> is used to change a property value or components are added or removed from the <see cref="T:System.ComponentModel.Design.IDesignerHost" /> container.</para>
+          <para>Before calling <see cref="M:System.ComponentModel.Design.IComponentChangeService.OnComponentChanged(System.Object,System.ComponentModel.MemberDescriptor,System.Object,System.Object)" />, first call <see cref="M:System.ComponentModel.Design.IComponentChangeService.OnComponentChanging(System.Object,System.ComponentModel.MemberDescriptor)" /> to indicate that a component is about to change, and make the change. Then call <see cref="M:System.ComponentModel.Design.IComponentChangeService.OnComponentChanged(System.Object,System.ComponentModel.MemberDescriptor,System.Object,System.Object)" /> to raise the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Announces to the component change service that a particular component has changed.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that has changed. </param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member that has changed. This is null if this change is not related to a single member. </param>
+        <param name="oldValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old value of the member. This is valid only if the member is not null. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value of the member. This is valid only if the member is not null. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnComponentChanging">
       <MemberSignature Language="C#" Value="public void OnComponentChanging (object component, System.ComponentModel.MemberDescriptor member);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void OnComponentChanging(object component, class System.ComponentModel.MemberDescriptor member) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -167,15 +288,20 @@
         <Parameter Name="member" Type="System.ComponentModel.MemberDescriptor" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="member">To be added: an object of type 'ComponentModel.MemberDescriptor'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanging" /> event.</para>
+          <para>Most designers included with the winsdklong, as well as the Visual Studio design-time environment, typically raise this event automatically; so most of the time, you do not need to explicitly call this method. The appropriate <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> events are automatically raised when a <see cref="T:System.ComponentModel.PropertyDescriptor" /> is used to change a property value or components are added or removed from the <see cref="T:System.ComponentModel.Design.IDesignerHost" /> container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Announces to the component change service that a particular component is changing.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that is about to change. </param>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member that is changing. This is null if this change is not related to a single member. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

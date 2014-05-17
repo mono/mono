@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolBarButton" FullName="System.Windows.Forms.ToolBarButton">
   <TypeSignature Language="C#" Value="public class ToolBarButton : System.ComponentModel.Component" />
   <AssemblyInfo>
@@ -24,8 +25,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ToolBarButton" /> controls are parented by <see cref="T:System.Windows.Forms.ToolBar" /> controls. Common properties to set once the toolbar button has been created are <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> and <see cref="P:System.Windows.Forms.ToolBarButton.ImageIndex" />. Set the <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> property of the button to display text beneath or to the right of the image. To assign images to the buttons by creating an <see cref="T:System.Windows.Forms.ImageList" />, assigning it to the <see cref="P:System.Windows.Forms.ToolBar.ImageList" /> property of the toolbar; then assign the image index value to the <see cref="P:System.Windows.Forms.ToolBarButton.ImageIndex" /> property of the button.</para>
+      <para>To change the appearance of the toolbar buttons assigned to the toolbar, set the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property of the parent toolbar control. The ToolBarAppearance.Flat appearance gives the buttons a flat appearance. As the mouse pointer moves over the buttons, their appearance changes to three-dimensional. Button separators appear as lines rather than spaces between the buttons when the buttons have a flat appearance. If the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property is set to ToolBarAppearance.Normal, the buttons appear raised and three-dimensional, and the separators appear as a gap between the buttons.</para>
+      <para>You can assign a <see cref="T:System.Windows.Forms.ContextMenu" /> to a button if the <see cref="P:System.Windows.Forms.ToolBarButton.Style" /> property is set to ToolBarButtonStyle.DropDown. When the button is clicked, the assigned menu is displayed.</para>
+      <para>To create a collection of <see cref="T:System.Windows.Forms.ToolBarButton" /> controls to display on a <see cref="T:System.Windows.Forms.ToolBar" />, add the buttons individually by using the <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Add(System.Windows.Forms.ToolBarButton)" /> method of the <see cref="P:System.Windows.Forms.ToolBar.Buttons" /> property. Alternatively, you can add several toolbar buttons using the <see cref="M:System.Windows.Forms.ToolBar.ToolBarButtonCollection.AddRange(System.Windows.Forms.ToolBarButton[])" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows toolbar button. Although <see cref="T:System.Windows.Forms.ToolStripButton" /> replaces and extends the <see cref="T:System.Windows.Forms.ToolBarButton" /> control of previous versions, <see cref="T:System.Windows.Forms.ToolBarButton" /> is retained for both backward compatibility and future use if you choose.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,8 +44,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A newly created <see cref="T:System.Windows.Forms.ToolBarButton" /> has no default <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> or <see cref="T:System.Drawing.Image" /> assigned to it. The button's default style is ToolBarButtonStyle.PushButton.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolBarButton" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +65,16 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Windows.Forms.ToolBarButton" /> has no <see cref="T:System.Drawing.Image" /> assigned to it. The button's default style is <see cref="F:System.Windows.Forms.ToolBarButtonStyle.PushButton" />. The <paramref name="text" /> parameter is assigned to the <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> property and is displayed on the new toolbar button control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolBarButton" /> class and displays the assigned text on the button.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to display on the new <see cref="T:System.Windows.Forms.ToolBarButton" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +91,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.ToolBarButton" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ToolBarButton" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,9 +123,18 @@
         <ReturnType>System.Windows.Forms.Menu</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify a <see cref="T:System.Windows.Forms.ContextMenu" /> to be displayed when the drop-down button is clicked. This property is not used unless the <see cref="P:System.Windows.Forms.ToolBarButton.Style" /> property value is set to <see cref="F:System.Windows.Forms.ToolBarButtonStyle.DropDownButton" />.</para>
+          <block subset="none" type="note">
+            <para>Although the <see cref="P:System.Windows.Forms.ToolBarButton.DropDownMenu" /> property is defined as a <see cref="T:System.Windows.Forms.Menu" /> type, you must assign it a <see cref="T:System.Windows.Forms.ContextMenu" /> for it to display properly. If you are creating your own <see cref="T:System.Windows.Forms.MenuItem" /> derived class you must assign that object to a <see cref="T:System.Windows.Forms.ContextMenu" /> and assign the <see cref="T:System.Windows.Forms.ContextMenu" /> to the <see cref="P:System.Windows.Forms.ToolBarButton.DropDownMenu" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the menu to be displayed in the drop-down toolbar button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +156,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.ToolBarButton.Enabled" /> property is set to false, the toolbar button cannot be clicked, and the button's appearance changes. The <see cref="T:System.Drawing.Image" /> and <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> assigned to the button appear grayed out. If the image or text has multiple colors, they display in a monochromatic gray.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the button is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +195,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBarButton.ImageIndex" /> value references the indexed value of the images in an <see cref="T:System.Windows.Forms.ImageList" /> assigned to the parent <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index value of the image assigned to the button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +237,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolBarButton.ImageKey" /> value indicates an image in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the parent <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the image assigned to the button.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -204,9 +263,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the button name as a key to retrieve the <see cref="T:System.Windows.Forms.ToolBarButton" /> from the <see cref="P:System.Windows.Forms.ToolBar.Buttons" /> collection of a <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the button.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parent">
@@ -221,9 +286,12 @@
         <ReturnType>System.Windows.Forms.ToolBar</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the toolbar control that the toolbar button is assigned to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,9 +310,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.ToolBarButton.PartialPush" /> is set to true, the toolbar button appears to have its face grayed. This appearance is different from the dimmed appearance when the <see cref="P:System.Windows.Forms.ToolBarButton.Enabled" /> property is set to false since the partial-push appearance gives a haze to the entire button face. This property has no effect unless the <see cref="T:System.Windows.Forms.ToolBarButtonStyle" /> is set to ToggleButton.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a toggle-style toolbar button is partially pushed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -263,9 +337,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.ToolBarButton.Pushed" /> is set to true, the toolbar button appears sunken or inset relative to the other buttons. This property has no effect unless the <see cref="T:System.Windows.Forms.ToolBarButtonStyle" /> is set to ToggleButton.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a toggle-style toolbar button is currently in the pushed state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -279,9 +359,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Windows.Forms.ToolBar" /> and the current button are both <see cref="P:System.Windows.Forms.ToolBarButton.Visible" />, then this property retrieves the bounding rectangle the button is currently contained in.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounding rectangle for a toolbar button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -303,9 +389,15 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the button <see cref="P:System.Windows.Forms.ToolBarButton.Style" /> is set to <see cref="F:System.Windows.Forms.ToolBarButtonStyle.DropDownButton" /> you can specify a <see cref="T:System.Windows.Forms.MenuItem" /> to be displayed when the drop-down button is pressed. If the style is set to ToolBarButtonStyle.Separator, the toolbar button appears as a button separator and not as a button. The ToolBarButtonStyle.ToggleButton style causes the toolbar button to act like a toggle button; it can be in an on or off state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the toolbar button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -333,9 +425,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves or assigns the data currently associated with the toolbar button. Any <see cref="T:System.Object" /> derived type can be assigned to this property. If this property is being set through the Windows Forms designer, only text can be assigned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that contains data about the toolbar button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -357,9 +455,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default the Text property value is an empty string ("") unless you created the control with the <see cref="M:System.Windows.Forms.ToolBar.#ctor" /> constructor that accepts the text string as a parameter. The orientation of the text on the toolbar button is determined by the <see cref="P:System.Windows.Forms.ToolBar.TextAlign" /> property of the button's parent <see cref="T:System.Windows.Forms.ToolBar" />, which can be set to one of the <see cref="T:System.Windows.Forms.ToolBarTextAlign" /> enumeration values. The orientation is in relation to the image assigned to the button. If no image is assigned to the button, there will be space left for one on the surface of the toolbar button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed on the toolbar button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -381,9 +485,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To enable the display of the ToolTip text when the mouse pointer is moved over the button, set the <see cref="P:System.Windows.Forms.ToolBar.ShowToolTips" /> property of the button's parent <see cref="T:System.Windows.Forms.ToolBar" /> to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that appears as a ToolTip for the button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -398,9 +508,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolBarButton.ToString" /> method returns a string that includes the type and the value of the <see cref="P:System.Windows.Forms.ToolBarButton.Style" /> and <see cref="P:System.Windows.Forms.ToolBarButton.Text" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.ToolBarButton" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.ToolBarButton" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -422,9 +541,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the toolbar button is not visible, it will not be displayed on the toolbar, and therefore cannot receive user input.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the toolbar button is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

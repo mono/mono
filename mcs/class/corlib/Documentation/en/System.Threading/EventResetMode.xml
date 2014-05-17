@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventResetMode" FullName="System.Threading.EventResetMode">
   <TypeSignature Language="C#" Value="public enum EventResetMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed EventResetMode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,46 +10,57 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version=".NET 2.0" />
-  </Docs>
-  <Members>
-    <Member MemberName="AutoReset">
-      <MemberSignature Language="C#" Value="AutoReset" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.EventResetMode</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="ManualReset">
-      <MemberSignature Language="C#" Value="ManualReset" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.EventResetMode</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether an <see cref="T:System.Threading.EventWaitHandle" /> is reset automatically or manually after receiving a signal.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="AutoReset">
+      <MemberSignature Language="C#" Value="AutoReset" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.EventResetMode AutoReset = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.EventResetMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When signaled, the <see cref="T:System.Threading.EventWaitHandle" /> resets automatically after releasing a single thread. If no threads are waiting, the <see cref="T:System.Threading.EventWaitHandle" /> remains signaled until a thread blocks, and resets after releasing the thread.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ManualReset">
+      <MemberSignature Language="C#" Value="ManualReset" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.EventResetMode ManualReset = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.EventResetMode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When signaled, the <see cref="T:System.Threading.EventWaitHandle" /> releases all waiting threads and remains signaled until it is manually reset.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

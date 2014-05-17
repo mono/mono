@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="BodyWriter" FullName="System.ServiceModel.Channels.BodyWriter">
+  <TypeSignature Language="C#" Value="public abstract class BodyWriter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit BodyWriter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A message consists of headers and a body. The headers are buffered and the body is streamed. Because the body is streamed, the user cannot pass the actual content of the body to a message. Instead the user must pass a class that knows how to write the body when asked to do so. This is done by passing a class derived from <see cref="T:System.ServiceModel.Channels.BodyWriter" /> to the <see cref="T:System.ServiceModel.Channels.Message" />. A message calls the class derived from <see cref="T:System.ServiceModel.Channels.BodyWriter" /> whenever it requires the body to be written using an <see cref="T:System.Xml.XmlWriter" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the writer of the message body.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BodyWriter (bool isBuffered);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(bool isBuffered) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="isBuffered" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="isBuffered" /> is false then the message calls the write method once and buffers the contents. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> class that explicitly indicates whether to buffer.</para>
+        </summary>
+        <param name="isBuffered">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the body writer can be called multiple times; otherwise false.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateBufferedCopy">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.BodyWriter CreateBufferedCopy (int maxBufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Channels.BodyWriter CreateBufferedCopy(int32 maxBufferSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BodyWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="maxBufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.ServiceModel.Channels.BodyWriter.IsBuffered" /> is true then the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> object is returned. If <see cref="P:System.ServiceModel.Channels.BodyWriter.IsBuffered" /> is false then the contents of the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> up to <paramref name="maxBufferSize" /> is returned. This also calls <see cref="M:System.ServiceModel.Channels.BodyWriter.OnCreateBufferedCopy(System.Int32)" /> as an extensibility point.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a buffered copy of the body.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.BodyWriter" /> that contains a copy of this object.</para>
+        </returns>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the buffer for the body.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="IsBuffered">
+      <MemberSignature Language="C#" Value="public bool IsBuffered { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsBuffered" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="isBuffered" /> is false then the message calls the write method once and buffers the contents. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the write method can be called multiple times.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnCreateBufferedCopy">
+      <MemberSignature Language="C#" Value="protected virtual System.ServiceModel.Channels.BodyWriter OnCreateBufferedCopy (int maxBufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.ServiceModel.Channels.BodyWriter OnCreateBufferedCopy(int32 maxBufferSize) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.BodyWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="maxBufferSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class derived from <see cref="T:System.ServiceModel.Channels.BodyWriter" /> can override this method to create a buffered copy of the <see cref="T:System.ServiceModel.Channels.BodyWriter" />. But the default implementation of <see cref="M:System.ServiceModel.Channels.BodyWriter.WriteBodyContents(System.Xml.XmlDictionaryWriter)" /> calls <see cref="M:System.ServiceModel.Channels.BodyWriter.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" />, so overriding just <see cref="M:System.ServiceModel.Channels.BodyWriter.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" /> should be easier and work for most scenarios.</para>
+          <para>Note that the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> returned must be buffered, that is <see cref="P:System.ServiceModel.Channels.BodyWriter.IsBuffered" /> must be true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an extensibility point when the body contents are written.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.BodyWriter" /> with the specified maximum buffer size.</para>
+        </returns>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the buffer for the body.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="OnWriteBodyContents">
+      <MemberSignature Language="C#" Value="protected abstract void OnWriteBodyContents (System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnWriteBodyContents(class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method must be implemented by classes derived from <see cref="T:System.ServiceModel.Channels.BodyWriter" />. This is the key method that writes the body. If the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> is buffered then this method is called only once.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, provides an extensibility point when the body contents are written.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write out the message body.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteBodyContents">
+      <MemberSignature Language="C#" Value="public void WriteBodyContents (System.Xml.XmlDictionaryWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteBodyContents(class System.Xml.XmlDictionaryWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlDictionaryWriter" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of <see cref="M:System.ServiceModel.Channels.BodyWriter.WriteBodyContents(System.Xml.XmlDictionaryWriter)" /> calls <see cref="M:System.ServiceModel.Channels.BodyWriter.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" />, so overriding <see cref="M:System.ServiceModel.Channels.BodyWriter.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" /> provides the best point of extension.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out the contents of the message body.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryWriter" /> used to write out the message body.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

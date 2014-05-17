@@ -21,15 +21,15 @@ DISTFILES = \
 	$(wildcard dlls/second/*.cs)
 
 TEST_SUPPORT_FILES = \
-	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll CS0012-5-lib.dll CS0012-6-lib.dll CS0012-9-lib.dll CS0012-10-lib.dll CS0012-11-lib.dll CS0012-12-lib.dll CS0012-13-lib.dll CS0012-14-lib.dll CS0012-15-lib.dll CS0012-16-lib.dll CS0012-17-lib.dll CS0012-18-lib.dll CS0012-21-lib.dll CS0029-26-lib.dll \
+	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll CS0012-5-lib.dll CS0012-6-lib.dll CS0012-9-lib.dll CS0012-10-lib.dll CS0012-11-lib.dll CS0012-12-lib.dll CS0012-13-lib.dll CS0012-14-lib.dll CS0012-15-lib.dll CS0012-16-lib.dll CS0012-17-lib.dll CS0012-18-lib.dll CS0012-21-lib.dll CS0012-22-lib.dll CS0019-71-lib.dll CS0029-26-lib.dll \
 	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-8-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0122-35-lib.dll CS0122-36-lib.dll CS0143-lib.dll CS0144-3-lib.dll CS0165-19-lib.dll \
-	CS0205-3-lib.dll CS0229-3-lib.dll CS0229-4-lib.dll CS0266-25-lib.dll \
+	CS0205-3-lib.dll CS0246-29-lib.dll CS0229-3-lib.dll CS0229-4-lib.dll CS0266-25-lib.dll \
 	CS0315-2-lib.dll \
 	CS0425-7-lib.dll CS0433-lib.dll CS0433-2-lib.dll \
 	CS0506-3-lib.dll CS0507-7-lib.dll CS0507-8-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0534-6-lib.dll CS0571-3-lib.dll CS0571-5-lib.dll CS0571-6-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll CS0619-42-lib.dll \
 	CS0619-43-lib.dll CS1546-lib.dll CS0619-51-lib.dll CS1509-module.dll CS1681-2-lib.dll \
-	CS0730-lib.dll \
+	CS0730-lib.dll CS0731-1-lib.dll CS0731-2-lib.dll \
 	CS1070-lib.dll \
 	CS1540-15-lib.dll CS1540-17-lib.dll CS1542-lib.dll CS1577-lib.dll \
 	CS1607-3-lib.dll CS1683-lib.dll CS1684-lib.dll CS1685-2-lib.dll \
@@ -56,11 +56,13 @@ test-local:
 run-test-local: clean-local
 	$(MAKE) run-mcs-tests
 
+check: run-test-local
+
 # Required to test parser correctly
 # -compiler-options:-v
 
 TEST_PATTERN = 'v4'
-TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0;NET_4_5"
+TESTER_OPTIONS = -compiler-options:"-v --break-on-ice -d:NET_4_0;NET_4_5"
 
 COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe

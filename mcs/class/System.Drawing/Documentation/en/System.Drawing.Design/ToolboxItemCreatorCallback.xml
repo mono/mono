@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolboxItemCreatorCallback" FullName="System.Drawing.Design.ToolboxItemCreatorCallback">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate System.Drawing.Design.ToolboxItem ToolboxItemCreatorCallback(object serializedObject, string format);" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
   <Docs>
     <param name="serializedObject">To be added.</param>
     <param name="format">To be added.</param>
-    <summary>To be added</summary>
     <value>To be added.</value>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can implement a toolbox item creator method with a method signature matching the method signature of this delegate type that creates a toolbox item from any object of a particular clipboard data format placed on the toolbox. For example, you can design a toolbox item creator that creates a <see cref="T:System.Windows.Forms.TextBox" /> to store text pasted to the toolbox from the clipboard. You can use the <see cref="M:System.Drawing.Design.IToolboxService.AddCreator(System.Drawing.Design.ToolboxItemCreatorCallback,System.String)" /> method of the <see cref="T:System.Drawing.Design.IToolboxService" /> to add a <see cref="T:System.Drawing.Design.ToolboxItemCreatorCallback" /> event handler for a particular data type to the toolbox. The <paramref name="serializedObject" /> parameter contains the data object.</para>
+      <para>When you create a <see cref="T:System.Drawing.Design.ToolboxItemCreatorCallback" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a callback mechanism that can create a <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

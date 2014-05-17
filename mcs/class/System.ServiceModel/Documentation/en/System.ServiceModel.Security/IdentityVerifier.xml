@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IdentityVerifier" FullName="System.ServiceModel.Security.IdentityVerifier">
+  <TypeSignature Language="C#" Value="public abstract class IdentityVerifier" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit IdentityVerifier extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The indigo2 infrastructure calls the <see cref="M:System.ServiceModel.Security.IdentityVerifier.TryGetIdentity(System.ServiceModel.EndpointAddress,System.ServiceModel.EndpointIdentity@)" /> method first to retrieve the service's identity from the message. Next, the infrastructure calls the <see cref="M:System.ServiceModel.Security.IdentityVerifier.CheckAccess(System.ServiceModel.EndpointIdentity,System.IdentityModel.Policy.AuthorizationContext)" /> method with the returned <see cref="T:System.ServiceModel.EndpointIdentity" /> and <see cref="T:System.IdentityModel.Policy.AuthorizationContext" />.</para>
+      <para>For more information about implementing the class, see <format type="text/html"><a href="f2d34e43-fa8b-46d2-91cf-d2960e13e16b">How To: Create a Custom Client Identity Verifier</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract base class that can be implemented to verify an expected identity against an authorization context that represents a remote endpoint, or to create an identity from an endpoint address.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected IdentityVerifier ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of this class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckAccess">
+      <MemberSignature Language="C#" Value="public abstract bool CheckAccess (System.ServiceModel.EndpointIdentity identity, System.IdentityModel.Policy.AuthorizationContext authContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CheckAccess(class System.ServiceModel.EndpointIdentity identity, class System.IdentityModel.Policy.AuthorizationContext authContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identity" Type="System.ServiceModel.EndpointIdentity" />
+        <Parameter Name="authContext" Type="System.IdentityModel.Policy.AuthorizationContext" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements a method to verify an identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the identity is verified; otherwise, false. The default is false.</para>
+        </returns>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointIdentity" /> to verify.</param>
+        <param name="authContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> to test the <paramref name="identity" /> against.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDefault">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Security.IdentityVerifier CreateDefault ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Security.IdentityVerifier CreateDefault() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Security.IdentityVerifier</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a default instance of this class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A default instance of <see cref="T:System.ServiceModel.Security.IdentityVerifier" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetIdentity">
+      <MemberSignature Language="C#" Value="public abstract bool TryGetIdentity (System.ServiceModel.EndpointAddress reference, out System.ServiceModel.EndpointIdentity identity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryGetIdentity(class System.ServiceModel.EndpointAddress reference, class System.ServiceModel.EndpointIdentity identity) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reference" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="identity" Type="System.ServiceModel.EndpointIdentity&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="reference">To be added.</param>
+        <param name="identity">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

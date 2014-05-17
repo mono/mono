@@ -1,0 +1,90 @@
+<Type Name="CodeSelect" FullName="Mono.CodeGeneration.CodeSelect">
+  <TypeSignature Language="C#" Value="public class CodeSelect : Mono.CodeGeneration.CodeStatement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeSelect extends Mono.CodeGeneration.CodeStatement" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.CodeGeneration.CodeStatement</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeSelect ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddCase">
+      <MemberSignature Language="C#" Value="public void AddCase (Mono.CodeGeneration.CodeExpression condition, Mono.CodeGeneration.CodeBlock block);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddCase(class Mono.CodeGeneration.CodeExpression condition, class Mono.CodeGeneration.CodeBlock block) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="block" Type="Mono.CodeGeneration.CodeBlock" />
+      </Parameters>
+      <Docs>
+        <param name="condition">To be added.</param>
+        <param name="block">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Generate">
+      <MemberSignature Language="C#" Value="public override void Generate (System.Reflection.Emit.ILGenerator gen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Generate(class System.Reflection.Emit.ILGenerator gen) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public override void PrintCode (Mono.CodeGeneration.CodeWriter cp);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void PrintCode(class Mono.CodeGeneration.CodeWriter cp) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cp" Type="Mono.CodeGeneration.CodeWriter" />
+      </Parameters>
+      <Docs>
+        <param name="cp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

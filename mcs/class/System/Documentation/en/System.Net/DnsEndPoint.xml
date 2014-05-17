@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="DnsEndPoint" FullName="System.Net.DnsEndPoint">
+  <TypeSignature Language="C#" Value="public class DnsEndPoint : System.Net.EndPoint" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DnsEndPoint extends System.Net.EndPoint" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Net.EndPoint</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.DnsEndPoint" /> class contains a host name or an IP address and remote port information needed by an application to connect to a service on a host. By combining the host name or IP address and port number of a service, the <see cref="T:System.Net.DnsEndPoint" /> class forms a connection point to a service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a network endpoint as a host name or a string representation of an IP address and a port number.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DnsEndPoint (string host, int port);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string host, int32 port) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.DnsEndPoint.#ctor(System.String,System.Int32)" /> constructor can be used to initialize a <see cref="T:System.Net.DnsEndPoint" /> class using either a host name or a string that represents an IP address and a port. This constructor sets the <see cref="P:System.Net.DnsEndPoint.AddressFamily" /> property to <see cref="F:System.Net.Sockets.AddressFamily.Unknown" />. </para>
+          <para>When using this constructor with a host name rather than a string representation of an IP address, the address family of the <see cref="T:System.Net.DnsEndPoint" /> will remain <see cref="F:System.Net.Sockets.AddressFamily.Unknown" /> even after use. The <see cref="P:System.Net.DnsEndPoint.AddressFamily" /> property of any <see cref="T:System.Net.Sockets.Socket" /> that is created by calls to the <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,System.Net.Sockets.SocketAsyncEventArgs)" /> method will be the address family of the first address to which a connection can be successfully established (not necessarily the first address to be resolved).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.DnsEndPoint" /> class with the host name or string representation of an IP address and a port number.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host name or a string representation of the IP address.</param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port number associated with the address, or 0 to specify any available port. <paramref name="port" /> is in host order.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DnsEndPoint (string host, int port, System.Net.Sockets.AddressFamily addressFamily);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string host, int32 port, valuetype System.Net.Sockets.AddressFamily addressFamily) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="addressFamily" Type="System.Net.Sockets.AddressFamily" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.DnsEndPoint.#ctor(System.String,System.Int32,System.Net.Sockets.AddressFamily)" /> constructor can be used to initialize a <see cref="T:System.Net.DnsEndPoint" /> class using either a host name or a string that represents an IP address, a port, and an address family. </para>
+          <para>When using the constructor with a host name rather than a string representation of an IP address, the address family restricts DNS resolution to prefer addresses of the specified address family value. When using the constructor with the address family specified as <see cref="F:System.Net.Sockets.AddressFamily.Unknown" />, the address family of the <see cref="T:System.Net.DnsEndPoint" /> will remain <see cref="F:System.Net.Sockets.AddressFamily.Unknown" /> even after use. The <see cref="P:System.Net.DnsEndPoint.AddressFamily" /> property of any <see cref="T:System.Net.Sockets.Socket" /> that is created by calls to the <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,System.Net.Sockets.SocketAsyncEventArgs)" /> method will be the address family of the first address to which a connection can be successfully established (not necessarily the first address to be resolved).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.DnsEndPoint" /> class with the host name or string representation of an IP address, a port number, and an address family.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host name or a string representation of the IP address.</param>
+        <param name="port">
+          <attribution license="cc4" from="Microsoft" modified="false" />The port number associated with the address, or 0 to specify any available port. <paramref name="port" /> is in host order.</param>
+        <param name="addressFamily">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Net.Sockets.AddressFamily" /> values.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddressFamily">
+      <MemberSignature Language="C#" Value="public override System.Net.Sockets.AddressFamily AddressFamily { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.AddressFamily AddressFamily" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.DnsEndPoint.AddressFamily" /> property indicates the address family for an instance of the <see cref="T:System.Net.DnsEndPoint" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Internet Protocol (IP) address family.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object comparand) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="comparand" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.DnsEndPoint.Equals(System.Object)" /> method compares the current <see cref="T:System.Net.DnsEndPoint" /> instance with the <paramref name="comparand" /> parameter and returns true if the two instances contain the same endpoint.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Net.DnsEndPoint" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Net.DnsEndPoint" /> instances are equal; otherwise, false.</para>
+        </returns>
+        <param name="comparand">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.DnsEndPoint" /> instance to compare to the current instance.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.DnsEndPoint.GetHashCode" /> method returns a hash code of the <see cref="T:System.Net.DnsEndPoint" />. This value can be used as a key in hash tables.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash value for a <see cref="T:System.Net.DnsEndPoint" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value for the <see cref="T:System.Net.DnsEndPoint" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Host">
+      <MemberSignature Language="C#" Value="public string Host { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Host" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.DnsEndPoint.Host" /> property indicates the host name or string representation of the IP address for an instance of the <see cref="T:System.Net.DnsEndPoint" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the host name or string representation of the Internet Protocol (IP) address of the host.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Port">
+      <MemberSignature Language="C#" Value="public int Port { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the port number of the <see cref="T:System.Net.DnsEndPoint" />.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.DnsEndPoint.ToString" /> method returns a string that contains the address family, the host name or IP address string, and the port number.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the host name or string representation of the IP address and port number of the <see cref="T:System.Net.DnsEndPoint" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the address family, host name or IP address string, and the port number of the specified <see cref="T:System.Net.DnsEndPoint" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

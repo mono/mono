@@ -167,9 +167,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
 				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, evaluatedMetadata);
-				return string.Equals (metadataName, "fullpath", StringComparison.OrdinalIgnoreCase)
-						? MSBuildUtils.Escape (metadata)
-						: metadata;
+				return MSBuildUtils.Unescape (metadata);
 			}
 
 			if (evaluatedMetadata.Contains (metadataName))
@@ -181,10 +179,7 @@ namespace Microsoft.Build.BuildEngine {
 		public string GetMetadata (string metadataName)
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
-				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
-				return string.Equals (metadataName, "fullpath", StringComparison.OrdinalIgnoreCase)
-					? MSBuildUtils.Escape (metadata)
-					: metadata;
+				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
 			} else if (unevaluatedMetadata.Contains (metadataName))
 				return (string) unevaluatedMetadata [metadataName];
 			else
@@ -269,9 +264,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		void AddMetadata (string name, string value)
 		{
+			var options = IsDynamic ?
+			              ParseOptions.AllowItemsMetadataAndSplit : ParseOptions.AllowItemsNoMetadataAndSplit;
+
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
-				e.Parse (value, ParseOptions.AllowItemsNoMetadataAndSplit);
+				e.Parse (value, options);
 				evaluatedMetadata [name] = (string) e.ConvertTo (parent_item_group.ParentProject,
 						typeof (string), ExpressionOptions.ExpandItemRefs);
 			} else

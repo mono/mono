@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ThemeProvider" FullName="System.Web.UI.ThemeProvider">
   <TypeSignature Language="C#" Value="public sealed class ThemeProvider" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Page developers and control authors do not use the <see cref="T:System.Web.UI.ThemeProvider" /> class. ASP.NET developer tool and designer builders use the <see cref="T:System.Web.UI.ThemeProvider" /> class in conjunction with the <see cref="T:System.Web.UI.SkinBuilder" /> class and the <see cref="T:System.Web.UI.IThemeResolutionService" /> interface to apply themes and their respective control skins to controls at design time.</para>
+      <para>The <see cref="T:System.Web.UI.ThemeProvider" /> class encapsulates the information needed to apply a theme or style sheet theme and its control skins to the child controls of a control in a designer. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a class that encapsulates theme and style sheet information for controls in a designer environment. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,14 +33,25 @@
         <Parameter Name="themePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="themeDefinition">To be added.</param>
-        <param name="cssFiles">To be added.</param>
-        <param name="themePath">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="themeDefinition" /> parameter passed to the <see cref="M:System.Web.UI.ThemeProvider.#ctor(System.ComponentModel.Design.IDesignerHost,System.String,System.String,System.String[],System.String)" /> constructor represents the concatenation of all control skins associated with the theme but is not exposed directly by the <see cref="T:System.Web.UI.ThemeProvider" /> class, as this particular parameter is passed to a <see cref="T:System.Web.UI.DesignTimeTemplateParser" /> to retrieve a <see cref="T:System.Web.UI.ControlBuilder" /> and is not otherwise used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ThemeProvider" /> class. </para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that represents the current designer environment.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the theme or style sheet theme that the <see cref="T:System.Web.UI.ThemeProvider" /> represents. This parameter can be null.</param>
+        <param name="themeDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />Theme information passed to the <see cref="M:System.Web.UI.DesignTimeTemplateParser.ParseTheme(System.ComponentModel.Design.IDesignerHost,System.String,System.String)" /> method. These are the raw, concatenated contents of the theme.</param>
+        <param name="cssFiles">
+          <attribution license="cc4" from="Microsoft" modified="false" />The names of the cascading style sheet (CSS) files that are included with the theme that the <see cref="T:System.Web.UI.ThemeProvider" /> represents.</param>
+        <param name="themePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The absolute path of the file that contains the theme and control skin information for the named theme.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +64,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash of the theme definition passed to the constructor.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +83,16 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by designer hosts to add style sheet links to CSS files when rendering HTML to a design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a set of strings that represent the names of any cascading style sheet (CSS) files associated with the current theme, if the theme is a style sheet theme.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +105,13 @@
         <ReturnType>System.ComponentModel.Design.IDesignerHost</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> object that represents the current designer environment.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,11 +127,21 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ThemeProvider.GetSkinBuilder(System.Web.UI.Control)" /> method is called by the <see cref="T:System.Web.UI.ControlBuilder" /> base class to apply a theme and any control skin to a control when it is built at design time. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Web.UI.SkinBuilder" /> instance for the specified control, which is used to apply a theme and control skin in a designer environment.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.SkinBuilder" /> instance, if one is defined for the specified control type; otherwise, null.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to apply a theme and control skin to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,11 +157,18 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.IDictionary" /> object that contains a set of <see cref="T:System.Web.UI.SkinBuilder" /> objects for the specified <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> that contains a list of one or more <see cref="T:System.Web.UI.ControlBuilder" /> objects associated with the <see cref="T:System.Type" /> passed to the method. This list is populated with <see cref="T:System.Collections.DictionaryEntry" /> objects where the <see cref="P:System.Web.UI.Control.SkinID" /> is a <see cref="P:System.Collections.DictionaryEntry.Key" />, and its associated <see cref="T:System.Web.UI.SkinBuilder" /> is the <see cref="P:System.Collections.DictionaryEntry.Value" />. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> for which to retrieve any associated <see cref="T:System.Web.UI.ControlBuilder" /> objects.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -136,11 +184,21 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.ThemeProvider.GetSkinsForControl(System.Type)" /> method is used by designers to populate lists of control skin names. Designers use the list to bind to user interface (UI) elements or to display design properties for a given control type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> of skin identifiers that are associated with the specified <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of skin identifiers, if control skins are defined for the specified <see cref="T:System.Type" />. If no control skins are associated with the type, an empty <see cref="T:System.Collections.ICollection" /> is returned. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> for which to retrieve any associated skin names.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,10 +211,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.ThemeProvider.ThemeName" /> property is set by the <paramref name="name" /> property of the <see cref="M:System.Web.UI.ThemeProvider.#ctor(System.ComponentModel.Design.IDesignerHost,System.String,System.String,System.String[],System.String)" /> constructor. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the theme or style sheet theme that the <see cref="T:System.Web.UI.ThemeProvider" /> instance represents.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

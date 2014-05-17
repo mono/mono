@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceHost" FullName="System.ServiceModel.ServiceHost">
+  <TypeSignature Language="C#" Value="public class ServiceHost : System.ServiceModel.ServiceHostBase" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceHost extends System.ServiceModel.ServiceHostBase" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.ServiceHostBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the host used by the indigo1 service model programming model.</para>
+      <para>Use the <see cref="T:System.ServiceModel.ServiceHost" /> class to configure and expose a service for use by client applications when you are not using Internet Information Services (IIS) or Windows Activation Services (WAS) to expose a service. Both IIS and WAS interact with a <see cref="T:System.ServiceModel.ServiceHost" /> object on your behalf.</para>
+      <para>To expose a service for use by callers, indigo2 requires a complete service description (represented by the <see cref="T:System.ServiceModel.Description.ServiceDescription" /> class). The <see cref="T:System.ServiceModel.ServiceHost" /> class creates a <see cref="T:System.ServiceModel.Description.ServiceDescription" /> from the service type and configuration information and then uses that description to create <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> objects for each endpoint in the description. </para>
+      <para>Use a <see cref="T:System.ServiceModel.ServiceHost" /> object to load a service, configure endpoints, apply security settings, and start listeners to handle incoming requests. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a host for services.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ServiceHost ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are two constructors used to create an instance of the <see cref="T:System.ServiceModel.ServiceHost" /> class. Use the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Type,System.Uri[])" /> constructor which takes the service type as an input parameter, most of the time. The host can use this to create new services as needed. Use the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Object,System.Uri[])" /> constructor instead only when you want the service host to use a specific singleton instance of the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceHost" /> class. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceHost (object serviceInstance, Uri[] baseAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(object serviceInstance, class System.Uri[] baseAddresses) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="serviceInstance" Type="System.Object" />
+        <Parameter Name="baseAddresses" Type="System.Uri[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="serviceInstance">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor as an alternative to implementing a custom <see cref="T:System.ServiceModel.Dispatcher.IInstanceContextInitializer" /> when you want to provide a specific object instance for use by a singleton service. You may want to use this overload when your service implementation type is difficult to construct (for example, if it does not implement a default public constructor that has no parameters). </para>
+          <para>Note that when an object is provided to this overload, some features related to the indigo1 instancing behavior work differently. For example, calling <see cref="M:System.ServiceModel.InstanceContext.ReleaseServiceInstance" /> have no effect when a well-known object instance is provided using this constructor overload. Similarly, any other instance release mechanism is ignored. The <see cref="T:System.ServiceModel.ServiceHost" /> always behaves as if the <see cref="P:System.ServiceModel.OperationBehaviorAttribute.ReleaseInstanceMode" /> property is set to <see cref="F:System.ServiceModel.ReleaseInstanceMode.None" /> for all operations.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceHost" /> class with the instance of the service and its base addresses specified.</para>
+        </summary>
+        <param name="baseAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Array" /> of type <see cref="T:System.Uri" /> that contains the base addresses for the hosted service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceHost (Type serviceType, Uri[] baseAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type serviceType, class System.Uri[] baseAddresses) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="serviceType" Type="System.Type" />
+        <Parameter Name="baseAddresses" Type="System.Uri[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor when you have the service type and you can create new instances of it when needed, even when you need a singleton instance. Use the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Object,System.Uri[])" /> constructor instead only when you want the service host to use a specific singleton instance of the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceHost" /> class with the type of service and its base addresses specified.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of hosted service.</param>
+        <param name="baseAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Uri" /> that contains the base addresses for the hosted service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddServiceEndpoint">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint (Type implementedContract, System.ServiceModel.Channels.Binding binding, string address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint(class System.Type implementedContract, class System.ServiceModel.Channels.Binding binding, string address) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="implementedContract" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="address" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, and endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the endpoint added.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address for the endpoint added.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddServiceEndpoint">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint (Type implementedContract, System.ServiceModel.Channels.Binding binding, Uri address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint(class System.Type implementedContract, class System.ServiceModel.Channels.Binding binding, class System.Uri address) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="implementedContract" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="address" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, and URI that contains the endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the endpoint added.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the address for the endpoint added.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddServiceEndpoint">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint (Type implementedContract, System.ServiceModel.Channels.Binding binding, string address, Uri listenUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint(class System.Type implementedContract, class System.ServiceModel.Channels.Binding binding, string address, class System.Uri listenUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="implementedContract" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="address" Type="System.String" />
+        <Parameter Name="listenUri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this version of the method when you have multiple endpoints that need to listen on the same, specified URI.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, an endpoint address, and a URI on which the service listens.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the endpoint added.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint address for the service.</param>
+        <param name="listenUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> on which the service endpoints can listen.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="AddServiceEndpoint">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint (Type implementedContract, System.ServiceModel.Channels.Binding binding, Uri address, Uri listenUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.ServiceEndpoint AddServiceEndpoint(class System.Type implementedContract, class System.ServiceModel.Channels.Binding binding, class System.Uri address, class System.Uri listenUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="implementedContract" Type="System.Type" />
+        <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="listenUri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this version of the method when you have multiple endpoints that need to listen on the same, specified URI.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, a URI that contains the endpoint address, and a URI on which the service listens.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract for the endpoint added.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the address for the endpoint added.</param>
+        <param name="listenUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> on which the service endpoints can listen.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDescription">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Description.ServiceDescription CreateDescription (out System.Collections.Generic.IDictionary&lt;string,System.ServiceModel.Description.ContractDescription&gt; implementedContracts);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.ServiceModel.Description.ServiceDescription CreateDescription(class System.Collections.Generic.IDictionary`2&lt;string, class System.ServiceModel.Description.ContractDescription&gt; implementedContracts) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceDescription</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="implementedContracts" Type="System.Collections.Generic.IDictionary&lt;System.String,System.ServiceModel.Description.ContractDescription&gt;&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="implementedContracts">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeDescription">
+      <MemberSignature Language="C#" Value="protected void InitializeDescription (object serviceInstance, System.ServiceModel.UriSchemeKeyedCollection baseAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void InitializeDescription(object serviceInstance, class System.ServiceModel.UriSchemeKeyedCollection baseAddresses) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceInstance" Type="System.Object" />
+        <Parameter Name="baseAddresses" Type="System.ServiceModel.UriSchemeKeyedCollection" />
+      </Parameters>
+      <Docs>
+        <param name="serviceInstance">To be added.</param>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a description of the service hosted based on its instance and specified base addresses.</para>
+        </summary>
+        <param name="baseAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.UriSchemeKeyedCollection" /> that contains the base addresses for the hosted service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeDescription">
+      <MemberSignature Language="C#" Value="protected void InitializeDescription (Type serviceType, System.ServiceModel.UriSchemeKeyedCollection baseAddresses);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void InitializeDescription(class System.Type serviceType, class System.ServiceModel.UriSchemeKeyedCollection baseAddresses) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceType" Type="System.Type" />
+        <Parameter Name="baseAddresses" Type="System.ServiceModel.UriSchemeKeyedCollection" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a description of the service hosted based on its type and specified base addresses.</para>
+        </summary>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of service hosted.</param>
+        <param name="baseAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.UriSchemeKeyedCollection" /> that contains the base addresses for the hosted service.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="SingletonInstance">
+      <MemberSignature Language="C#" Value="public object SingletonInstance { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SingletonInstance" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.ServiceHost.#ctor(System.Object,System.Uri[])" /> constructor to initialize a singleton instance of the service to be hosted when you want to control the instance of the service that is used. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the singleton instance of the hosted service.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

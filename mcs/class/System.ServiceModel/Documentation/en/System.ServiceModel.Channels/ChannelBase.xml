@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ChannelBase" FullName="System.ServiceModel.Channels.ChannelBase">
+  <TypeSignature Language="C#" Value="public abstract class ChannelBase : System.ServiceModel.Channels.CommunicationObject, System.ServiceModel.Channels.IChannel, System.ServiceModel.IDefaultCommunicationTimeouts" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ChannelBase extends System.ServiceModel.Channels.CommunicationObject implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.ICommunicationObject, class System.ServiceModel.IDefaultCommunicationTimeouts" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Channels.CommunicationObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.IDefaultCommunicationTimeouts</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.ChannelBase" /> class provides an abstract base class implementation of the <see cref="T:System.ServiceModel.Channels.IChannel" /> interface. It also requires that each channel be associated with a channel manager. Note that the only constructor available for creating instances of <see cref="T:System.ServiceModel.Channels.ChannelBase" /> requires a <paramref name="channelManager" /> input parameter. </para>
+      <para>State changes are managed by inheriting from the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> implementation of the state machine.</para>
+      <para>The <see cref="T:System.ServiceModel.Channels.ChannelBase" /> gets its default communication timeouts for the open, close, send and receive operations from the <see cref="T:System.ServiceModel.Channels.ChannelManagerBase" /> associated with it.</para>
+      <para>The <see cref="T:System.ServiceModel.Channels.ChannelBase" /> also manages the manager for you. In addition to exposing a reference to the manager, the base class also notifies the manager when channels are created and destroyed. But the reference to the manager is only good until the channel is destroyed. </para>
+      <para>Even if you do use the base class, you must still provide behaviors for opening and closing the channel. The default implementations of these methods do not provide useful information. </para>
+      <para>You must also make sure to override <see cref="M:System.ServiceModel.Channels.ChannelBase.GetProperty``1" /> whenever you implement a channel. <see cref="M:System.ServiceModel.Channels.ChannelBase.GetProperty``1" /> is an excellent way to communicate information along the channel stack without having to know what channels are below you, or what channels above you may perform queries. Define interfaces that can be queried for available information. Whenever you do not recognize the type argument for <see cref="M:System.ServiceModel.Channels.ChannelBase.GetProperty``1" />, delegate down to the next channel in the stack or return null if you are creating a new transport channel at the bottom of the stack. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base implementation for custom channels.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ChannelBase (System.ServiceModel.Channels.ChannelManagerBase manager);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ServiceModel.Channels.ChannelManagerBase manager) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="manager" Type="System.ServiceModel.Channels.ChannelManagerBase" />
+      </Parameters>
+      <Docs>
+        <param name="manager">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that the only constructor available for creating instances of <see cref="T:System.ServiceModel.Channels.ChannelBase" /> requires a <paramref name="channelManager" /> input parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.ChannelBase" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultCloseTimeout">
+      <MemberSignature Language="C#" Value="protected override TimeSpan DefaultCloseTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan DefaultCloseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.ServiceModel.IDefaultCommunicationTimeouts.CloseTimeout" /> associated with <see cref="P:System.ServiceModel.Channels.ChannelBase.Manager" /> for the channel.</para>
+          <para>All operations that are potentially lengthy must have a timeout. Methods that do not take explicit timeouts, must delegate to those methods with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already accessed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time provided for a close operation to complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultOpenTimeout">
+      <MemberSignature Language="C#" Value="protected override TimeSpan DefaultOpenTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan DefaultOpenTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.ServiceModel.IDefaultCommunicationTimeouts.OpenTimeout" /> associated with <see cref="P:System.ServiceModel.Channels.ChannelBase.Manager" /> for the channel.</para>
+          <para>All operations that are potentially lengthy must have a timeout. Methods that do not take explicit timeouts, must delegate to those methods with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already accessed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time provided for an open operation to complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultReceiveTimeout">
+      <MemberSignature Language="C#" Value="protected TimeSpan DefaultReceiveTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan DefaultReceiveTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.ServiceModel.IDefaultCommunicationTimeouts.ReceiveTimeout" /> associated with <see cref="P:System.ServiceModel.Channels.ChannelBase.Manager" /> for the channel.</para>
+          <para>All operations that are potentially lengthy must have a timeout. Methods that do not take explicit timeouts, must delegate to those methods with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already accessed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time provided for a receive operation to complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultSendTimeout">
+      <MemberSignature Language="C#" Value="protected TimeSpan DefaultSendTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan DefaultSendTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="P:System.ServiceModel.IDefaultCommunicationTimeouts.SendTimeout" /> associated with <see cref="P:System.ServiceModel.Channels.ChannelBase.Manager" /> for the channel.</para>
+          <para>All operations that are potentially lengthy must have a timeout. Methods that do not take explicit timeouts, must delegate to those methods with default timeouts or must not do any work that blocks. Timeouts are the total limit for high-level operations for which they are to complete, so any retries must be limited to the time not already accessed by earlier tries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time provided for a send operation to complete.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProperty&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public virtual T GetProperty&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !!T GetProperty&lt;class T&gt;() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this to request a typed object such as an interface for setting properties or getting status from the appropriate layer in the channel stack. If a layer supports returning the requested object, it returns it. If not, it delegates the call down to the next layer in the stack. If it gets to the bottom of the stack and no channel layer supported the requested object, then the method returns null.</para>
+          <para>You must also make sure to override <see cref="M:System.ServiceModel.Channels.ChannelBase.GetProperty``1" /> whenever you implement a channel. <see cref="M:System.ServiceModel.Channels.ChannelBase.GetProperty``1" /> is an excellent way to communicate information along the channel stack without having to know what channels are below you, or what channels above you may perform queries. Define interfaces that can be queried for available information. Whenever you do not recognize the type argument for <see cref="M:System.ServiceModel.Channels.ChannelBase.GetProperty``1" />, delegate down to the next channel in the stack or return null if you are creating a new transport channel at the bottom of the stack. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the typed object requested, if present, from the appropriate layer in the channel stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T" /> requested, if it is present, or null, if it is not.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
+      </Docs>
+    </Member>
+    <Member MemberName="Manager">
+      <MemberSignature Language="C#" Value="protected System.ServiceModel.Channels.ChannelManagerBase Manager { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Channels.ChannelManagerBase Manager" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.ChannelManagerBase</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every <see cref="T:System.ServiceModel.Channels.ChannelBase" /> must have a <see cref="T:System.ServiceModel.Channels.ChannelManagerBase" /> associated with it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the channel manager that is associated with the current channel.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="OnClosed">
+      <MemberSignature Language="C#" Value="protected override void OnClosed ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnClosed() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is reserved for system use and is not expected to be called by the user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses diagnostic tracing during the transition into the closing state.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.IDefaultCommunicationTimeouts.CloseTimeout">
+      <MemberSignature Language="C#" Value="TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.CloseTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.CloseTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelBase.System.ServiceModel.IDefaultCommunicationTimeouts.CloseTimeout" /> calls <see cref="P:System.ServiceModel.Channels.ChannelBase.DefaultCloseTimeout" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the close method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.IDefaultCommunicationTimeouts.OpenTimeout">
+      <MemberSignature Language="C#" Value="TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.OpenTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.OpenTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelBase.System.ServiceModel.IDefaultCommunicationTimeouts.OpenTimeout" /> calls <see cref="P:System.ServiceModel.Channels.ChannelBase.DefaultOpenTimeout" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the open method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.IDefaultCommunicationTimeouts.ReceiveTimeout">
+      <MemberSignature Language="C#" Value="TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.ReceiveTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.ReceiveTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelBase.System.ServiceModel.IDefaultCommunicationTimeouts.ReceiveTimeout" /> calls <see cref="P:System.ServiceModel.Channels.ChannelBase.DefaultReceiveTimeout" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the receive method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ServiceModel.IDefaultCommunicationTimeouts.SendTimeout">
+      <MemberSignature Language="C#" Value="TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.SendTimeout { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan System.ServiceModel.IDefaultCommunicationTimeouts.SendTimeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.Channels.ChannelBase.System.ServiceModel.IDefaultCommunicationTimeouts.SendTimeout" /> calls <see cref="P:System.ServiceModel.Channels.ChannelBase.DefaultSendTimeout" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time after which the send method, invoked by a communication object, times out.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

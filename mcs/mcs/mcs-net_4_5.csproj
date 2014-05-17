@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C43E1948-715C-4711-9442-13652674CE49}</ProjectGuid>
+    <ProjectGuid>{96874A7F-2F4E-4900-B812-1A61610DECE3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\mcs-net_4_5</OutputPath>
@@ -121,13 +121,16 @@
 $(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\cs-parser.jay > $(ProjectDir)\cs-parser.cs
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -135,3 +138,4 @@ $(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(Project
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

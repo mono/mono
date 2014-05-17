@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,TResult&gt;" FullName="System.Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,TResult&gt;">
   <TypeSignature Language="C#" Value="public delegate TResult Func&lt;in T1,in T2,in T3,in T4,in T5,in T6,in T7,in T8,out TResult&gt;(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Func`9&lt;- T1, - T2, - T3, - T4, - T5, - T6, - T7, - T8, + TResult&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -85,8 +87,19 @@
     <param name="arg6">To be added.</param>
     <param name="arg7">To be added.</param>
     <param name="arg8">To be added.</param>
-    <summary>To be added.</summary>
-    <value>To be added.</value>
-    <remarks>To be added.</remarks>
+    <returns>To be added.</returns>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use this delegate to represent a method that can be passed as a parameter without explicitly declaring a custom delegate. The encapsulated method must correspond to the method signature that is defined by this delegate. This means that the encapsulated method must have eight parameters, each of which is passed to it by value, and that it must return a value.</para>
+      <block subset="none" type="note">
+        <para>To reference a method that has eight parameters and returns void (or in Visual Basic, that is declared as a Sub rather than as a Function), use the generic <see cref="T:System.Action`8" /> delegate instead. </para>
+      </block>
+      <para>You can also use the <see cref="T:System.Func`9" /> delegate with anonymous methods and lambda expressions.</para>
+      <para>The underlying type of a lambda expression is one of the generic Func delegates. This makes it possible to pass a lambda expression as a parameter without explicitly assigning it to a delegate.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a method that has eight parameters and returns a value of the type specified by the <paramref name="TResult" /> parameter.</para>
+    </summary>
   </Docs>
 </Type>

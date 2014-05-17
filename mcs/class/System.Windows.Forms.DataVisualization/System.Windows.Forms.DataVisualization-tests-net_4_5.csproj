@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B1643A3E-B53E-4264-8CA3-27533EF662CB}</ProjectGuid>
+    <ProjectGuid>{53691FB6-46CA-4725-AA1A-03418AFED79A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Windows.Forms.DataVisualization-tests-net_4_5</OutputPath>
@@ -61,38 +61,50 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Windows.Forms.DataVisualization\System.Windows.Forms.DataVisualization-net_4_5.csproj">
-      <Project>{47FD8F07-F207-478D-B9D7-4CE5DC4A52B6}</Project>
+      <Project>{5D72C9D5-37E8-4B93-A634-919A3B251C9B}</Project>
       <Name>System.Windows.Forms.DataVisualization\System.Windows.Forms.DataVisualization-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
-      <Project>{945A4FD5-2184-44CC-9519-13AFC37ED81A}</Project>
+      <Project>{CB1CB976-AA54-4553-B0E7-05665B199EC4}</Project>
       <Name>System.Drawing\System.Drawing-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
-      <Project>{409FF748-B765-4AB3-BCB1-72199B9E341C}</Project>
+      <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

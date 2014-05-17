@@ -1,22 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHelpService" FullName="System.ComponentModel.Design.IHelpService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IHelpService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IHelpService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The design-time environment provides a Help system that attempts to locate relevant Help topics to display when a user presses F1. The Help system maintains a set of current context keywords that are used to identify relevant topics if Help is requested. By default, keywords are associated with selected class objects and properties of objects in the design time environment. The default keyword for a component or property is its fully qualified class or property name. Specific keywords are also associated with certain modes, such as when multiple objects are selected. If a custom Help collection is integrated with the design-time environment by configuring it for an external help provider, a documentation provider can associate a topic for a specific component class or property with a keyword consisting of the item's fully qualified type or member name.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.IHelpService" /> can be used to invoke the help service with a specified keyword using the <see cref="M:System.ComponentModel.Design.IHelpService.ShowHelpFromKeyword(System.String)" /> method, or to invoke a help topic from a specified URL using the <see cref="M:System.ComponentModel.Design.IHelpService.ShowHelpFromUrl(System.String)" /> method.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.IHelpService" /> can also be used to add or remove Help keywords at design time. Selecting a component or property at design time sets a default context keyword consisting of the fully qualified type or member name of the selection, and removes the keywords for any previously selected and no longer selected components or properties.</para>
+      <para>Because the Help system does not automatically remove custom Help keywords, you must explicitly remove a custom keyword when it no longer applies. You can monitor the events defined by the <see cref="T:System.ComponentModel.Design.ISelectionService" /> interface to determine when a component selection changes. Based on those events, you can add a Help context attribute for a component when it is selected and then remove the Help context attribute when the selection no longer includes the component.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for showing Help topics and adding and removing Help keywords at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddContextAttribute">
       <MemberSignature Language="C#" Value="public void AddContextAttribute (string name, string value, System.ComponentModel.Design.HelpKeywordType keywordType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddContextAttribute(string name, string value, valuetype System.ComponentModel.Design.HelpKeywordType keywordType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -26,36 +44,52 @@
         <Parameter Name="keywordType" Type="System.ComponentModel.Design.HelpKeywordType" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <param name="keywordType">To be added: an object of type 'HelpKeywordType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Context attributes are used to provide context-sensitive Help to users. The designer host automatically adds context attributes from available Help attributes on certain components and properties. This method allows you to further customize the context-sensitive Help.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a context attribute to the document.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to add. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute. </param>
+        <param name="keywordType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the keyword, from the enumeration <see cref="T:System.ComponentModel.Design.HelpKeywordType" />. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ClearContextAttributes">
       <MemberSignature Language="C#" Value="public void ClearContextAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ClearContextAttributes() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all existing context attributes from the document.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateLocalContext">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.IHelpService CreateLocalContext (System.ComponentModel.Design.HelpContextType contextType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ComponentModel.Design.IHelpService CreateLocalContext(valuetype System.ComponentModel.Design.HelpContextType contextType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.IHelpService</ReturnType>
       </ReturnValue>
@@ -63,19 +97,28 @@
         <Parameter Name="contextType" Type="System.ComponentModel.Design.HelpContextType" />
       </Parameters>
       <Docs>
-        <param name="contextType">To be added: an object of type 'HelpContextType'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IHelpService'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a local <see cref="T:System.ComponentModel.Design.IHelpService" /> to manage subcontexts.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.Design.IHelpService" />.</para>
+        </returns>
+        <param name="contextType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The priority type of the subcontext to add. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveContextAttribute">
       <MemberSignature Language="C#" Value="public void RemoveContextAttribute (string name, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveContextAttribute(string name, string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -84,19 +127,26 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added context attribute.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to remove. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute to remove. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveLocalContext">
       <MemberSignature Language="C#" Value="public void RemoveLocalContext (System.ComponentModel.Design.IHelpService localContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveLocalContext(class System.ComponentModel.Design.IHelpService localContext) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -104,18 +154,24 @@
         <Parameter Name="localContext" Type="System.ComponentModel.Design.IHelpService" />
       </Parameters>
       <Docs>
-        <param name="localContext">To be added: an object of type 'IHelpService'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a context created with <see cref="M:System.ComponentModel.Design.IHelpService.CreateLocalContext(System.ComponentModel.Design.HelpContextType)" />.</para>
+        </summary>
+        <param name="localContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local context <see cref="T:System.ComponentModel.Design.IHelpService" /> to remove. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShowHelpFromKeyword">
       <MemberSignature Language="C#" Value="public void ShowHelpFromKeyword (string helpKeyword);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ShowHelpFromKeyword(string helpKeyword) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -123,18 +179,27 @@
         <Parameter Name="helpKeyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="helpKeyword">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Visual Studio integrated development environment's Help system displays the topic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the Help topic that corresponds to the specified keyword.</para>
+        </summary>
+        <param name="helpKeyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The keyword of the Help topic to display. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShowHelpFromUrl">
       <MemberSignature Language="C#" Value="public void ShowHelpFromUrl (string helpUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ShowHelpFromUrl(string helpUrl) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -142,14 +207,17 @@
         <Parameter Name="helpUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="helpUrl">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Visual Studio integrated development environment's Help system displays the topic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the Help topic that corresponds to the specified URL.</para>
+        </summary>
+        <param name="helpUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the Help topic to display. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

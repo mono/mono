@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionBuilder" FullName="System.Web.Compilation.ExpressionBuilder">
   <TypeSignature Language="C#" Value="public abstract class ExpressionBuilder" />
   <AssemblyInfo>
@@ -9,9 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class is the base class for expression builders, such as the <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" /> class, that create code expressions during page parsing. </para>
+      <para>Expression builders parse declarative expressions and create code to retrieve values bound to a control property. In no-compile scenarios, an expression builder that supports a no-compile feature evaluates the expression during run time.</para>
+      <para>When the page parser encounters an expression that is delimited with the string &lt;%$ %&gt;, it creates an expression builder for the expression based on the prefix in the string. The prefix is the portion of the string that is to the left of the colon (:). For example, when the parser encounters the string &lt;%$ ConnectionStrings:MessageDB %&gt;, it creates a <see cref="T:System.Web.Compilation.ConnectionStringsExpressionBuilder" /> object. Prefixes are associated with expression builders in the Web.config file in the <see cref="P:System.Web.Configuration.CompilationSection.ExpressionBuilders" /> section.</para>
+      <para>The right side of the declarative expression is passed to the expression builder for evaluation. Override the <see cref="M:System.Web.Compilation.ExpressionBuilder.GetCodeExpression(System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method to generate code that will be compiled with the page. </para>
+      <para>If you want the custom expression builder to be active on pages that are not compiled, you must also override the <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method to return an object that represents the results of the expression. You also must override the <see cref="P:System.Web.Compilation.ExpressionBuilder.SupportsEvaluate" /> property to indicate that the custom expression builder does support no-compile pages. </para>
+      <para>You can define a set of properties and methods for selecting and evaluating an expression that is associated with a control property at design time by implementing an expression editor. The editor is marked on the expression builder through class-level metadata. For more information, see <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Evaluates expressions during page parsing.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +31,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class is abstract, you cannot create an instance of <see cref="T:System.Web.Compilation.ExpressionBuilder" /> directly by using the <see cref="M:System.Web.Compilation.ExpressionBuilder.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,14 +58,27 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="entry">To be added.</param>
-        <param name="parsedData">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want your <see cref="T:System.Web.Compilation.ExpressionBuilder" /> object to be active on a page that supports the no-compile feature, you can override the <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method and the <see cref="P:System.Web.Compilation.ExpressionBuilder.SupportsEvaluate" /> property. The <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method should return the evaluation of the current expression. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns an object that represents an evaluated expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the evaluated expression; otherwise, null if the inheritor does not implement <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" />.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing the expression.</param>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents information about the property bound to by the expression.</param>
+        <param name="parsedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing parsed data as returned by <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contextual information for the evaluation of the expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,13 +96,25 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added.</param>
-        <param name="parsedData">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that inherit from the <see cref="T:System.Web.Compilation.ExpressionBuilder" /> class must implement the <see cref="M:System.Web.Compilation.ExpressionBuilder.GetCodeExpression(System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> abstract method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns code that is used during page execution to obtain the evaluated expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> that is used for property assignment.</para>
+        </returns>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents information about the property bound to by the expression.</param>
+        <param name="parsedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing parsed data as returned by <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" />. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contextual information for the evaluation of the expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -89,13 +132,25 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, this method parses the expression and returns it as an object that can be used as the <paramref name="parsedData" /> parameter in a <see cref="M:System.Web.Compilation.ExpressionBuilder.GetCodeExpression(System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> or <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns an object that represents the parsed expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing the parsed representation of the expression; otherwise, null if <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" /> is not implemented.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the declarative expression.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the property bound to by the expression.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contextual information for the evaluation of the expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,10 +163,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Web.Compilation.ExpressionBuilder.SupportsEvaluate" /> property is false. To support no-compile pages, you must override both the <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method and the <see cref="P:System.Web.Compilation.ExpressionBuilder.SupportsEvaluate" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a value indicating whether the current <see cref="T:System.Web.Compilation.ExpressionBuilder" /> object supports no-compile pages. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

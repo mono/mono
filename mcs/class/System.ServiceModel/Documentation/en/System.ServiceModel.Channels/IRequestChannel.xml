@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IRequestChannel" FullName="System.ServiceModel.Channels.IRequestChannel">
+  <TypeSignature Language="C#" Value="public interface IRequestChannel : System.ServiceModel.Channels.IChannel" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRequestChannel implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IChannel</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> defines synchronous and asynchronous variants of a <see cref="M:System.ServiceModel.Channels.IRequestChannel.Request(System.ServiceModel.Message)" /> method that returns a response message. It also provides a <see cref="P:System.ServiceModel.Channels.IRequestChannel.RemoteAddress" /> and <see cref="P:System.ServiceModel.Channels.IRequestChannel.Via" /> properties to retrieve the endpoint address and URI to which the request message is sent.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract that a channel must implement to be on the requesting side of a request-reply communication between messaging endpoints. </para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginRequest">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginRequest (System.ServiceModel.Channels.Message message, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginRequest(class System.ServiceModel.Channels.Message message, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to transmit a request message to the reply side of a request-reply message exchange. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous message transmission. </para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the completion of the asynchronous operation transmitting a request message.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous operation transmitting a request message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginRequest">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginRequest (System.ServiceModel.Channels.Message message, TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginRequest(class System.ServiceModel.Channels.Message message, valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> should be thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+          <para>If a <paramref name="timeout" /> is passed while calling the function then that value is used. If the <see cref="P:System.ServiceModel.Channels.Binding.SendTimeout" /> is set on the binding, then the value on the binding is used if no <paramref name="timeout" /> is specified while calling the function.</para>
+          <para>The <see cref="P:System.ServiceModel.Channels.ChannelBase.DefaultSendTimeout" /> is used if no timeout is specified on either the binding or while calling the function. This default value is 1 minute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to transmit a request message to the reply side of a request-reply message exchange within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous message transmission. </para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> that specifies the interval of time within which a response must be received. (For defaults, see the Remarks section.)</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the completion of the asynchronous operation transmitting a request message.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous operation transmitting a request message.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="EndRequest">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Message EndRequest (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message EndRequest(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to return a message-based response to a transmitted request. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> received in response to the request. </para>
+        </returns>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="Overload:System.ServiceModel.Channels.IInputChannel.BeginReceive" /> method. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoteAddress">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.EndpointAddress RemoteAddress { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.EndpointAddress RemoteAddress" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> serves as both the ultimate destination and the physical address if a <see cref="P:System.ServiceModel.Channels.IRequestChannel.Via" /> is not specified. If the <see cref="P:System.ServiceModel.Channels.IRequestChannel.Via" /> is specified, then that is the actual physical address to which the message is sent and through which the message must go to arrive at its destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the remote address to which the request channel sends messages. </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Request">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Message Request (System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message Request(class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementations of <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> ensure that the response message is correlated with the request message. </para>
+          <para>Generally, if an implementation of <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> receives a message that is not correlated to an outstanding request, it is dropped. </para>
+          <para>The <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" /> method can be called concurrently across multiple threads. </para>
+          <para>Passing the message into the request channel causes the message to be accessed. After you call <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" />, you can no longer inspect the message or call <see cref="M:System.ServiceModel.Channels.Message.Close" /> on the message. </para>
+          <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a message-based request and returns the correlated message-based response. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> received in response to the request. </para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Request">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Channels.Message Request (System.ServiceModel.Channels.Message message, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Channels.Message Request(class System.ServiceModel.Channels.Message message, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Message</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementations of <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> ensure that the response message is correlated with the request message. </para>
+          <para>Generally, if an implementation of <see cref="T:System.ServiceModel.Channels.IRequestChannel" /> receives a message that is not correlated to an outstanding request, it is dropped. </para>
+          <para>The <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" /> method can be called concurrently across multiple threads. </para>
+          <para>Passing the message into the request channel causes the message to be accessed. After you call <see cref="Overload:System.ServiceModel.Channels.IRequestChannel.Request" />, you can no longer inspect the message or call <see cref="M:System.ServiceModel.Channels.Message.Close" /> on the message. </para>
+          <para>If the request message is larger that the maximum message size allowed by the binding being used, a <see cref="T:System.ServiceModel.QuotaExceededException" /> is thrown. The maximum message size is set by the <see cref="P:System.ServiceModel.Channels.TransportBindingElement.MaxReceivedMessageSize" /> property. The default value is 65536 bytes. </para>
+          <para>If a <paramref name="timeout" /> is passed while calling the function then that value is used. If the <see cref="P:System.ServiceModel.Channels.Binding.SendTimeout" /> is set on the binding, then the value on the binding is used if no <paramref name="timeout" /> is specified while calling the function.</para>
+          <para>The <see cref="P:System.ServiceModel.Channels.ChannelBase.DefaultSendTimeout" /> is used if no timeout is specified on either the binding or while calling the function. This default value is 1 minute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a message-based request and returns the correlated message-based response within a specified interval of time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.Message" /> received in response to the request. </para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.ServiceModel.Channels.Message" /> to be transmitted.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> that specifies the interval of time within which a response must be received.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="Via">
+      <MemberSignature Language="C#" Value="public Uri Via { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Via" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> serves as both the ultimate destination and the physical address if a <see cref="P:System.ServiceModel.Channels.IRequestChannel.Via" /> is not specified. If the <see cref="P:System.ServiceModel.Channels.IRequestChannel.Via" /> is specified, then that is the actual physical address to which the message is sent and through which the message must go to arrive at its destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the transport address to which the request is send.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

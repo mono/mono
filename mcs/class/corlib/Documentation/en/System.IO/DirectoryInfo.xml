@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryInfo" FullName="System.IO.DirectoryInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class DirectoryInfo : System.IO.FileSystemInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DirectoryInfo extends System.IO.FileSystemInfo" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,52 +14,107 @@
     <BaseTypeName>System.IO.FileSystemInfo</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Represents information about a directory in the filesystem.</summary>
-    <remarks>The <see cref="T:System.IO.DirectoryInfo" /> class encodes information about a directory.
-It also allows basic manipulations of filesystem structure:
-
-<list type="bullet"><item><term>Creation with <see cref="M:System.IO.DirectoryInfo.Create" /> or <see cref="M:System.IO.DirectoryInfo.CreateSubdirectory" />.</term></item><item><term>Deletion with <see cref="M:System.IO.DirectoryInfo.Delete" />.</term></item><item><term>Movement with <see cref="M:System.IO.DirectoryInfo.MoveTo" />.</term></item><item><term>Listing with <see cref="M:System.IO.DirectoryInfo.GetDirectories" />, <see cref="M:System.IO.DirectoryInfo.GetFiles" />, and <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />.</term></item></list></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.IO.DirectoryInfo" /> class for typical operations such as copying, moving, renaming, creating, and deleting directories.</para>
+      <para>If you are going to reuse an object several times, consider using the instance method of <see cref="T:System.IO.DirectoryInfo" /> instead of the corresponding static methods of the <see cref="T:System.IO.Directory" /> class, because a security check will not always be necessary.</para>
+      <block subset="none" type="note">
+        <para>In members that accept a path as an input string, that path must be well-formed or an exception is raised. For example, if a path is fully qualified but begins with a space, the path is not trimmed in methods of the class. Therefore, the path is malformed and an exception is raised. Similarly, a path or a combination of paths cannot be fully qualified twice. For example, "c:\temp c:\windows" also raises an exception in most cases. Ensure that your paths are well-formed when using methods that accept a path string.</para>
+      </block>
+      <para>In members that accept a path, the path can refer to a file or just a directory. The specified path can also refer to a relative path or a Universal Naming Convention (UNC) path for a server and share name. For example, all the following are acceptable paths: </para>
+      <list type="bullet">
+        <item>
+          <para>"c:\\MyDir\\MyFile.txt" in C#, or "c:\MyDir\MyFile.txt" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"c:\\MyDir" in C#, or "c:\MyDir" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"MyDir\\MySubdir" in C#, or "MyDir\MySubDir" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"\\\\MyServer\\MyShare" in C#, or "\\MyServer\MyShare" in Visual Basic.</para>
+        </item>
+      </list>
+      <para>By default, full read/write access to new directories is granted to all users.</para>
+      <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes instance methods for creating, moving, and enumerating through directories and subdirectories. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DirectoryInfo (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor does not check if a directory exists. This constructor is a placeholder for a string that is used to access the disk in subsequent operations.</para>
+          <para>The <paramref name="path" /> parameter can be a file name, including a file on a Universal Naming Convention (UNC) share.</para>
+          <block subset="none" type="note">
+            <para>When you compile a set of characters with a particular cultural setting and retrieve those same characters with a different cultural setting, the characters might not be interpretable, and could cause an exception to be thrown.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.DirectoryInfo" /> class on the specified path.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string specifying the path on which to create the DirectoryInfo. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public void Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Create() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the directory already exists, this method does nothing.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a directory.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public void Create (System.Security.AccessControl.DirectorySecurity directorySecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Create(class System.Security.AccessControl.DirectorySecurity directorySecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -65,19 +122,30 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="directorySecurity" Type="System.Security.AccessControl.DirectorySecurity" />
       </Parameters>
       <Docs>
-        <param name="directorySecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to create a directory with access control, so there is no chance the directory can be accessed before security is applied.</para>
+          <para>If the directory already exists, this method does nothing.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a directory using a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object.</para>
+        </summary>
+        <param name="directorySecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access control to apply to the directory.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSubdirectory">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo CreateSubdirectory (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.DirectoryInfo CreateSubdirectory(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.DirectoryInfo</ReturnType>
       </ReturnValue>
@@ -85,20 +153,34 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DirectoryInfo'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any and all directories specified in <paramref name="path" /> are created, unless some part of <paramref name="path" /> is invalid. The <paramref name="path" /> parameter specifies a directory path, not a file path. If the subdirectory already exists, this method does nothing.</para>
+          <block subset="none" type="note">
+            <para>Path names are limited to 248 characters.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a subdirectory or subdirectories on the specified path. The specified path can be relative to this instance of the <see cref="T:System.IO.DirectoryInfo" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last directory specified in <paramref name="path" />.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified path. This cannot be a different disk volume or Universal Naming Convention (UNC) name. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSubdirectory">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo CreateSubdirectory (string path, System.Security.AccessControl.DirectorySecurity directorySecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.DirectoryInfo CreateSubdirectory(string path, class System.Security.AccessControl.DirectorySecurity directorySecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.DirectoryInfo</ReturnType>
       </ReturnValue>
@@ -107,38 +189,62 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="directorySecurity" Type="System.Security.AccessControl.DirectorySecurity" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="directorySecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any and all directories specified in <paramref name="path" /> are created, unless some part of <paramref name="path" /> is invalid. The <paramref name="path" /> parameter specifies a directory path, not a file path. If the subdirectory already exists, this method does nothing.</para>
+          <block subset="none" type="note">
+            <para>Path names are limited to 248 characters.</para>
+          </block>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a subdirectory or subdirectories on the specified path with the specified security. The specified path can be relative to this instance of the <see cref="T:System.IO.DirectoryInfo" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last directory specified in <paramref name="path" />.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified path. This cannot be a different disk volume or Universal Naming Convention (UNC) name.</param>
+        <param name="directorySecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security to apply.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="public override void Delete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Delete() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes this <see cref="T:System.IO.DirectoryInfo" /> if it is empty.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="public void Delete (bool recursive);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Delete(bool recursive) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Delete">
-      <MemberSignature Language="C#" Value="public void Delete (bool recursive);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -146,18 +252,22 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="recursive" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="recursive">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the DirectoryInfo has no files or subdirectories, this method deletes the DirectoryInfo even if <paramref name="recursive" /> is false. Attempting to delete a DirectoryInfo that is not empty when <paramref name="recursive" /> is false throws an <see cref="T:System.IO.IOException" />.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes this instance of a <see cref="T:System.IO.DirectoryInfo" />, specifying whether to delete subdirectories and files.</para>
+        </summary>
+        <param name="recursive">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to delete this directory, its subdirectories, and all files; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EnumerateDirectories">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.DirectoryInfo&gt; EnumerateDirectories ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.DirectoryInfo&gt; EnumerateDirectories() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -167,13 +277,71 @@ It also allows basic manipulations of filesystem structure:
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> and <see cref="M:System.IO.DirectoryInfo.GetDirectories" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />, you can start enumerating the collection of <see cref="T:System.IO.DirectoryInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetDirectories" />, you must wait for the whole array of <see cref="T:System.IO.DirectoryInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.DirectoryInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on  the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of directory information in the current directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of directories in the current directory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnumerateDirectories">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.DirectoryInfo&gt; EnumerateDirectories (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.DirectoryInfo&gt; EnumerateDirectories(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -185,14 +353,104 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> and <see cref="M:System.IO.DirectoryInfo.GetDirectories" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />, you can start enumerating the collection of <see cref="T:System.IO.DirectoryInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetDirectories" />, you must wait for the whole array of <see cref="T:System.IO.DirectoryInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.DirectoryInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on  the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of directory information that matches a specified search pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of directories that matches <paramref name="searchPattern" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
     </Member>
     <Member MemberName="EnumerateDirectories">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.DirectoryInfo&gt; EnumerateDirectories (string searchPattern, System.IO.SearchOption searchOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.DirectoryInfo&gt; EnumerateDirectories(string searchPattern, valuetype System.IO.SearchOption searchOption) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -205,15 +463,106 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <param name="searchOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> and <see cref="M:System.IO.DirectoryInfo.GetDirectories" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />, you can start enumerating the collection of <see cref="T:System.IO.DirectoryInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetDirectories" />, you must wait for the whole array of <see cref="T:System.IO.DirectoryInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.DirectoryInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on  the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of directory information that matches a specified search pattern and search subdirectory option. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of directories that matches <paramref name="searchPattern" /> and <paramref name="searchOption" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
+        <param name="searchOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the search operation should include only the current directory or all subdirectories. The default value is <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />.</param>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFiles">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.FileInfo&gt; EnumerateFiles ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.FileInfo&gt; EnumerateFiles() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -223,13 +572,76 @@ It also allows basic manipulations of filesystem structure:
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFiles" />, you must wait for the whole array of <see cref="T:System.IO.FileInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileInfo.Length" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of file information in the current directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the files in the current directory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFiles">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.FileInfo&gt; EnumerateFiles (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.FileInfo&gt; EnumerateFiles(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -241,14 +653,109 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFiles" />, you must wait for the whole array of <see cref="T:System.IO.FileInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileInfo.Length" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of file information that matches a search pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of files that matches <paramref name="searchPattern" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFiles">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.FileInfo&gt; EnumerateFiles (string searchPattern, System.IO.SearchOption searchOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.FileInfo&gt; EnumerateFiles(string searchPattern, valuetype System.IO.SearchOption searchOption) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -261,15 +768,111 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <param name="searchOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFiles" />, you must wait for the whole array of <see cref="T:System.IO.FileInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileInfo.Length" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of file information that matches a specified search pattern and search subdirectory option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of files that matches <paramref name="searchPattern" /> and <paramref name="searchOption" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
+        <param name="searchOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the search operation should include only the current directory or all subdirectories. The default value is <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />.</param>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFileSystemInfos">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.FileSystemInfo&gt; EnumerateFileSystemInfos ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.FileSystemInfo&gt; EnumerateFileSystemInfos() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -279,13 +882,71 @@ It also allows basic manipulations of filesystem structure:
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> and <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />, you must wait for the whole array of <see cref="T:System.IO.FileSystemInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileSystemInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of file system information in the current directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file system information in the current directory. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFileSystemInfos">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.FileSystemInfo&gt; EnumerateFileSystemInfos (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.FileSystemInfo&gt; EnumerateFileSystemInfos(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -297,14 +958,104 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> and <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />, you must wait for the whole array of <see cref="T:System.IO.FileSystemInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileSystemInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of file system information that matches a specified search pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file system information objects that matches <paramref name="searchPattern" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFileSystemInfos">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.FileSystemInfo&gt; EnumerateFileSystemInfos (string searchPattern, System.IO.SearchOption searchOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.FileSystemInfo&gt; EnumerateFileSystemInfos(string searchPattern, valuetype System.IO.SearchOption searchOption) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -317,51 +1068,165 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <param name="searchOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> and <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />, you must wait for the whole array of <see cref="T:System.IO.FileSystemInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" /> can be more efficient.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileSystemInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+          <para>The returned collection is not cached; each call to the <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> method on the collection will start a new enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerable collection of file system information that matches a specified search pattern and search subdirectory option.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file system information objects that matches <paramref name="searchPattern" /> and <paramref name="searchOption" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
+        <param name="searchOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the search operation should include only the current directory or all subdirectories. The default value is <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public override bool Exists { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Exists" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.DirectoryInfo.Exists" /> property returns false if any error occurs while trying to determine if the specified file exists. This can occur in situations that raise exceptions such as passing a file name with invalid characters or too many characters, a failing or missing disk, or if the caller does not have permission to read the file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the directory exists.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.DirectorySecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.DirectorySecurity GetAccessControl() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.DirectorySecurity</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method overload is equivalent to calling the <see cref="M:System.IO.Directory.GetAccessControl(System.String,System.Security.AccessControl.AccessControlSections)" /> method overload and specifying the access control sections <see cref="F:System.Security.AccessControl.AccessControlSections.Access" /> | <see cref="F:System.Security.AccessControl.AccessControlSections.Owner" /> | <see cref="F:System.Security.AccessControl.AccessControlSections.Group" /> (<see cref="F:System.Security.AccessControl.AccessControlSections.Access" /> Or <see cref="F:System.Security.AccessControl.AccessControlSections.Owner" /> Or <see cref="F:System.Security.AccessControl.AccessControlSections.Group" /> in Visual Basic).</para>
+          <para>Use the <see cref="M:System.IO.DirectoryInfo.GetAccessControl" /> method to retrieve the access control list (ACL) entries for the current file.</para>
+          <para>An ACL describes individuals and/or groups who have, or do not have, rights to specific actions on the given file or directory. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How to: Add or Remove an Access Control List Entry</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control list (ACL) entries for the directory described by the current <see cref="T:System.IO.DirectoryInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control rules for the directory.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.DirectorySecurity GetAccessControl (System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.DirectorySecurity GetAccessControl(valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.DirectorySecurity GetAccessControl (System.Security.AccessControl.AccessControlSections includeSections);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.DirectorySecurity</ReturnType>
       </ReturnValue>
@@ -369,38 +1234,161 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.IO.DirectoryInfo.GetAccessControl(System.Security.AccessControl.AccessControlSections)" /> method to retrieve the access control list (ACL) entries for the current file.</para>
+          <para>An ACL describes individuals and/or groups who have, or do not have, rights to specific actions on the given file or directory. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How to: Add or Remove an Access Control List Entry</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the specified type of access control list (ACL) entries for the directory described by the current <see cref="T:System.IO.DirectoryInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control rules for the file described by the <paramref name="path" /> parameter.</para>
+          <para>Exceptions</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Exception type</para>
+                </term>
+                <description>
+                  <para>Condition</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.SystemException" /> </para>
+              </term>
+              <description>
+                <para>The directory could not be found or modified.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.UnauthorizedAccessException" /> </para>
+              </term>
+              <description>
+                <para>The current process does not have access to open the directory.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.IO.IOException" /> </para>
+              </term>
+              <description>
+                <para>An I/O error occurred while opening the directory.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.PlatformNotSupportedException" /> </para>
+              </term>
+              <description>
+                <para>The current operating system is not Microsoft Windows 2000 or later.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.UnauthorizedAccessException" /> </para>
+              </term>
+              <description>
+                <para>The directory is read-only.</para>
+                <para>-or- </para>
+                <para>This operation is not supported on the current platform.</para>
+                <para>-or- </para>
+                <para>The caller does not have the required permission.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> values that specifies the type of access control list (ACL) information to receive.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDirectories">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo[] GetDirectories ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.DirectoryInfo[] GetDirectories() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DirectoryInfo[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DirectoryInfo []'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DirectoryInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are no subdirectories, this method returns an empty array. This method is not recursive.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.DirectoryInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the subdirectories of the current directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.IO.DirectoryInfo" /> objects.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetDirectories">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo[] GetDirectories (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.DirectoryInfo[] GetDirectories(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.DirectoryInfo[]</ReturnType>
       </ReturnValue>
@@ -408,20 +1396,98 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DirectoryInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.DirectoryInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of directories in the current <see cref="T:System.IO.DirectoryInfo" /> matching the given search criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type DirectoryInfo matching <paramref name="searchPattern" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDirectories">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo[] GetDirectories (string searchPattern, System.IO.SearchOption searchOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.DirectoryInfo[] GetDirectories(string searchPattern, valuetype System.IO.SearchOption searchOption) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.DirectoryInfo[]</ReturnType>
       </ReturnValue>
@@ -430,39 +1496,185 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <param name="searchOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>If there are no subdirectories, or no subdirectories match the <paramref name="searchPattern" /> parameter, this method returns an empty array.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.DirectoryInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of directories in the current <see cref="T:System.IO.DirectoryInfo" /> matching the given search criteria and using a value to determine whether to search subdirectories.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type DirectoryInfo matching <paramref name="searchPattern" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
+        <param name="searchOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the search operation should include only the current directory or all subdirectories.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFiles">
       <MemberSignature Language="C#" Value="public System.IO.FileInfo[] GetFiles ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo[] GetFiles() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.FileInfo[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Returns all files in this directory</summary>
-        <returns>To be added: an object of type 'FileInfo []'</returns>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFiles" />, you must wait for the whole array of <see cref="T:System.IO.FileInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> can be more efficient.</para>
+          <para>If there are no files in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array.</para>
+          <para>The order of the returned file names is not guaranteed; use the <see cref="Overload:System.Array.Sort" /> method if a specific sort order is required.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileInfo.Length" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a file list from the current directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.IO.FileInfo" />.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetFiles">
       <MemberSignature Language="C#" Value="public System.IO.FileInfo[] GetFiles (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo[] GetFiles(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileInfo[]</ReturnType>
       </ReturnValue>
@@ -470,20 +1682,151 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned. </para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFiles" />, you must wait for the whole array of <see cref="T:System.IO.FileInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> can be more efficient.</para>
+          <para>If there are no files in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array.</para>
+          <para>The following wildcard specifiers are permitted in the <paramref name="searchPattern" /> parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard character </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* </para>
+              </term>
+              <description>
+                <para>Zero or more characters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? </para>
+              </term>
+              <description>
+                <para>Exactly one character. </para>
+              </description>
+            </item>
+          </list>
+          <para>The order of the returned file names is not guaranteed; use the <see cref="Overload:System.Array.Sort" /> method if a specific sort order is required.</para>
+          <para>Wildcards are permitted. For example, the <paramref name="searchPattern" /> string "*.txt" searches for all file names having an extension of "txt". The <paramref name="searchPattern" /> string "s*" searches for all file names beginning with the letter "s". If there are no files, or no files that match the <paramref name="searchPattern" /> string in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array.</para>
+          <block subset="none" type="note">
+            <para>When using the asterisk wildcard character in a <paramref name="searchPattern" /> (for example, "*.txt"), the matching behavior varies depending on the length of the specified file extension. A <paramref name="searchPattern" /> with a file extension of exactly three characters returns files with an extension of three or more characters, where the first three characters match the file extension specified in the <paramref name="searchPattern" />. A <paramref name="searchPattern" /> with a file extension of one, two, or more than three characters returns only files with extensions of exactly that length that match the file extension specified in the <paramref name="searchPattern" />. When using the question mark wildcard character, this method returns only files that match the specified file extension. For example, given two files in a directory, "file1.txt" and "file1.txtother", a search pattern of "file?.txt" returns only the first file, while a search pattern of "file*.txt" returns both files.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Because this method checks against file names with both the 8.3 file name format and the long file name format, a search pattern similar to "*1*.txt" may return unexpected file names. For example, using a search pattern of "*1*.txt" will return "longfilename.txt" because the equivalent 8.3 file name format would be "longf~1.txt".</para>
+          </block>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileInfo.Length" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a file list from the current directory matching the given search pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.IO.FileInfo" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFiles">
       <MemberSignature Language="C#" Value="public System.IO.FileInfo[] GetFiles (string searchPattern, System.IO.SearchOption searchOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileInfo[] GetFiles(string searchPattern, valuetype System.IO.SearchOption searchOption) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileInfo[]</ReturnType>
       </ReturnValue>
@@ -492,39 +1835,206 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <param name="searchOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> and <see cref="M:System.IO.DirectoryInfo.GetFiles" /> methods differ as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />, you can start enumerating the collection of <see cref="T:System.IO.FileInfo" /> objects before the whole collection is returned.</para>
+            </item>
+            <item>
+              <para>When you use <see cref="M:System.IO.DirectoryInfo.GetFiles" />, you must wait for the whole array of <see cref="T:System.IO.FileInfo" /> objects to be returned before you can access the array. </para>
+            </item>
+          </list>
+          <para>Therefore, when you are working with many files and directories, <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" /> can be more efficient.</para>
+          <para>If there are no files in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array.</para>
+          <para>The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard character </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* </para>
+              </term>
+              <description>
+                <para>Zero or more characters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? </para>
+              </term>
+              <description>
+                <para>Exactly one character. </para>
+              </description>
+            </item>
+          </list>
+          <para>The order of the returned file names is not guaranteed; use the <see cref="Overload:System.Array.Sort" /> method if a specific sort order is required.</para>
+          <para>Wildcards are permitted. For example, the <paramref name="searchPattern" /> string "*.txt" searches for all file names having an extension of "txt". The <paramref name="searchPattern" /> string "s*" searches for all file names beginning with the letter "s". If there are no files, or no files that match the <paramref name="searchPattern" /> string in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array.</para>
+          <block subset="none" type="note">
+            <para>When using the asterisk wildcard character in a <paramref name="searchPattern" /> (for example, "*.txt"), the matching behavior varies depending on the length of the specified file extension. A <paramref name="searchPattern" /> with a file extension of exactly three characters returns files with an extension of three or more characters, where the first three characters match the file extension specified in the <paramref name="searchPattern" />. A <paramref name="searchPattern" /> with a file extension of one, two, or more than three characters returns only files with extensions of exactly that length that match the file extension specified in the <paramref name="searchPattern" />. When using the question mark wildcard character, this method returns only files that match the specified file extension. For example, given two files in a directory, "file1.txt" and "file1.txtother", a search pattern of "file?.txt" returns only the first file, while a search pattern of "file*.txt" returns both files.</para>
+          </block>
+          <para>The following list shows the behavior of different lengths for the <paramref name="searchPattern" /> parameter: </para>
+          <list type="bullet">
+            <item>
+              <para>"*.abc" returns files having an extension of.abc,.abcd,.abcde,.abcdef, and so on.</para>
+            </item>
+            <item>
+              <para>"*.abcd" returns only files having an extension of.abcd.</para>
+            </item>
+            <item>
+              <para>"*.abcde" returns only files having an extension of.abcde.</para>
+            </item>
+            <item>
+              <para>"*.abcdef" returns only files having an extension of.abcdef.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Because this method checks against file names with both the 8.3 file name format and the long file name format, a search pattern similar to "*1*.txt" may return unexpected file names. For example, using a search pattern of "*1*.txt" will return "longfilename.txt" because the equivalent 8.3 file name format would be "longf~1.txt".</para>
+          </block>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileInfo" /> properties:</para>
+          <list type="ordered">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileInfo.Length" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a file list from the current directory matching the given search pattern and using a value to determine whether to search subdirectories.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.IO.FileInfo" />.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
+        <param name="searchOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the search operation should include only the current directory or all subdirectories.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileSystemInfos">
       <MemberSignature Language="C#" Value="public System.IO.FileSystemInfo[] GetFileSystemInfos ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileSystemInfo[] GetFileSystemInfos() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileSystemInfo[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileSystemInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are no files or directories in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array. This method is not recursive.</para>
+          <para>For subdirectories, the <see cref="T:System.IO.FileSystemInfo" /> objects returned by this method can be cast to the derived class <see cref="T:System.IO.DirectoryInfo" />. Use the <see cref="T:System.IO.FileAttributes" /> value returned by the <see cref="P:System.IO.FileSystemInfo.Attributes" /> property to determine whether the <see cref="T:System.IO.FileSystemInfo" /> represents a file or a directory.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileSystemInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of strongly typed <see cref="T:System.IO.FileSystemInfo" /> entries representing all the files and subdirectories in a directory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strongly typed <see cref="T:System.IO.FileSystemInfo" /> entries.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetFileSystemInfos">
+      <MemberSignature Language="C#" Value="public System.IO.FileSystemInfo[] GetFileSystemInfos (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileSystemInfo[] GetFileSystemInfos(string searchPattern) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFileSystemInfos">
-      <MemberSignature Language="C#" Value="public System.IO.FileSystemInfo[] GetFileSystemInfos (string searchPattern);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileSystemInfo[]</ReturnType>
       </ReturnValue>
@@ -532,19 +2042,97 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileSystemInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>This method is not recursive.</para>
+          <para>For subdirectories, the <see cref="T:System.IO.FileSystemInfo" /> objects returned by this method can be cast to the derived class <see cref="T:System.IO.DirectoryInfo" />. Use the <see cref="T:System.IO.FileAttributes" /> value returned by the <see cref="P:System.IO.FileSystemInfo.Attributes" /> property to determine whether the <see cref="T:System.IO.FileSystemInfo" /> represents a file or a directory.</para>
+          <para>Wild cards are permitted. For example, the <paramref name="searchPattern" /> string "*t" searches for all directory names in <paramref name="path" /> ending with the letter "t". The <paramref name="searchPattern" /> string "s*" searches for all directory names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>The string ".." can only be used in <paramref name="searchPattern" /> if it is specified as a part of a valid directory name, such as in the directory name "a..b". It cannot be used to move up the directory hierarchy. If there are no files or directories, or no files or directories that match the <paramref name="searchPattern" /> string in the <see cref="T:System.IO.DirectoryInfo" />, this method returns an empty array.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileSystemInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of strongly typed <see cref="T:System.IO.FileSystemInfo" /> objects representing the files and subdirectories that match the specified search criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strongly typed FileSystemInfo objects matching the search criteria.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories and files.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileSystemInfos">
       <MemberSignature Language="C#" Value="public System.IO.FileSystemInfo[] GetFileSystemInfos (string searchPattern, System.IO.SearchOption searchOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.FileSystemInfo[] GetFileSystemInfos(string searchPattern, valuetype System.IO.SearchOption searchOption) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -557,16 +2145,102 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <param name="searchPattern">To be added.</param>
-        <param name="searchOption">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="searchPattern" /> can be a combination of literal and wildcard characters, but doesn't support regular expressions. The following wildcard specifiers are permitted in <paramref name="searchPattern" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Wildcard specifier </para>
+                </term>
+                <description>
+                  <para>Matches </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>Zero or more characters in that position. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>? (question mark)</para>
+              </term>
+              <description>
+                <para>Zero or one character in that position. </para>
+              </description>
+            </item>
+          </list>
+          <para>Characters other than the wildcard are literal characters. For example, the  string "*t" searches for all names in  ending with the letter "t". ". The <paramref name="searchPattern" /> string "s*" searches for all names in <paramref name="path" /> beginning with the letter "s".</para>
+          <para>For subdirectories, the <see cref="T:System.IO.FileSystemInfo" /> objects returned by this method can be cast to the derived class <see cref="T:System.IO.DirectoryInfo" />. Use the <see cref="T:System.IO.FileAttributes" /> value returned by the <see cref="P:System.IO.FileSystemInfo.Attributes" /> property to determine whether the <see cref="T:System.IO.FileSystemInfo" /> represents a file or a directory.</para>
+          <para>This method pre-populates the values of the following <see cref="T:System.IO.FileSystemInfo" /> properties:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.Attributes" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTime" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of <see cref="T:System.IO.FileSystemInfo" /> objects that represent the files and subdirectories matching the specified search criteria.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of file system entries that match the search criteria.</para>
+        </returns>
+        <param name="searchPattern">
+          <attribution license="cc4" from="Microsoft" modified="false" />The search string to match against the names of directories and filesa.  This parameter can contain a combination of valid literal path and wildcard (* and ?) characters (see Remarks), but doesn't support regular expressions. The default pattern is "*", which returns all files.</param>
+        <param name="searchOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies whether the search operation should include only the current directory or all subdirectories. The default value is <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />.</param>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
       <MemberSignature Language="C#" Value="public void MoveTo (string destDirName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MoveTo(string destDirName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -574,70 +2248,99 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="destDirName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="destDirName">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method throws an <see cref="T:System.IO.IOException" /> if, for example, you try to move c:\mydir to c:\public, and c:\public already exists. You must specify "c:\\public\\mydir" as the <paramref name="destDirName" /> parameter, or specify a new directory name such as "c:\\newdir".</para>
+          <para>This method permits moving a directory to a read-only directory. The read/write attribute of neither directory is affected.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves a <see cref="T:System.IO.DirectoryInfo" /> instance and its contents to a new path.</para>
+        </summary>
+        <param name="destDirName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name and path to which to move this directory. The destination cannot be another disk volume or a directory with the identical name. It can be an existing directory to which you want to add this directory as a subdirectory. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public override string Name { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="P:System.IO.DirectoryInfo.Name" /> property returns only the name of the directory, such as "Bin". To get the full path, such as "c:\public\Bin", use the <see cref="P:System.IO.FileSystemInfo.FullName" /> property.</para>
+          <para>The <see cref="P:System.IO.DirectoryInfo.Name" /> property of a <see cref="T:System.IO.DirectoryInfo" /> requires no permission (beyond the read permission to the directory necessary to construct the <see cref="P:System.IO.DirectoryInfo.Exists" />) but can give out the directory name. If it is necessary to hand out a <see cref="T:System.IO.DirectoryInfo" /> to a protected directory with a cryptographically secure name, create a dummy directory for the untrusted code’s use.</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of this <see cref="T:System.IO.DirectoryInfo" /> instance.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parent">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo Parent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.DirectoryInfo Parent" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DirectoryInfo</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'DirectoryInfo'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DirectoryInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'DirectoryInfo'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent directory of a specified subdirectory.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Root">
       <MemberSignature Language="C#" Value="public System.IO.DirectoryInfo Root { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.DirectoryInfo Root" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.IO.DirectoryInfo</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'DirectoryInfo'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.DirectoryInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'DirectoryInfo'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root portion of the directory.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SetAccessControl">
       <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.DirectorySecurity directorySecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.DirectorySecurity directorySecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -645,38 +2348,66 @@ It also allows basic manipulations of filesystem structure:
         <Parameter Name="directorySecurity" Type="System.Security.AccessControl.DirectorySecurity" />
       </Parameters>
       <Docs>
-        <param name="directorySecurity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An access control list (ACL) describes individuals and/or groups who have, or do not have, rights to specific actions on the given file or directory. For more information, see <format type="text/html"><a href="06fbf66d-6f02-4378-b863-b2f12e349045">ACL Technology Overview</a></format> and <format type="text/html"><a href="53758b39-bd9b-4640-bb04-cad5ed8d0abf">How to: Add or Remove an Access Control List Entry</a></format>.</para>
+          <para>The <see cref="M:System.IO.DirectoryInfo.SetAccessControl(System.Security.AccessControl.DirectorySecurity)" /> method applies ACL entries to a file that represents the noninherited ACL list.</para>
+          <block subset="none" type="note">
+            <para>The ACL specified for <paramref name="directorySecurity" /> replaces the existing ACL for the directory. To add permissions for a new user, use the <see cref="Overload:System.IO.DirectoryInfo.GetAccessControl" /> method to obtain the existing ACL, and modify it.</para>
+          </block>
+          <para>The <see cref="M:System.IO.DirectoryInfo.SetAccessControl(System.Security.AccessControl.DirectorySecurity)" /> method persists only <see cref="T:System.Security.AccessControl.DirectorySecurity" /> objects that have been modified after object creation.  If a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object has not been modified, it will not be persisted to a file.  Therefore, it is not possible to retrieve a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object from one file and reapply the same object to another file.</para>
+          <para>To copy ACL information from one file to another:</para>
+          <list type="ordered">
+            <item>
+              <para>Use the <see cref="Overload:System.IO.DirectoryInfo.GetAccessControl" /> method to retrieve the <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object from the source file.</para>
+            </item>
+            <item>
+              <para>Create a new <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object for the destination file.</para>
+            </item>
+            <item>
+              <para>Use the <see cref="M:System.Security.AccessControl.ObjectSecurity.GetSecurityDescriptorBinaryForm" /> or <see cref="M:System.Security.AccessControl.ObjectSecurity.GetSecurityDescriptorSddlForm(System.Security.AccessControl.AccessControlSections)" /> method of the source <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object to retrieve the ACL information.</para>
+            </item>
+            <item>
+              <para>Use the <see cref="M:System.Security.AccessControl.ObjectSecurity.SetSecurityDescriptorBinaryForm(System.Byte[])" /> or <see cref="M:System.Security.AccessControl.ObjectSecurity.SetSecurityDescriptorSddlForm(System.String)" /> method to copy the information retrieved in step 3 to the destination <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object.</para>
+            </item>
+            <item>
+              <para>Set the destination <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object to the destination file using the <see cref="M:System.IO.DirectoryInfo.SetAccessControl(System.Security.AccessControl.DirectorySecurity)" /> method. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies access control list (ACL) entries described by a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object to the directory described by the current <see cref="T:System.IO.DirectoryInfo" /> object.</para>
+        </summary>
+        <param name="directorySecurity">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that describes an ACL entry to apply to the directory described by the <paramref name="path" /> parameter.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the original path that was passed by the user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the original path that was passed by the user.</para>
+        </returns>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

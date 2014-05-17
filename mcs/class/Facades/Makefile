@@ -1,23 +1,53 @@
+MCS_BUILD_DIR = ../../build
+
 thisdir = class/Facades
 
-net_4_5_SUBDIRS = System.Runtime System.Linq System.Xml.XmlSerializer \
-	System.ServiceModel.Primitives System.Xml.ReaderWriter System.Diagnostics.Debug \
-	System.Runtime.Extensions System.Diagnostics.Tools System.Collections \
-	System.ComponentModel.EventBasedAsync System.ComponentModel System.ObjectModel \
-	System.Text.RegularExpressions System.Threading System.Runtime.InteropServices \
-	System.Reflection System.Globalization System.IO System.Reflection.Primitives \
-	System.Resources.ResourceManager System.Security.Principal System.Text.Encoding \
-	System.Text.Encoding.Extensions System.Linq.Queryable System.Linq.Expressions \
-	System.Net.Primitives System.Net.Requests System.Net.NetworkInformation \
-	System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml \
-	System.Runtime.Serialization.Json System.ServiceModel.Http \
-	System.Xml.XDocument System.Threading.Tasks System.Diagnostics.Contracts \
-	System.Dynamic.Runtime System.ComponentModel.Annotations System.Runtime.Numerics \
-	System.Linq.Parallel System.Collections.Concurrent System.Threading.Tasks.Parallel \
-	System.Reflection.Extensions
+monotouch_SUBDIRS = System.Collections.Concurrent System.Collections System.ComponentModel.Annotations System.ComponentModel.EventBasedAsync System.ComponentModel \
+	System.Diagnostics.Contracts System.Diagnostics.Debug System.Diagnostics.Tracing System.Diagnostics.Tools System.Dynamic.Runtime System.Globalization System.IO System.Linq.Expressions \
+	System.Linq.Parallel System.Linq.Queryable System.Linq System.Net.NetworkInformation System.Net.Primitives System.Net.Requests System.ObjectModel \
+	System.Reflection.Extensions System.Reflection.Primitives System.Reflection System.Resources.ResourceManager System.Runtime.Extensions \
+	System.Runtime.InteropServices System.Runtime.InteropServices.WindowsRuntime System.Runtime.Numerics System.Runtime.Serialization.Json \
+	System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml System.Runtime System.Security.Principal System.ServiceModel.Http \
+	System.ServiceModel.Primitives System.Text.Encoding.Extensions System.Text.Encoding System.Text.RegularExpressions System.Threading.Tasks.Parallel \
+	System.Threading.Tasks System.Threading.Timer System.Threading System.Xml.ReaderWriter System.Xml.XDocument System.Xml.XmlSerializer
+
+mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
+
+net_4_5_SUBDIRS = $(monotouch_SUBDIRS) System.Reflection.Emit.ILGeneration System.Reflection.Emit.Lightweight System.Reflection.Emit
+
+monodroid_SUBDIRS = $(net_4_5_SUBDIRS)
+
+xammac_SUBDIRS = $(net_4_5_SUBDIRS)
 
 SUBDIRS = $(net_4_5_SUBDIRS)
 
-include ../../build/rules.make
+OVERRIDE_TARGET_ALL = yes
+
+# 
+# The output directory for the facade assemblies
+#
+target_dir = $(topdir)/class/lib/$(PROFILE)/Facades
+
+#
+# Contains the expanded version of the target dll for each profile
+#
+target_libraries = $(patsubst %,$(target_dir)/%.dll,$(SUBDIRS))
+
+#
+# To build each target, go into the subdirectory
+#
+$(target_dir)/%.dll: 
+	(cd `basename $@ .dll`; $(MAKE))
+
+all.override: $(target_libraries)
+
+include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
+
+
+doc-update-local:
+	@echo "not doing docs"
+
+doc-update-recursive:
+	@echo "do not recurse the Facades folder"

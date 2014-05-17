@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObfuscateAssemblyAttribute" FullName="System.Reflection.ObfuscateAssemblyAttribute">
   <TypeSignature Language="C#" Value="public sealed class ObfuscateAssemblyAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ObfuscateAssemblyAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,61 +20,104 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Reflection.ObfuscationAttribute" /> and <see cref="T:System.Reflection.ObfuscateAssemblyAttribute" /> attributes provide a way for assembly authors to annotate their binaries so that obfuscation tools can process them correctly with minimal external configuration. </para>
+      <para>Applying this attribute to an assembly tells the obfuscation tool to use its default rules for the assembly type.</para>
+      <block subset="none" type="note">
+        <para>Applying this attribute does not automatically obfuscate the assembly. Applying the attribute is an alternative to creating a configuration file for the obfuscation tool. That is, it merely provides instructions for an obfuscation tool. Microsoft recommends that vendors of obfuscation tools follow the semantics described here. However, there is no guarantee that a particular tool follows Microsoft recommendations.</para>
+      </block>
+      <para>You can apply <see cref="T:System.Reflection.ObfuscationAttribute" /> to types within an assembly, and to members on those types. The innermost attribute controls the way an obfuscation tool treats any particular code entity. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instructs obfuscation tools to use their standard obfuscation rules for the appropriate assembly type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ObfuscateAssemblyAttribute (bool assemblyIsPrivate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool assemblyIsPrivate) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="assemblyIsPrivate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="assemblyIsPrivate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Mark assemblies as private if they are used only by your application, and are not libraries to be used by other software. Generally, marking an assembly as private tells an obfuscator that it can obfuscate the names of all methods, including public methods, as part of obfuscating an application. If an assembly is public, an obfuscator should not obfuscate the names of public members.</para>
+          <block subset="none" type="note">
+            <para>Applying this attribute does not automatically obfuscate the assembly. Applying the attribute is an alternative to creating a configuration file for the obfuscation tool. That is, it merely provides instructions for an obfuscation tool. Microsoft recommends that vendors of obfuscation tools follow the semantics described here. However, there is no guarantee that a particular tool follows Microsoft recommendations.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.ObfuscateAssemblyAttribute" /> class, specifying whether the assembly to be obfuscated is public or private.</para>
+        </summary>
+        <param name="assemblyIsPrivate">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the assembly is used within the scope of one application; otherwise, false.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AssemblyIsPrivate">
       <MemberSignature Language="C#" Value="public bool AssemblyIsPrivate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AssemblyIsPrivate" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A private assembly is used only by the application of which it is a part, and not by other software.</para>
+          <block subset="none" type="note">
+            <para>Applying this attribute does not automatically obfuscate the assembly. Applying the attribute is an alternative to creating a configuration file for the obfuscation tool. That is, it merely provides instructions for an obfuscation tool. Microsoft recommends that vendors of obfuscation tools follow the semantics described here. However, there is no guarantee that a particular tool follows Microsoft recommendations.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value indicating whether the assembly was marked private.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="StripAfterObfuscation">
-      <MemberSignature Language="C#" Value="public bool StripAfterObfuscation { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool StripAfterObfuscation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool StripAfterObfuscation" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attributes should not be stripped if your library will be included as part of another application, and obfuscated as part of that application. </para>
+          <para>Specifying that obfuscation tools should strip the <see cref="T:System.Reflection.ObfuscateAssemblyAttribute" /> does not affect instances of <see cref="T:System.Reflection.ObfuscationAttribute" /> that have been applied to types and members within the assembly. </para>
+          <block subset="none" type="note">
+            <para>Applying this attribute does not automatically obfuscate the assembly. Applying the attribute is an alternative to creating a configuration file for the obfuscation tool. That is, it merely provides instructions for an obfuscation tool. Microsoft recommends that vendors of obfuscation tools follow the semantics described here. However, there is no guarantee that a particular tool follows Microsoft recommendations.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value indicating whether the obfuscation tool should remove the attribute after processing.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

@@ -201,10 +201,7 @@ namespace System.Net.Sockets
 
 			Socket clientSocket = server.Accept ();
 
-			TcpClient client = new TcpClient();
-			// use internal method SetTcpClient to make a
-			// client with the specified socket
-			client.SetTcpClient (clientSocket);
+			TcpClient client = new TcpClient(clientSocket);
 			
 			return client;
 		}
@@ -288,9 +285,7 @@ namespace System.Net.Sockets
 		public TcpClient EndAcceptTcpClient (IAsyncResult asyncResult)
 		{
 			Socket clientSocket = server.EndAccept (asyncResult);
-			TcpClient client = new TcpClient ();
-			
-			client.SetTcpClient (clientSocket);
+			TcpClient client = new TcpClient (clientSocket);
 			
 			return(client);
 		}

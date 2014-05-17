@@ -1,8 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataObjectFieldAttribute" FullName="System.ComponentModel.DataObjectFieldAttribute">
   <TypeSignature Language="C#" Value="public sealed class DataObjectFieldAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataObjectFieldAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -14,47 +17,70 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> attribute to provide information about the schema of the underlying data. Design-time classes such as the <see cref="T:System.Web.UI.Design.WebControls.ObjectDataSourceDesigner" /> class use the <see cref="T:System.ComponentModel.DataObjectAttribute" /> attribute to set properties at design-time based on the exposed schema.</para>
+      <para>You apply the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> attribute to members of the data item objects that are returned by the Select method of an object marked with the <see cref="T:System.ComponentModel.DataObjectAttribute" /> attribute. In the following example, the NorthwindData class is marked with the <see cref="T:System.ComponentModel.DataObjectAttribute" /> attribute, and returns an <see cref="T:System.Collections.IEnumerable" /> object containing NorthwindEmployee objects from the GetAllEmployees method. Fields in the NorthwindEmployee class are marked with the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> attribute to indicate they represent data fields in the underlying data source.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides metadata for a property representing a data field. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataObjectFieldAttribute (bool primaryKey);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool primaryKey) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="primaryKey" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="primaryKey">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> class and indicates whether the field is the primary key for the data row.</para>
+        </summary>
+        <param name="primaryKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is in the primary key of the data row; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataObjectFieldAttribute (bool primaryKey, bool isIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool primaryKey, bool isIdentity) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="primaryKey" Type="System.Boolean" />
         <Parameter Name="isIdentity" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="primaryKey">To be added.</param>
-        <param name="isIdentity">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> class and indicates whether the field is the primary key for the data row, and whether the field is a database identity field.</para>
+        </summary>
+        <param name="primaryKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is in the primary key of the data row; otherwise, false.</param>
+        <param name="isIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is an identity field that uniquely identifies the data row; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataObjectFieldAttribute (bool primaryKey, bool isIdentity, bool isNullable);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool primaryKey, bool isIdentity, bool isNullable) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="primaryKey" Type="System.Boolean" />
@@ -62,18 +88,26 @@
         <Parameter Name="isNullable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="primaryKey">To be added.</param>
-        <param name="isIdentity">To be added.</param>
-        <param name="isNullable">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> class and indicates whether the field is the primary key for the data row, whether the field is a database identity field, and whether the field can be null.</para>
+        </summary>
+        <param name="primaryKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is in the primary key of the data row; otherwise, false.</param>
+        <param name="isIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is an identity field that uniquely identifies the data row; otherwise, false.</param>
+        <param name="isNullable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field can be null in the data store; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DataObjectFieldAttribute (bool primaryKey, bool isIdentity, bool isNullable, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool primaryKey, bool isIdentity, bool isNullable, int32 length) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="primaryKey" Type="System.Boolean" />
@@ -82,19 +116,28 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="primaryKey">To be added.</param>
-        <param name="isIdentity">To be added.</param>
-        <param name="isNullable">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> class and indicates whether the field is the primary key for the data row, whether it is a database identity field, and whether it can be null and sets the length of the field.</para>
+        </summary>
+        <param name="primaryKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is in the primary key of the data row; otherwise, false.</param>
+        <param name="isIdentity">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field is an identity field that uniquely identifies the data row; otherwise, false.</param>
+        <param name="isNullable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the field can be null in the data store; otherwise, false.</param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the field in bytes.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -103,86 +146,140 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method determines whether this instance of <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> fits the pattern of another object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance is the same as the instance specified by the <paramref name="obj" /> parameter; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance of <see cref="T:System.ComponentModel.DataObjectFieldAttribute" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsIdentity">
       <MemberSignature Language="C#" Value="public bool IsIdentity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIdentity" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.IsIdentity" /> property to true when the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> attribute is applied to a property that represents an identity field in the underlying data store. Typically an identity field is generated by the data store and uniquely identifies an entity in the data store.</para>
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.IsIdentity" /> property with one of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a property represents an identity field in the underlying data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsNullable">
       <MemberSignature Language="C#" Value="public bool IsNullable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsNullable" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.IsNullable" /> property to true when then <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> attribute is applied to a property that represents a field in the underlying data store that can be set to null. The value that represents null in the data store may be different from null in the programming language.</para>
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.IsNullable" /> property with one of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a property represents a field that can be null in the underlying data store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Length">
       <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.Length" /> property to the length, in bytes, of the data from the underlying data store. If the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.Length" /> property is not set, it will be -1.</para>
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.Length" /> property with one of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the property in bytes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrimaryKey">
       <MemberSignature Language="C#" Value="public bool PrimaryKey { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PrimaryKey" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.PrimaryKey" /> property to true when the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> attribute is applied to a property that represents the primary key value of the underlying data. The primary key is typically used by the underlying data store to uniquely identify an entity in the data store, and often is, but is not required to be, a data store identity field.</para>
+          <para>Set the <see cref="P:System.ComponentModel.DataObjectFieldAttribute.PrimaryKey" /> property with one of the <see cref="T:System.ComponentModel.DataObjectFieldAttribute" /> constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a property is in the primary key in the underlying data.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

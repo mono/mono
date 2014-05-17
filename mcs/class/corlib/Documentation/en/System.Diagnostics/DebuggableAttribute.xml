@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DebuggableAttribute" FullName="System.Diagnostics.DebuggableAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class DebuggableAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DebuggableAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -21,13 +23,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.DebuggableAttribute" /> controls how the runtime treats code within the module. The runtime might track extra information about generated code, and it might disable certain optimizations based on the values contained within this attribute.  </para>
+      <para>A debugger might choose to ignore the <see cref="T:System.Diagnostics.DebuggableAttribute" /> settings when loading an assembly. However, attaching a debugger to a running program may prevent the debugger from changing the settings because they have already been applied.</para>
+      <para>To use the <see cref="T:System.Diagnostics.DebuggableAttribute" /> with dynamic assemblies using the Reflection Emit <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule" /> methods, emit the <see cref="T:System.Diagnostics.DebuggableAttribute" /> before calling the <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule" /> methods to ensure that the settings are applied to the entire assembly.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Modifies code generation for runtime just-in-time (JIT) debugging. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DebuggableAttribute (System.Diagnostics.DebuggableAttribute.DebuggingModes modes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes modes) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="modes" Type="System.Diagnostics.DebuggableAttribute+DebuggingModes" />
       </Parameters>
@@ -37,81 +53,113 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DebuggableAttribute (bool isJITTrackingEnabled, bool isJITOptimizerDisabled);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isJITTrackingEnabled, bool isJITOptimizerDisabled) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="isJITTrackingEnabled" Type="System.Boolean" />
         <Parameter Name="isJITOptimizerDisabled" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isJITTrackingEnabled">To be added: an object of type 'bool'</param>
-        <param name="isJITOptimizerDisabled">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the properties <see cref="P:System.Diagnostics.DebuggableAttribute.IsJITTrackingEnabled" /> and <see cref="P:System.Diagnostics.DebuggableAttribute.IsJITOptimizerDisabled" />.</para>
+          <para>An <paramref name="isJITTrackingEnabaled" /> parameter value of true causes the runtime to track information important to the debugger during code generation; a value of false results in no tracking, but does not prevent debugging. This parameter has no effect in the .NET Framework version 2.0.  In version 2.0, JIT tracking information, the Microsoft intermediate language (MSIL) offset to the native-code offset within a method, is always generated.</para>
+          <para>An <paramref name="isJITOptimizerDisabled" /> parameter value of true optimizes for debugging; a value of false optimizes for execution.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.DebuggableAttribute" /> class, using the specified tracking and optimization options for the just-in-time (JIT) compiler.</para>
+        </summary>
+        <param name="isJITTrackingEnabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to enable debugging; otherwise, false. </param>
+        <param name="isJITOptimizerDisabled">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to disable the optimizer for execution; otherwise, false. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DebuggingFlags">
       <MemberSignature Language="C#" Value="public System.Diagnostics.DebuggableAttribute.DebuggingModes DebuggingFlags { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes DebuggingFlags" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.DebuggableAttribute+DebuggingModes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.DebuggableAttribute.DebuggingFlags" /> property controls how the runtime tracks information important to the debugger during code generation. This information helps the debugger provide a rich debugging experience.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the debugging modes for the attribute.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsJITOptimizerDisabled">
       <MemberSignature Language="C#" Value="public bool IsJITOptimizerDisabled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsJITOptimizerDisabled" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value of true enhances performance for runtime debugging, which can cause a decline in execution performance. A value of false enhances performance for execution. When <see cref="P:System.Diagnostics.DebuggableAttribute.IsJITOptimizerDisabled" /> is set to false, stepping through code might result in a different behavior than when set to true because the compiler might reorder instructions or insert jumps to common code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the runtime optimizer is disabled.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsJITTrackingEnabled">
       <MemberSignature Language="C#" Value="public bool IsJITTrackingEnabled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsJITTrackingEnabled" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Diagnostics.DebuggableAttribute.IsJITTrackingEnabled" /> controls whether the runtime tracks information important to the debugger during code generation. This information helps the debugger provide a rich debugging experience.</para>
+          <block subset="none" type="note">
+            <para>This property does not control the ability to debug, but tells the just-in-time (JIT) compiler to generate tracking information. Specifically, the compiler tracks the Microsoft Intermediate Language (MSIL)-offset to the native-code offset within a method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the runtime will track information during code generation for the debugger.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

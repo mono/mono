@@ -1,76 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnaryExpression" FullName="System.Linq.Expressions.UnaryExpression">
   <TypeSignature Language="C#" Value="public sealed class UnaryExpression : System.Linq.Expressions.Expression" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UnaryExpression extends System.Linq.Expressions.Expression" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Linq.Expressions.Expression</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerTypeProxy(typeof(System.Linq.Expressions.Expression/UnaryExpressionProxy))</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table summarizes the factory methods that can be used to create a <see cref="T:System.Linq.Expressions.UnaryExpression" /> that has a specific node type.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>
+                <see cref="P:System.Linq.Expressions.Expression.NodeType" />
+              </para>
+            </term>
+            <description>
+              <para>Factory Method</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.ArrayLength" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Linq.Expressions.Expression.ArrayLength(System.Linq.Expressions.Expression)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Convert" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Convert" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.ConvertChecked" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.ConvertChecked" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Negate" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Negate" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.NegateChecked" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.NegateChecked" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Not" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.Not" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.Quote" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Linq.Expressions.Expression.Quote(System.Linq.Expressions.Expression)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.TypeAs" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="M:System.Linq.Expressions.Expression.TypeAs(System.Linq.Expressions.Expression,System.Type)" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Linq.Expressions.ExpressionType.UnaryPlus" />
+            </para>
+          </term>
+          <description>
+            <para>
+              <see cref="Overload:System.Linq.Expressions.Expression.UnaryPlus" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <para>In addition, the <see cref="Overload:System.Linq.Expressions.Expression.MakeUnary" /> methods can also be used to create a <see cref="T:System.Linq.Expressions.UnaryExpression" />. These factory methods can be used to create a <see cref="T:System.Linq.Expressions.UnaryExpression" /> of any node type that represents a unary operation. The parameter of these methods that is of type <see cref="P:System.Linq.Expressions.Expression.NodeType" /> specifies the desired node type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an expression that has a unary operator.</para>
+    </summary>
   </Docs>
   <Members>
-    <Member MemberName="IsLifted">
-      <MemberSignature Language="C#" Value="public bool IsLifted { get; }" />
+    <Member MemberName="Accept">
+      <MemberSignature Language="C#" Value="protected override System.Linq.Expressions.Expression Accept (System.Linq.Expressions.ExpressionVisitor visitor);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.Linq.Expressions.Expression Accept(class System.Linq.Expressions.ExpressionVisitor visitor) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="visitor" Type="System.Linq.Expressions.ExpressionVisitor" />
+      </Parameters>
+      <Docs>
+        <param name="visitor">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanReduce">
+      <MemberSignature Language="C#" Value="public override bool CanReduce { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanReduce" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression tree node can be reduced.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IsLifted">
+      <MemberSignature Language="C#" Value="public bool IsLifted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsLifted" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operator call is <newTerm>lifted</newTerm> if the operator expects a non-nullable operand but a nullable operand is passed to it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression tree node represents a lifted call to an operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLiftedToNull">
       <MemberSignature Language="C#" Value="public bool IsLiftedToNull { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsLiftedToNull" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An operator call is <newTerm>lifted</newTerm> if the operator expects a non-nullable operand but a nullable operand is passed to it. If the value of <see cref="P:System.Linq.Expressions.UnaryExpression.IsLiftedToNull" /> is true, the operator returns a nullable type and if the nullable operand evaluates to null, the operator returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the expression tree node represents a lifted call to an operator whose return type is lifted to a nullable type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Method">
       <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo Method { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo Method" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the implementing method for the unary operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NodeType">
+      <MemberSignature Language="C#" Value="public override sealed System.Linq.Expressions.ExpressionType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Linq.Expressions.ExpressionType NodeType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the node type of this <see cref="T:System.Linq.Expressions.Expression" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Operand">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression Operand { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.Expression Operand" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the operand of the unary operation.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Reduce">
+      <MemberSignature Language="C#" Value="public override System.Linq.Expressions.Expression Reduce ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Linq.Expressions.Expression Reduce() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the CanReduce method returns true, this should return a valid expression.</para>
+          <para>This method can return another node which itself must be reduced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reduces the expression node to a simpler expression. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reduced expression.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public override sealed Type Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type Type" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the static type of the expression that this <see cref="T:System.Linq.Expressions.Expression" /> represents.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public System.Linq.Expressions.UnaryExpression Update (System.Linq.Expressions.Expression operand);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Linq.Expressions.UnaryExpression Update(class System.Linq.Expressions.Expression operand) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.UnaryExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operand" Type="System.Linq.Expressions.Expression" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="operand">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.UnaryExpression.Operand" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

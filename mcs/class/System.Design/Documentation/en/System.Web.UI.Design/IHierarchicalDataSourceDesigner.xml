@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHierarchicalDataSourceDesigner" FullName="System.Web.UI.Design.IHierarchicalDataSourceDesigner">
   <TypeSignature Language="C#" Value="public interface IHierarchicalDataSourceDesigner" />
   <AssemblyInfo>
@@ -6,8 +7,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, when creating a new data source class for hierarchical data and an accompanying designer, you would inherit the <see cref="T:System.Web.UI.Design.HierarchicalDataSourceDesigner" /> class rather than implement the <see cref="T:System.Web.UI.Design.IHierarchicalDataSourceDesigner" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides design-time support in a visual designer for a class that is derived from the <see cref="T:System.Web.UI.HierarchicalDataSourceControl" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CanConfigure">
@@ -20,9 +27,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.IHierarchicalDataSourceDesigner.CanConfigure" /> property is used by a design host, such as vsprvslong, to determine whether to display a <ui>Configure</ui> command at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="M:System.Web.UI.Design.IHierarchicalDataSourceDesigner.Configure" /> method can be called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanRefreshSchema">
@@ -35,9 +48,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.IHierarchicalDataSourceDesigner.CanRefreshSchema" /> property is used by a design host, such as vsprvslong, to determine whether to display a <ui>Refresh Schema</ui> command at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="M:System.Web.UI.Design.IHierarchicalDataSourceDesigner.RefreshSchema(System.Boolean)" /> method can be called.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Configure">
@@ -51,8 +70,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Launches the configuration wizard for the underlying data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSourceChanged">
@@ -65,8 +87,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a data source control has changed in some way that affects data-bound controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetView">
@@ -82,10 +107,17 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="viewPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the named data source view that is associated with the data source control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The named data source view that is associated with the data source control.</para>
+        </returns>
+        <param name="viewPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XPath for the part of the data source to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="RefreshSchema">
@@ -101,9 +133,13 @@
         <Parameter Name="preferSilent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preferSilent">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the schema of the underlying data source.</para>
+        </summary>
+        <param name="preferSilent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to suppress events raised while refreshing the schema; otherwise false.</param>
       </Docs>
     </Member>
     <Member MemberName="ResumeDataSourceEvents">
@@ -117,8 +153,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores events after calling the <see cref="M:System.Web.UI.Design.IHierarchicalDataSourceDesigner.SuppressDataSourceEvents" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemaRefreshed">
@@ -131,8 +170,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the fields or data of the underlying data source have changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuppressDataSourceEvents">
@@ -146,8 +188,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can restore events with the <see cref="M:System.Web.UI.Design.IHierarchicalDataSourceDesigner.ResumeDataSourceEvents" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Turns off events in the data source control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

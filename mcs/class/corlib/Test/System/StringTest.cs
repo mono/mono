@@ -37,6 +37,13 @@ public class StringTest
 		}
 	}
 
+	class ToNullStringer
+	{
+		public override string ToString()
+		{
+			return null;
+		}
+	}
 
 	private CultureInfo orgCulture;
 
@@ -1207,6 +1214,13 @@ public class StringTest
 	{
 		var s = String.Format (new NullFormatter (), "{0:}", "test");
 		Assert.AreEqual ("test", s);
+	}
+
+	[Test]
+	public void Format_Arg_ToNullStringer ()
+	{
+		var s = String.Format ("{0}", new ToNullStringer ());
+		Assert.AreEqual ("", s);
 	}
 
 	[Test]
@@ -2976,6 +2990,15 @@ public class StringTest
 		}
 	}
 
+	[Test]
+	public void PadLeft_Overflow ()
+	{
+		try {
+			"x".PadLeft (int.MaxValue, '-');
+		} catch (OutOfMemoryException) {
+		}
+	}
+
 	[Test] // PadRight (Int32)
 	public void PadRight1 ()
 	{
@@ -3015,6 +3038,15 @@ public class StringTest
 	{
 		Assert.AreEqual ("100000000000", "1".PadRight (12, '0'), "#1");
 		Assert.AreEqual ("000000000000", "".PadRight (12, '0'), "#2");
+	}
+
+	[Test]
+	public void PadRight_Overflow ()
+	{
+		try {
+			"x".PadRight (int.MaxValue, '-');
+		} catch (OutOfMemoryException) {
+		}
 	}
 
 	[Test] // Remove (Int32, Int32)

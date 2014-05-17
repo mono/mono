@@ -344,11 +344,13 @@ public class GregorianCalendar : Calendar {
 		return 12;
 	}
 
+#if !NET_4_5
 	[ComVisible (false)]
 	public override int GetWeekOfYear (DateTime time, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
 		return base.GetWeekOfYear (time, rule, firstDayOfWeek);
 	}
+#endif
 
 	/// <summary>
 	/// Overridden. Gives the number of the year of the specified

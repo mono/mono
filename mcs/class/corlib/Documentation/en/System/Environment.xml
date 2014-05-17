@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Environment" FullName="System.Environment" FullNameSP="System_Environment" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Environment extends System.Object" />
   <TypeSignature Language="C#" Value="public static class Environment" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Environment extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,101 +16,108 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Provides the current settings for, and information about, the execution environment.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>Use this class to retrieve the following 
- information:</para>
-        <list type="bullet">
-          <item>
-            <term>Command line arguments</term>
-          </item>
-          <item>
-            <term>Exit codes</term>
-          </item>
-          <item>
-            <term>Environment variable settings</term>
-          </item>
-          <item>
-            <term>Contents of the call stack</term>
-          </item>
-          <item>
-            <term>Time since last system boot</term>
-          </item>
-          <item>
-            <term>Version of the execution engine</term>
-          </item>
-        </list>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Environment" /> class to retrieve information such as command-line arguments, the exit code, environment variable settings, contents of the call stack, time since last system boot, and the version of the common language runtime.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about, and means to manipulate, the current environment and platform. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CommandLine">
       <MemberSignature Language="ILASM" Value=".property string CommandLine { public hidebysig static specialname string get_CommandLine() }" />
       <MemberSignature Language="C#" Value="public static string CommandLine { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string CommandLine" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets the information entered on the command line when the current process was
-      started.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing
    the command line arguments.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <para>This property provides access to the program name and
-      any arguments specified on the command line when the current process was
-      started.</para>
-          <para>If the environment does not support a program name, as
-         can be the case with compact devices, then the program name is equal to <see cref="F:System.String.Empty" />.</para>
-          <para>The format of the information returned by this property is implementation-specific.</para>
-          <pre />
-          <block subset="none" type="note">
-            <para>The program name can, but is not required to, include
-      path information.</para>
-            <para>Use the <see cref="M:System.Environment.GetCommandLineArgs" /> method to retrieve the command line information parsed
-   and stored in an array of strings.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides access to the program name and any arguments specified on the command line when the current process was started.</para>
+          <para>The program name can  include path information, but is not required to do so. Use the <see cref="M:System.Environment.GetCommandLineArgs" /> method to retrieve the command-line information parsed and stored in an array of strings.</para>
+          <para>The maximum size of the command-line buffer is not set to a specific number of characters; it varies depending on the Windows operating system that is running on the computer.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command line for this process.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrentDirectory">
+      <MemberSignature Language="C#" Value="public static string CurrentDirectory { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property string CurrentDirectory" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentDirectory">
-      <MemberSignature Language="C#" Value="public static string CurrentDirectory { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The full path of the current working directory of the process.</summary>
         <value>A <see cref="T:System.String" /> containing
    the full current working directory path.</value>
-        <remarks>This property is for getting or setting the current working directory of the process.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By definition, if this process starts in the root directory of a local or network drive, the value of this property is the drive name followed by a trailing slash (for example, "C:\"). If this process starts in a subdirectory, the value of this property is the drive and subdirectory path, without a trailing slash (for example, "C:\mySubDirectory").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fully qualified path of the current working directory.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CurrentManagedThreadId">
+      <MemberSignature Language="C#" Value="public static int CurrentManagedThreadId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 CurrentManagedThreadId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for the current managed thread.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Exit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Exit(int32 exitCode)" />
+      <MemberSignature Language="C#" Value="public static void Exit (int exitCode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Exit(int32 exitCode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Exit">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Exit(int32 exitCode)" />
-      <MemberSignature Language="C#" Value="public static void Exit (int exitCode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -116,61 +125,84 @@
         <Parameter Name="exitCode" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="exitCode">A <see cref="T:System.Int32" /> value that is provided to the operating system.</param>
-        <summary>
-          <para>Terminates the current process and sets the process exit code to the specified value.</para>
-        </summary>
-        <remarks>
-          <para>This method causes an executing program to halt.</para>
-        </remarks>
         <exception cref="T:System.Security.SecurityException">The immediate caller does not have the required permission.</exception>
         <permission cref="T:System.Security.Permissions.EnvironmentPermission">Requires permission to read environment variables. See <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Read" />.</permission>
         <permission cref="T:System.Security.Permissions.SecurityPermission">Requires unmanaged code permission. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <paramref name="exitCode" /> parameter, use a non-zero number to indicate an error. In your application, you can define your own error codes in an enumeration, and return the appropriate error code based on the scenario. For example, return a value of 1 to indicate that the required file is not present and a value of 2 to indicate that the file is in the wrong format. For a list of exit codes used by the Windows operating system, see <see cref="http://msdn.microsoft.com/library/ms681381.aspx">System Error Codes</see> in the Windows documentation.</para>
+          <para>Calling the <see cref="M:System.Environment.Exit(System.Int32)" /> method differs from using your programming language's return statement in the following ways: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.Environment.Exit(System.Int32)" /> always terminates an application. Using the return statement may terminate an application only if it is used in the application entry point, such as in the Main method. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Environment.Exit(System.Int32)" /> terminates an application immediately, even if other threads are running. If the return statement is called in the application entry point, it causes an application to terminate only after all foreground threads have terminated. </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Environment.Exit(System.Int32)" /> requires the caller to have permission to call unmanaged code. The return statement does not. </para>
+            </item>
+            <item>
+              <para>If <see cref="M:System.Environment.Exit(System.Int32)" /> is called from a try or finally block, the code in any catch block does not execute. If the return statement is used, the code in the catch block does execute. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates this process and gives the underlying operating system the specified exit code.</para>
+        </summary>
+        <param name="exitCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />Exit code to be given to the operating system. Use 0 (zero) to indicate that the process completed successfully.</param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ExitCode">
+      <MemberSignature Language="ILASM" Value=".property int32 ExitCode { public hidebysig static specialname int32 get_ExitCode() public hidebysig static specialname void set_ExitCode(int32 value) }" />
+      <MemberSignature Language="C#" Value="public static int ExitCode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 ExitCode" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExitCode">
-      <MemberSignature Language="ILASM" Value=".property int32 ExitCode { public hidebysig static specialname int32 get_ExitCode() public hidebysig static specialname void set_ExitCode(int32 value) }" />
-      <MemberSignature Language="C#" Value="public static int ExitCode { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>
-          <para>Gets or sets the exit code of a process.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" />
 value returned by a process. The default value is zero.</para>
         </value>
         <remarks>
-          <para>When a process exits, if the process does not return a
-      value, the value of <see cref="P:System.Environment.ExitCode" />
-      is returned. If the value of this property is not set by
-      an application, zero is returned.</para>
-          <para>On operating systems that do
-      not support process exit codes, CLI implementations are required to fully support getting and
-      setting values for this property.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the Main method returns void, you can use this property to set the exit code that will be returned to the calling environment. If Main does not return void, this property is ignored. The initial value of this property is zero.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Environment.ExitCode" /> property is a signed 32-bit integer. To prevent the property from returning a negative exit code, you should not use values greater than or equal to 0x80000000.</para>
+          </block>
+          <para>Use a non-zero number to indicate an error. In your application, you can define your own error codes in an enumeration, and return the appropriate error code based on the scenario. For example, return a value of 1 to indicate that the required file is not present and a value of 2 to indicate that the file is in the wrong format. For a list of exit codes used by the Windows operating system, see <see cref="http://msdn.microsoft.com/en-us/library/ms681381(v=vs.85)">System Error Codes</see> in the Windows documentation. </para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the exit code of the process.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ExpandEnvironmentVariables">
+      <MemberSignature Language="C#" Value="public static string ExpandEnvironmentVariables (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ExpandEnvironmentVariables(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExpandEnvironmentVariables">
-      <MemberSignature Language="C#" Value="public static string ExpandEnvironmentVariables (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -178,43 +210,32 @@ value returned by a process. The default value is zero.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The string containing 0 or more environment variable references (like %HOME%).</param>
-        <summary>Expands all the environment variable references in the given string with the value of the environment variable.</summary>
-        <returns>To be added.</returns>
-        <remarks>In the given string parameter, the reference to the environment variable is written in Windows style, e.g.
-<para>
-%HOME%
-</para>
-
-Note that the expansion only takes place if the environment variable is set. If it's not set, the reference is printed as is.
-
-<example><code lang="C#">
-using System;
-
-class SystemDemo
-{
-	public static void Main(string[] args)
-	{
-		Console.WriteLine(Environment.ExpandEnvironmentVariables("This app is running under the display %DISPLAY%"));
-	}
-}
-  </code>
-prints
-<para>
-This app is running under the display :0.0
-</para>
-when running on the :0 display on Linux.
-</example></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>COM interop is used to retrieve the environment variables from the operating system. If the environment variables cannot be retrieved due to a COM error, the HRESULT that explains the cause of the failure is used to generate one of several possible exceptions; that is, the exception depends on the HRESULT. For more information about how the HRESULT is processed, see the Remarks section of the <see cref="M:System.Runtime.InteropServices.Marshal.ThrowExceptionForHR(System.Int32)" /> method.</para>
+          <para>Replacement only occurs for environment variables that are set. For example, suppose <paramref name="name" /> is "MyENV = %MyENV%". If the environment variable, MyENV, is set to 42, this method returns "MyENV = 42". If MyENV is not set, no change occurs; this method returns "MyENV = %MyENV%".</para>
+          <para>The size of the return value is limited to 32K on Windows NT 4.0 and earlier, and Windows 2000 and later. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the name of each environment variable embedded in the specified string with the string equivalent of the value of the variable, then returns the resulting string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string with each environment variable replaced by its value.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the names of zero or more environment variables. Each environment variable is quoted with the percent sign character (%).</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FailFast">
       <MemberSignature Language="C#" Value="public static void FailFast (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void FailFast(string message) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -222,18 +243,24 @@ when running on the :0 display on Linux.
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method terminates a process without running any active try/finally blocks or finalizers. </para>
+          <para>The <see cref="M:System.Environment.FailFast(System.String)" /> method writes the <paramref name="message" /> string to the Windows Application event log, creates a dump of your application, and then terminates the current process. The <paramref name="message" /> string is also included in error reporting to Microsoft.</para>
+          <para>Use the <see cref="M:System.Environment.FailFast(System.String)" /> method instead of the <see cref="M:System.Environment.Exit(System.Int32)" /> method to terminate your application if the state of your application is damaged beyond repair, and executing your application's try/finally blocks and finalizers will corrupt program resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Immediately terminates a process after writing a message to the Windows Application event log, and then includes the message in error reporting to Microsoft.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that explains why the process was terminated, or null if no explanation is provided.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FailFast">
       <MemberSignature Language="C#" Value="public static void FailFast (string message, Exception exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void FailFast(string message, class System.Exception exception) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -251,53 +278,121 @@ when running on the :0 display on Linux.
         <Parameter Name="exception" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="exception">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method terminates the process without running any active try/finally blocks or finalizers. </para>
+          <para>The <see cref="M:System.Environment.FailFast(System.String,System.Exception)" /> method writes the <paramref name="message" /> string to the Windows Application event log, creates a dump of your application, and then terminates the current process.</para>
+          <para>Error reporting to Microsoft includes <paramref name="message" /> and <paramref name="exception" /> information, which provides details used to classify the error. Although <paramref name="exception" /> is not handled because the process is terminated, the contextual information that raised the exception is still obtained.</para>
+          <para>If <paramref name="exception" /> is null, or if <paramref name="exception" /> is not thrown, this method operates the same as the <see cref="M:System.Environment.FailFast(System.String)" /> method overload. </para>
+          <para>Use the <see cref="M:System.Environment.FailFast(System.String,System.Exception)" /> method instead of the <see cref="M:System.Environment.Exit(System.Int32)" /> method to terminate your application if the state of your application is damaged beyond repair, and executing your application's try/finally blocks and finalizers will corrupt program resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Immediately terminates a process after writing a message to the Windows Application event log, and then includes the message and exception information in error reporting to Microsoft.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that explains why the process was terminated, or null if no explanation is provided.</param>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />An exception that represents the error that caused the termination. This is typically the exception in a catch block.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCommandLineArgs">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.String[] GetCommandLineArgs()" />
       <MemberSignature Language="C#" Value="public static string[] GetCommandLineArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] GetCommandLineArgs() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Returns the arguments specified on the command
-      line.</para>
-        </summary>
-        <returns>
-          <para> Returns a <see cref="T:System.String" /> array. Each <see cref="T:System.String" /> in the array
-   contains a single command line argument.</para>
-        </returns>
-        <remarks>
-          <para>The first element in the array contains the filename of
-      the executing program. If the filename is not available, the first element is
-      equal to <see cref="F:System.String.Empty" />. The remaining elements contain any additional tokens
-      entered on the command line.</para>
-          <block subset="none" type="note">
-            <para>The program filename can, but is not required to,
-         include path information.</para>
-            <para>To obtain the command line as a single <see cref="T:System.String" />, use the <see cref="P:System.Environment.CommandLine" />
-   property.</para>
-          </block>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first element in the array contains the file name of the executing program. If the file name is not available, the first element is equal to <see cref="F:System.String.Empty" />. The remaining elements contain any additional tokens entered on the command line.</para>
+          <para>The program file name can, but is not required to, include path information.</para>
+          <para>Command line arguments are delimited by spaces. You can use double quotation marks (") to include spaces within an argument. The single quotation mark ('), however, does not provide this functionality. </para>
+          <para>If a double quotation mark follows two or an even number of backslashes, each proceeding backslash pair is replaced with one backslash and the double quotation mark is removed. If a double quotation mark follows an odd number of backslashes, including just one, each preceding pair is replaced with one backslash and the remaining backslash is removed; however, in this case the double quotation mark is not removed. </para>
+          <para>The following table shows how command line arguments can be delimited, and assumes MyApp as the current executing application.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Input at the command line</para>
+                </term>
+                <description>
+                  <para>Resulting command line arguments</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>MyApp alpha beta</para>
+              </term>
+              <description>
+                <para>MyApp, alpha, beta</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MyApp "alpha with spaces" "beta with spaces"</para>
+              </term>
+              <description>
+                <para>MyApp, alpha with spaces, beta with spaces </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MyApp 'alpha with spaces' beta</para>
+              </term>
+              <description>
+                <para>MyApp, 'alpha, with, spaces', beta</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MyApp \\\alpha \\\\"beta</para>
+              </term>
+              <description>
+                <para>MyApp, \\\alpha, \\beta</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>MyApp \\\\\"alpha \"beta</para>
+              </term>
+              <description>
+                <para>MyApp, \\"alpha, "beta</para>
+              </description>
+            </item>
+          </list>
+          <para>To obtain the command line as a single string, use the <see cref="P:System.Environment.CommandLine" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string array containing the command-line arguments for the current process.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of string where each element contains a command-line argument. The first element is the executable file name, and the following zero or more elements contain the remaining command-line arguments.</para>
+        </returns>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName="GetEnvironmentVariable">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static string GetEnvironmentVariable(string variable)" />
       <MemberSignature Language="C#" Value="public static string GetEnvironmentVariable (string variable);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetEnvironmentVariable(string variable) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -305,44 +400,36 @@ when running on the :0 display on Linux.
         <Parameter Name="variable" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="variable">A <see cref="T:System.String" /> containing the name of an environment variable.</param>
-        <summary>
-          <para>Returns the value of
-      the specified environment variable.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the current setting of <paramref name="variable" /> , or 
-<see langword="null" />.</para>
-        </returns>
-        <remarks>
-          <para>If <paramref name="variable" /> contains a valid name for an environment variable, and
-   if the caller has sufficient permissions, this method returns the current
-   setting for <paramref name="variable" />. Environment variable names are
-   case-insensitive.</para>
-          <para>If <paramref name="variable" /> specifies an
-invalid name or the system does not support environment variables, this method
-returns <see langword="null" />
-.</para>
-          <para>
-            <block subset="none" type="note">To obtain names and settings for all
-   environment variables, use the <see cref="M:System.Environment.GetEnvironmentVariables" /> method.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="variable" /> is a null reference.</exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <permission cref="T:System.Security.Permissions.EnvironmentPermission">Requires permission to read environment variables. See <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Read" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Environment variable names are not case-sensitive.</para>
+          <para>To retrieve all environment variables along with their values, call the <see cref="M:System.Environment.GetEnvironmentVariables" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of an environment variable from the current process.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the environment variable specified by <paramref name="variable" />, or null if the environment variable is not found.</para>
+        </returns>
+        <param name="variable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the environment variable.</param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnvironmentVariable">
       <MemberSignature Language="C#" Value="public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetEnvironmentVariable(string variable, valuetype System.EnvironmentVariableTarget target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -351,46 +438,42 @@ returns <see langword="null" />
         <Parameter Name="target" Type="System.EnvironmentVariableTarget" />
       </Parameters>
       <Docs>
-        <param name="variable">To be added.</param>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="target" /> parameter specifies whether the environment variable is retrieved from the current process or from the Windows operating system registry key for the current user or local machine.</para>
+          <para>Environment variable names are not case-sensitive.</para>
+          <para>To retrieve all environment variables along with their values, call the <see cref="M:System.Environment.GetEnvironmentVariables" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of an environment variable from the current process or from the Windows operating system registry key for the current user or local machine.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the environment variable specified by the <paramref name="variable" /> and <paramref name="target" /> parameters, or null if the environment variable is not found.</para>
+        </returns>
+        <param name="variable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an environment variable.</param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.EnvironmentVariableTarget" /> values.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnvironmentVariables">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Collections.IDictionary GetEnvironmentVariables()" />
       <MemberSignature Language="C#" Value="public static System.Collections.IDictionary GetEnvironmentVariables ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.IDictionary GetEnvironmentVariables() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Returns all
-      environment variables and their current settings.</para>
-        </summary>
-        <returns>
-          <para>A <see cref="T:System.Collections.IDictionary" /> object containing environment variable names
-   and settings, or <see langword="null" />
-   if
-   the system does not
-   support environment variables.</para>
-        </returns>
-        <remarks>
-          <para>The names and settings for the environment variables are
-      stored in the returned <see cref="T:System.Collections.IDictionary" /> object as keys and values, respectively.</para>
-          <para>
-            <block subset="none" type="note">To obtain the
-      setting of a single environment variable, use the <see cref="M:System.Environment.GetEnvironmentVariable(System.String)" /> method. </block>
-          </para>
-        </remarks>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <permission cref="T:System.Security.Permissions.EnvironmentPermission">Requires permission to read environment variables. See <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Read" />.</permission>
         <example>
@@ -416,17 +499,29 @@ class EnvTest:Object {
    </code>
           <para>The output will vary depending on your system.</para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The names and values for the environment variables are stored as key-value pairs in the returned <see cref="T:System.Collections.IDictionary" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves all environment variable names and their values from the current process.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dictionary that contains all environment variable names and their values; otherwise, an empty dictionary if no environment variables are found.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnvironmentVariables">
       <MemberSignature Language="C#" Value="public static System.Collections.IDictionary GetEnvironmentVariables (EnvironmentVariableTarget target);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.IDictionary GetEnvironmentVariables(valuetype System.EnvironmentVariableTarget target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
@@ -434,20 +529,33 @@ class EnvTest:Object {
         <Parameter Name="target" Type="System.EnvironmentVariableTarget" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="target" /> parameter specifies whether the source is the current process, the registry key for the current user, or the registry key for the local machine.</para>
+          <para>The names and values of the environment variables are stored as key/value pairs in the returned <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves all environment variable names and their values from the current process, or from the Windows operating system registry key for the current user or local machine.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dictionary that contains all environment variable names and their values from the source specified by the <paramref name="target" /> parameter; otherwise, an empty dictionary if no environment variables are found.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.EnvironmentVariableTarget" /> values.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFolderPath">
       <MemberSignature Language="C#" Value="public static string GetFolderPath (Environment.SpecialFolder folder);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetFolderPath(valuetype System.Environment/SpecialFolder folder) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -460,14 +568,10 @@ class EnvTest:Object {
         <returns>The path to the special folder, or the empty string if the special folder is not available or not applicable in the running operating system.</returns>
         <remarks>See <see cref="T:System.Environment+SpecialFolder" /> for a list of special folders and their locations on non-Windows operating systems.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFolderPath">
       <MemberSignature Language="C#" Value="public static string GetFolderPath (Environment.SpecialFolder folder, Environment.SpecialFolderOption option);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetFolderPath(valuetype System.Environment/SpecialFolder folder, valuetype System.Environment/SpecialFolderOption option) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -489,60 +593,64 @@ class EnvTest:Object {
     </Member>
     <Member MemberName="GetLogicalDrives">
       <MemberSignature Language="C#" Value="public static string[] GetLogicalDrives ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] GetLogicalDrives() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of string containing the names of the logical drives on the current computer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings where each element contains the name of a logical drive. For example, if the computer's hard drive is the first logical drive, the first element returned is "C:\".</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="HasShutdownStarted">
+      <MemberSignature Language="ILASM" Value=".property bool HasShutdownStarted { public hidebysig static specialname instance bool get_HasShutdownStarted() }" />
+      <MemberSignature Language="C#" Value="public static bool HasShutdownStarted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool HasShutdownStarted" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasShutdownStarted">
-      <MemberSignature Language="ILASM" Value=".property bool HasShutdownStarted { public hidebysig static specialname instance bool get_HasShutdownStarted() }" />
-      <MemberSignature Language="C#" Value="public static bool HasShutdownStarted { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets a value indicating whether an application has started to shut down.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the shutdown
    process has started; otherwise <see langword="false" />.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <block subset="none" type="note">
-            <para>This property is for use inside the finalizer of an application. If the 
-         shutdown process has started, static members should not be accessed; they
-         might have been cleaned up by the garbage collector. If the member has been
-         cleaned up, any access attempt will cause an exception to be thrown. </para>
-            <para>
-              <see cref="P:System.Console.Out" qualify="true" /> is a special case that is always available after the 
-      shutdown process has started.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the CLR unloads an application domain, it runs the finalizers on all objects that have a finalizer method in that application domain. When the CLR shuts down, it starts the finalizer thread on all objects that have a finalizer method. The <see cref="P:System.Environment.HasShutdownStarted" /> property returns true only after the finalizer thread has been started. When the property returns true, you can determine whether an application domain is being unloaded or the CLR itself is shutting down by calling the <see cref="M:System.AppDomain.IsFinalizingForUnload" /> method. This method returns true if finalizers are called because the application domain is unloading or false if the CLR is shutting down. </para>
+          <para>The <see cref="P:System.Environment.HasShutdownStarted" /> property returns false if the finalizer thread has not been started. </para>
+          <para>By using this property, you can determine whether to access static variables in your finalization code. If either an application domain or the CLR is shutting down, you cannot reliably access any object that has a finalization method and that is referenced by a static field. This is because these objects may have already been finalized.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the current application domain is being unloaded or the common language runtime (CLR) is shutting down. </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Is64BitOperatingSystem">
       <MemberSignature Language="C#" Value="public static bool Is64BitOperatingSystem { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool Is64BitOperatingSystem" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -551,13 +659,17 @@ class EnvTest:Object {
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current operating system is a 64-bit operating system.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Is64BitProcess">
       <MemberSignature Language="C#" Value="public static bool Is64BitProcess { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool Is64BitProcess" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -566,67 +678,56 @@ class EnvTest:Object {
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current process is a 64-bit process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MachineName">
       <MemberSignature Language="C#" Value="public static string MachineName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string MachineName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>ReadOnly property for getting the machine name of the computer.</summary>
-        <value>The machine name of the computer the application is running on.</value>
-        <remarks>The information in the <see cref="P:System.Environment.MachineName" /> is dependent on the underlying operating system.
-
-<list type="bullet"><item><term>On Linux, this returns the value of the <b>HOSTNAME</b> environment variable.</term></item><item><term>On Windows, this returns the NETBIOS machine name of the computer.</term></item></list><example><code lang="C#">
-using System;
-
-class SystemDemo
-{
-	public static void Main(string[] args)
-	{
-		Console.WriteLine(Environment.MachineName);
-	}
-}
-  </code>
-Executing this program on a linux machine returns a name like "machinename.example.com", while on Windows, it'll show a name like "MACHINENAME".
-</example></remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>The machine name of the computer the application is running on.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of this computer is established at system startup when the name is read from the registry. If this computer is a node in a cluster, the name of the node is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the NetBIOS name of this local computer.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NewLine">
       <MemberSignature Language="ILASM" Value=".property string NewLine { public hidebysig static specialname string get_NewLine() }" />
       <MemberSignature Language="C#" Value="public static string NewLine { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string NewLine" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the newline string for the current platform.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing the characters required to write a newline.</para>
         </value>
-        <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="note"> This property is
-      intended for platform-independent formatting of multi-line strings. This value
-      is automatically appended to text when using <see langword="WriteLine " />methods,
-      such as <see cref="M:System.Console.WriteLine" />
-      .</block>
-          </para>
-        </remarks>
         <example>
           <para>The following example demonstrates using the <see cref="P:System.Environment.NewLine" />
 property. The string returned by <see cref="P:System.Environment.NewLine" /> is inserted between "Hello" and
@@ -645,70 +746,80 @@ class TestClass {
             <para>World</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value of <see cref="P:System.Environment.NewLine" /> is a constant customized specifically for the current platform and implementation of the .NET Framework. For more information about the escape characters in the property value, see <format type="text/html"><a href="f49cc9cc-db7d-4058-8b8a-422bc08b29b0">Character Escapes</a></format>.</para>
+          <para>The functionality provided by <see cref="P:System.Environment.NewLine" /> is often what is meant by the terms newline, line feed, line break, carriage return, CRLF, and end of line. </para>
+          <para>
+            <see cref="P:System.Environment.NewLine" /> can be used in conjunction with language-specific newline support such as the escape characters '\r' and '\n' in Microsoft C# and C/C++, or vbCrLf in Microsoft Visual Basic.</para>
+          <para>
+            <see cref="P:System.Environment.NewLine" /> is automatically appended to text processed by the <see cref="Overload:System.Console.WriteLine" /> and <see cref="Overload:System.Text.StringBuilder.AppendLine" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the newline string defined for this environment.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OSVersion">
+      <MemberSignature Language="C#" Value="public static OperatingSystem OSVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.OperatingSystem OSVersion" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OSVersion">
-      <MemberSignature Language="C#" Value="public static OperatingSystem OSVersion { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.OperatingSystem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns a <see cref="T:System.OperatingSystem" /> object that contains details about the current execution platform.</summary>
         <value>A <see cref="T:System.OperatingSystem" /> object representing the current platform.</value>
         <remarks>
-          <example>
-            <code lang="C#">
-using System;
-
-class SystemDemo
-{
-	public static void Main(string[] args)
-	{
-		Console.WriteLine(Environment.OSVersion);
-	}
-}
-  </code>
-prints 
-<para>
-Unix 2.6.6.1
-</para>
-on a Linux installation with the 2.6.6.1 kernel.
-</example>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, the <see cref="P:System.Environment.OSVersion" /> property is used to ensure that an app is running on some base version of an operating system in which a particular feature was introduced. When this is the case, you should perform a version check by testing whether the current operating system version returned by the <see cref="P:System.Environment.OSVersion" /> property is the same as, or greater than, the base operating system version. For more information, see the <see cref="T:System.Version" /> class topic. </para>
+          <para>The <see cref="P:System.Environment.OSVersion" /> property returns the version reported by the Windows <see cref="http://msdn.microsoft.com/library/windows/desktop/ms724451(v=vs.85).aspx">GetVersionEx</see> function. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Environment.OSVersion" /> property reports the same version number (6.2.0.0) for both win8 and win81. </para>
+          </block>
+          <para>In some cases, the <see cref="P:System.Environment.OSVersion" /> property may not return the operating system version that matches the version specified for the Windows Program Compatibility mode feature.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.OperatingSystem" /> object that contains the current platform identifier and version number.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProcessorCount">
       <MemberSignature Language="C#" Value="public static int ProcessorCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 ProcessorCount" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of processors on the current machine.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="SetEnvironmentVariable">
+      <MemberSignature Language="C#" Value="public static void SetEnvironmentVariable (string variable, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetEnvironmentVariable(string variable, string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetEnvironmentVariable">
-      <MemberSignature Language="C#" Value="public static void SetEnvironmentVariable (string variable, string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -717,20 +828,32 @@ on a Linux installation with the 2.6.6.1 kernel.
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="variable">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="value" /> parameter is not empty and the environment variable named by the <paramref name="variable" /> parameter does not exist, the environment variable is created and assigned the contents of <paramref name="value" />. Solely for purposes of this operation, <paramref name="value" /> is considered empty if it is null, contains a zero-length string, or contains an initial hexadecimal zero character (0x00).</para>
+          <para>If <paramref name="variable" /> contains a non-initial hexadecimal zero character, the characters before the zero character are considered the environment variable name and all subsequent characters are ignored.</para>
+          <para>If <paramref name="value" /> contains a non-initial hexadecimal zero character, the characters before the zero character are assigned to the environment variable and all subsequent characters are ignored.</para>
+          <para>If <paramref name="value" /> is empty and the environment variable named by <paramref name="variable" /> exists, the environment variable is deleted. If <paramref name="variable" /> does not exist, no error occurs even though the operation cannot be performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates, modifies, or deletes an environment variable stored in the current process.</para>
+        </summary>
+        <param name="variable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an environment variable.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value to assign to <paramref name="variable" />.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetEnvironmentVariable">
+      <MemberSignature Language="C#" Value="public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetEnvironmentVariable(string variable, string value, valuetype System.EnvironmentVariableTarget target) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetEnvironmentVariable">
-      <MemberSignature Language="C#" Value="public static void SetEnvironmentVariable (string variable, string value, EnvironmentVariableTarget target);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -740,106 +863,49 @@ on a Linux installation with the 2.6.6.1 kernel.
         <Parameter Name="target" Type="System.EnvironmentVariableTarget" />
       </Parameters>
       <Docs>
-        <param name="variable">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="value" /> parameter is not empty and the environment variable named by the <paramref name="variable" /> parameter does not exist, the environment variable is created and assigned the contents of <paramref name="value" />. Solely for the purposes of this operation, <paramref name="value" /> is considered empty if it is null, contains a zero-length string, or contains an initial hexadecimal zero character (0x00).</para>
+          <para>If <paramref name="variable" /> contains a non-initial hexadecimal zero character, the characters before the zero character are considered the environment variable name and all subsequent characters are ignored.</para>
+          <para>If <paramref name="value" /> contains a non-initial hexadecimal zero character, the characters before the zero character are assigned to the environment variable and all subsequent characters are ignored.</para>
+          <para>If <paramref name="value" /> is empty and the environment variable named by <paramref name="variable" /> exists, the environment variable is deleted. If <paramref name="variable" /> does not exist, no error occurs even though the operation cannot be performed. Exercise caution when <paramref name="target" /> is <see cref="F:System.EnvironmentVariableTarget.Machine" /> because you can delete an environment variable that affects your entire local machine, not just the current process or user.</para>
+          <para>If <paramref name="target" /> is <see cref="F:System.EnvironmentVariableTarget.User" />, the environment variable is stored in the Windows registry key reserved for the current user. It is also copied to instances of File Explorer that are running as the current user. The environment variable is then inherited by any new processes that the user launches from File Explorer. </para>
+          <para>Similarly, if <paramref name="target" /> is <see cref="F:System.EnvironmentVariableTarget.Machine" />, the environment variable is stored in the Windows registry key reserved for the local computer. It is also copied to all instances of File Explorer. The environment variable is then inherited by any new processes that are launched from File Explorer.</para>
+          <para>If <paramref name="target" /> is <see cref="F:System.EnvironmentVariableTarget.User" /> or <see cref="F:System.EnvironmentVariableTarget.Machine" />, other applications are notified of the set operation by a Windows WM_SETTINGCHANGE message.</para>
+          <para>If <paramref name="target" /> is <see cref="F:System.EnvironmentVariableTarget.User" /> or <see cref="F:System.EnvironmentVariableTarget.Machine" />, it is recommended that the length of <paramref name="value" /> be less than 2048 characters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates, modifies, or deletes an environment variable stored in the current process or in the Windows operating system registry key reserved for the current user or local machine.</para>
+        </summary>
+        <param name="variable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an environment variable.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value to assign to <paramref name="variable" />.</param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.EnvironmentVariableTarget" /> values.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StackTrace">
       <MemberSignature Language="ILASM" Value=".property string StackTrace { public hidebysig static specialname string get_StackTrace() }" />
       <MemberSignature Language="C#" Value="public static string StackTrace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string StackTrace" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Returns a string representation of the state of the call stack.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing a description of the methods currently in the
    call stack. This value can be <see cref="F:System.String.Empty" /> .</para>
         </value>
-        <remarks>
-          <para>This property is read-only.</para>
-          <block subset="none" type="note">
-            <para>An example of how the <see cref="T:System.String" /> returned by this property might be
-      formatted follows, where one line of information is provided for each method on
-      the call stack:</para>
-            <para>
-              <c>at
-   <paramref name="FullClassName" />.<paramref name="MethodName" />(<paramref name="MethodParms" />) in
-   <paramref name="FileName" />:line <paramref name="LineNumber" /></c>
-            </para>
-            <para>
-              <paramref name="FullClassName" />, <paramref name="MethodName" />,
-<paramref name="MethodParms" />, <paramref name="FileName" />, and <paramref name="LineNumber" /> are defined as 
-follows:</para>
-            <list type="table">
-              <listheader>
-                <term>Item</term>
-                <description>Description</description>
-              </listheader>
-              <item>
-                <term>
-                  <paramref name="FullClassName" />
-                </term>
-                <description> The fully qualified name of the
-      class. </description>
-              </item>
-              <item>
-                <term>
-                  <paramref name="MethodName" />
-                </term>
-                <description>The name of the method. </description>
-              </item>
-              <item>
-                <term>
-                  <paramref name="MethodParms" />
-                </term>
-                <description>The list of parameter type/name pairs. Each pair is
-   separated by a comma (,). This information is omitted if
-<paramref name="MethodName" /> 
-takes zero
-parameters.</description>
-              </item>
-              <item>
-                <term>
-                  <paramref name="FileName" />
-                </term>
-                <description>The name of the source file where the
-<paramref name="MethodName" /> method is declared. 
-   This information is omitted if debug symbols are not available.</description>
-              </item>
-              <item>
-                <term>
-                  <paramref name="LineNumber" />
-                </term>
-                <description>The number of the line in <paramref name="FileName" /> that
-contains the source code from <paramref name="MethodName" />
-for the instruction that is on the call stack. This information
-is omitted if debug symbols are not available.</description>
-              </item>
-            </list>
-            <para>The literal "at" is preceded by a single space.</para>
-            <para>The literals "in" and ":line" are omitted if debug
-   symbols are not available.</para>
-            <para>The method calls are described in reverse chronological
-   order (the most recent method call is described first).</para>
-            <para>
-              <see cref="P:System.Environment.StackTrace" /> might not report as many method
-calls as expected, due to code transformations that occur during
-optimization.</para>
-          </block>
-        </remarks>
         <example>
           <para>The following example gets the <see cref="P:System.Environment.StackTrace" />
 property from within a series of nested calls.</para>
@@ -879,35 +945,91 @@ public class TestCallStack {
             <para>at TestCallStack.Main() in c:\ECMAExamples\envstack.cs:line 15</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Environment.StackTrace" /> property lists method calls in reverse chronological order, that is, the most recent method call is described first, and one line of stack trace information is listed for each method call on the stack. However, the <see cref="P:System.Environment.StackTrace" /> property might not report as many method calls as expected due to code transformations that occur during optimization.</para>
+          <block subset="none" type="note">
+            <para>For a hierarchical view of the stack trace information by class, use the <see cref="T:System.Diagnostics.StackTrace" /> class.</para>
+          </block>
+          <para>The <see cref="P:System.Environment.StackTrace" /> property formats the stack trace information for each method call as follows: </para>
+          <para>"at <paramref name="FullClassName" />.<paramref name="MethodName" />(<paramref name="MethodParams" />) in <paramref name="FileName" /> :line <paramref name="LineNumber" /> " </para>
+          <para>The literal "at" is preceded by three spaces, and the entire substring starting with "in" is omitted if debug symbols are not available. The placeholders, <paramref name="FullClassName" />, <paramref name="MethodName" />, <paramref name="MethodParams" />, <paramref name="FileName" />, and <paramref name="LineNumber" />, are replaced by actual values, and are defined as follows: </para>
+          <list type="table">
+            <item>
+              <term>FullClassName</term>
+              <description>
+                <para>The full name of the class, including the namespace. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="MethodName" />
+              </term>
+              <description>
+                <para>The name of the method. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="MethodParams" />
+              </term>
+              <description>
+                <para>The list of parameter type/name pairs. Each pair is separated by a comma (","). This information is omitted if <paramref name="MethodName" /> takes no parameters. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="FileName" />
+              </term>
+              <description>
+                <para>The name of the source file where the <paramref name="MethodName" /> method is declared. This information is omitted if debug symbols are not available. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <paramref name="LineNumber" />
+              </term>
+              <description>
+                <para>The number of the line in <paramref name="FileName" /> that contains the source code from <paramref name="MethodName" /> for the instruction that is on the call stack. This information is omitted if debug symbols are not available. </para>
+              </description>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Environment.NewLine" /> string terminates each line of the stack trace. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets current stack trace information.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SystemDirectory">
+      <MemberSignature Language="C#" Value="public static string SystemDirectory { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string SystemDirectory" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SystemDirectory">
-      <MemberSignature Language="C#" Value="public static string SystemDirectory { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns the 'System' directory for the Operating System.</summary>
         <value>The full path to the 'System' directory.</value>
-        <remarks>This returns the System Folder for the Operating System. This is dependent on the Operating System.
-
-<list type="bullet"><item><term>On Windows: it returns the Windows System folder (e.g. C:\WinNT\System32).</term></item><item><term>On Non-Windows systems: It returns a blank string ("").</term></item></list></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of the value returned is the string "C:\WinNT\System32".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified path of the system directory.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SystemPageSize">
       <MemberSignature Language="C#" Value="public static int SystemPageSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 SystemPageSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -916,164 +1038,177 @@ public class TestCallStack {
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This information can be useful when determining whether to use the <see cref="F:System.IO.MemoryMappedFiles.MemoryMappedFileOptions.DelayAllocatePages" /> option when you work with memory-mapped files.</para>
+          <para>In Windows, this value is the dwPageSize member in the SYSTEM_INFO structure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of bytes in the operating system's memory page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TickCount">
       <MemberSignature Language="ILASM" Value=".property int32 TickCount { public hidebysig static specialname int32 get_TickCount() }" />
       <MemberSignature Language="C#" Value="public static int TickCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 TickCount" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <MemberValue>496190500</MemberValue>
       <Docs>
-        <summary>
-          <para> Gets the number of milliseconds elapsed since the system was
-      started.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int32" /> value containing the amount of time in milliseconds that
    has passed since the last time the computer was started.</para>
         </value>
         <remarks>
-          <para> This property is
-      read-only.</para>
-          <para> The resolution of the <see cref="P:System.Environment.TickCount" />
-property cannot be less than 500
-milliseconds.</para>
-          <para> The value of this property is derived from the system
-   timer.</para>
-          <para> The <see cref="P:System.Environment.TickCount" /> property handles an overflow condition by
-resetting its value to zero. The minimum value returned by <see cref="P:System.Environment.TickCount" />
-is
-0.</para>
-          <block subset="none" type="note">
-            <para>
-              <see cref="P:System.Environment.TickCount" />
-is measured in milliseconds, not in
-"ticks".</para>
-            <para> The <see cref="P:System.Environment.TickCount" />
-reaches its maximum value after approximately 24.8 days of continuous up
-time.</para>
-            <para> For applications that require a finer granularity or a 
-   larger maximum time than <see cref="P:System.Environment.TickCount" /> supports, see <see cref="P:System.DateTime.Now" />
-   
-   .</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is derived from the system timer and is stored as a 32-bit signed integer. Consequently, if the system runs continuously, <see cref="P:System.Environment.TickCount" /> will increment from zero to <see cref="F:System.Int32.MaxValue" /> for approximately 24.9 days, then jump to <see cref="F:System.Int32.MinValue" />, which is a negative number, then increment back to zero during the next 24.9 days.</para>
+          <para>
+            <see cref="P:System.Environment.TickCount" /> is different from the <see cref="P:System.DateTime.Ticks" /> property, which is the number of 100-nanosecond intervals that have elapsed since 1/1/0001, 12:00am.</para>
+          <para>Use the <see cref="P:System.DateTime.Now" /> property to obtain the current local date and time on this computer.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of milliseconds elapsed since the system started.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="UserDomainName">
+      <MemberSignature Language="C#" Value="public static string UserDomainName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string UserDomainName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserDomainName">
-      <MemberSignature Language="C#" Value="public static string UserDomainName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns the domain name of the currently user.</summary>
         <value>Domain name of the current user.</value>
-        <remarks>This returns the same value as <see cref="P:System.Environment.MachineName" /> on mono.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The domain account credentials for a user are formatted as the user's domain name, the '\' character, and user name. Use the <see cref="P:System.Environment.UserDomainName" /> property to obtain the user's domain name without the user name, and the <see cref="P:System.Environment.UserName" /> property to obtain the user name without the domain name.  For example, if a user's domain name and user name are CORPORATENETWORK\john, the <see cref="P:System.Environment.UserDomainName" /> property returns "CORPORATENETWORK". </para>
+          <para>The <see cref="P:System.Environment.UserDomainName" /> property first attempts to get the domain name component of the Windows account name for the current user. If that attempt fails, this property attempts to get the domain name associated with the user name provided by the <see cref="P:System.Environment.UserName" /> property. If that attempt fails because the host computer is not joined to a domain, then the host computer name is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the network domain name associated with the current user.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="UserInteractive">
+      <MemberSignature Language="C#" Value="public static bool UserInteractive { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool UserInteractive" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserInteractive">
-      <MemberSignature Language="C#" Value="public static bool UserInteractive { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Environment.UserInteractive" /> property reports false for a Windows process or a service like IIS that runs without a user interface. If this property is false, do not display modal dialogs or message boxes because there is no graphical user interface for the user to interact with.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current process is running in user interactive mode.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="UserName">
+      <MemberSignature Language="C#" Value="public static string UserName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string UserName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserName">
-      <MemberSignature Language="C#" Value="public static string UserName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns the user name the current process is running under.</summary>
         <value>The username of the account the current process is running under.</value>
-        <remarks>This property identifies the username under which the current process is executing.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Environment.UserName" /> property to identify the user on the current thread, to the system and application for security or access purposes. It can also be used to customize a particular application for each user.</para>
+          <para>The domain account credentials for a user are formatted as the user's domain name, the '\' character, and user name. Use the <see cref="P:System.Environment.UserDomainName" /> property to obtain the user's domain name and the <see cref="P:System.Environment.UserName" /> property to obtain the user name. A user name is typically an abbreviated combination of the user's first and last names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user name of the person who is currently logged on to the Windows operating system.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Version">
+      <MemberSignature Language="ILASM" Value=".property class System.Version Version { public hidebysig static specialname class System.Version get_Version() }" />
+      <MemberSignature Language="C#" Value="public static Version Version { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Version Version" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Version">
-      <MemberSignature Language="ILASM" Value=".property class System.Version Version { public hidebysig static specialname class System.Version get_Version() }" />
-      <MemberSignature Language="C#" Value="public static Version Version { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the current version of
- the execution engine.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Version" /> object that contains the major, minor, build, and 
  revision numbers of the execution engine.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about the version of the common language runtime that is installed with each version of the .NET Framework, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">.NET Framework Versions and Dependencies</a></format>.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Version" /> object that describes the major, minor, build, and revision numbers of the common language runtime.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WorkingSet">
+      <MemberSignature Language="C#" Value="public static long WorkingSet { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int64 WorkingSet" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WorkingSet">
-      <MemberSignature Language="C#" Value="public static long WorkingSet { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the amount of physical memory mapped to the process context.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TimeSpanStyles" FullName="System.Globalization.TimeSpanStyles">
   <TypeSignature Language="C#" Value="public enum TimeSpanStyles" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TimeSpanStyles extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -13,12 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the formatting options that customize string parsing for the <see cref="Overload:System.TimeSpan.ParseExact" /> and <see cref="Overload:System.TimeSpan.TryParseExact" /> methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AssumeNegative">
       <MemberSignature Language="C#" Value="AssumeNegative" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.TimeSpanStyles AssumeNegative = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,11 +33,15 @@
         <ReturnType>System.Globalization.TimeSpanStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that input is always interpreted as a negative time interval.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.TimeSpanStyles None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -40,7 +50,10 @@
         <ReturnType>System.Globalization.TimeSpanStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that input is interpreted as a negative time interval only if a negative sign is present.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

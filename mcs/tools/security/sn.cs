@@ -126,7 +126,7 @@ namespace Mono.Tools {
 				return new StrongName (data).RSA;
 			}
 			catch {
-				if (data [0] != 0x30)
+				if (data.Length == 0 || data [0] != 0x30)
 					throw;
 				// this could be a PFX file
 				Console.Write ("Enter password for private key (will be visible when typed): ");

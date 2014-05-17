@@ -114,32 +114,22 @@ namespace Mono.CSharp {
 			var sn = expr as SimpleName;
 			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
 
-			//
-			// Resolve the expression with flow analysis turned off, we'll do the definite
-			// assignment checks later.  This is because we don't know yet what the expression
-			// will resolve to - it may resolve to a FieldExpr and in this case we must do the
-			// definite assignment check on the actual field and not on the whole struct.
-			//
-			using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
-				if (sn != null) {
-					expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
+			if (sn != null) {
+				expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
 
-					//
-					// Resolve expression which does have type set as we need expression type
-					// with disable flow analysis as we don't know whether left side expression
-					// is used as variable or type
-					//
-					if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
-						using (rc.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-							expr = expr.Resolve (rc);
-						}
-					} else if (expr is TypeParameterExpr) {
-						expr.Error_UnexpectedKind (rc, flags, sn.Location);
-						expr = null;
-					}
-				} else {
-					expr = expr.Resolve (rc, flags);
+				//
+				// Resolve expression which does have type set as we need expression type
+				// with disable flow analysis as we don't know whether left side expression
+				// is used as variable or type
+				//
+				if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+					expr = expr.Resolve (rc);
+				} else if (expr is TypeParameterExpr) {
+					expr.Error_UnexpectedKind (rc, flags, sn.Location);
+					expr = null;
 				}
+			} else {
+				expr = expr.Resolve (rc, flags);
 			}
 
 			if (expr == null)
@@ -157,14 +147,14 @@ namespace Mono.CSharp {
 			}
 
 			var results = new List<string> ();
-			if (expr is Namespace) {
-				Namespace nexpr = expr as Namespace;
+			var nexpr = expr as NamespaceExpression;
+			if (nexpr != null) {
 				string namespaced_partial;
 
 				if (partial_name == null)
-					namespaced_partial = nexpr.Name;
+					namespaced_partial = nexpr.Namespace.Name;
 				else
-					namespaced_partial = nexpr.Name + "." + partial_name;
+					namespaced_partial = nexpr.Namespace.Name + "." + partial_name;
 
 				rc.CurrentMemberDefinition.GetCompletionStartingWith (namespaced_partial, results);
 				if (partial_name != null)
@@ -218,6 +208,18 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			// Nothing
+		}
+	}
+
+	public class EmptyCompletion : CompletingExpression
+	{
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new CompletionResult ("", new string [0]);
 		}
 	}
 	

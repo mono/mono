@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeNode" FullName="System.Windows.Forms.TreeNode">
   <TypeSignature Language="C#" Value="public class TreeNode : MarshalByRefObject, ICloneable, System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -25,8 +26,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> collection holds all the child <see cref="T:System.Windows.Forms.TreeNode" /> objects assigned to the current <see cref="T:System.Windows.Forms.TreeNode" />. You can add, remove, or clone a <see cref="T:System.Windows.Forms.TreeNode" />; when you do this, all child tree nodes are added, removed, or cloned. Each <see cref="T:System.Windows.Forms.TreeNode" /> can contain a collection of other <see cref="T:System.Windows.Forms.TreeNode" /> objects. This can make it difficult to determine where you are in the <see cref="T:System.Windows.Forms.TreeView" /> when iterating through the collection. To determine your location in a tree structure, use the <see cref="P:System.Windows.Forms.TreeNode.FullPath" /> property. The <see cref="P:System.Windows.Forms.TreeNode.FullPath" /> string can be parsed using the <see cref="P:System.Windows.Forms.TreeView.PathSeparator" /> string value to determine where a <see cref="T:System.Windows.Forms.TreeNode" /> label begins and ends.</para>
+      <para>The <see cref="T:System.Windows.Forms.TreeNode" /> label is set by setting the <see cref="P:System.Windows.Forms.TreeNode.Text" /> property explicitly. The alternative is to create the tree node using one of the <see cref="M:System.Windows.Forms.TreeNode.#ctor" /> constructors that has a string parameter that represents the <see cref="P:System.Windows.Forms.TreeNode.Text" /> property. The label is displayed next to the <see cref="T:System.Windows.Forms.TreeNode" /> image, if one is displayed.</para>
+      <para>To display images next to the tree nodes, assign an <see cref="T:System.Windows.Forms.ImageList" /> to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> control and assign an <see cref="T:System.Drawing.Image" /> by referencing its index value in the <see cref="T:System.Windows.Forms.ImageList" /> property. Set the <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> property to the index value of the <see cref="T:System.Drawing.Image" /> you want to display when the <see cref="T:System.Windows.Forms.TreeNode" /> is in an unselected state. Likewise, set the <see cref="P:System.Windows.Forms.TreeNode.SelectedImageIndex" /> property to the index value of the <see cref="T:System.Drawing.Image" /> you want to display when the <see cref="T:System.Windows.Forms.TreeNode" /> is selected.</para>
+      <para>Selecting specific tree nodes and iterating through the <see cref="P:System.Windows.Forms.TreeView.Nodes" /> collection can be achieved by using the following property values: <see cref="P:System.Windows.Forms.TreeNode.FirstNode" />, <see cref="P:System.Windows.Forms.TreeNode.LastNode" />, <see cref="P:System.Windows.Forms.TreeNode.NextNode" />, <see cref="P:System.Windows.Forms.TreeNode.PrevNode" />, <see cref="P:System.Windows.Forms.TreeNode.NextVisibleNode" />, <see cref="P:System.Windows.Forms.TreeNode.PrevVisibleNode" />. Assign the <see cref="T:System.Windows.Forms.TreeNode" /> returned by one of aforementioned properties to the <see cref="P:System.Windows.Forms.TreeView.SelectedNode" /> property to select that tree node in the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+      <para>Tree nodes can be expanded to display the next level of child tree nodes. The user can expand the <see cref="T:System.Windows.Forms.TreeNode" /> by pressing the plus (+) button next to the <see cref="T:System.Windows.Forms.TreeNode" />, if one is displayed, or you can expand the <see cref="T:System.Windows.Forms.TreeNode" /> by calling the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method. To expand all child tree node levels in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> collection, call the <see cref="M:System.Windows.Forms.TreeNode.ExpandAll" /> method. You can collapse the child <see cref="T:System.Windows.Forms.TreeNode" /> level by calling the <see cref="M:System.Windows.Forms.TreeNode.Collapse" /> method, or the user can press the minus (-) button next to the <see cref="T:System.Windows.Forms.TreeNode" />, if one is displayed. You can also call the <see cref="M:System.Windows.Forms.TreeNode.Toggle" /> method to alternate the <see cref="T:System.Windows.Forms.TreeNode" /> between the expanded and collapsed states.</para>
+      <para>Tree nodes can optionally display a check box. To display the check boxes, set the <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property of the <see cref="T:System.Windows.Forms.TreeView" /> to true. The <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property is set to true for tree nodes that are in a checked state.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a node of a <see cref="T:System.Windows.Forms.TreeView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,8 +46,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNode" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,9 +64,16 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="text" /> parameter value is assigned to the node's <see cref="P:System.Windows.Forms.TreeNode.Text" /> property and becomes the tree node label.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNode" /> class with the specified label text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The label <see cref="P:System.Windows.Forms.TreeNode.Text" /> of the new tree node. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +91,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNode" /> class using the specified serialization information and context.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that contains the data to deserialize the class.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the source and destination of the serialized stream.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -83,10 +110,18 @@
         <Parameter Name="children" Type="System.Windows.Forms.TreeNode[]" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="children">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="text" /> parameter value is assigned to the node's <see cref="P:System.Windows.Forms.TreeNode.Text" /> property and becomes the tree node label. The tree nodes that are contained in the <paramref name="children" /> array are added to the <see cref="T:System.Windows.Forms.TreeNodeCollection" /> that is stored in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNode" /> class with the specified label text and child tree nodes.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The label <see cref="P:System.Windows.Forms.TreeNode.Text" /> of the new tree node. </param>
+        <param name="children">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of child <see cref="T:System.Windows.Forms.TreeNode" /> objects. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,11 +137,20 @@
         <Parameter Name="selectedImageIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="imageIndex">To be added.</param>
-        <param name="selectedImageIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="text" /> parameter value is assigned to the node's <see cref="P:System.Windows.Forms.TreeNode.Text" /> property and becomes the tree node label. The <paramref name="imageIndex" /> and <paramref name="selectedImageIndex" /> values are the index values of an <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property. The image referenced in the <paramref name="imageIndex" /> property is displayed when the tree node is not selected. Likewise, the image referenced in the <paramref name="selectedImageIndex" /> property is displayed when the tree node is in a selected state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNode" /> class with the specified label text and images to display when the tree node is in a selected and unselected state.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The label <see cref="P:System.Windows.Forms.TreeNode.Text" /> of the new tree node. </param>
+        <param name="imageIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index value of <see cref="T:System.Drawing.Image" /> to display when the tree node is unselected. </param>
+        <param name="selectedImageIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index value of <see cref="T:System.Drawing.Image" /> to display when the tree node is selected. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,12 +167,22 @@
         <Parameter Name="children" Type="System.Windows.Forms.TreeNode[]" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="imageIndex">To be added.</param>
-        <param name="selectedImageIndex">To be added.</param>
-        <param name="children">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="text" /> parameter value is assigned to the node's <see cref="P:System.Windows.Forms.TreeNode.Text" /> property and becomes the tree node label. The <paramref name="imageIndex" /> and <paramref name="selectedImageIndex" /> values are the index values of an <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property. The image referenced in the <paramref name="imageIndex" /> parameter is displayed when the tree node is not selected. Likewise, the image referenced in the <paramref name="selectedImageIndex" /> parameter is displayed when the tree node is in a selected state. The tree nodes that are contained in the <paramref name="children" /> array are added to the <see cref="T:System.Windows.Forms.TreeNodeCollection" /> that is stored in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNode" /> class with the specified label text, child tree nodes, and images to display when the tree node is in a selected and unselected state.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The label <see cref="P:System.Windows.Forms.TreeNode.Text" /> of the new tree node. </param>
+        <param name="imageIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index value of <see cref="T:System.Drawing.Image" /> to display when the tree node is unselected. </param>
+        <param name="selectedImageIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index value of <see cref="T:System.Drawing.Image" /> to display when the tree node is selected. </param>
+        <param name="children">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of child <see cref="T:System.Windows.Forms.TreeNode" /> objects. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,9 +196,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.TreeNode.BackColor" /> property is set to <see cref="F:System.Drawing.Color.Empty" />, the <see cref="T:System.Drawing.Color" /> used is the <see cref="P:System.Windows.Forms.Control.BackColor" /> property value of the <see cref="T:System.Windows.Forms.TreeView" /> control that the tree node is assigned to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,8 +219,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A typical scenario to use this method is to call it on the <see cref="E:System.Windows.Forms.MenuItem.Click" /> event of a <see cref="T:System.Windows.Forms.MenuItem" /> or <see cref="T:System.Windows.Forms.ContextMenu" />.</para>
+          <block subset="none" type="note">
+            <para>This method only works if the <see cref="P:System.Windows.Forms.TreeView.LabelEdit" /> property of the <see cref="T:System.Windows.Forms.TreeView" /> is set to true. If <see cref="P:System.Windows.Forms.TreeView.LabelEdit" /> is set to false, an exception is thrown and the tree node will not be put into an editable state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates the editing of the tree node label.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -174,9 +243,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The coordinates are relative to the upper-left corner of the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounds of the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,9 +270,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the tree node is in a checked state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,9 +295,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tree structure from the tree node being cloned and below is copied. Any child tree nodes assigned to the <see cref="T:System.Windows.Forms.TreeNode" /> being cloned are included in the new tree node and subtree.</para>
+          <para>The <see cref="M:System.Windows.Forms.TreeNode.Clone" /> method performs a shallow copy of the node. If the value of the <see cref="P:System.Windows.Forms.TreeNode.Tag" /> property is a reference type, both the original and cloned copy will point to the same single instance of the <see cref="P:System.Windows.Forms.TreeNode.Tag" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the tree node and the entire subtree rooted at this tree node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -234,8 +322,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeNode.Collapse" /> method collapses the current <see cref="T:System.Windows.Forms.TreeNode" /> and its child nodes. If you want to collapse only the current <see cref="T:System.Windows.Forms.TreeNode" />, use the <see cref="M:System.Windows.Forms.TreeNode.Collapse(System.Boolean)" /> overload, passing true to ignore its child nodes.</para>
+          <block subset="none" type="note">
+            <para>The state of a <see cref="T:System.Windows.Forms.TreeNode" /> is persisted. For example, if the next level of child nodes was not collapsed previously, when the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method is called, the child nodes appear in their previously expanded state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collapses the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -255,9 +352,16 @@
         <Parameter Name="ignoreChildren" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="ignoreChildren">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.TreeNode.Collapse(System.Boolean)" /> method, passing true, when you want to collapse a node but leave its child nodes in their expanded state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Collapses the <see cref="T:System.Windows.Forms.TreeNode" /> and optionally collapses its children.</para>
+        </summary>
+        <param name="ignoreChildren">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to leave the child nodes in their current state; false to collapse the child nodes.</param>
       </Docs>
     </Member>
     <Member MemberName="ContextMenu">
@@ -275,9 +379,15 @@
         <ReturnType>System.Windows.Forms.ContextMenu</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The preferred way to associate a shortcut menu with a tree node is with the <see cref="P:System.Windows.Forms.TreeNode.ContextMenuStrip" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the shortcut menu that is associated with this tree node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContextMenuStrip">
@@ -295,9 +405,15 @@
         <ReturnType>System.Windows.Forms.ContextMenuStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The shortcut menu is shown when the user right-clicks the tree node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the shortcut menu associated with this tree node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -314,10 +430,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the state of the <see cref="T:System.Windows.Forms.TreeNode" /> from the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that describes the <see cref="T:System.Windows.Forms.TreeNode" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that indicates the state of the stream during deserialization.</param>
       </Docs>
     </Member>
     <Member MemberName="EndEdit">
@@ -330,9 +451,13 @@
         <Parameter Name="cancel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cancel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the editing of the tree node label.</para>
+        </summary>
+        <param name="cancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the editing of the tree node label text was canceled without being saved; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -347,8 +472,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Windows.Forms.TreeNode.EnsureVisible" /> method is called, the tree is expanded and scrolled to ensure that the current tree node is visible in the <see cref="T:System.Windows.Forms.TreeView" />. This method is useful if you are selecting a tree node in code based on certain criteria. By calling this method after you select the node, the user can see and interact with the selected node.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Windows.Forms.TreeView.ItemHeight" /> property is set to a value that is larger than the height of the tree view control, calling this method has unexpected results.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ensures that the tree node is visible, expanding tree nodes and scrolling the tree view control as necessary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -363,8 +497,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method expands the current <see cref="T:System.Windows.Forms.TreeNode" /> down to the next level of nodes.</para>
+          <block subset="none" type="note">
+            <para>The state of a <see cref="T:System.Windows.Forms.TreeNode" /> is persisted. For example, if the next level of child nodes was not collapsed previously, when the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method is called, the child nodes appear in their previously expanded state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Expands the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -379,8 +522,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TreeNode.ExpandAll" /> method expands all the child tree nodes assigned to the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> collection.</para>
+          <block subset="none" type="note">
+            <para>The state of a <see cref="T:System.Windows.Forms.TreeNode" /> is persisted. For example, if the next level of child nodes was not collapsed previously, when the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method is called, the child nodes appear in their previously expanded state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Expands all the child tree nodes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -394,9 +546,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.FirstNode" /> is the first child <see cref="T:System.Windows.Forms.TreeNode" /> in the <see cref="T:System.Windows.Forms.TreeNodeCollection" /> stored in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property of the current tree node. If the <see cref="T:System.Windows.Forms.TreeNode" /> has no child tree node, the <see cref="P:System.Windows.Forms.TreeNode.FirstNode" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first child tree node in the tree node collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -415,9 +573,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If null, the <see cref="T:System.Drawing.Color" /> used is the <see cref="P:System.Windows.Forms.Control.ForeColor" /> property value of the <see cref="T:System.Windows.Forms.TreeView" /> control that the tree node is assigned to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -435,11 +599,22 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="tree">To be added.</param>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a node is added to the <see cref="P:System.Windows.Forms.TreeView.Nodes" /> collection, the <see cref="T:System.Windows.Forms.TreeView" /> control sends an NM_CUSTOMDRAW notification before the node handle is available. If you override the <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)" /> method of the <see cref="T:System.Windows.Forms.TreeView" /> to provide custom drawing in response to this notification, you should always check the return value of this method for null before you attempt to access the node. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the tree node with the specified handle and assigned to the specified tree view control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.TreeNode" /> that represents the tree node assigned to the specified <see cref="T:System.Windows.Forms.TreeView" /> control with the specified handle.</para>
+        </returns>
+        <param name="tree">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeView" /> that contains the tree node. </param>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle of the tree node. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -453,9 +628,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path consists of the labels of all the tree nodes that must be navigated to reach this tree node, starting at the root tree node. The node labels are separated by the delimiter character specified in the <see cref="P:System.Windows.Forms.TreeView.PathSeparator" /> property of the <see cref="T:System.Windows.Forms.TreeView" /> control that contains this node. For example, if the delimiter character of the tree view control named "Location" is set to the backslash character, (\), the <see cref="P:System.Windows.Forms.TreeNode.FullPath" /> property value is "Country\Region\State".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path from the root tree node to the current tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -477,10 +658,17 @@
         <Parameter Name="includeSubTrees" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="includeSubTrees">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of child tree nodes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of child tree nodes assigned to the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> collection.</para>
+        </returns>
+        <param name="includeSubTrees">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the resulting count includes all tree nodes indirectly rooted at this tree node; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -494,9 +682,15 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a handle is not already created when the <see cref="P:System.Windows.Forms.TreeNode.Handle" /> property is referenced, it is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the handle of the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -535,9 +729,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> value is the index value of an <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property.</para>
+          <block subset="none" type="note">
+            <para>The default value of the <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> property is the same as the <see cref="P:System.Windows.Forms.TreeView.ImageIndex" /> property of the <see cref="T:System.Windows.Forms.TreeView" /> control that the <see cref="T:System.Windows.Forms.TreeNode" /> is assigned to.</para>
+          </block>
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> and <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> properties are mutually exclusive; therefore, if one property is set, the other is ignored. If you set the <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> property, the <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> property is automatically set to -1. Alternatively, if you set <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" />, <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> is automatically set to an empty string (""). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the image list index value of the image displayed when the tree node is in the unselected state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -574,9 +778,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The image key returned by this property is contained in the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property of the containing <see cref="T:System.Windows.Forms.TreeView" /> control. </para>
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> is case-insensitive.</para>
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> and <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> properties are mutually exclusive; if one property is set, the other is ignored. If you set the <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> property, the <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" /> property is automatically set to -1. Alternatively, if you set <see cref="P:System.Windows.Forms.TreeNode.ImageIndex" />, <see cref="P:System.Windows.Forms.TreeNode.ImageKey" /> is automatically set to an empty string (""). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key for the image associated with this tree node when the node is in an unselected state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Index">
@@ -586,9 +798,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the position of the tree node in the tree node collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -602,9 +817,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the tree node is in an editable state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -623,9 +841,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the tree node is in the expanded state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -644,9 +865,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the tree node is in the selected state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -665,9 +889,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the tree node is visible or partially visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -686,9 +913,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.LastNode" /> is the last child <see cref="T:System.Windows.Forms.TreeNode" /> in the <see cref="T:System.Windows.Forms.TreeNodeCollection" /> stored in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property of the current tree node. If the <see cref="T:System.Windows.Forms.TreeNode" /> has no child tree node, the <see cref="P:System.Windows.Forms.TreeNode.LastNode" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last child tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -715,9 +948,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="P:System.Windows.Forms.TreeNode.Level" /> property, the root node is considered the first level of nesting and returns 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the zero-based depth of the tree node in the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -730,9 +969,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.Name" /> of a <see cref="T:System.Windows.Forms.TreeNode" /> is also the node's key, when the node is part of a <see cref="T:System.Windows.Forms.TreeNodeCollection" />. If the node does not have a name, <see cref="P:System.Windows.Forms.TreeNode.Name" /> returns an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the tree node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NextNode">
@@ -742,9 +987,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.NextNode" /> is the next sibling <see cref="T:System.Windows.Forms.TreeNode" /> in the <see cref="T:System.Windows.Forms.TreeNodeCollection" /> stored in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property of the tree node's parent <see cref="T:System.Windows.Forms.TreeNode" />. If there is no next tree node, the <see cref="P:System.Windows.Forms.TreeNode.NextNode" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next sibling tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -763,9 +1014,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.NextVisibleNode" /> can be a child, sibling, or a tree node from another branch. If there is no next tree node, the <see cref="P:System.Windows.Forms.TreeNode.NextVisibleNode" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next visible tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -792,9 +1049,18 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If null, the <see cref="T:System.Drawing.Font" /> used is the <see cref="P:System.Windows.Forms.Control.Font" /> property value of the <see cref="T:System.Windows.Forms.TreeView" /> control that this node is attached to.</para>
+          <block subset="none" type="note">
+            <para>If the node font is larger than the <see cref="P:System.Windows.Forms.Control.Font" /> property value that is set in the <see cref="T:System.Windows.Forms.TreeView" /> control, the tree node label text is clipped.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font that is used to display the text on the tree node label.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -816,9 +1082,15 @@
         <ReturnType>System.Windows.Forms.TreeNodeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property can hold a collection of other <see cref="T:System.Windows.Forms.TreeNode" /> objects. Each of the tree node in the collection has a <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property that can contain its own <see cref="T:System.Windows.Forms.TreeNodeCollection" />. This nesting of tree nodes can make it difficult to navigate a tree structure. The <see cref="P:System.Windows.Forms.TreeNode.FullPath" /> property makes it easier to determine your location in a tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Windows.Forms.TreeNode" /> objects assigned to the current tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -832,9 +1104,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the tree node is at the root level, the <see cref="P:System.Windows.Forms.TreeNode.Parent" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent tree node of the current tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -853,9 +1131,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.PrevNode" /> is the previous sibling <see cref="T:System.Windows.Forms.TreeNode" /> in the <see cref="T:System.Windows.Forms.TreeNodeCollection" /> stored in the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> property of the tree node's parent <see cref="T:System.Windows.Forms.TreeNode" />. If there is no previous tree node, the <see cref="P:System.Windows.Forms.TreeNode.PrevNode" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous sibling tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -874,9 +1158,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.PrevVisibleNode" /> can be a child, sibling, or a tree node from another branch. If there is no previous tree node, the <see cref="P:System.Windows.Forms.TreeNode.PrevVisibleNode" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous visible tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -896,8 +1186,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Windows.Forms.TreeNode.Remove" /> method is called, the tree node, and any child tree nodes that are assigned to the <see cref="T:System.Windows.Forms.TreeNode" />, are removed from the <see cref="T:System.Windows.Forms.TreeView" />. The removed child nodes are removed from the <see cref="T:System.Windows.Forms.TreeView" /> but are still attached to this tree node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the current tree node from the tree view control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -931,9 +1227,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.SelectedImageIndex" /> value is the index value of an <see cref="T:System.Drawing.Image" /> stored in the <see cref="T:System.Windows.Forms.ImageList" /> assigned to the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property.</para>
+          <block subset="none" type="note">
+            <para>The default value of the <see cref="P:System.Windows.Forms.TreeNode.SelectedImageIndex" /> property is the same as the <see cref="P:System.Windows.Forms.TreeView.SelectedImageIndex" /> property of the <see cref="T:System.Windows.Forms.TreeView" /> control that the <see cref="T:System.Windows.Forms.TreeNode" /> is assigned to.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the image list index value of the image that is displayed when the tree node is in the selected state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -970,9 +1275,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The image key returned by this property is contained in the <see cref="P:System.Windows.Forms.TreeView.ImageList" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key of the image displayed in the tree node when it is in a selected state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -989,10 +1300,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the state of the <see cref="T:System.Windows.Forms.TreeNode" /> to the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" />. </para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that describes the <see cref="T:System.Windows.Forms.TreeNode" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that indicates the state of the stream during serialization</param>
       </Docs>
     </Member>
     <Member MemberName="StateImageIndex">
@@ -1025,9 +1341,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The image index that is returned by this property is contained in the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+          <para>If the parent <see cref="T:System.Windows.Forms.TreeView" /> has check boxes enabled, the <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> is ignored and the node will display the first or second image in the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> set on the parent <see cref="T:System.Windows.Forms.TreeView" /> to indicate an unchecked or checked state, respectively. Toggling the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property does not affect the value of the <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" />.</para>
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> returns -1 when not set. The <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> and <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> properties are mutually exclusive, meaning if one is set, the other is ignored. If you set the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> property, the <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> property is automatically set to -1. Alternatively, if you set <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" />, <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> is automatically set to an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the image that is used to indicate the state of the <see cref="T:System.Windows.Forms.TreeNode" /> when the parent <see cref="T:System.Windows.Forms.TreeView" /> has its <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property set to false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StateImageKey">
@@ -1060,9 +1384,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The image key that is returned by this property is contained in the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+          <para>If the parent <see cref="T:System.Windows.Forms.TreeView" /> has check boxes enabled, the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> is ignored and the node will display the first or second image in the <see cref="P:System.Windows.Forms.TreeView.StateImageList" /> set on the parent <see cref="T:System.Windows.Forms.TreeView" /> to indicate an unchecked or checked state, respectively. Toggling the <see cref="P:System.Windows.Forms.TreeNode.Checked" /> property does not affect the value of the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" />.</para>
+          <para>The <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> and <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> properties are mutually exclusive, meaning if one is set, the other is ignored. If you set the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> property, the <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" /> property is automatically set to -1. Alternatively, if you set <see cref="P:System.Windows.Forms.TreeNode.StateImageIndex" />, <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> is automatically set to an empty string (""). You should set the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> to an image with a corresponding index between 0 and 14. You can set the <see cref="P:System.Windows.Forms.TreeNode.StateImageKey" /> to an image with an index value greater than 14 (an exception will not be thrown), but the image may not be displayed</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key of the image that is used to indicate the state of the <see cref="T:System.Windows.Forms.TreeNode" /> when the parent <see cref="T:System.Windows.Forms.TreeView" /> has its <see cref="P:System.Windows.Forms.TreeView.CheckBoxes" /> property set to false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
@@ -1080,10 +1412,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a serialization information object with the data needed to serialize the <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that contains the data to serialize the <see cref="T:System.Windows.Forms.TreeNode" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the destination information for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="Tag">
@@ -1107,9 +1444,18 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any <see cref="T:System.Object" /> derived type can be assigned to this property. If this property is being set through the Windows Forms designer, only text can be assigned.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.TreeNode.Clone" /> method performs a shallow copy of the node. If the value of the <see cref="P:System.Windows.Forms.TreeNode.Tag" /> property is a reference type, both the original and cloned copy will point to the same single instance of the <see cref="P:System.Windows.Forms.TreeNode.Tag" /> value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that contains data about the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1128,9 +1474,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of characters that a <see cref="T:System.Windows.Forms.TreeNode" /> can display is 259. If a <see cref="T:System.String" /> that has more than 259 characters is assigned to this property, only the first 259 characters are displayed.</para>
+          <para>This property cannot be set by the user if the <see cref="P:System.Windows.Forms.TreeView.LabelEdit" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> is set to false. The alternative to explicitly setting this property is to create the tree node by using one of the <see cref="M:System.Windows.Forms.TreeNode.#ctor" /> constructors that has a string parameter that represents the <see cref="P:System.Windows.Forms.TreeNode.Text" /> property. The label is displayed next to the <see cref="T:System.Windows.Forms.TreeNode" /> image, if one is displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed in the label of the tree node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1145,8 +1498,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tree node is toggled to the state opposite its current state, either expanded or collapsed.</para>
+          <block subset="none" type="note">
+            <para>The state of a <see cref="T:System.Windows.Forms.TreeNode" /> is persisted. For example, if the next level of child nodes was not collapsed previously, when the <see cref="M:System.Windows.Forms.TreeNode.Expand" /> method is called, the child nodes appear in their previously expanded state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Toggles the tree node to either the expanded or collapsed state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1171,9 +1533,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set the <see cref="P:System.Windows.Forms.TreeView.ShowNodeToolTips" /> property of the parent <see cref="T:System.Windows.Forms.TreeView" /> to true for the <see cref="P:System.Windows.Forms.TreeNode.ToolTipText" /> to be visible at run time.</para>
+          <para>If the <see cref="T:System.Windows.Forms.TreeView" /> control has a ToolTip and also contains a <see cref="T:System.Windows.Forms.TreeNode" /> that has a <see cref="T:System.Windows.Forms.ToolTip" />, only the <see cref="T:System.Windows.Forms.ToolTip" /> for the node will be shown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text that appears when the mouse pointer hovers over a <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1200,9 +1569,12 @@
         <ReturnType>System.Windows.Forms.TreeView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent tree view that the tree node is assigned to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

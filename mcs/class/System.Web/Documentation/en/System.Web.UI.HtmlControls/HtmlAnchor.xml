@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlAnchor" FullName="System.Web.UI.HtmlControls.HtmlAnchor">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlAnchor : System.Web.UI.HtmlControls.HtmlContainerControl, System.Web.UI.IPostBackEventHandler" />
   <AssemblyInfo>
@@ -25,8 +26,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>There are two ways to use the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> class. The first is for navigation: using the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.HRef" /> property to define the location of the page to link to. The second is for postback events: using the <see cref="E:System.Web.UI.HtmlControls.HtmlAnchor.ServerClick" /> event to programmatically handle the user's clicking a link.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="96D2C59E-693C-4079-9B53-B3FF0D9E9133">Validation Server Controls</a></format>.</para>
+      </block>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlAnchor.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows programmatic access to the HTML &lt;a&gt; element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +46,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>Construct a new control representing the &lt;a ...&gt; element in HTML.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" />  </para>
+              </term>
+              <description>
+                <para>The "a" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +97,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, page validation is performed when an <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked. Page validation determines whether controls that are associated with a validation control on the page all pass the validation rules that are specified by the validation control.</para>
+          <para>You can specify or determine whether validation is performed on both the client and the server when an <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked by using the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.CausesValidation" /> property. To prevent validation from being performed, set the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.CausesValidation" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether validation is performed when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HRef">
@@ -71,9 +117,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the URL to link to when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL target of the link specified in the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,9 +151,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to mark a section on a Web page with a name. This allows you to link to this section from anywhere on the same page. For example, you can provide a table of contents at the top of a page that will link directly to topics on the page.</para>
+          <para>To link to a marked section, use an <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control with the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.HRef" /> property set to the name of the section, preceded by a # symbol (&lt;a HRef= "#Topic1"/&gt;).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the bookmark name defined in the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,9 +185,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event and registers client script for generating a postback.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -145,9 +208,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.HtmlControls.HtmlAnchor.ServerClick" /> event is raised when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked. This server event causes a round trip to occur from the client to the server and back.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlAnchor.OnServerClick(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.HtmlControls.HtmlAnchor.ServerClick" /> event. This allows you to provide a custom handler for the event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +239,17 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlAnchor.RaisePostBackEvent(System.String)" /> method is used by the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control, when it is clicked, to raise a <see cref="E:System.Web.UI.HtmlControls.HtmlAnchor.ServerClick" /> event.</para>
+          <para>This method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control when it posts back to the server. </para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument for the event.</param>
       </Docs>
     </Member>
     <Member MemberName="RenderAttributes">
@@ -182,9 +262,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.HRef" /> property is a malformed URL, the <see cref="M:System.Web.UI.HtmlControls.HtmlAnchor.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method throws an <see cref="T:System.Web.HttpException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control's attributes to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that contains the output stream to render on the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -199,8 +286,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.HtmlControls.HtmlAnchor.ServerClick" /> event is raised when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked. This server event causes a round trip to occur from the client to the server and back.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -221,9 +315,17 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlAnchor.System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" /> method calls the <see cref="M:System.Web.UI.HtmlControls.HtmlAnchor.RaisePostBackEvent(System.String)" /> method.</para>
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.Page.RaisePostBackEvent(System.Web.UI.IPostBackEventHandler,System.String)" />.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event arguments.</param>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -234,9 +336,75 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.Target" /> property to specify the target window or frame that displays the contents of the Web page that is linked to when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.Target" /> property renders as a target attribute. The target attribute on a elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> must be compliant with XHTML 1.1. For more information, see <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, avoid using the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.Target" /> property to target another window. For more information, see <format type="text/html"><a href="9b5f3e05-e88d-4248-a5f4-9e64850fa0ae">ASP.NET Accessibility</a></format>.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.Target" /> value must begin with a letter in the range of A to Z (case-insensitive), except for the following special values, which begin with an underscore.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search </para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine if the _search value is supported.  For example, Microsoft Internet Explorer 5.0 and later support the _search target value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the browser window or frame that displays the contents of the Web page that is linked to when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control is clicked. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -259,9 +427,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to provide a custom ToolTip for the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control. This text is displayed when the mouse pointer rests over the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text displayed when the mouse pointer is placed over the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -294,9 +468,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validation groups allow you to assign validation controls on a page to a specific category. Each validation group can be validated independently of other validation groups on the page. Use the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control causes validation when it posts back to the server. </para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.ValidationGroup" /> property has an effect only when the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.CausesValidation" /> property is set to true. When you specify a value for the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.ValidationGroup" /> property, only the validation controls that are part of the specified group are validated when the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control posts back to the server. If you do not specify a value for this property and the <see cref="P:System.Web.UI.HtmlControls.HtmlAnchor.CausesValidation" /> property is set to true, all validation controls on the page that are not assigned to a validation group are validated when the control posts back to the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group of controls for which the <see cref="T:System.Web.UI.HtmlControls.HtmlAnchor" /> control causes validation when it posts back to the server.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

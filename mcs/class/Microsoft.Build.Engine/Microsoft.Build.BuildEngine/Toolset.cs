@@ -37,7 +37,7 @@ namespace Microsoft.Build.BuildEngine
 			ToolsPath = toolsPath;
 			BuildProperties = buildProperties;
 		}
-		
+
 		public Toolset (string toolsVersion, string toolsPath)
 			: this (toolsVersion, toolsPath, null)
 		{

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListSourceHelper" FullName="System.Web.UI.ListSourceHelper">
   <TypeSignature Language="C#" Value="public static class ListSourceHelper" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.ListSourceHelper" /> class is a utility class provided to simplify implementation of the <see cref="T:System.ComponentModel.IListSource" /> interface by data source controls. Data source controls that implement the <see cref="T:System.Web.UI.IDataSource" /> interface but do not extend the <see cref="T:System.Web.UI.DataSourceControl" /> class can use the static <see cref="T:System.Web.UI.ListSourceHelper" /> methods in their own implementations of the methods defined by the <see cref="T:System.ComponentModel.IListSource" /> interface. Data source controls that extend from the <see cref="T:System.Web.UI.DataSourceControl" /> class inherit these method implementations automatically.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used by data source controls when implementing the members defined by the <see cref="T:System.ComponentModel.IListSource" /> interface. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ContainsListCollection">
@@ -24,11 +31,21 @@
         <Parameter Name="dataSource" Type="System.Web.UI.IDataSource" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method in an implementation of the <see cref="P:System.ComponentModel.IListSource.ContainsListCollection" /> property, passing a reference to a data source control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified data source control contains a collection of data source view objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data source control contains a collection of data source view objects; otherwise, false.</para>
+        </returns>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.IDataSource" /> that specifies the data source control to test for associated data source view objects.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,11 +61,22 @@
         <Parameter Name="dataSource" Type="System.Web.UI.IDataSource" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method in an implementation of the <see cref="M:System.Web.UI.DataSourceControl.System#ComponentModel#IListSource#GetList" /> method, passing a reference to a data source control.</para>
+          <para>The <see cref="T:System.Collections.IList" /> object that is returned implements the <see cref="T:System.ComponentModel.ITypedList" /> interface. You can use the <see cref="M:System.ComponentModel.ITypedList.GetItemProperties(System.ComponentModel.PropertyDescriptor[])" /> method to retrieve a list of <see cref="T:System.ComponentModel.PropertyDescriptor" /> descriptors that correspond to the <see cref="T:System.Web.UI.DataSourceView" /> names associated with the data source control from the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an <see cref="T:System.Collections.IList" /> collection of data source objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IList" /> of one <see cref="T:System.Web.UI.IDataSource" />, if the <see cref="T:System.Web.UI.IDataSource" /> has one or more associated <see cref="T:System.Web.UI.DataSourceView" /> objects; otherwise, returns null. </para>
+        </returns>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.IDataSource" /> that contains one or more associated <see cref="T:System.Web.UI.DataSourceView" /> objects, which are retrieved by a call to <see cref="M:System.Web.UI.DataSourceControl.GetViewNames" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

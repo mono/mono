@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapExtensionReflector" FullName="System.Web.Services.Description.SoapExtensionReflector">
   <TypeSignature Language="C#" Value="public abstract class SoapExtensionReflector" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The abstract <see cref="T:System.Web.Services.Description.SoapExtensionReflector" /> class exposes an abstract method, <see cref="M:System.Web.Services.Description.SoapExtensionReflector.ReflectMethod" />. This abstract method allows a derived class to add descriptions of SOAP extensions when reflecting a Web method into objects that are placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object. The method itself is not an input. The descriptions get added for all Web methods belonging to a specified binding that produces a <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+      <para>You can use a <see cref="T:System.Web.Services.Description.ServiceDescription" /> to generate a Web Services Description Language (WSDL) document via the <see cref="Overload:System.Web.Services.Description.ServiceDescription.Write" /> method. The <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class and related classes can also use a <see cref="T:System.Web.Services.Description.ServiceDescription" /> to generate client proxy code or abstract server code.    </para>
+      <para>Use a class derived from the <see cref="T:System.Web.Services.Description.SoapExtensionReflector" /> class in conjunction with a class derived from the abstract <see cref="T:System.Web.Services.Protocols.SoapExtension" /> class to extend run-time processing of SOAP messages on the client or service.</para>
+      <para>You can specify <see cref="T:System.Web.Services.Description.SoapExtensionReflector" /> in a configuration file via the <format type="text/html"><a href="6950609a-c9a3-4f6f-a5fc-a05d6d204d5c">&lt;soapExtensionReflectorTypes&gt;</a></format> element and its child add element. You can also apply the configuration to an ASP.NET Web application that publishes a Web service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common interface and functionality for classes to add SOAP extension information to a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object on a per-method basis.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.SoapExtensionReflector" /> class</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +55,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates service-specific description information that gets placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object corresponding to a binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectionContext">
@@ -54,9 +70,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ProtocolReflector'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you implement a class that is derived from the <see cref="T:System.Web.Services.Description.SoapExtensionReflector" /> abstract class, you do not need to implement a class that is derived from <see cref="T:System.Web.Services.Description.ProtocolReflector" /> to invoke the <see cref="M:System.Web.Services.Description.SoapExtensionReflector.ReflectMethod" /> method or to set the <see cref="P:System.Web.Services.Description.SoapExtensionReflector.ReflectionContext" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the instance of a class derived from the abstract <see cref="T:System.Web.Services.Description.ProtocolReflector" /> class that invokes the <see cref="M:System.Web.Services.Description.SoapExtensionReflector.ReflectMethod" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -71,8 +93,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Description.SoapExtensionReflector.ReflectMethod" /> method is called for each Web method that belongs to a binding that the <see cref="T:System.Web.Services.Description.ServiceDescription" /> represents. The <see cref="M:System.Web.Services.Description.SoapExtensionReflector.ReflectMethod" /> method does not use the Web method directly. The SOAP extension information gets added for all Web methods in a binding reflected from a Web service class.</para>
+          <para>An implementation of the <see cref="M:System.Web.Services.Description.SoapExtensionReflector.ReflectMethod" /> can generate information like operation binding, abstract operation, and messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Abstract method that a derived class must implement to add SOAP extension information to a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object on a per-method basis.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

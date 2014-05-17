@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyHashAlgorithm" FullName="System.Configuration.Assemblies.AssemblyHashAlgorithm">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum AssemblyHashAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AssemblyHashAlgorithm extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,66 +13,157 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
-  <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members>
-    <Member MemberName="MD5">
-      <MemberSignature Language="C#" Value="MD5" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="SHA1">
-      <MemberSignature Language="C#" Value="SHA1" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-  </Members>
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <paramref name="hash function" /> <paramref name="H" /> is a transformation that takes an input <paramref name="m" /> and returns a fixed-size string, which is called the hash value <paramref name="h" /> (that is, <paramref name="h" /> = <paramref name="H" /> (<paramref name="m" />)). Hash functions with just this property have a variety of general computational uses, but when employed in cryptography, the hash functions are usually chosen to have some additional properties.</para>
+      <para>The basic requirements for a cryptographic hash function are: </para>
+      <list type="bullet">
+        <item>
+          <para>The input can be of any length.</para>
+        </item>
+        <item>
+          <para>The output has a fixed length.</para>
+        </item>
+        <item>
+          <para>
+            <paramref name="H" /> (<paramref name="x)" /> is relatively easy to compute for any given x.</para>
+        </item>
+        <item>
+          <para>
+            <paramref name="H" /> (<paramref name="x" />) is one-way.</para>
+        </item>
+        <item>
+          <para>
+            <paramref name="H" /> (<paramref name="x" />) is collision-free.</para>
+        </item>
+      </list>
+      <para>The hash value represents concisely the longer message or document from which it was computed; this value is called the message digest. You can think of a message digest as a digital fingerprint of the larger document. Examples of well-known hash functions are MD2 and and SHA.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies all the hash algorithms used for hashing files and for generating the strong name.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="MD5">
+      <MemberSignature Language="C#" Value="MD5" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm MD5 = int32(32771)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the MD5 message-digest algorithm. MD5 was developed by Rivest in 1991. It is basically MD4 with safety-belts and while it is slightly slower than MD4, it helps provide more security. The algorithm consists of four distinct rounds, which has a slightly different design from that of MD4. Message-digest size, as well as padding requirements, remain the same.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask indicating that there is no hash algorithm. If you specify None for a multi-module assembly, the common language runtime defaults to the SHA1 algorithm, since multi-module assemblies need to generate a hash.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SHA1">
+      <MemberSignature Language="C#" Value="SHA1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm SHA1 = int32(32772)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask used to retrieve a revision of the Secure Hash Algorithm that corrects an unpublished flaw in SHA.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SHA256">
+      <MemberSignature Language="C#" Value="SHA256" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm SHA256 = int32(32780)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask used to retrieve a version of the Secure Hash Algorithm with a hash size of 256 bits.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SHA384">
+      <MemberSignature Language="C#" Value="SHA384" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm SHA384 = int32(32781)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask used to retrieve a version of the Secure Hash Algorithm with a hash size of 384 bits.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SHA512">
+      <MemberSignature Language="C#" Value="SHA512" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Configuration.Assemblies.AssemblyHashAlgorithm SHA512 = int32(32782)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.Assemblies.AssemblyHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask used to retrieve a version of the Secure Hash Algorithm with a hash size of 512 bits.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

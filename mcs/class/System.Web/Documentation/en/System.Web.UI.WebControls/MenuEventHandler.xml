@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuEventHandler" FullName="System.Web.UI.WebControls.MenuEventHandler">
   <TypeSignature Language="C#" Value="public delegate void MenuEventHandler(object sender, MenuEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,47 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.MenuEventHandler" /> class is used to represent the method that handles the events in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" />
+            </para>
+          </term>
+          <description>
+            <para>Occurs when a menu item is clicked. This event is commonly used to synchronize a <see cref="T:System.Web.UI.WebControls.Menu" /> control with another control on the page.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" />
+            </para>
+          </term>
+          <description>
+            <para>Occurs when a menu item is bound to data. This event is commonly used to modify a menu item before it is rendered in a <see cref="T:System.Web.UI.WebControls.Menu" /> control.</para>
+          </description>
+        </item>
+      </list>
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.MenuEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.Web.UI.WebControls.Menu.MenuItemClick" /> event or <see cref="E:System.Web.UI.WebControls.Menu.MenuItemDataBound" /> event of a <see cref="T:System.Web.UI.WebControls.Menu" /> control. </para>
+    </summary>
   </Docs>
 </Type>

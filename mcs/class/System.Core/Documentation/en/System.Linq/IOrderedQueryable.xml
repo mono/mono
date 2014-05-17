@@ -1,17 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IOrderedQueryable" FullName="System.Linq.IOrderedQueryable">
-  <TypeSignature Language="C#" Value="public interface IOrderedQueryable : System.Linq.IQueryable" />
+  <TypeSignature Language="C#" Value="public interface IOrderedQueryable : System.Collections.IEnumerable, System.Linq.IQueryable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOrderedQueryable implements class System.Collections.IEnumerable, class System.Linq.IQueryable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
     <Interface>
       <InterfaceName>System.Linq.IQueryable</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Linq.IOrderedQueryable" /> interface is intended for implementation by query providers.</para>
+      <para>This interface represents the result of a sorting query that calls the method(s) <see cref="Overload:System.Linq.Queryable.OrderBy" />, <see cref="Overload:System.Linq.Queryable.OrderByDescending" />, <see cref="Overload:System.Linq.Queryable.ThenBy" /> or <see cref="Overload:System.Linq.Queryable.ThenByDescending" />. When <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> is called and passed an expression tree that represents a sorting query, the resulting <see cref="T:System.Linq.IQueryable" /> object must be of a type that implements <see cref="T:System.Linq.IOrderedQueryable" />.</para>
+      <para>For more information about how to create your own LINQ provider, see <see cref="http://go.microsoft.com/fwlink/?LinkID=112370">LINQ: Building an IQueryable Provider</see> on MSDN Blogs.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the result of a sorting operation.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

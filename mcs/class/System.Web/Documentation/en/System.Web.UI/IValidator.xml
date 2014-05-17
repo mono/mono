@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IValidator" FullName="System.Web.UI.IValidator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IValidator" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Classes that implement this interface represent a possible user input error. When the <see cref="M:System.Web.UI.IValidator.Validate" /> method is called, the class updates its <see cref="P:System.Web.UI.IValidator.IsValid" /> property to signify whether the error occurred. The <see cref="P:System.Web.UI.IValidator.ErrorMessage" /> property contains a text description of the error condition that you can display when the error occurs.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.BaseValidator" /> class implements this interface, and all other ASP.NET validation server control classes inherit from <see cref="T:System.Web.UI.WebControls.BaseValidator" />. For information on validation server controls and how they work, see <format type="text/html"><a href="fa2aa14d-a461-492e-9a79-c990904613ef">Validation ASP.NET Controls</a></format>.</para>
+      <para>For details on how to develop custom ASP.NET validation server controls, see <format type="text/html"><a href="f3ece2ad-2e88-40df-bb8b-3fe53ecf21ab">How to: Validate with a Custom Function for ASP.NET Server Controls</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the properties and methods that objects that participate in Web Forms validation must implement.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ErrorMessage">
@@ -22,9 +31,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET developers access this property declaratively in the opening tag of a validation server control. For more information, see <format type="text/html"><a href="96d2c59e-693c-4079-9b53-b3ff0d9e9133">Validation Server Controls</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a class, gets or sets the error message text generated when the condition being validated fails.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +54,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a class, gets or sets a value indicating whether the user-entered content in the specified control passes validation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,8 +74,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a class, evaluates the condition it checks and updates the <see cref="P:System.Web.UI.IValidator.IsValid" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

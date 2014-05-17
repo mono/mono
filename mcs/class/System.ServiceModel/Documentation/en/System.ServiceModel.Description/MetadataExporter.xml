@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="MetadataExporter" FullName="System.ServiceModel.Description.MetadataExporter">
+  <TypeSignature Language="C#" Value="public abstract class MetadataExporter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MetadataExporter extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Metadata export is the process of describing service endpoints and projecting them into a parallel, standardized representation (typically, but not necessarily XML) that applications can access to implement a client that uses the service. To export metadata from <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use an implementation of the <see cref="T:System.ServiceModel.Description.MetadataExporter" /> abstract class.  A <see cref="T:System.ServiceModel.Description.MetadataExporter" /> implementation generates metadata that is encapsulated in a <see cref="T:System.ServiceModel.Description.MetadataSet" /> instance. </para>
+      <para>The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> class provides a framework for generating policy expressions that describe the capabilities and requirements of an endpoint binding and its associated operations, messages and faults. These policy expressions are captured in a <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> instance. A <see cref="T:System.ServiceModel.Description.MetadataExporter" /> implementation can then attach these policy expressions to the metadata it generates.</para>
+      <para>The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> calls into each <see cref="T:System.ServiceModel.Channels.BindingElement" /> that implements the <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> interface in the binding of a <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> when generating a <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object for the <see cref="T:System.ServiceModel.Description.MetadataExporter" /> implementation to use. You can export new policy assertions by implementing the <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> interface on your custom implementations of the <see cref="T:System.ServiceModel.Channels.BindingElement" /> type. </para>
+      <para>The <see cref="T:System.ServiceModel.Description.WsdlExporter" /> type is the implementation of the <see cref="T:System.ServiceModel.Description.MetadataExporter" /> class included with indigo1. The <see cref="T:System.ServiceModel.Description.WsdlExporter" /> type generates WSDL metadata with attached policy expressions. </para>
+      <para>To export custom WSDL metadata or WSDL extensions for endpoint behaviors, contract behaviors or binding elements in a service endpoint, you can implement the <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> interface. The <see cref="T:System.ServiceModel.Description.WsdlExporter" /> type calls into parts of a service endpoint that implement this interface when generating the WSDL document from that endpoint.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exports service description information into metadata.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Errors">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.MetadataConversionError&gt; Errors { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.MetadataConversionError&gt; Errors" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.MetadataConversionError&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is populated with errors that occurred during the metadata export process. Users of derived classes should check the <see cref="P:System.ServiceModel.Description.MetadataExporter.Errors" /> property prior to using the exported metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of errors that occurred during metadata export.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportContract">
+      <MemberSignature Language="C#" Value="public abstract void ExportContract (System.ServiceModel.Description.ContractDescription contract);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ExportContract(class System.ServiceModel.Description.ContractDescription contract) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contract" Type="System.ServiceModel.Description.ContractDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override and implement <see cref="M:System.ServiceModel.Description.MetadataExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" /> to convert a contract description into metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, exports a contract description into metadata. </para>
+        </summary>
+        <param name="contract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract to export.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportEndpoint">
+      <MemberSignature Language="C#" Value="public abstract void ExportEndpoint (System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ExportEndpoint(class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override and implement <see cref="M:System.ServiceModel.Description.MetadataExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" /> to convert a contract description into metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, converts an endpoint into metadata. </para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint to convert.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="ExportPolicy">
+      <MemberSignature Language="C#" Value="protected System.ServiceModel.Description.PolicyConversionContext ExportPolicy (System.ServiceModel.Description.ServiceEndpoint endpoint);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance class System.ServiceModel.Description.PolicyConversionContext ExportPolicy(class System.ServiceModel.Description.ServiceEndpoint endpoint) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.PolicyConversionContext</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts policy assertions into a <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains policy assertion information for the endpoint. The policy assertions can then be embedded in a metadata document.</para>
+        </returns>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint from which to extract policy assertions.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetGeneratedMetadata">
+      <MemberSignature Language="C#" Value="public abstract System.ServiceModel.Description.MetadataSet GetGeneratedMetadata ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.Description.MetadataSet GetGeneratedMetadata() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MetadataSet</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.MetadataExporter.GetGeneratedMetadata" /> method to retrieve the metadata generated from earlier calls. Check the <see cref="P:System.ServiceModel.Description.MetadataExporter.Errors" /> property prior to retrieving the metadata to ensure that you have the metadata you want.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the metadata generated by a call to either <see cref="M:System.ServiceModel.Description.MetadataExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.MetadataExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.MetadataExporter.ExportPolicy(System.ServiceModel.Description.ServiceEndpoint)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects that contain the exported metadata.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="State">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;object,object&gt; State { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.Dictionary`2&lt;object, object&gt; State" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;System.Object,System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the State property to pass a <see cref="T:System.ServiceModel.Description.MetadataExporter" /> state data required to successfully export endpoints or contracts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of objects used in the export of metadata.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

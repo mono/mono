@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="WsdlEndpointConversionContext" FullName="System.ServiceModel.Description.WsdlEndpointConversionContext">
+  <TypeSignature Language="C#" Value="public class WsdlEndpointConversionContext" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WsdlEndpointConversionContext extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Description.WsdlEndpointConversionContext" /> class represents the context in which the custom WSDL for an endpoint is either exported using <see cref="T:System.ServiceModel.Description.IWsdlExportExtension" /> or imported using <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" />. The following properties enable you to retrieve the WSDL document object model for the current WSDL:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlEndpointConversionContext.ContractConversionContext" /> property gets the <see cref="T:System.ServiceModel.Description.WsdlContractConversionContext" /> for the endpoint contract.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlEndpointConversionContext.Endpoint" /> property gets the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> for the current endpoint.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlEndpointConversionContext.WsdlBinding" /> property gets the binding for the current endpoint.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Description.WsdlEndpointConversionContext.WsdlPort" /> property gets the port for the current endpoint.</para>
+        </item>
+        <item>
+          <para />
+        </item>
+        <item>
+          <para>The following methods enable you to add or remove custom WSDL elements to the appropriate scopes in the exported or imported WSDL:</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetFaultBinding(System.ServiceModel.Description.FaultDescription)" /> method returns the fault binding for the specified fault.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetFaultDescription(System.Web.Services.Description.FaultBinding)" /> method returns the fault for the specified fault binding.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetMessageBinding(System.ServiceModel.Description.MessageDescription)" /> method returns the message binding for the specified message.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetMessageDescription(System.Web.Services.Description.MessageBinding)" /> method returns the message for the specified message binding.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetOperationBinding(System.ServiceModel.Description.OperationDescription)" /> method returns the operation binding for the specified operation.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetOperationDescription(System.Web.Services.Description.OperationBinding)" /> method returns the operation for the specified operation binding.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Passed to custom WSDL exporters and importers to enable customization of the metadata export and import processes for a WSDL endpoint.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="ContractConversionContext">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.WsdlContractConversionContext ContractConversionContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.WsdlContractConversionContext ContractConversionContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.WsdlContractConversionContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.WsdlEndpointConversionContext.ContractConversionContext" /> to obtain the conversion context of the contract for the endpoint.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.WsdlContractConversionContext" /> being exported or imported.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Endpoint">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.ServiceEndpoint Endpoint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ServiceModel.Description.ServiceEndpoint Endpoint" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpoint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.WsdlEndpointConversionContext.Endpoint" /> property to obtain the service endpoint description on export or import.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> being exported or imported.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageBinding">
+      <MemberSignature Language="C#" Value="public System.Web.Services.Description.MessageBinding GetMessageBinding (System.ServiceModel.Description.MessageDescription message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Web.Services.Description.MessageBinding GetMessageBinding(class System.ServiceModel.Description.MessageDescription message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Services.Description.MessageBinding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.ServiceModel.Description.MessageDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetMessageDescription(System.Web.Services.Description.MessageBinding)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the WSDL binding for the message specified by the description.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.MessageBinding" /> for the message specified by the description.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessageDescription" /> associated with the description.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageDescription">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.MessageDescription GetMessageDescription (System.Web.Services.Description.MessageBinding message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.MessageDescription GetMessageDescription(class System.Web.Services.Description.MessageBinding message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.MessageDescription</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.Web.Services.Description.MessageBinding" />
+      </Parameters>
+      <Docs>
+        <param name="message">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetMessageBinding(System.ServiceModel.Description.MessageDescription)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message description for the message specified by the WSDL binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.MessageDescription" /> for the message specified by the binding.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetOperationBinding">
+      <MemberSignature Language="C#" Value="public System.Web.Services.Description.OperationBinding GetOperationBinding (System.ServiceModel.Description.OperationDescription operation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Web.Services.Description.OperationBinding GetOperationBinding(class System.ServiceModel.Description.OperationDescription operation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Services.Description.OperationBinding</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operation" Type="System.ServiceModel.Description.OperationDescription" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetOperationDescription(System.Web.Services.Description.OperationBinding)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the WSDL binding for the operation specified by the description.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.OperationBinding" /> for the operation specified by the description.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.OperationDescription" /> of the operation associated with the binding.</param>
+      </Docs>
+    </Member>
+    <Member MemberName="GetOperationDescription">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.Description.OperationDescription GetOperationDescription (System.Web.Services.Description.OperationBinding operation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ServiceModel.Description.OperationDescription GetOperationDescription(class System.Web.Services.Description.OperationBinding operation) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.OperationDescription</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operation" Type="System.Web.Services.Description.OperationBinding" />
+      </Parameters>
+      <Docs>
+        <param name="operation">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetOperationBinding(System.ServiceModel.Description.OperationDescription)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the operation description of the operation associated with the WSDL binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.OperationDescription" /> of the operation associated with the binding.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="WsdlBinding">
+      <MemberSignature Language="C#" Value="public System.Web.Services.Description.Binding WsdlBinding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.Services.Description.Binding WsdlBinding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Services.Description.Binding</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.Binding" /> for the WSDL endpoint.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WsdlPort">
+      <MemberSignature Language="C#" Value="public System.Web.Services.Description.Port WsdlPort { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.Services.Description.Port WsdlPort" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Services.Description.Port</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.Port" /> for the WSDL endpoint.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

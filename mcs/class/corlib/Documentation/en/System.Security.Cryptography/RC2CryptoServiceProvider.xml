@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RC2CryptoServiceProvider" FullName="System.Security.Cryptography.RC2CryptoServiceProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RC2CryptoServiceProvider : System.Security.Cryptography.RC2" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RC2CryptoServiceProvider extends System.Security.Cryptography.RC2" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,32 +15,55 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>Managed implementation of the RC2(r) symmetric algorithm.</summary>
     <remarks>
-      <para>This implementation supports key size from 40 bits to 128 bits to match Microsoft implementation (based on CryptoAPI). Also to maintain compatibility with CryptoAPI this implementation requires that the effective key size always match the key size.</para>
-      <para>In Mono this class is completely implemented in managed code.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> implementation supports key lengths from 40 bits to 128 bits in increments of 8 bits.</para>
+      <para>The <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> object is a block cipher that encrypts and decrypts data in blocks of 8 bytes.  This class pads the final block of data if it is less than 8 bytes.  As a result of this padding, the length of encrypted data could be greater than the original plaintext.  </para>
+      <para>Note that the <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> object does not use salt.   </para>
+      <block subset="none" type="note">
+        <para>A newer symmetric encryption algorithm, Advanced Encryption Standard (AES), is available. Consider using the <see cref="T:System.Security.Cryptography.Aes" /> algorithm and its derived classes instead of the <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> class. Use <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> only for compatibility with legacy applications and data.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a wrapper object to access the cryptographic service provider (CSP) implementation of the <see cref="T:System.Security.Cryptography.RC2" /> algorithm. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public RC2CryptoServiceProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDecryptor">
       <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.Cryptography.ICryptoTransform CreateDecryptor(unsigned int8[] rgbKey, unsigned int8[] rgbIV) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
       </ReturnValue>
@@ -47,21 +72,33 @@
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">Secret key to be used for the decryption transform.</param>
-        <param name="rgbIV">Initialization Vector (IV) to be used by the decryption transform.</param>
-        <summary>Creates a symmetric RC2(r) decryptor transform.</summary>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to decrypt data.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to decrypt an encrypted message created using the <see cref="M:System.Security.Cryptography.RC2CryptoServiceProvider.CreateEncryptor(System.Byte[],System.Byte[])" /> overload with the same parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric <see cref="T:System.Security.Cryptography.RC2" /> decryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />)and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.RC2" /> decryptor object.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
+        <param name="rgbIV">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization vector to use for the symmetric algorithm. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEncryptor">
       <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.Cryptography.ICryptoTransform CreateEncryptor(unsigned int8[] rgbKey, unsigned int8[] rgbIV) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
       </ReturnValue>
@@ -70,91 +107,102 @@
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbKey">Secret key to be used for the encryption transform.</param>
-        <param name="rgbIV">Initialization Vector (IV) to be used by the encryption transform.</param>
-        <summary>Creates a symmetric RC2(r) encryptor transform. </summary>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to encrypt data.</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Cryptography.RC2CryptoServiceProvider.CreateDecryptor(System.Byte[],System.Byte[])" /> overload with the same parameters to decrypt the result of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric <see cref="T:System.Security.Cryptography.RC2" /> encryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.RC2" /> encryptor object.</para>
+        </returns>
+        <param name="rgbKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
+        <param name="rgbIV">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialization vector to use for the symmetric algorithm. </param>
       </Docs>
+    </Member>
+    <Member MemberName="EffectiveKeySize">
+      <MemberSignature Language="C#" Value="public override int EffectiveKeySize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 EffectiveKeySize" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EffectiveKeySize">
-      <MemberSignature Language="C#" Value="public override int EffectiveKeySize { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the effective size, in bits, of the secret key used by the <see cref="T:System.Security.Cryptography.RC2" /> algorithm.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenerateIV">
       <MemberSignature Language="C#" Value="public override void GenerateIV ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GenerateIV() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Generate a new random Initialization Vector (IV) required for some block cipher modes.</summary>
-        <remarks>
-          <para>
-The IV is used for most <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Mode" /> of operation (except <see cref="E:System.Security.Cryptography.CipherMode.ECB" />). The value can be made public and must be available when decrypting the data.
-</para>
-          <para>
-IMPORTANT: If you reuse the same RC2 object for multiple encryption using the same key it is CAPITAL that you use a different IV each time.
-</para>
-          <example>
-            <code lang="C#">
-RC2 rc2 = RC2.Create ();
-rc2.GenerateKey ();
-foreach (string file in files) {
-	// each file MUST be encrypted with a different IV
-	rc2.GenerateIV ();
-	// encrypt the specified file with our RC2 key
-	EncryptFile (file, rc2);
-}
-  </code>
-          </example>
-        </remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to generate a random <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" /> when none is specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />) to use for the algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="GenerateKey">
       <MemberSignature Language="C#" Value="public override void GenerateKey ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GenerateKey() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>Generate a new random secret key.</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to generate a random key when none is specified.</para>
+          <para>The <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> implementation supports key lengths from 40 bits to 128 bits in increments of 8 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) to be used for the algorithm.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="UseSalt">
-      <MemberSignature Language="C#" Value="public bool UseSalt { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool UseSalt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseSalt" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -164,20 +212,17 @@ foreach (string file in files) {
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.RC2CryptoServiceProvider.UseSalt" /> property allows you to interoperate with an existing application that uses an 11-byte-long, zero-value salt.  For most scenarios, you should not use a salt with an <see cref="T:System.Security.Cryptography.RC2CryptoServiceProvider" /> key. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether to create a key with an 11-byte-long, zero-value salt. </para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

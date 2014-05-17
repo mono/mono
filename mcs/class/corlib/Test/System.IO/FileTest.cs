@@ -2760,5 +2760,55 @@ namespace MonoTests.System.IO
 			}
 		}
 #endif
+
+		void MoveTest (FileAccess acc, FileShare share, bool works)
+		{
+			// use TEMP so since the default location (right along with the assemblies) 
+			// will get access denied when running under some environment (e.g. iOS devices)
+			var file = Path.Combine (Path.GetTempPath (), "kk597rfdnllh89");
+
+			File.Delete (file + ".old");
+			using (var v = File.Create (file)) { }
+
+			using (var stream = new FileStream(file, FileMode.Open, acc, share, 4096, FileOptions.SequentialScan)) {
+				try {
+					File.Move(file, file + ".old");
+					if (!works)
+						Assert.Fail ("Move with ({0}) and  ({1}) did not fail", acc, share);
+				} catch (IOException) {
+					if (works)
+						Assert.Fail ("Move with ({0}) and  ({1}) did fail", acc, share);
+				}
+			}
+		}
+
+		[Test]
+		public void MoveTest ()
+		{
+			MoveTest (FileAccess.Read, FileShare.None, false);
+			MoveTest (FileAccess.Read, FileShare.Read, false);
+			MoveTest (FileAccess.Read, FileShare.Write, false);
+			MoveTest (FileAccess.Read, FileShare.ReadWrite, false);
+			MoveTest (FileAccess.Read, FileShare.Delete, true);
+			MoveTest (FileAccess.Read, FileShare.Read | FileShare.Delete, true);
+			MoveTest (FileAccess.Read, FileShare.Write | FileShare.Delete, true);
+			MoveTest (FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, true);
+			MoveTest (FileAccess.Write, FileShare.None, false);
+			MoveTest (FileAccess.Write, FileShare.Read, false);
+			MoveTest (FileAccess.Write, FileShare.Write, false);
+			MoveTest (FileAccess.Write, FileShare.ReadWrite, false);
+			MoveTest (FileAccess.Write, FileShare.Delete, true);
+			MoveTest (FileAccess.Write, FileShare.Read | FileShare.Delete, true);
+			MoveTest (FileAccess.Write, FileShare.Write | FileShare.Delete, true);
+			MoveTest (FileAccess.Write, FileShare.ReadWrite | FileShare.Delete, true);
+			MoveTest (FileAccess.ReadWrite, FileShare.None, false);
+			MoveTest (FileAccess.ReadWrite, FileShare.Read, false);
+			MoveTest (FileAccess.ReadWrite, FileShare.Write, false);
+			MoveTest (FileAccess.ReadWrite, FileShare.ReadWrite, false);
+			MoveTest (FileAccess.ReadWrite, FileShare.Delete, true);
+			MoveTest (FileAccess.ReadWrite, FileShare.Read | FileShare.Delete, true);
+			MoveTest (FileAccess.ReadWrite, FileShare.Write | FileShare.Delete, true);
+			MoveTest (FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, true);
+		}
 	}
 }

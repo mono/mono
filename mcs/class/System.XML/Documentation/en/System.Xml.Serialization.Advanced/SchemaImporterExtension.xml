@@ -1,35 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SchemaImporterExtension" FullName="System.Xml.Serialization.Advanced.SchemaImporterExtension">
   <TypeSignature Language="C#" Value="public abstract class SchemaImporterExtension" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SchemaImporterExtension extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Schema importation occurs whenever a Web service proxy is produced through a tool such as the Add Web Reference dialog box found in Visual Studio, or by using the <format type="text/html"><a href="b9210348-8bc2-4367-8c91-d1a04b403e88">Web Services Description Language Tool (Wsdl.exe)</a></format>. Schema importation also occurs when using the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format> to generate code from a specific XSD document. </para>
+      <para>The <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtension" /> class allows you to modify the code generated when using any of these tools. For example, you may have an existing class that processes book orders on a system and you have an existing XSD document that supplies your orders. Using the <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtension" /> class, you can enable one of the tools to generate code that uses your class.</para>
+      <para>In order to control the generation of the code, you must use the classes found in the <see cref="N:System.CodeDom" /> namespace. For more information, see <format type="text/html"><a href="0444ddf3-c3f6-44ed-a999-f710d9c3e0cf">Using the CodeDOM</a></format> and <format type="text/html"><a href="c77b8bfd-0a32-4e36-b59a-4f687f32c524">CodeDOM Quick Reference</a></format>.</para>
+      <para>The steps to enabling the WSDL.exe tool (which in turn is used by other tools such as the Add Web Reference dialog box) to use your extension are:</para>
+      <list type="ordered">
+        <item>
+          <para>Create an implementation of the <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtension" /> class. </para>
+        </item>
+        <item>
+          <para>Use the <see cref="Overload:System.Xml.Serialization.Advanced.SchemaImporterExtension.ImportSchemaType" /> method to write code for the code generator. The method contains parameters that allow you to examine the intercepted XSD type and create CodeDOM objects that are used to generate the new CLR code. </para>
+        </item>
+        <item>
+          <para>If required, use the <see cref="M:System.Xml.Serialization.Advanced.SchemaImporterExtension.ImportAnyElement(System.Xml.Schema.XmlSchemaAny,System.Boolean,System.Xml.Serialization.XmlSchemas,System.Xml.Serialization.XmlSchemaImporter,System.CodeDom.CodeCompileUnit,System.CodeDom.CodeNamespace,System.Xml.Serialization.CodeGenerationOptions,System.CodeDom.Compiler.CodeDomProvider)" /> method to handle &lt;xsd:any&gt; elements found in the XSD document.</para>
+        </item>
+        <item>
+          <para>If required, use the <see cref="M:System.Xml.Serialization.Advanced.SchemaImporterExtension.ImportDefaultValue(System.String,System.String)" /> method to examine default values found in the XSD document and return a different default value. </para>
+        </item>
+        <item>
+          <para>Compile your extension into a library.</para>
+        </item>
+        <item>
+          <para>Sign the assembly.</para>
+        </item>
+        <item>
+          <para>Install the assembly in the Global Assembly Cache (GAC).</para>
+        </item>
+        <item>
+          <para>Modify the machine.config file to include the extension.</para>
+        </item>
+      </list>
+      <para> </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows you to customize the code generated from a Web Services Description Language (WSDL) document when using automated query tools.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected SchemaImporterExtension ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtension" /> class. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ImportAnyElement">
-      <MemberSignature Language="C#" Value="public virtual string ImportAnyElement (System.Xml.Schema.XmlSchemaAny any, bool mixed, System.Xml.Serialization.XmlSchemas schemas, System.Xml.Serialization.XmlSchemaImporter importer, System.CodeDom.CodeCompileUnit codeCompileUnit, System.CodeDom.CodeNamespace codeNamespace, System.Xml.Serialization.CodeGenerationOptions options, System.CodeDom.Compiler.CodeDomProvider codeProvider);" />
+      <MemberSignature Language="C#" Value="public virtual string ImportAnyElement (System.Xml.Schema.XmlSchemaAny any, bool mixed, System.Xml.Serialization.XmlSchemas schemas, System.Xml.Serialization.XmlSchemaImporter importer, System.CodeDom.CodeCompileUnit compileUnit, System.CodeDom.CodeNamespace mainNamespace, System.Xml.Serialization.CodeGenerationOptions options, System.CodeDom.Compiler.CodeDomProvider codeProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ImportAnyElement(class System.Xml.Schema.XmlSchemaAny any, bool mixed, class System.Xml.Serialization.XmlSchemas schemas, class System.Xml.Serialization.XmlSchemaImporter importer, class System.CodeDom.CodeCompileUnit compileUnit, class System.CodeDom.CodeNamespace mainNamespace, valuetype System.Xml.Serialization.CodeGenerationOptions options, class System.CodeDom.Compiler.CodeDomProvider codeProvider) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -38,32 +87,51 @@
         <Parameter Name="mixed" Type="System.Boolean" />
         <Parameter Name="schemas" Type="System.Xml.Serialization.XmlSchemas" />
         <Parameter Name="importer" Type="System.Xml.Serialization.XmlSchemaImporter" />
-        <Parameter Name="codeCompileUnit" Type="System.CodeDom.CodeCompileUnit" />
-        <Parameter Name="codeNamespace" Type="System.CodeDom.CodeNamespace" />
+        <Parameter Name="compileUnit" Type="System.CodeDom.CodeCompileUnit" />
+        <Parameter Name="mainNamespace" Type="System.CodeDom.CodeNamespace" />
         <Parameter Name="options" Type="System.Xml.Serialization.CodeGenerationOptions" />
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="any">To be added.</param>
-        <param name="mixed">To be added.</param>
-        <param name="schemas">To be added.</param>
-        <param name="importer">To be added.</param>
-        <param name="codeCompileUnit">To be added.</param>
-        <param name="codeNamespace">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to control the generation of the code, you must use the classes found in the <see cref="N:System.CodeDom" /> namespace. For more information, see <format type="text/html"><a href="0444ddf3-c3f6-44ed-a999-f710d9c3e0cf">Using the CodeDOM</a></format> and <format type="text/html"><a href="c77b8bfd-0a32-4e36-b59a-4f687f32c524">CodeDOM Quick Reference</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles the importation of the &lt;xsd:any&gt; elements in the schema.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the CLR type that the element maps to. </para>
+        </returns>
+        <param name="any">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaAny" /> that represents the xsd:any element found in the XML Schema Document (XSD).</param>
+        <param name="mixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> that indicates whether the XSD complex attribute has been set to "mixed". true, if the attribute has been set to mixed, otherwise false. </param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlSchemas" /> that contains the collection of schemas found in the XSD.</param>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> that is the importer being used.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> to which you can add CodeDOM structures to generate alternative code for the XSD. </param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeNamespace" /> that represents the current namespace for the element.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Serialization.CodeGenerationOptions" /> for the setting options on the code compiler.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> that is the CodeDOM provider used to generate the new code. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImportDefaultValue">
       <MemberSignature Language="C#" Value="public virtual System.CodeDom.CodeExpression ImportDefaultValue (string value, string type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.CodeDom.CodeExpression ImportDefaultValue(string value, string type) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeExpression</ReturnType>
       </ReturnValue>
@@ -72,20 +140,33 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to control the generation of the code, you must use the classes found in the <see cref="N:System.CodeDom" /> namespace. For more information, see <format type="text/html"><a href="0444ddf3-c3f6-44ed-a999-f710d9c3e0cf">Using the CodeDOM</a></format> and <format type="text/html"><a href="c77b8bfd-0a32-4e36-b59a-4f687f32c524">CodeDOM Quick Reference</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows you to specify the default value for the XSD type being imported.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> setting the new default value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value found in the original XSD.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XSD type name.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImportSchemaType">
-      <MemberSignature Language="C#" Value="public virtual string ImportSchemaType (System.Xml.Schema.XmlSchemaType type, System.Xml.Schema.XmlSchemaObject context, System.Xml.Serialization.XmlSchemas schemas, System.Xml.Serialization.XmlSchemaImporter importer, System.CodeDom.CodeCompileUnit codeCompileUnit, System.CodeDom.CodeNamespace codeNamespace, System.Xml.Serialization.CodeGenerationOptions options, System.CodeDom.Compiler.CodeDomProvider codeProvider);" />
+      <MemberSignature Language="C#" Value="public virtual string ImportSchemaType (System.Xml.Schema.XmlSchemaType type, System.Xml.Schema.XmlSchemaObject context, System.Xml.Serialization.XmlSchemas schemas, System.Xml.Serialization.XmlSchemaImporter importer, System.CodeDom.CodeCompileUnit compileUnit, System.CodeDom.CodeNamespace mainNamespace, System.Xml.Serialization.CodeGenerationOptions options, System.CodeDom.Compiler.CodeDomProvider codeProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ImportSchemaType(class System.Xml.Schema.XmlSchemaType type, class System.Xml.Schema.XmlSchemaObject context, class System.Xml.Serialization.XmlSchemas schemas, class System.Xml.Serialization.XmlSchemaImporter importer, class System.CodeDom.CodeCompileUnit compileUnit, class System.CodeDom.CodeNamespace mainNamespace, valuetype System.Xml.Serialization.CodeGenerationOptions options, class System.CodeDom.Compiler.CodeDomProvider codeProvider) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -94,32 +175,48 @@
         <Parameter Name="context" Type="System.Xml.Schema.XmlSchemaObject" />
         <Parameter Name="schemas" Type="System.Xml.Serialization.XmlSchemas" />
         <Parameter Name="importer" Type="System.Xml.Serialization.XmlSchemaImporter" />
-        <Parameter Name="codeCompileUnit" Type="System.CodeDom.CodeCompileUnit" />
-        <Parameter Name="codeNamespace" Type="System.CodeDom.CodeNamespace" />
+        <Parameter Name="compileUnit" Type="System.CodeDom.CodeCompileUnit" />
+        <Parameter Name="mainNamespace" Type="System.CodeDom.CodeNamespace" />
         <Parameter Name="options" Type="System.Xml.Serialization.CodeGenerationOptions" />
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="schemas">To be added.</param>
-        <param name="importer">To be added.</param>
-        <param name="codeCompileUnit">To be added.</param>
-        <param name="codeNamespace">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows you to manipulate the code generated by examining the imported schema and specifying the CLR type that it maps to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the CLR type that this maps to.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaType" /> that represents the XSD type.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that represents schema information, such as the line number of the XML element.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlSchemas" /> that contains the collection of schemas in the document.</param>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> that is the importer being used.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> to which you can add CodeDOM structures to generate alternative code for the XSD.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeNamespace" /> that represents the current namespace for the element.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Serialization.CodeGenerationOptions" /> for the setting options on the code compiler.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> that is used to generate the new code.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImportSchemaType">
-      <MemberSignature Language="C#" Value="public virtual string ImportSchemaType (string name, string ns, System.Xml.Schema.XmlSchemaObject context, System.Xml.Serialization.XmlSchemas schemas, System.Xml.Serialization.XmlSchemaImporter importer, System.CodeDom.CodeCompileUnit codeCompileUnit, System.CodeDom.CodeNamespace codeNamespace, System.Xml.Serialization.CodeGenerationOptions options, System.CodeDom.Compiler.CodeDomProvider codeProvider);" />
+      <MemberSignature Language="C#" Value="public virtual string ImportSchemaType (string name, string ns, System.Xml.Schema.XmlSchemaObject context, System.Xml.Serialization.XmlSchemas schemas, System.Xml.Serialization.XmlSchemaImporter importer, System.CodeDom.CodeCompileUnit compileUnit, System.CodeDom.CodeNamespace mainNamespace, System.Xml.Serialization.CodeGenerationOptions options, System.CodeDom.Compiler.CodeDomProvider codeProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ImportSchemaType(string name, string ns, class System.Xml.Schema.XmlSchemaObject context, class System.Xml.Serialization.XmlSchemas schemas, class System.Xml.Serialization.XmlSchemaImporter importer, class System.CodeDom.CodeCompileUnit compileUnit, class System.CodeDom.CodeNamespace mainNamespace, valuetype System.Xml.Serialization.CodeGenerationOptions options, class System.CodeDom.Compiler.CodeDomProvider codeProvider) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -129,29 +226,44 @@
         <Parameter Name="context" Type="System.Xml.Schema.XmlSchemaObject" />
         <Parameter Name="schemas" Type="System.Xml.Serialization.XmlSchemas" />
         <Parameter Name="importer" Type="System.Xml.Serialization.XmlSchemaImporter" />
-        <Parameter Name="codeCompileUnit" Type="System.CodeDom.CodeCompileUnit" />
-        <Parameter Name="codeNamespace" Type="System.CodeDom.CodeNamespace" />
+        <Parameter Name="compileUnit" Type="System.CodeDom.CodeCompileUnit" />
+        <Parameter Name="mainNamespace" Type="System.CodeDom.CodeNamespace" />
         <Parameter Name="options" Type="System.Xml.Serialization.CodeGenerationOptions" />
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="schemas">To be added.</param>
-        <param name="importer">To be added.</param>
-        <param name="codeCompileUnit">To be added.</param>
-        <param name="codeNamespace">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to control the generation of the code, you must use the classes found in the <see cref="N:System.CodeDom" /> namespace. For more information, see <format type="text/html"><a href="0444ddf3-c3f6-44ed-a999-f710d9c3e0cf">Using the CodeDOM</a></format> and <format type="text/html"><a href="c77b8bfd-0a32-4e36-b59a-4f687f32c524">CodeDOM Quick Reference</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows you to manipulate the code generated by examining the imported schema and specifying the CLR type that it maps to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the CLR type that this maps to.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaObject" /> that represents schema information, such as the line number of the XML element.</param>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlSchemas" /> that contains the collection of schemas in the document.</param>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> that is the importer being used.</param>
+        <param name="compileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> to which you can add CodeDOM structures to generate alternative code for the XSD.</param>
+        <param name="mainNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeNamespace" /> that represents the current namespace for the element.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Serialization.CodeGenerationOptions" /> for the setting options on the code compiler.</param>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> that is used to generate the new code.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -71,9 +74,11 @@ namespace Mono.Debugger.Soft
 			try {
 				return vm.DecodeValues (vm.conn.Object_GetValues (id, ids));
 			} catch (CommandException ex) {
-				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID)
+				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID) {
+					if (fields.Count == 1)
+						throw new ArgumentException (string.Format ("The field '{0}' is not valid for this type.", fields[0].Name));
 					throw new ArgumentException ("One of the fields is not valid for this type.", "fields");
-				else
+				} else
 					throw;
 			}
 		}
@@ -143,6 +148,23 @@ namespace Mono.Debugger.Soft
 		public Value EndInvokeMethod (IAsyncResult asyncResult) {
 			return EndInvokeMethodInternal (asyncResult);
 		}
+
+#if NET_4_5
+		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<Value> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (EndInvokeMethod (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
+#endif
 
 		//
 		// Invoke the members of METHODS one-by-one, calling CALLBACK after each invoke was finished. The IAsyncResult will be marked as completed after all invokes have

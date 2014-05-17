@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Reflection" FullName="System.Reflection" FullNameSP="System.Reflection" Maintainer="Mono">
   <Docs>
-    <summary>
-        Reflection is the ability for a program at run-time to get information about loaded type and assemblies.  It can be used to access and invoke members and fields by their name, for instance.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Reflection" /> namespace contains types that retrieve information about assemblies, modules, members, parameters, and other entities in managed code by examining their metadata. These types also can be used to manipulate instances of loaded types, for example to hook up events or to invoke methods. To dynamically create types, use the <see cref="N:System.Reflection.Emit" /> namespace.</para>
+    </summary>
   </Docs>
 </Namespace>

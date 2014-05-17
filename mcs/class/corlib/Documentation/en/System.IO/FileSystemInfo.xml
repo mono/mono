@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileSystemInfo" FullName="System.IO.FileSystemInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class FileSystemInfo : MarshalByRefObject, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit FileSystemInfo extends System.MarshalByRefObject implements class System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,193 +18,491 @@
       <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.IO.FileSystemInfo" /> class contains methods that are common to file and directory manipulation. A <see cref="T:System.IO.FileSystemInfo" /> object can represent either a file or a directory, thus serving as the basis for <see cref="T:System.IO.FileInfo" /> or <see cref="T:System.IO.DirectoryInfo" /> objects. Use this base class when parsing a lot of files and directories.</para>
+      <para>A derived class can inherit from <see cref="T:System.IO.FileSystemInfo" /> only if the derived class has the AllAccess permission from the <see cref="T:System.Security.Permissions.FileIOPermissionAccess" /> enumeration.</para>
+      <para>In members that accept a path, the path can refer to a file or just a directory. The specified path can also refer to a relative path or a Universal Naming Convention (UNC) path for a server and share name. For example, all the following are acceptable paths: </para>
+      <list type="bullet">
+        <item>
+          <para>"c:\\MyDir\\MyFile.txt" in C#, or "c:\MyDir\MyFile.txt" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"c:\\MyDir" in C#, or "c:\MyDir" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"MyDir\\MySubdir" in C#, or "MyDir\MySubDir" in Visual Basic.</para>
+        </item>
+        <item>
+          <para>"\\\\MyServer\\MyShare" in C#, or "\\MyServer\MyShare" in Visual Basic.</para>
+        </item>
+      </list>
+      <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class for both <see cref="T:System.IO.FileInfo" /> and <see cref="T:System.IO.DirectoryInfo" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected FileSystemInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.FileSystemInfo" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected FileSystemInfo (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.FileSystemInfo" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="C#" Value="public System.IO.FileAttributes Attributes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.FileAttributes Attributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Attributes">
-      <MemberSignature Language="C#" Value="public System.IO.FileAttributes Attributes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FileAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.Attributes" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+          <para>The value of this property is a combination of the archive, compressed, directory, hidden, offline, read-only, system, and temporary file attribute flags. </para>
+          <para>When you set this value, use the bitwise OR operator (| in C# or Or in Visual Basic) to apply more than one value. To retain any existing values in the <see cref="P:System.IO.FileSystemInfo.Attributes" /> property, include the value of the <see cref="P:System.IO.FileSystemInfo.Attributes" /> property in your assignment. For example: </para>
+          <para>exampleFile.Attributes = exampleFile.Attributes | FileAttributes.ReadOnly;</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the attributes for the current file or directory.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CreationTime">
+      <MemberSignature Language="C#" Value="public DateTime CreationTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime CreationTime" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreationTime">
-      <MemberSignature Language="C#" Value="public DateTime CreationTime { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   This method may return an inaccurate value, because it uses native functions whose values may not be continuously updated by the operating system.</para>
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.CreationTime" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+          <para>If the file described in the <see cref="T:System.IO.FileSystemInfo" /> object does not exist, this property will return 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC), adjusted to local time.</para>
+          <para>NTFS-formatted drives may cache file meta-info, such as file creation time, for a short period of time. This process is known as file tunneling. As a result, it may be necessary to explicitly set the creation time of a file if you are overwriting or replacing an existing file.</para>
+          <para>This property value is null if the file system containing the <see cref="T:System.IO.FileSystemInfo" /> object does not support this information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the creation time of the current file or directory.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CreationTimeUtc">
+      <MemberSignature Language="C#" Value="public DateTime CreationTimeUtc { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime CreationTimeUtc" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreationTimeUtc">
-      <MemberSignature Language="C#" Value="public DateTime CreationTimeUtc { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   This method may return an inaccurate value, because it uses native functions whose values may not be continuously updated by the operating system.</para>
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.CreationTimeUtc" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+          <para>If the file described in the <see cref="T:System.IO.FileSystemInfo" /> object does not exist, this property will return 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC).</para>
+          <para>NTFS-formatted drives may cache file meta-info, such as file creation time, for a short period of time. This process is known as file tunneling. As a result, it may be necessary to explicitly set the creation time of a file if you are overwriting or replacing an existing file.</para>
+          <para>This property value is null if the file system containing the <see cref="T:System.IO.FileSystemInfo" /> object does not support this information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the creation time, in coordinated universal time (UTC), of the current file or directory.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Delete">
+      <MemberSignature Language="C#" Value="public abstract void Delete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Delete() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Delete">
-      <MemberSignature Language="C#" Value="public abstract void Delete ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes a file or directory.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Exists">
+      <MemberSignature Language="C#" Value="public abstract bool Exists { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Exists" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Exists">
-      <MemberSignature Language="C#" Value="public abstract bool Exists { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the file or directory exists.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Extension">
       <MemberSignature Language="C#" Value="public string Extension { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Extension" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Extension property returns the <see cref="T:System.IO.FileSystemInfo" /> extension, including the period (.). For example, for a file c:\NewFile.txt, this property returns ".txt".</para>
+          <para>The following table lists examples of other typical or related I/O tasks.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>To do this... </para>
+                </term>
+                <description>
+                  <para>See the example in this topic... </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Create a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Write to a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="060CBE06-2ADF-4337-9E7B-961A5C840208">[&lt;topic://cpconwritingtexttofile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Read from a text file. </para>
+              </term>
+              <description>
+                <para>
+                  <format type="text/html">
+                    <a href="ED180BAA-DFC6-4C69-A725-46E87EDAFB27">[&lt;topic://cpconreadingtextfromfile&gt;]</a>
+                  </format> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Retrieve the fully qualified path of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.Path.GetFullPath(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Retrieve only the file name a path. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.Path.GetFileNameWithoutExtension(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Retrieve only the directory name from a path. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.Path.GetDirectoryName(System.String)" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Change the extension of a file. </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.IO.Path.ChangeExtension(System.String,System.String)" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string representing the extension part of the file.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="FullName">
       <MemberSignature Language="C#" Value="public virtual string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'string'</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For example, for a file c:\NewFile.txt, this property returns "c:\NewFile.txt".</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full path of the directory or file.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="FullPath">
       <MemberSignature Language="C#" Value="protected string FullPath;" />
+      <MemberSignature Language="ILAsm" Value=".field family string FullPath" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the fully qualified path of the directory or file.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -211,159 +511,346 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the file name and additional exception information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="LastAccessTime">
-      <MemberSignature Language="C#" Value="public DateTime LastAccessTime { set; get; }" />
+      <MemberSignature Language="C#" Value="public DateTime LastAccessTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastAccessTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   This method may return an inaccurate value, because it uses native functions whose values may not be continuously updated by the operating system.</para>
+          <para>If the file described in the <see cref="T:System.IO.FileSystemInfo" /> object does not exist, this property will return 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC), adjusted to local time.</para>
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time the current file or directory was last accessed.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastAccessTimeUtc">
-      <MemberSignature Language="C#" Value="public DateTime LastAccessTimeUtc { set; get; }" />
+      <MemberSignature Language="C#" Value="public DateTime LastAccessTimeUtc { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastAccessTimeUtc" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   This method may return an inaccurate value, because it uses native functions whose values may not be continuously updated by the operating system.</para>
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.LastAccessTimeUtc" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" />  object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" />  method.</para>
+          <para>If the file described in the <see cref="T:System.IO.FileSystemInfo" /> object does not exist, this property will return 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC).</para>
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time, in coordinated universal time (UTC), that the current file or directory was last accessed.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="LastWriteTime">
-      <MemberSignature Language="C#" Value="public DateTime LastWriteTime { set; get; }" />
+      <MemberSignature Language="C#" Value="public DateTime LastWriteTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastWriteTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   This method may return an inaccurate value, because it uses native functions whose values may not be continuously updated by the operating system.</para>
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.LastWriteTime" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+          <para>If the file described in the <see cref="T:System.IO.FileSystemInfo" /> object does not exist, this property will return 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC), adjusted to local time.</para>
+          <para>This property value is null if the file system containing the file does not support this information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time when the current file or directory was last written to.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="LastWriteTimeUtc">
+      <MemberSignature Language="C#" Value="public DateTime LastWriteTimeUtc { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastWriteTimeUtc" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastWriteTimeUtc">
-      <MemberSignature Language="C#" Value="public DateTime LastWriteTimeUtc { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note   This method may return an inaccurate value, because it uses native functions whose values may not be continuously updated by the operating system.</para>
+          <para>The value of the <see cref="P:System.IO.FileSystemInfo.LastWriteTimeUtc" /> property is pre-cached if the current instance of the <see cref="T:System.IO.FileSystemInfo" /> object was returned from any of the following <see cref="T:System.IO.DirectoryInfo" /> methods:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.GetFileSystemInfos" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateDirectories" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFiles" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.IO.DirectoryInfo.EnumerateFileSystemInfos" />
+              </para>
+            </item>
+          </list>
+          <para>To get the latest value, call the <see cref="M:System.IO.FileSystemInfo.Refresh" /> method.</para>
+          <para>If the file described in the <see cref="T:System.IO.FileSystemInfo" /> object does not exist, this property will return 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC).</para>
+          <para>This property value is null if the file system containing the file does not support this information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time, in coordinated universal time (UTC), when the current file or directory was last written to.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public abstract string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a directory, Name returns only the name of the parent directory, such as Dir, not c:\Dir. For a subdirectory, Name returns only the name of the subdirectory, such as Sub1, not c:\Dir\Sub1.</para>
+          <para>For a file, Name returns only the file name and file name extension, such as MyFile.txt, not c:\Dir\Myfile.txt.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For files, gets the name of the file. For directories, gets the name of the last directory in the hierarchy if a hierarchy exists. Otherwise, the Name property gets the name of the directory.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="OriginalPath">
+      <MemberSignature Language="C#" Value="protected string OriginalPath;" />
+      <MemberSignature Language="ILAsm" Value=".field family string OriginalPath" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OriginalPath">
-      <MemberSignature Language="C#" Value="protected string OriginalPath;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of common I/O tasks, see <format type="text/html"><a href="bf00c380-706a-4e38-b829-454a480629fc">Common I/O Tasks</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path originally specified by the user, whether relative or absolute.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Refresh">
+      <MemberSignature Language="C#" Value="public void Refresh ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Refresh() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Refresh">
-      <MemberSignature Language="C#" Value="public void Refresh ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>FileSystemInfo.Refresh takes a snapshot of the file from the current file system. Refresh cannot correct the underlying file system even if the file system returns incorrect or outdated information. This can happen on platforms such as Windows 98.</para>
+          <para>Calls must be made to Refresh before attempting to get the attribute information, or the information will be outdated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the state of the object.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

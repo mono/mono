@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="IValidatableObject" FullName="System.ComponentModel.DataAnnotations.IValidatableObject">
+  <TypeSignature Language="C#" Value="public interface IValidatableObject" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IValidatableObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.DataAnnotations</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way for an object to be invalidated.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt; Validate (System.ComponentModel.DataAnnotations.ValidationContext validationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class System.ComponentModel.DataAnnotations.ValidationResult&gt; Validate(class System.ComponentModel.DataAnnotations.ValidationContext validationContext) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
+      </Parameters>
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that holds failed-validation information.</para>
+        </returns>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation context.</param>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContractClassForAttribute" FullName="System.Diagnostics.Contracts.ContractClassForAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractClassForAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractClassForAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -17,12 +19,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Marks a class as containing contracts for the type specified.</summary>
-    <remarks>Interfaces and abstract methods cannot have their contracts written directly in the code. The <see cref="T:System.Diagnostics.Contracts.ContractClassAttribute" /> and <see cref="T:System.Diagnostics.Contracts.ContractClassForAttribute" /> may be used to specify another class that contains the contracts for an interface or abstract class.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Types that are marked with this attribute represent a code contract for another type. The type that the contract applies to is specified in the constructor. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a class is a contract for a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractClassForAttribute (Type typeContractsAreFor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type typeContractsAreFor) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -31,13 +40,22 @@
         <Parameter Name="typeContractsAreFor" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="typeContractsAreFor">The type (interface or abstract class) for which these are the code contract specifications.</param>
-        <summary>Constructs a ContractClassForAttribute, specifying the type (interface or abstract class) for which these are the code contract specifications.</summary>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following example shows how to use the <see cref="M:System.Diagnostics.Contracts.ContractClassAttribute.#ctor(System.Type)" /> constructor to specify that the contracts in the type apply to the IArray interface. This code example is part of a larger example provided for the <see cref="T:System.Diagnostics.Contracts.ContractClassAttribute" /> class.</para>
+          <para>code reference: ContractExample#4</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.Contracts.ContractClassForAttribute" /> class, specifying the type the current class is a contract for. </para>
+        </summary>
+        <param name="typeContractsAreFor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type the current class is a contract for.</param>
       </Docs>
     </Member>
     <Member MemberName="TypeContractsAreFor">
       <MemberSignature Language="C#" Value="public Type TypeContractsAreFor { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type TypeContractsAreFor" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -46,9 +64,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Get the type for which these are the code contract specifications.</summary>
         <value>The type for which these are the code contract specifications.</value>
         <remarks />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that this code contract applies to. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NumericUpDown" FullName="System.Windows.Forms.NumericUpDown">
   <TypeSignature Language="C#" Value="public class NumericUpDown : System.Windows.Forms.UpDownBase, System.ComponentModel.ISupportInitialize" />
   <AssemblyInfo>
@@ -31,8 +32,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.NumericUpDown" /> control contains a single numeric value that can be incremented or decremented by clicking the up or down buttons of the control. The user can also enter in a value, unless the <see cref="P:System.Windows.Forms.UpDownBase.ReadOnly" /> property is set to true.</para>
+      <para>The numeric display can be formatted by setting the <see cref="P:System.Windows.Forms.NumericUpDown.DecimalPlaces" />, <see cref="P:System.Windows.Forms.NumericUpDown.Hexadecimal" />, or <see cref="P:System.Windows.Forms.NumericUpDown.ThousandsSeparator" /> properties. To display hexadecimal values in the control, set the <see cref="P:System.Windows.Forms.NumericUpDown.Hexadecimal" /> property to true. To display a thousands separator in decimal numbers when appropriate, set the <see cref="P:System.Windows.Forms.NumericUpDown.ThousandsSeparator" /> property to true. To specify the number of digits displayed after the decimal symbol, set the <see cref="P:System.Windows.Forms.NumericUpDown.DecimalPlaces" /> property to the number of decimal places to display.</para>
+      <para>To specify the allowable range of values for the control, set the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> properties. Set the <see cref="P:System.Windows.Forms.NumericUpDown.Increment" /> value to specify the value to be incremented or decremented to the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property when the user clicks the up or down arrow buttons. You can increase the speed that the control moves through numbers when the user continuously presses the up or down arrow by setting the <see cref="P:System.Windows.Forms.NumericUpDown.Accelerations" /> property.</para>
+      <para>When the <see cref="M:System.Windows.Forms.NumericUpDown.UpButton" /> or <see cref="M:System.Windows.Forms.NumericUpDown.DownButton" /> methods are called, either in code or by the click of the up or down buttons, the new value is validated and the control is updated with the new value in the appropriate format. Specifically, if the <see cref="P:System.Windows.Forms.UpDownBase.UserEdit" /> property is set to true, the <see cref="M:System.Windows.Forms.NumericUpDown.ParseEditText" /> method is called prior to validating or updating the value. The value is then verified to be between the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> values, and the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows spin box (also known as an up-down control) that displays numeric values.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,8 +50,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.NumericUpDown" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +79,15 @@
         <ReturnType>System.Windows.Forms.NumericUpDownAccelerationCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.NumericUpDown.Accelerations" /> property can be used to increase the speed with which the <see cref="T:System.Windows.Forms.NumericUpDown" /> moves through a large set of numbers when the user holds the up or down arrow, either with the keyboard or with the mouse. Setting this property will decrease the number of <see cref="E:System.Windows.Forms.NumericUpDown.ValueChanged" /> events that occur depending on the <see cref="P:System.Windows.Forms.NumericUpDownAcceleration.Increment" /> and <see cref="P:System.Windows.Forms.NumericUpDownAcceleration.Seconds" /> property values specified for each <see cref="T:System.Windows.Forms.NumericUpDownAcceleration" /> object in the collection. The <see cref="T:System.Windows.Forms.NumericUpDownAcceleration" /> objects contained in the collection are sorted by their <see cref="P:System.Windows.Forms.NumericUpDownAcceleration.Seconds" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of sorted acceleration objects for the <see cref="T:System.Windows.Forms.NumericUpDown" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginInit">
@@ -79,8 +98,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the initialization of a <see cref="T:System.Windows.Forms.NumericUpDown" /> control that is used on a form or used by another component. The initialization occurs at run time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +138,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.DecimalPlaces" /> property is set, the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called to update the spin box's display to the new format.</para>
+          <para>The appropriate decimal symbol is determined by the regional settings of the user's operating system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to display in the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,8 +162,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Windows.Forms.NumericUpDown.DownButton" /> method is called, either in code or by the click of the down button, the new value is validated and the control is updated with the new value in the appropriate format. Specifically, if the <see cref="P:System.Windows.Forms.UpDownBase.UserEdit" /> property is set to true, the <see cref="M:System.Windows.Forms.NumericUpDown.ParseEditText" /> method is called prior to validating or updating the value. The value is then validated to be between the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> values, and the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrements the value of the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,8 +184,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the initialization of a <see cref="T:System.Windows.Forms.NumericUpDown" /> control that is used on a form or used by another component. The initialization occurs at run time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -169,9 +207,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.Hexadecimal" /> property is set, the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called to update the spin box's display to the new format. </para>
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.Hexadecimal" /> property is set to true, the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property should be set to <see cref="F:System.Int32.MaxValue" /> and the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property should be set to <see cref="F:System.Int32.MinValue" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the spin box (also known as an up-down control) should display the value it contains in hexadecimal format.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +230,15 @@
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clicking the up button causes the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property to increment by the amount specified by the <see cref="P:System.Windows.Forms.NumericUpDown.Increment" /> property and approach the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property. Clicking the down button causes the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property to be decremented by the amount specified by the <see cref="P:System.Windows.Forms.NumericUpDown.Increment" /> property and approach the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value to increment or decrement the spin box (also known as an up-down control) when the up or down buttons are clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -206,9 +257,15 @@
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property is set, the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property is evaluated and the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called. If the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property is greater than the new <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property, the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property value is set equal to the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> value. If the current <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> is greater than the new <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> value. the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property value is set equal to the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum value for the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -227,9 +284,15 @@
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property is set, the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property is evaluated and the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called. If the new <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> property value is greater than the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property value, the <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> value is set equal to the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> value. If the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> is less than the new <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> value, the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property is also set equal to the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum allowed value for the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -249,9 +312,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.NumericUpDown.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnKeyUp">
@@ -267,9 +338,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.NumericUpDown.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyUp" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnLostFocus">
@@ -282,10 +361,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.NumericUpDown.OnLostFocus(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.LostFocus" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -302,10 +389,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyPressEventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.NumericUpDown" /> control accepts only digits, the negative sign, the decimal point, and editing keystrokes, such as BACKSPACE. If the <see cref="P:System.Windows.Forms.NumericUpDown.Hexadecimal" /> property is set to true, <see cref="T:System.Windows.Forms.NumericUpDown" /> accepts hexadecimal digits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -322,9 +417,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.NumericUpDown.OnValueChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.NumericUpDown.ValueChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -352,9 +455,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.NumericUpDown.Padding" /> property as no effect on the appearance of the <see cref="T:System.Windows.Forms.NumericUpDown" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the space between the edges of a <see cref="T:System.Windows.Forms.NumericUpDown" /> control and its contents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -375,8 +484,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.NumericUpDown.Padding" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParseEditText">
@@ -387,8 +502,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.UpDownBase.UserEdit" /> property is set to true, the text displayed is converted to a numeric value so it can be validated to be between the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the text displayed in the spin box (also known as an up-down control) to a numeric value and evaluates it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -416,9 +537,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.NumericUpDown.Text" /> has no affect on the appearance of the <see cref="T:System.Windows.Forms.NumericUpDown" /> control; therefore, it is hidden in the designer and from IntelliSense.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to be displayed in the <see cref="T:System.Windows.Forms.NumericUpDown" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -440,8 +567,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.NumericUpDown.Text" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -463,9 +593,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.ThousandsSeparator" /> property is set, the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called to update the spin box's display to the new format.</para>
+          <para>The appropriate thousands separator is determined by the regional settings of the user's operating system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a thousands separator is displayed in the spin box (also known as an up-down control) when appropriate.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,9 +617,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return string includes the type and the values for the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.NumericUpDown" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.NumericUpDown" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -497,8 +643,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Windows.Forms.NumericUpDown.UpButton" /> method is called, either in code or by the click of the up button, the new value is validated and the control is updated with the new value in the appropriate format. Specifically, if <see cref="P:System.Windows.Forms.UpDownBase.UserEdit" /> is set to true, <see cref="M:System.Windows.Forms.NumericUpDown.ParseEditText" /> is called prior to validating or updating the value. The value is then validated to be between the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> values and the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Increments the value of the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -513,8 +665,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the spin box is not being initialized, the current value is validated to be between the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> values and is converted to the correct format for display in the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the current value of the spin box (also known as an up-down control) in the appropriate format.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -529,8 +687,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.NumericUpDown.ValidateEditText" /> method calls the <see cref="M:System.Windows.Forms.NumericUpDown.ParseEditText" /> and <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> methods to validate and update the display of the spin box.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates and updates the text displayed in the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -549,9 +713,15 @@
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property is set, the new value is validated to be between the <see cref="P:System.Windows.Forms.NumericUpDown.Minimum" /> and <see cref="P:System.Windows.Forms.NumericUpDown.Maximum" /> values. Following this, the <see cref="M:System.Windows.Forms.NumericUpDown.UpdateEditText" /> method is called to update the spin box's display with the new value in the appropriate format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value assigned to the spin box (also known as an up-down control).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -565,8 +735,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="E:System.Windows.Forms.NumericUpDown.ValueChanged" /> event to occur, the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property can be changed in code, by clicking the up or down button, or by the user entering a new value that is read by the control. The new value is read when the user hits the ENTER key or navigates away from the control. If the user enters a new value and then clicks the up or down button, the <see cref="E:System.Windows.Forms.NumericUpDown.ValueChanged" /> event will occur twice.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.NumericUpDown.Value" /> property has been changed in some way.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

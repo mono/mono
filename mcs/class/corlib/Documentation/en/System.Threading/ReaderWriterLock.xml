@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReaderWriterLock" FullName="System.Threading.ReaderWriterLock">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ReaderWriterLock : System.Runtime.ConstrainedExecution.CriticalFinalizerObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ReaderWriterLock extends System.Runtime.ConstrainedExecution.CriticalFinalizerObject" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,29 +14,102 @@
     <BaseTypeName>System.Runtime.ConstrainedExecution.CriticalFinalizerObject</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The dnprdnshort has two reader-writer locks, <see cref="T:System.Threading.ReaderWriterLockSlim" /> and <see cref="T:System.Threading.ReaderWriterLock" />. <see cref="T:System.Threading.ReaderWriterLockSlim" /> is recommended for all new development. <see cref="T:System.Threading.ReaderWriterLockSlim" /> is similar to <see cref="T:System.Threading.ReaderWriterLock" />, but it has simplified rules for recursion and for upgrading and downgrading lock state. <see cref="T:System.Threading.ReaderWriterLockSlim" /> avoids many cases of potential deadlock. In addition, the performance of <see cref="T:System.Threading.ReaderWriterLockSlim" /> is significantly better than <see cref="T:System.Threading.ReaderWriterLock" />. </para>
+      </block>
+      <para>
+        <see cref="T:System.Threading.ReaderWriterLock" /> is used to synchronize access to a resource. At any given time, it allows either concurrent read access for multiple threads, or write access for a single thread. In a situation where a resource is changed infrequently, a ReaderWriterLock provides better throughput than a simple one-at-a-time lock, such as <see cref="T:System.Threading.Monitor" />.</para>
+      <para>ReaderWriterLock works best where most accesses are reads, while writes are infrequent and of short duration. Multiple readers alternate with single writers, so that neither readers nor writers are blocked for long periods.</para>
+      <block subset="none" type="note">
+        <para>Holding reader locks or writer locks for long periods will starve other threads. For best performance, consider restructuring your application to minimize the duration of writes.</para>
+      </block>
+      <para>A thread can hold a reader lock or a writer lock, but not both at the same time. Instead of releasing a reader lock in order to acquire the writer lock, you can use <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> and <see cref="M:System.Threading.ReaderWriterLock.DowngradeFromWriterLock(System.Threading.LockCookie@)" />.</para>
+      <para>Recursive lock requests increase the lock count on a lock.</para>
+      <para>Readers and writers are queued separately. When a thread releases the writer lock, all threads waiting in the reader queue at that instant are granted reader locks; when all of those reader locks have been released, the next thread waiting in the writer queue, if any, is granted the writer lock, and so on. In other words, ReaderWriterLock alternates between a collection of readers, and one writer.</para>
+      <para>While a thread in the writer queue is waiting for active reader locks to be released, threads requesting new reader locks accumulate in the reader queue. Their requests are not granted, even though they could share concurrent access with existing reader-lock holders; this helps protect writers against indefinite blockage by readers.</para>
+      <para>Most methods for acquiring locks on a ReaderWriterLock accept time-out values. Use time-outs to avoid deadlocks in your application. For example, a thread might acquire the writer lock on one resource and then request a reader lock on a second resource; in the meantime, another thread might acquire the writer lock on the second resource, and request a reader lock on the first. Unless time-outs are used, the threads deadlock.</para>
+      <para>If the time-out interval expires and the lock request has not been granted, the method returns control to the calling thread by throwing an <see cref="T:System.ApplicationException" />. A thread can catch this exception and determine what action to take next.</para>
+      <para>Time-outs are expressed in milliseconds. If you use a <see cref="T:System.TimeSpan" /> to specify the time-out, the value used is the total number of whole milliseconds represented by the <see cref="T:System.TimeSpan" />. The following table shows the valid time-out values in milliseconds.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Value </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>-1 </para>
+          </term>
+          <description>
+            <para>The thread waits until the lock is acquired, regardless of how long it takes. For methods that specify integer time-outs, the constant <see cref="F:System.Threading.Timeout.Infinite" /> can be used. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>0 </para>
+          </term>
+          <description>
+            <para>The thread does not wait to acquire the lock. If the lock cannot be acquired immediately, the method returns. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>&gt;0 </para>
+          </term>
+          <description>
+            <para>The number of milliseconds to wait. </para>
+          </description>
+        </item>
+      </list>
+      <para>With the exception of -1, negative time-out values are not allowed. If you specify a negative integer other than -1, a time-out value of zero is used instead. (That is, the method returns without waiting, if the lock cannot be acquired immediately.) If you specify a <see cref="T:System.TimeSpan" /> that represents a negative number of milliseconds other than -1, <see cref="T:System.ArgumentOutOfRangeException" /> is thrown.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a lock that supports single writers and multiple readers. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ReaderWriterLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.ReaderWriterLock" /> class.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AcquireReaderLock">
       <MemberSignature Language="C#" Value="public void AcquireReaderLock (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AcquireReaderLock(int32 millisecondsTimeout) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -42,19 +117,34 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ReaderWriterLock.AcquireReaderLock(System.Int32)" /> blocks if a different thread has the writer lock, or if at least one thread is waiting for the writer lock.</para>
+          <block subset="none" type="note">
+            <para>If the current thread already has the writer lock, no reader lock is acquired. Instead, the lock count on the writer lock is incremented. This prevents a thread from blocking on its own writer lock. The result is exactly the same as calling <see cref="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)" />, and an additional call to <see cref="M:System.Threading.ReaderWriterLock.ReleaseWriterLock" /> is required when releasing the writer lock.</para>
+          </block>
+          <para>AcquireReaderLock supports recursive reader-lock requests. That is, a thread can call AcquireReaderLock multiple times, which increments the lock count each time. You must call <see cref="M:System.Threading.ReaderWriterLock.ReleaseReaderLock" /> once for each time you call AcquireReaderLock. Alternatively, you can call <see cref="M:System.Threading.ReaderWriterLock.ReleaseLock" /> to reduce the lock count to zero immediately.</para>
+          <para>Recursive lock requests are always granted immediately, without placing the requesting thread in the reader queue. Use recursive locks with caution, to avoid blocking writer-lock requests for long periods.</para>
+          <para>For valid time-out values, see <see cref="T:System.Threading.ReaderWriterLock" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Acquires a reader lock, using an <see cref="T:System.Int32" /> value for the time-out.</para>
+        </summary>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time-out in milliseconds. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AcquireReaderLock">
       <MemberSignature Language="C#" Value="public void AcquireReaderLock (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AcquireReaderLock(valuetype System.TimeSpan timeout) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -62,19 +152,34 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ReaderWriterLock.AcquireReaderLock(System.Int32)" /> blocks if a different thread has the writer lock, or if at least one thread is waiting for the writer lock.</para>
+          <block subset="none" type="note">
+            <para>If the current thread already has the writer lock, no reader lock is acquired. Instead, the lock count on the writer lock is incremented. This prevents a thread from blocking on its own writer lock. The result is exactly the same as calling <see cref="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)" />, and an additional call to <see cref="M:System.Threading.ReaderWriterLock.ReleaseWriterLock" /> is required when releasing the writer lock.</para>
+          </block>
+          <para>AcquireReaderLock supports recursive reader-lock requests. That is, a thread can call AcquireReaderLock multiple times, which increments the lock count each time. You must call <see cref="M:System.Threading.ReaderWriterLock.ReleaseReaderLock" /> once for each time you call AcquireReaderLock. Alternatively, you can call <see cref="M:System.Threading.ReaderWriterLock.ReleaseLock" /> to reduce the lock count to zero immediately.</para>
+          <para>Recursive lock requests are always granted immediately, without placing the requesting thread in the reader queue. Use recursive locks with caution, to avoid blocking writer-lock requests for long periods.</para>
+          <para>For valid time-out values, see <see cref="T:System.Threading.ReaderWriterLock" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Acquires a reader lock, using a <see cref="T:System.TimeSpan" /> value for the time-out.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TimeSpan specifying the time-out period. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AcquireWriterLock">
+      <MemberSignature Language="C#" Value="public void AcquireWriterLock (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AcquireWriterLock(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AcquireWriterLock">
-      <MemberSignature Language="C#" Value="public void AcquireWriterLock (int millisecondsTimeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -82,19 +187,34 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks if another thread has a reader lock or writer lock. For a description of the way the writer lock alternates with multiple concurrent reader locks, see the <see cref="T:System.Threading.ReaderWriterLock" /> class.</para>
+          <para>A thread that already has a reader lock can acquire the writer lock in one of two ways: by releasing the reader lock before calling <see cref="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)" />, or by calling <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" />.</para>
+          <block subset="none" type="note">
+            <para>If a thread calls AcquireWriterLock while it still has a reader lock, it will block on its own reader lock; if an infinite time-out is specified, the thread will deadlock. To avoid such deadlocks, use <see cref="P:System.Threading.ReaderWriterLock.IsReaderLockHeld" /> to determine whether the current thread already has a reader lock.</para>
+          </block>
+          <para>AcquireWriterLock supports recursive writer-lock requests. That is, a thread can call AcquireWriterLock multiple times, which increments the lock count each time. You must call <see cref="M:System.Threading.ReaderWriterLock.ReleaseWriterLock" /> once for each time you call AcquireWriterLock. Alternatively, you can call <see cref="M:System.Threading.ReaderWriterLock.ReleaseLock" /> to reduce the lock count to zero immediately.</para>
+          <para>Recursive lock requests are always granted immediately, without placing the requesting thread in the writer queue.</para>
+          <para>For valid time-out values, see <see cref="T:System.Threading.ReaderWriterLock" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Acquires the writer lock, using an <see cref="T:System.Int32" /> value for the time-out.</para>
+        </summary>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time-out in milliseconds. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AcquireWriterLock">
+      <MemberSignature Language="C#" Value="public void AcquireWriterLock (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AcquireWriterLock(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AcquireWriterLock">
-      <MemberSignature Language="C#" Value="public void AcquireWriterLock (TimeSpan timeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -102,19 +222,34 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method blocks if another thread has a reader lock or writer lock. For a description of the way the writer lock alternates with multiple concurrent reader locks, see the <see cref="T:System.Threading.ReaderWriterLock" /> class.</para>
+          <para>A thread that already has a reader lock can acquire the writer lock in one of two ways: by releasing the reader lock before calling <see cref="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)" />, or by calling <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" />.</para>
+          <block subset="none" type="note">
+            <para>If a thread calls AcquireWriterLock while it still has a reader lock, it will block on its own reader lock; if an infinite time-out is specified, the thread will deadlock. To avoid such deadlocks, use <see cref="P:System.Threading.ReaderWriterLock.IsReaderLockHeld" /> to determine whether the current thread already has a reader lock.</para>
+          </block>
+          <para>AcquireWriterLock supports recursive writer-lock requests. That is, a thread can call AcquireWriterLock multiple times, which increments the lock count each time. You must call <see cref="M:System.Threading.ReaderWriterLock.ReleaseWriterLock" /> once for each time you call AcquireWriterLock. Alternatively, you can call <see cref="M:System.Threading.ReaderWriterLock.ReleaseLock" /> to reduce the lock count to zero immediately.</para>
+          <para>Recursive lock requests are always granted immediately, without placing the requesting thread in the writer queue.</para>
+          <para>For valid time-out values, see <see cref="T:System.Threading.ReaderWriterLock" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Acquires the writer lock, using a <see cref="T:System.TimeSpan" /> value for the time-out.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TimeSpan specifying the time-out period. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AnyWritersSince">
+      <MemberSignature Language="C#" Value="public bool AnyWritersSince (int seqNum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool AnyWritersSince(int32 seqNum) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AnyWritersSince">
-      <MemberSignature Language="C#" Value="public bool AnyWritersSince (int seqNum);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -122,20 +257,32 @@
         <Parameter Name="seqNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="seqNum">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use <see cref="P:System.Threading.ReaderWriterLock.WriterSeqNum" /> and AnyWritersSince to improve application performance. For example, a thread might cache the information it obtains while holding a reader lock. After releasing and later reacquiring the lock, the thread can use AnyWritersSince to determine whether other threads have written to the resource in the interim; if not, the cached information can be used. This technique is useful where reading the information protected by the lock is expensive; for example, running a database query.</para>
+          <para>The caller must be holding a reader lock or a writer lock in order for the sequence number to be useful.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the writer lock has been granted to any thread since the sequence number was obtained.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the writer lock has been granted to any thread since the sequence number was obtained; otherwise, false.</para>
+        </returns>
+        <param name="seqNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence number. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DowngradeFromWriterLock">
+      <MemberSignature Language="C#" Value="public void DowngradeFromWriterLock (ref System.Threading.LockCookie lockCookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DowngradeFromWriterLock(valuetype System.Threading.LockCookie lockCookie) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DowngradeFromWriterLock">
-      <MemberSignature Language="C#" Value="public void DowngradeFromWriterLock (ref System.Threading.LockCookie lockCookie);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -147,14 +294,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~ReaderWriterLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -171,15 +314,8 @@
     </Member>
     <Member MemberName="IsReaderLockHeld">
       <MemberSignature Language="C#" Value="public bool IsReaderLockHeld { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReaderLockHeld" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -190,18 +326,22 @@
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current thread holds a reader lock.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="IsWriterLockHeld">
       <MemberSignature Language="C#" Value="public bool IsWriterLockHeld { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsWriterLockHeld" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -212,36 +352,51 @@
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added: an object of type 'bool'</value>
+        <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current thread holds the writer lock.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ReleaseLock">
       <MemberSignature Language="C#" Value="public System.Threading.LockCookie ReleaseLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.LockCookie ReleaseLock() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.LockCookie</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'LockCookie'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ReaderWriterLock.ReleaseLock" /> releases the reader lock or writer lock, regardless of the recursive lock count. To restore the state of the lock, including the lock count, pass the <see cref="T:System.Threading.LockCookie" /> to <see cref="M:System.Threading.ReaderWriterLock.RestoreLock(System.Threading.LockCookie@)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the lock, regardless of the number of times the thread acquired the lock.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.LockCookie" /> value representing the released lock.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReleaseReaderLock">
       <MemberSignature Language="C#" Value="public void ReleaseReaderLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReleaseReaderLock() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -252,18 +407,29 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ReaderWriterLock.ReleaseReaderLock" /> decrements the lock count. When the count reaches zero, the lock is released.</para>
+          <block subset="none" type="note">
+            <para>If a thread has the writer lock, calling ReleaseReaderLock has the same effect as calling <see cref="M:System.Threading.ReaderWriterLock.ReleaseWriterLock" />. If a thread has no locks, calling ReleaseReaderLock throws an <see cref="T:System.ApplicationException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrements the lock count.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ReleaseWriterLock">
       <MemberSignature Language="C#" Value="public void ReleaseWriterLock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReleaseWriterLock() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -274,10 +440,34 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Threading.ReaderWriterLock.ReleaseWriterLock" /> decrements the writer lock count. When the count reaches zero, the writer lock is released.</para>
+          <block subset="none" type="note">
+            <para>If a thread has a reader lock, or no locks, calling ReleaseWriterLock throws an <see cref="T:System.ApplicationException" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrements the lock count on the writer lock.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="RestoreLock">
       <MemberSignature Language="C#" Value="public void RestoreLock (ref System.Threading.LockCookie lockCookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RestoreLock(valuetype System.Threading.LockCookie lockCookie) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -289,15 +479,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="UpgradeToWriterLock">
+      <MemberSignature Language="C#" Value="public System.Threading.LockCookie UpgradeToWriterLock (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.LockCookie UpgradeToWriterLock(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UpgradeToWriterLock">
-      <MemberSignature Language="C#" Value="public System.Threading.LockCookie UpgradeToWriterLock (int millisecondsTimeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.LockCookie</ReturnType>
       </ReturnValue>
@@ -305,20 +496,37 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'LockCookie'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a thread calls UpgradeToWriterLock the reader lock is released, regardless of the lock count, and the thread goes to the end of the queue for the writer lock. Thus, other threads might write to the resource before the thread that requested the upgrade is granted the writer lock.</para>
+          <block subset="none" type="note">
+            <para>The time-out exception is not thrown until the thread that called the <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> method can reacquire the reader lock. If there are no other threads waiting for the writer lock, this happens immediately. However, if another thread is queued for the writer lock, the thread that called the <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> method cannot reacquire the reader lock until all current readers have released their locks, and one thread has acquired and released the writer lock. This is true even if the other thread that requested the writer lock requested it after the current thread called the <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> method.</para>
+          </block>
+          <para>To restore the lock state, call <see cref="M:System.Threading.ReaderWriterLock.DowngradeFromWriterLock(System.Threading.LockCookie@)" /> using the <see cref="T:System.Threading.LockCookie" /> returned by UpgradeToWriterLock. Do not use this LockCookie with <see cref="M:System.Threading.ReaderWriterLock.RestoreLock(System.Threading.LockCookie@)" />.</para>
+          <para>When a thread has no reader lock, do not use UpgradeToWriterLock. Use <see cref="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)" /> instead.</para>
+          <para>For valid time-out values, see <see cref="T:System.Threading.ReaderWriterLock" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Upgrades a reader lock to the writer lock, using an Int32 value for the time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.LockCookie" /> value.</para>
+        </returns>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time-out in milliseconds. </param>
       </Docs>
+    </Member>
+    <Member MemberName="UpgradeToWriterLock">
+      <MemberSignature Language="C#" Value="public System.Threading.LockCookie UpgradeToWriterLock (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.LockCookie UpgradeToWriterLock(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UpgradeToWriterLock">
-      <MemberSignature Language="C#" Value="public System.Threading.LockCookie UpgradeToWriterLock (TimeSpan timeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.LockCookie</ReturnType>
       </ReturnValue>
@@ -326,38 +534,53 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added: an object of type 'TimeSpan'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'LockCookie'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a thread calls UpgradeToWriterLock the reader lock is released, regardless of the lock count, and the thread goes to the end of the queue for the writer lock. Thus, other threads might write to the resource before the thread that requested the upgrade is granted the writer lock.</para>
+          <block subset="none" type="note">
+            <para>The time-out exception is not thrown until the thread that called the <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> method can reacquire the reader lock. If there are no other threads waiting for the writer lock, this happens immediately. However, if another thread is queued for the writer lock, the thread that called the <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> method cannot reacquire the reader lock until all current readers have released their locks, and one thread has acquired and released the writer lock. This is true even if the other thread that requested the writer lock requested it after the current thread called the <see cref="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)" /> method.</para>
+          </block>
+          <para>To restore the lock state, call <see cref="M:System.Threading.ReaderWriterLock.DowngradeFromWriterLock(System.Threading.LockCookie@)" /> using the <see cref="T:System.Threading.LockCookie" /> returned by UpgradeToWriterLock. Do not use this LockCookie with <see cref="M:System.Threading.ReaderWriterLock.RestoreLock(System.Threading.LockCookie@)" />.</para>
+          <para>When a thread has no reader lock, do not use UpgradeToWriterLock. Use <see cref="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)" /> instead.</para>
+          <para>For valid time-out values, see <see cref="T:System.Threading.ReaderWriterLock" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Upgrades a reader lock to the writer lock, using a TimeSpan value for the time-out.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.LockCookie" /> value.</para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TimeSpan specifying the time-out period. </param>
       </Docs>
+    </Member>
+    <Member MemberName="WriterSeqNum">
+      <MemberSignature Language="C#" Value="public int WriterSeqNum { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WriterSeqNum" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriterSeqNum">
-      <MemberSignature Language="C#" Value="public int WriterSeqNum { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sequence number increases whenever a thread acquires the writer lock. You can save the sequence number and pass it to <see cref="M:System.Threading.ReaderWriterLock.AnyWritersSince(System.Int32)" /> at a later time, if you want to determine whether other threads have acquired the writer lock in the meantime.</para>
+          <para>You can use WriterSeqNum to improve application performance. For example, a thread might cache the information it obtains while holding a reader lock. After releasing and later reacquiring the lock, the thread can determine whether other threads have written to the resource by calling AnyWritersSince; if not, the cached information can be used. This technique is useful when reading the information protected by the lock is expensive; for example, running a database query.</para>
+          <para>The caller must be holding a reader lock or a writer lock in order for the sequence number to be useful.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current sequence number.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

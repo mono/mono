@@ -1,95 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPersistComponentSettings" FullName="System.Configuration.IPersistComponentSettings">
   <TypeSignature Language="C#" Value="public interface IPersistComponentSettings" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPersistComponentSettings" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, you can add application settings support to an application by creating a settings wrapper class, which is derived from <see cref="T:System.Configuration.ApplicationSettingsBase" />, and then add special properties to this class. However, this approach does not sufficiently encapsulate application settings for a control so that its container is shielded from the details. The <see cref="T:System.Configuration.IPersistComponentSettings" /> interface provides an application with a standard interface for communicating application settings state change requests to a control, component, or library module. Design-time tools also depend on this interface to properly manage controls and components.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines standard functionality for controls or libraries that store and retrieve application settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="LoadComponentSettings">
       <MemberSignature Language="C#" Value="public void LoadComponentSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void LoadComponentSettings() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In general, the <see cref="M:System.Configuration.IPersistComponentSettings.LoadComponentSettings" /> method performs two essential operations:</para>
+          <list type="bullet">
+            <item>
+              <para>It causes each application settings instance contained by the control to refresh the values of its application settings properties, typically by calling their <see cref="M:System.Configuration.ApplicationSettingsBase.Reload" /> methods. </para>
+            </item>
+            <item>
+              <para>As required, it updates those general properties that depend on these reloaded settings properties. For example, if the settings class contained a location settings property, <see cref="M:System.Configuration.IPersistComponentSettings.LoadComponentSettings" /> should ensure that the control's <see cref="P:System.Windows.Forms.Control.Location" /> property is updated to reflect this reloaded setting.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads the control's application settings into their corresponding properties and updates the control's state.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResetComponentSettings">
       <MemberSignature Language="C#" Value="public void ResetComponentSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ResetComponentSettings() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The implementation of the <see cref="M:System.Configuration.IPersistComponentSettings.ResetComponentSettings" /> method typically calls the <see cref="M:System.Configuration.ApplicationSettingsBase.Reset" /> method on each instance of an application settings class it contains.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the control's application settings properties to their default values.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SaveComponentSettings">
       <MemberSignature Language="C#" Value="public void SaveComponentSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SaveComponentSettings() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Configuration.IPersistComponentSettings.SaveComponentSettings" /> method writes the values of the control's application settings properties to the associated data store. The data store and serialization technique the method uses is determined by the settings provider associated with each settings class through the <see cref="T:System.Configuration.SettingsProviderAttribute" />. You can override the choice of the settings provider by using the <see cref="T:System.Configuration.ISettingsProviderService" /> interface.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="P:System.Configuration.IPersistComponentSettings.SaveSettings" /> property is true, the control should call <see cref="M:System.Configuration.IPersistComponentSettings.SaveComponentSettings" /> in its own <see cref="Overload:System.Windows.Forms.Control.Dispose" /> method so that the control's configuration data is stored automatically before the application ends.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Persists the control's application settings properties.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SaveSettings">
-      <MemberSignature Language="C#" Value="public bool SaveSettings { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SaveSettings { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SaveSettings" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a control contains configuration data, it will typically persist this data in response to an explicit call to the <see cref="M:System.Configuration.IPersistComponentSettings.SaveComponentSettings" /> method or sometimes implicitly when the control's <see cref="Overload:System.Windows.Forms.Control.Dispose" /> method is invoked. The <see cref="P:System.Configuration.IPersistComponentSettings.SaveSettings" /> property determines whether a control automatically persists its configuration data when it is disposed.</para>
+          <para>The default value of <see cref="P:System.Configuration.IPersistComponentSettings.SaveSettings" /> depends on the implementation of the control. The documentation for the control should indicate whether it uses application settings, what data is persisted, and what the default value of the <see cref="P:System.Configuration.IPersistComponentSettings.SaveSettings" /> property is.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control should automatically persist its application settings properties.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SettingsKey">
-      <MemberSignature Language="C#" Value="public string SettingsKey { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SettingsKey { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SettingsKey" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Configuration.IPersistComponentSettings.SettingsKey" /> property to disambiguate groups of application settings properties when there are multiple instances of the same wrapper class. For example, if a control contains an associated wrapper class, then placing multiple instances of the same control in the same application will typically result in multiple instances of the wrapper class. A settings key is required only when the configuration data differs on a per-instance basis; for example, the location of dynamically positioned controls.</para>
+          <para>The following general rules apply to the use of <see cref="P:System.Configuration.IPersistComponentSettings.SettingsKey" />:</para>
+          <list type="bullet">
+            <item>
+              <para>A control, like any class, may contain zero or more application settings classes, derived from <see cref="T:System.Configuration.ApplicationSettingsBase" />. Each settings class contains its own <see cref="P:System.Configuration.ApplicationSettingsBase.SettingsKey" /> property, which helps disambiguate multiple instances of that class.</para>
+            </item>
+            <item>
+              <para>A control should separate its per-instance data and its shared data into different settings classes.</para>
+            </item>
+            <item>
+              <para>For a control with any per-instance configuration data, the get accessor of the <see cref="P:System.Configuration.IPersistComponentSettings.SettingsKey" /> property should default to the <see cref="P:System.Windows.Forms.Control.Name" /> of the control. In most cases the name of the control will be unique within an application. If the control contains only shared configuration data, get should default to null.</para>
+            </item>
+            <item>
+              <para>The set accessor for this property should be implemented to distinguish between settings classes containing per-instance and shared configuration data. For each settings class containing per-instance data, set should just pass-through to the <see cref="P:System.Configuration.ApplicationSettingsBase.SettingsKey" /> property of the settings class. For settings classes containing shared data, set should perform no action for that settings class.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the application settings key for the current instance of the control.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

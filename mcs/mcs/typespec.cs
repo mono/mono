@@ -321,6 +321,9 @@ namespace Mono.CSharp
 				if (Kind == MemberKind.Void)
 					return true;
 
+				if (Kind == MemberKind.TypeParameter)
+					return false;
+
 				if (IsNested && DeclaringType.IsGenericOrParentIsGeneric)
 					return false;
 
@@ -375,7 +378,7 @@ namespace Mono.CSharp
 				throw new InternalErrorException ("Modifying expanded interface list");
 
 			if (ifaces == null) {
-				ifaces = new List<TypeSpec> () { iface };
+				ifaces = new List<TypeSpec> { iface };
 				return true;
 			}
 
@@ -1250,6 +1253,9 @@ namespace Mono.CSharp
 						return false;
 				}
 
+				if (a.IsNested && b.IsNested)
+					return IsEqual (a.DeclaringType, b.DeclaringType);
+
 				return true;
 			}
 
@@ -1413,6 +1419,7 @@ namespace Mono.CSharp
 		bool IsPartial { get; }
 		bool IsComImport { get; }
 		bool IsTypeForwarder { get; }
+		bool IsCyclicTypeForwarder { get; }
 		int TypeParametersCount { get; }
 		TypeParameterSpec[] TypeParameters { get; }
 
@@ -1479,6 +1486,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsCyclicTypeForwarder {
 			get {
 				return false;
 			}
@@ -1609,6 +1622,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsCyclicTypeForwarder {
 			get {
 				return false;
 			}

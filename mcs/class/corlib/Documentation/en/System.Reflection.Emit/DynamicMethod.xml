@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DynamicMethod" FullName="System.Reflection.Emit.DynamicMethod">
   <TypeSignature Language="C#" Value="public sealed class DynamicMethod : System.Reflection.MethodInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit DynamicMethod extends System.Reflection.MethodInfo" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,13 +17,137 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Reflection.Emit.DynamicMethod" /> class to generate and execute a method at run time, without having to generate a dynamic assembly and a dynamic type to contain the method. The executable code created by the just-in-time (JIT) compiler is reclaimed when the <see cref="T:System.Reflection.Emit.DynamicMethod" /> object is reclaimed. Dynamic methods are the most efficient way to generate and execute small amounts of code.</para>
+      <para>A dynamic method can be anonymously hosted, or it can be logically associated with a module or with a type. </para>
+      <list type="bullet">
+        <item>
+          <para>If the dynamic method is anonymously hosted, it is located in a system-provided assembly, and therefore is isolated from other code. By default, it does not have access to any non-public data. An anonymously hosted dynamic method can have restricted ability to skip the JIT compiler's visibility checks, if it has been granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag. The trust level of the assembly whose non-public members are accessed by the dynamic method must be equal to, or a subset of, the trust level of the call stack that emitted the dynamic method. For more information about anonymously hosted dynamic methods, see <format type="text/html"><a href="c45be261-2a9d-4c4e-9bd6-27f0931b7d25">Walkthrough: Emitting Code in Partial Trust Scenarios</a></format>.</para>
+        </item>
+        <item>
+          <para>If the dynamic method is associated with a module that you specify, the dynamic method is effectively global to that module. It can access all types in the module and all internal (Friend in Visual Basic) members of the types. You can associate a dynamic method with any module, regardless of whether you created the module, provided that a demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag can be satisfied by the call stack that includes your code. If the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag is included in the grant, the dynamic method can skip the JIT compiler's visibility checks and access the private data of all types declared in the module or in any other module in any assembly. </para>
+          <block subset="none" type="note">
+            <para>When you specify the module with which a dynamic method is associated, that module must not be in the system-provided assembly that is used for anonymous hosting.</para>
+          </block>
+        </item>
+        <item>
+          <para>If the dynamic method is associated with a type that you specify, it has access to all members of the type, regardless of access level. In addition, JIT visibility checks can be skipped. This gives the dynamic method access to the private data of other types declared in the same module or in any other module in any assembly. You can associate a dynamic method with any type, but your code must be granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with both the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> and <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flags.</para>
+        </item>
+      </list>
+      <para>The following table shows which types and members are accessible to an anonymously hosted dynamic method, with and without JIT visibility checks, depending on whether <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag is granted. </para>
+      <list type="table">
+        <item>
+          <term>
+            <para> </para>
+          </term>
+          <description>
+            <para>Without <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> </para>
+          </description>
+          <description>
+            <para>With <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /></para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Without skipping JIT visibility checks</para>
+          </term>
+          <description>
+            <para>Public members of public types in any assembly.</para>
+          </description>
+          <description>
+            <para>Public members of public types in any assembly.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Skipping JIT visibility checks, with restrictions</para>
+          </term>
+          <description>
+            <para>Public members of public types in any assembly.</para>
+          </description>
+          <description>
+            <para>All members of all types, only in assemblies whose trust levels are equal to or less than the trust level of the assembly that emitted the dynamic method.</para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Prior to the net_v20sp1_long, emitting code required <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. This permission is included by default in the FullTrust and LocalIntranet named permission sets, but not in the Internet permission set. Therefore, in earlier versions of the dnprdnshort a library can be used with Internet permissions only if it has the <see cref="T:System.Security.SecurityCriticalAttribute" /> attribute and also executes an <see cref="M:System.Security.PermissionSet.Assert" /> for <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" />. Such libraries require careful security review because coding errors could result in security holes. The net_v20SP1_short allows code to be emitted in partial trust scenarios without issuing any security demands, because generating code is not inherently a privileged operation. That is, the generated code has no more permissions than the assembly that emits it. This allows libraries that emit code to be security transparent and removes the need to assert <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" />, which simplifies the task of writing a secure library. To use this feature, your application should target the net_v35_long or later.</para>
+      </block>
+      <para>The following table shows which types and members are accessible to a dynamic method that is associated with a module or with a type in a module. </para>
+      <list type="table">
+        <item>
+          <term>
+            <para> </para>
+          </term>
+          <description>
+            <para>Associated with module</para>
+          </description>
+          <description>
+            <para>Associated with type</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Without skipping JIT visibility checks</para>
+          </term>
+          <description>
+            <para>Public and internal members of public, internal, and private types in the module.</para>
+            <para>Public members of public types in any assembly.</para>
+          </description>
+          <description>
+            <para>All members of the associated type. Public and internal members of all the other types in the module.</para>
+            <para>Public members of public types in any assembly.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Skipping JIT visibility checks</para>
+          </term>
+          <description>
+            <para>All members of all types in any assembly.</para>
+          </description>
+          <description>
+            <para>All members of all types in any assembly.</para>
+          </description>
+        </item>
+      </list>
+      <para>A dynamic method that is associated with a module has the permissions of that module. A dynamic method that is associated with a type has the permissions of the module containing that type. </para>
+      <para>Dynamic methods and their parameters do not have to be named, but you can specify names to assist in debugging. Custom attributes are not supported on dynamic methods or their parameters.</para>
+      <para>Although dynamic methods are static methods (Shared methods in Visual Basic), the relaxed rules for delegate binding introduced in the dnprdnlong allow a dynamic method to be bound to an object, so that it acts like an instance method when called using that delegate instance. An example that demonstrates this is provided for the <see cref="M:System.Reflection.Emit.DynamicMethod.CreateDelegate(System.Type,System.Object)" /> method overload. </para>
+      <block subset="none" type="note">
+        <para>In the dnprdnlong, dynamic methods do not support symbol information, that is, local variable names and line-number mapping. This limitation might be removed in a future version. You can use <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> during development to simplify debugging the generated Microsoft intermediate language (MSIL), and then switch to dynamic methods during final deployment, because the <see cref="T:System.Reflection.Emit.ILGenerator" /> calls are the same in both cases.</para>
+      </block>
+      <format type="text/html">
+        <h2>Verification</h2>
+      </format>
+      <para>The following list summarizes the conditions under which dynamic methods can contain unverifiable code. (For example, a dynamic method is unverifiable if its <see cref="P:System.Reflection.Emit.DynamicMethod.InitLocals" /> property is set to false.) </para>
+      <list type="bullet">
+        <item>
+          <para>A dynamic method that is associated with a security-critical assembly is also security-critical, and can skip verification. For example, an assembly without security attributes that is run as a desktop application is treated as security-critical by the runtime. If you associate a dynamic method with the assembly, the dynamic method can contain unverifiable code.</para>
+        </item>
+        <item>
+          <para>If a dynamic method that contains unverifiable code is associated with an assembly that has level 1 transparency, the just-in-time (JIT) compiler injects a security demand. The demand succeeds only if the dynamic method is executed by fully trusted code. See <format type="text/html"><a href="5fd8f46d-3961-46a7-84af-2eb1f48e75cf">Security-Transparent Code, Level 1</a></format>.</para>
+        </item>
+        <item>
+          <para>If a dynamic method that contains unverifiable code is associated with an assembly that has level 2 transparency (such as mscorlib.dll), it throws an exception (injected by the JIT compiler) instead of making a security demand. See <format type="text/html"><a href="4d05610a-0da6-4f08-acea-d54c9d6143c0">Security-Transparent Code, Level 2</a></format>.</para>
+        </item>
+        <item>
+          <para>An anonymously hosted dynamic method that contains unverifiable code always throws an exception. It can never skip verification, even if it is created and executed by fully trusted code.</para>
+        </item>
+      </list>
+      <para>The exception that is thrown for unverifiable code varies depending on the way the dynamic method is invoked. If you invoke a dynamic method by using a delegate returned from the <see cref="M:System.Reflection.Emit.DynamicMethod.CreateDelegate(System.Type)" /> method, a <see cref="T:System.Security.VerificationException" /> is thrown. If you invoke the dynamic method by using the <see cref="Overload:System.Reflection.Emit.DynamicMethod.Invoke" /> method, a <see cref="T:System.Reflection.TargetInvocationException" /> is thrown with an inner <see cref="T:System.Security.VerificationException" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines and represents a dynamic method that can be compiled, executed, and discarded. Discarded methods are available for garbage collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DynamicMethod (string name, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -33,15 +159,31 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic method that is created by this constructor is associated with an anonymous assembly instead of an existing type or module. The anonymous assembly exists only to provide a sandbox environment for dynamic methods, that is, to isolate them from other code. This environment makes it safe for the dynamic method to be emitted and executed by partially trusted code. </para>
+          <para>This constructor specifies that just-in-time (JIT) visibility checks will be enforced for the Microsoft intermediate language (MSIL) of the dynamic method. That is, the code in the dynamic method has access to public methods of public classes. Exceptions are thrown if the method tries to access types or members that are private, protected, or internal (Friend in Visual Basic). To create a dynamic method that has restricted ability to skip JIT visibility checks, use the <see cref="M:System.Reflection.Emit.DynamicMethod.#ctor(System.String,System.Type,System.Type[],System.Boolean)" /> constructor.</para>
+          <para>When an anonymously hosted dynamic method is constructed, the call stack of the emitting assembly is included. When the method is invoked, the permissions of the emitting assembly are used instead of the permissions of the actual caller. Thus, the dynamic method cannot execute at a higher level of privilege than that of the assembly that emitted it, even if it is passed to and executed by an assembly that has a higher trust level.</para>
+          <para>This constructor specifies the method attributes <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />, and the calling convention <see cref="F:System.Reflection.CallingConventions.Standard" />.</para>
+          <block subset="none" type="note">
+            <para>This constructor was introduced in the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an anonymously hosted dynamic method, specifying the method name, return type, and parameter types. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool restrictedSkipVisibility);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.Type returnType, class System.Type[] parameterTypes, bool restrictedSkipVisibility) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,17 +196,52 @@
         <Parameter Name="restrictedSkipVisibility" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="restrictedSkipVisibility">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic method that is created by this constructor is associated with an anonymous assembly instead of an existing type or module. The anonymous assembly exists only to provide a sandbox environment for dynamic methods, that is, to isolate them from other code. This environment makes it safe for the dynamic method to be emitted and executed by partially trusted code. </para>
+          <para>Anonymously hosted dynamic methods do not have automatic access to any types or members that are private, protected, or internal (Friend in Visual Basic). This is different from dynamic methods that are associated with an existing type or module, which have access to hidden members in their associated scope. </para>
+          <para>Specify true for <paramref name="restrictedSkipVisibility" /> if your dynamic method has to access types or members that are private, protected, or internal. This gives the dynamic method restricted access to these members. That is, the members can be accessed only if the following conditions are met:</para>
+          <list type="bullet">
+            <item>
+              <para>The target members belong to an assembly that has a level of trust equal to or lower than the call stack that emits the dynamic method.</para>
+            </item>
+            <item>
+              <para>The call stack that emits the dynamic method is granted <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.RestrictedMemberAccess" /> flag. This is always true when the code is executed with full trust. For partially trusted code, it is true only if the host explicitly grants the permission.</para>
+              <block subset="none" type="note">
+                <para>If the permission has not been granted, a security exception is thrown when <see cref="Overload:System.Reflection.Emit.DynamicMethod.CreateDelegate" /> is called or when the dynamic method is invoked, not when this constructor is called. No special permissions are required to emit the dynamic method.</para>
+              </block>
+            </item>
+          </list>
+          <para>For example, a dynamic method that is created with <paramref name="restrictedSkipVisibility" /> set to true can access a private member of any assembly on the call stack if the call stack has been granted restricted member access. If the dynamic method is created with partially trusted code on the call stack, it cannot access a private member of a type in a dnprdnshort assembly, because such assemblies are fully trusted. </para>
+          <para>If <paramref name="restrictedSkipVisibility" /> is false, JIT visibility checks are enforced. The code in the dynamic method has access to public methods of public classes, and exceptions are thrown if it tries to access types or members that are private, protected, or internal. </para>
+          <para>When an anonymously hosted dynamic method is constructed, the call stack of the emitting assembly is included. When the method is invoked, the permissions of the emitting call stack are used instead of the permissions of the actual caller. Thus, the dynamic method cannot execute at a higher level of privilege than that of the assembly that emitted it, even if it is passed to and executed by an assembly that has a higher trust level.</para>
+          <para>This constructor specifies the method attributes <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />, and the calling convention <see cref="F:System.Reflection.CallingConventions.Standard" />.</para>
+          <block subset="none" type="note">
+            <para>This constructor was introduced in the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an anonymously hosted dynamic method, specifying the method name, return type, parameter types, and whether just-in-time (JIT) visibility checks should be skipped for types and members accessed by the Microsoft intermediate language (MSIL) of the dynamic method. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="restrictedSkipVisibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to skip JIT visibility checks on types and members accessed by the MSIL of the dynamic method, with this restriction: the trust level of the assemblies that contain those types and members must be equal to or less than the trust level of the call stack that emits the dynamic method; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DynamicMethod (string name, Type returnType, Type[] parameterTypes, System.Reflection.Module m);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.Type returnType, class System.Type[] parameterTypes, class System.Reflection.Module m) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="returnType" Type="System.Type" />
@@ -72,22 +249,40 @@
         <Parameter Name="m" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="m">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor specifies method attributes <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />, calling convention <see cref="F:System.Reflection.CallingConventions.Standard" />, and does not skip just-in-time (JIT) visibility checks.</para>
+          <para>The dynamic method created with this constructor has access to public and internal (Friend in Visual Basic) members of all the types contained in module <paramref name="m" />. </para>
+          <block subset="none" type="note">
+            <para>For backward compatibility, this constructor demands <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlEvidence" /> flag if the following conditions are both true: <paramref name="m" /> is a module other than the calling module, and the demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag has failed. If the demand for <see cref="T:System.Security.Permissions.SecurityPermission" /> succeeds, the operation is allowed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a dynamic method that is global to a module, specifying the method name, return type, parameter types, and module.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.Module" /> representing the module with which the dynamic method is to be logically associated. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Type owner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.Type returnType, class System.Type[] parameterTypes, class System.Type owner) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="returnType" Type="System.Type" />
@@ -95,22 +290,40 @@
         <Parameter Name="owner" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic method created with this constructor has access to all members of the type <paramref name="owner" />, and to public and internal (Friend in Visual Basic) members of all the other types in the module that contains <paramref name="owner" />.</para>
+          <para>This constructor specifies method attributes <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />, calling convention <see cref="F:System.Reflection.CallingConventions.Standard" />, and does not skip just-in-time (JIT) visibility checks.</para>
+          <block subset="none" type="note">
+            <para>For backward compatibility, this constructor demands <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlEvidence" /> flag if the following conditions are both true: <paramref name="owner" /> is in a module other than the calling module, and the demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag has failed. If the demand for <see cref="T:System.Security.Permissions.SecurityPermission" /> succeeds, the operation is allowed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a dynamic method, specifying the method name, return type, parameter types, and the type with which the dynamic method is logically associated.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> with which the dynamic method is logically associated. The dynamic method has access to all members of the type. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DynamicMethod (string name, Type returnType, Type[] parameterTypes, System.Reflection.Module m, bool skipVisibility);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.Type returnType, class System.Type[] parameterTypes, class System.Reflection.Module m, bool skipVisibility) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="returnType" Type="System.Type" />
@@ -119,23 +332,42 @@
         <Parameter Name="skipVisibility" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="m">To be added.</param>
-        <param name="skipVisibility">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor specifies method attributes <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />, and calling convention <see cref="F:System.Reflection.CallingConventions.Standard" />.</para>
+          <para>The dynamic method created with this constructor has access to public and internal (Friend in Visual Basic) members of all the types in contained module <paramref name="m" />. Skipping the JIT compiler's visibility checks allows the dynamic method to access private and protected members of all other types as well. This is useful, for example, when writing code to serialize objects.</para>
+          <block subset="none" type="note">
+            <para>For backward compatibility, this constructor demands <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlEvidence" /> flag if the following conditions are both true: <paramref name="m" /> is a module other than the calling module, and the demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag has failed. If the demand for <see cref="T:System.Security.Permissions.SecurityPermission" /> succeeds, the operation is allowed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a dynamic method that is global to a module, specifying the method name, return type, parameter types, module, and whether just-in-time (JIT) visibility checks should be skipped for types and members accessed by the Microsoft intermediate language (MSIL) of the dynamic method.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.Module" /> representing the module with which the dynamic method is to be logically associated. </param>
+        <param name="skipVisibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to skip JIT visibility checks on types and members accessed by the MSIL of the dynamic method. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, class System.Type returnType, class System.Type[] parameterTypes, class System.Type owner, bool skipVisibility) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="returnType" Type="System.Type" />
@@ -144,23 +376,42 @@
         <Parameter Name="skipVisibility" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="owner">To be added.</param>
-        <param name="skipVisibility">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic method created with this constructor has access to all members of the type <paramref name="owner" />, and to public and internal (Friend in Visual Basic) members of all the other types in the module that contains <paramref name="owner" />. Skipping the JIT compiler's visibility checks allows the dynamic method to access private and protected members of all other types as well. This is useful, for example, when writing code to serialize objects.</para>
+          <para>This constructor specifies method attributes <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />, and calling convention <see cref="F:System.Reflection.CallingConventions.Standard" />.</para>
+          <block subset="none" type="note">
+            <para>For backward compatibility, this constructor demands <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlEvidence" /> flag if the following conditions are both true: <paramref name="owner" /> is in a module other than the calling module, and the demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag has failed. If the demand for <see cref="T:System.Security.Permissions.SecurityPermission" /> succeeds, the operation is allowed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a dynamic method, specifying the method name, return type, parameter types, the type with which the dynamic method is logically associated, and whether just-in-time (JIT) visibility checks should be skipped for types and members accessed by the Microsoft intermediate language (MSIL) of the dynamic method.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> with which the dynamic method is logically associated. The dynamic method has access to all members of the type.</param>
+        <param name="skipVisibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to skip JIT visibility checks on types and members accessed by the MSIL of the dynamic method; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DynamicMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, System.Reflection.Module m, bool skipVisibility);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Reflection.MethodAttributes attributes, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes, class System.Reflection.Module m, bool skipVisibility) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public DynamicMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, System.Reflection.Module m, bool skipVisibility);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="attributes" Type="System.Reflection.MethodAttributes" />
@@ -171,25 +422,46 @@
         <Parameter Name="skipVisibility" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <param name="callingConvention">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="m">To be added.</param>
-        <param name="skipVisibility">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic method created with this constructor has access to public and internal (Friend in Visual Basic) members of all the public and internal types contained in module <paramref name="m" />. </para>
+          <para>Skipping the JIT compiler's visibility checks allows the dynamic method to access private and protected members of all other types in the module and in all other assemblies as well. This is useful, for example, when writing code to serialize objects.</para>
+          <block subset="none" type="note">
+            <para>For backward compatibility, this constructor demands <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlEvidence" /> flag if the following conditions are both true: <paramref name="m" /> is a module other than the calling module, and the demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag has failed. If the demand for <see cref="T:System.Security.Permissions.SecurityPermission" /> succeeds, the operation is allowed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a dynamic method that is global to a module, specifying the method name, attributes, calling convention, return type, parameter types, module, and whether just-in-time (JIT) visibility checks should be skipped for types and members accessed by the Microsoft intermediate language (MSIL) of the dynamic method.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.MethodAttributes" /> values that specifies the attributes of the dynamic method. The only combination allowed is <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />.</param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention for the dynamic method. Must be <see cref="F:System.Reflection.CallingConventions.Standard" />.</param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.Module" /> representing the module with which the dynamic method is to be logically associated. </param>
+        <param name="skipVisibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to skip JIT visibility checks on types and members accessed by the MSIL of the dynamic method; otherwise, false. </param>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DynamicMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Reflection.MethodAttributes attributes, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes, class System.Type owner, bool skipVisibility) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public DynamicMethod (string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="attributes" Type="System.Reflection.MethodAttributes" />
@@ -200,72 +472,90 @@
         <Parameter Name="skipVisibility" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <param name="callingConvention">To be added.</param>
-        <param name="returnType">To be added.</param>
-        <param name="parameterTypes">To be added.</param>
-        <param name="owner">To be added.</param>
-        <param name="skipVisibility">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic method is global to the module that contains the type <paramref name="owner" />. It has access to all members of the type <paramref name="owner" />.</para>
+          <para>The dynamic method created with this constructor has access to all members of the type <paramref name="owner" />, and to public and internal (Friend in Visual Basic) members of all the types contained in the module that contains <paramref name="owner" />. Skipping the JIT compiler's visibility checks allows the dynamic method to access private and protected members of all other types as well. This is useful, for example, when writing code to serialize objects.</para>
+          <block subset="none" type="note">
+            <para>For backward compatibility, this constructor demands <see cref="T:System.Security.Permissions.SecurityPermission" /> with the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlEvidence" /> flag if the following conditions are both true: <paramref name="owner" /> is in a module other than the calling module, and the demand for <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag has failed. If the demand for <see cref="T:System.Security.Permissions.SecurityPermission" /> succeeds, the operation is allowed.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Starting with the net_v20sp1_long, this member no longer requires <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.ReflectionEmit" /> flag. (See <format type="text/html"><a href="0f8bf8fa-b993-478f-87ab-1a1a7976d298">Security Issues in Reflection Emit</a></format>.) To use this functionality, your application should target the net_v35_long or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a dynamic method, specifying the method name, attributes, calling convention, return type, parameter types, the type with which the dynamic method is logically associated, and whether just-in-time (JIT) visibility checks should be skipped for types and members accessed by the Microsoft intermediate language (MSIL) of the dynamic method.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic method. This can be a zero-length string, but it cannot be null.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.MethodAttributes" /> values that specifies the attributes of the dynamic method. The only combination allowed is <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />.</param>
+        <param name="callingConvention">
+          <attribution license="cc4" from="Microsoft" modified="false" />The calling convention for the dynamic method. Must be <see cref="F:System.Reflection.CallingConventions.Standard" />.</param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that specifies the return type of the dynamic method, or null if the method has no return type. </param>
+        <param name="parameterTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects specifying the types of the parameters of the dynamic method, or null if the method has no parameters. </param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> with which the dynamic method is logically associated. The dynamic method has access to all members of the type.</param>
+        <param name="skipVisibility">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to skip JIT visibility checks on types and members accessed by the MSIL of the dynamic method; otherwise, false.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MethodAttributes Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.MethodAttributes Attributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Attributes">
-      <MemberSignature Language="C#" Value="public override System.Reflection.MethodAttributes Attributes { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently, the method attributes for a dynamic method are always <see cref="F:System.Reflection.MethodAttributes.Public" /> and <see cref="F:System.Reflection.MethodAttributes.Static" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes specified when the dynamic method was created.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="CallingConvention">
+      <MemberSignature Language="C#" Value="public override System.Reflection.CallingConventions CallingConvention { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.CallingConventions CallingConvention" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CallingConvention">
-      <MemberSignature Language="C#" Value="public override System.Reflection.CallingConventions CallingConvention { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.CallingConventions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently, the calling convention for a dynamic method is always <see cref="F:System.Reflection.CallingConventions.Standard" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the calling convention specified when the dynamic method was created.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDelegate">
-      <MemberSignature Language="C#" Value="public Delegate CreateDelegate (Type delegateType);" />
+      <MemberSignature Language="C#" Value="public override sealed Delegate CreateDelegate (Type delegateType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Delegate CreateDelegate(class System.Type delegateType) cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Delegate</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="delegateType" Type="System.Type" />
-      </Parameters>
-      <Docs>
-        <param name="delegateType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -275,10 +565,44 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Delegate</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="delegateType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Reflection.Emit.DynamicMethod.CreateDelegate(System.Type)" /> method or the <see cref="Overload:System.Reflection.Emit.DynamicMethod.Invoke" /> method completes the dynamic method. Any further attempt to alter the dynamic method, such as modifying parameter definitions or emitting more Microsoft intermediate language (MSIL), is ignored; no exception is thrown.</para>
+          <para>To create a method body for a dynamic method when you have your own MSIL generator, call the <see cref="M:System.Reflection.Emit.DynamicMethod.GetDynamicILInfo" /> method to obtain a <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. If you do not have your own MSIL generator, call the <see cref="Overload:System.Reflection.Emit.DynamicMethod.GetILGenerator" /> method to obtain an <see cref="T:System.Reflection.Emit.ILGenerator" /> object that can be used to generate the method body.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the dynamic method and creates a delegate that can be used to execute it.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type, which can be used to execute the dynamic method.</para>
+        </returns>
+        <param name="delegateType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate type whose signature matches that of the dynamic method. </param>
+      </Docs>
     </Member>
     <Member MemberName="CreateDelegate">
-      <MemberSignature Language="C#" Value="public Delegate CreateDelegate (Type delegateType, object target);" />
+      <MemberSignature Language="C#" Value="public override sealed Delegate CreateDelegate (Type delegateType, object target);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Delegate CreateDelegate(class System.Type delegateType, object target) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Delegate</ReturnType>
       </ReturnValue>
@@ -287,43 +611,60 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="delegateType">To be added.</param>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overload creates a delegate bound to a particular object. Such a delegate is said to be closed over its first argument. Although the method is static, it acts as if it were an instance method; the instance is <paramref name="target" />. </para>
+          <para>This method overload requires <paramref name="target" /> to be of the same type as the first parameter of the dynamic method, or to be assignable to that type (for example, a derived class).  The signature of <paramref name="delegateType" /> has all the parameters of the dynamic method except the first. For example, if the dynamic method has the parameters <see cref="T:System.String" />, <see cref="T:System.Int32" />, and <see cref="T:System.Byte" />, then <paramref name="delegateType" /> has the parameters <see cref="T:System.Int32" /> and <see cref="T:System.Byte" />; <paramref name="target" /> is of type <see cref="T:System.String" />. </para>
+          <para>Calling the <see cref="M:System.Reflection.Emit.DynamicMethod.CreateDelegate(System.Type)" /> method or the <see cref="Overload:System.Reflection.Emit.DynamicMethod.Invoke" /> method completes the dynamic method. Any further attempt to alter the dynamic method, such as modifying parameter definitions or emitting more Microsoft intermediate language (MSIL), is ignored; no exception is thrown.</para>
+          <para>To create a method body for a dynamic method when you have your own MSIL generator, call the <see cref="M:System.Reflection.Emit.DynamicMethod.GetDynamicILInfo" /> method to obtain a <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. If you do not have your own MSIL generator, call the <see cref="Overload:System.Reflection.Emit.DynamicMethod.GetILGenerator" /> method to obtain an <see cref="T:System.Reflection.Emit.ILGenerator" /> object that can be used to generate the method body.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the dynamic method and creates a delegate that can be used to execute it, specifying the delegate type and an object the delegate is bound to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type, which can be used to execute the dynamic method with the specified target object.</para>
+        </returns>
+        <param name="delegateType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate type whose signature matches that of the dynamic method, minus the first parameter.</param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object the delegate is bound to. Must be of the same type as the first parameter of the dynamic method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="DeclaringType">
+      <MemberSignature Language="C#" Value="public override Type DeclaringType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type DeclaringType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="DeclaringType">
-      <MemberSignature Language="C#" Value="public override Type DeclaringType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns null for dynamic methods. Even when a dynamic method is logically associated with a type, it is not declared by the type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type that declares the method, which is always null for dynamic methods.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="DefineParameter">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.ParameterBuilder DefineParameter (int position, System.Reflection.ParameterAttributes attributes, string parameterName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.ParameterBuilder DefineParameter(int32 position, valuetype System.Reflection.ParameterAttributes attributes, string parameterName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineParameter">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.ParameterBuilder DefineParameter (int position, System.Reflection.ParameterAttributes attributes, string parameterName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.ParameterBuilder</ReturnType>
       </ReturnValue>
@@ -333,18 +674,27 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <param name="parameterName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="position" /> is 0, the <see cref="M:System.Reflection.Emit.DynamicMethod.DefineParameter(System.Int32,System.Reflection.ParameterAttributes,System.String)" /> method refers to the return value. Setting parameter information has no effect on the return value.</para>
+          <para>If the dynamic method has already been completed, by calling the <see cref="Overload:System.Reflection.Emit.DynamicMethod.CreateDelegate" /> or <see cref="Overload:System.Reflection.Emit.DynamicMethod.Invoke" /> method, the <see cref="M:System.Reflection.Emit.DynamicMethod.DefineParameter(System.Int32,System.Reflection.ParameterAttributes,System.String)" /> method has no effect. No exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a parameter of the dynamic method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns null. </para>
+        </returns>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the parameter in the parameter list. Parameters are indexed beginning with the number 1 for the first parameter. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.ParameterAttributes" /> values that specifies the attributes of the parameter. </param>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. The name can be a zero-length string. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~DynamicMethod ();" />
@@ -360,30 +710,44 @@
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetBaseDefinition">
       <MemberSignature Language="C#" Value="public override System.Reflection.MethodInfo GetBaseDefinition ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.MethodInfo GetBaseDefinition() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always returns the current DynamicMethod object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the base implementation for the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation of the method.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public override object[] GetCustomAttributes (bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object[] GetCustomAttributes(bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public override object[] GetCustomAttributes (bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
@@ -391,20 +755,34 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For dynamic methods, specifying true for <paramref name="inherit" /> has no effect, because the method is not declared in a type.</para>
+          <block subset="none" type="note">
+            <para>Custom attributes are not currently supported on dynamic methods. The only attribute returned is <see cref="T:System.Runtime.CompilerServices.MethodImplAttribute" />; you can get the method implementation flags more easily using the <see cref="M:System.Reflection.Emit.DynamicMethod.GetMethodImplementationFlags" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all the custom attributes defined for the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects representing all the custom attributes of the method.</para>
+        </returns>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to search the method's inheritance chain to find the custom attributes; false to check only the current method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public override object[] GetCustomAttributes (Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object[] GetCustomAttributes(class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public override object[] GetCustomAttributes (Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
@@ -413,20 +791,31 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For dynamic methods, specifying true for <paramref name="inherit" /> has no effect, because the method is not declared in a type.</para>
+          <block subset="none" type="note">
+            <para>Custom attributes are not currently supported on dynamic methods. The only attribute returned is <see cref="T:System.Runtime.CompilerServices.MethodImplAttribute" />; you can get the method implementation flags more easily using the <see cref="M:System.Reflection.Emit.DynamicMethod.GetMethodImplementationFlags" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the custom attributes of the specified type that have been applied to the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects representing the attributes of the method that are of type <paramref name="attributeType" /> or derive from type <paramref name="attributeType" />.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of custom attribute to return. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to search the method's inheritance chain to find the custom attributes; false to check only the current method. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetDynamicILInfo">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.DynamicILInfo GetDynamicILInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.DynamicILInfo GetDynamicILInfo() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -437,32 +826,59 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.Emit.DynamicILInfo" /> class is provided to support unmanaged code generation. For more information, see <format type="text/html"><a href="0c5bb9de-0cf6-438d-ba47-134e6c775fb8">The Unmanaged Reflection API</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object that can be used to generate a method body from metadata tokens, scopes, and Microsoft intermediate language (MSIL) streams.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object that can be used to generate a method body from metadata tokens, scopes, and MSIL streams.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
       <MemberSignature Language="C#" Value="public System.Reflection.Emit.ILGenerator GetILGenerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.ILGenerator GetILGenerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.ILGenerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After a dynamic method has been completed, by calling the <see cref="Overload:System.Reflection.Emit.DynamicMethod.CreateDelegate" /> or <see cref="Overload:System.Reflection.Emit.DynamicMethod.Invoke" /> method, any further attempt to add MSIL is ignored. No exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>There are restrictions on unverifiable code in dynamic methods, even in some full-trust scenarios. See the "Verification" section in Remarks for <see cref="T:System.Reflection.Emit.DynamicMethod" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Microsoft intermediate language (MSIL) generator for the method with a default MSIL stream size of 64 bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.ILGenerator" /> object for the method.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetILGenerator">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.ILGenerator GetILGenerator (int streamSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.Emit.ILGenerator GetILGenerator(int32 streamSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetILGenerator">
-      <MemberSignature Language="C#" Value="public System.Reflection.Emit.ILGenerator GetILGenerator (int streamSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.ILGenerator</ReturnType>
       </ReturnValue>
@@ -470,73 +886,114 @@
         <Parameter Name="streamSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="streamSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After a dynamic method has been completed, by calling the <see cref="Overload:System.Reflection.Emit.DynamicMethod.CreateDelegate" /> or <see cref="Overload:System.Reflection.Emit.DynamicMethod.Invoke" /> method, any further attempt to add MSIL is ignored. No exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>There are restrictions on unverifiable code in dynamic methods, even in some full-trust scenarios. See the "Verification" section in Remarks for <see cref="T:System.Reflection.Emit.DynamicMethod" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Microsoft intermediate language (MSIL) generator for the method with the specified MSIL stream size.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.ILGenerator" /> object for the method, with the specified MSIL stream size.</para>
+        </returns>
+        <param name="streamSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the MSIL stream, in bytes. </param>
       </Docs>
+    </Member>
+    <Member MemberName="GetMethodImplementationFlags">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MethodImplAttributes GetMethodImplementationFlags ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.Reflection.MethodImplAttributes GetMethodImplementationFlags() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMethodImplementationFlags">
-      <MemberSignature Language="C#" Value="public override System.Reflection.MethodImplAttributes GetMethodImplementationFlags ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodImplAttributes</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Currently, method implementation attributes for dynamic methods are always <see cref="F:System.Reflection.MethodImplAttributes.IL" /> and <see cref="F:System.Reflection.MethodImplAttributes.NoInlining" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the implementation flags for the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Reflection.MethodImplAttributes" /> values representing the implementation flags for the method.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="GetParameters">
+      <MemberSignature Language="C#" Value="public override System.Reflection.ParameterInfo[] GetParameters ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Reflection.ParameterInfo[] GetParameters() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetParameters">
-      <MemberSignature Language="C#" Value="public override System.Reflection.ParameterInfo[] GetParameters ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ParameterInfo[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.ParameterInfo" /> objects returned by this method are for information only. Use the <see cref="M:System.Reflection.Emit.DynamicMethod.DefineParameter(System.Int32,System.Reflection.ParameterAttributes,System.String)" /> method to set or change the characteristics of the parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the parameters of the dynamic method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.ParameterInfo" /> objects that represent the parameters of the dynamic method.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="InitLocals">
+      <MemberSignature Language="C#" Value="public bool InitLocals { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool InitLocals" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InitLocals">
-      <MemberSignature Language="C#" Value="public bool InitLocals { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to true, the emitted Microsoft intermediate language (MSIL) includes initialization of local variables. If it is set to false, local variables are not initialized and the generated code is unverifiable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the local variables in the method are zero-initialized. </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Invoke">
+      <MemberSignature Language="C#" Value="public override object Invoke (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance object Invoke(object obj, valuetype System.Reflection.BindingFlags invokeAttr, class System.Reflection.Binder binder, object[] parameters, class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Invoke">
-      <MemberSignature Language="C#" Value="public override object Invoke (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -548,24 +1005,50 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In addition to the listed exceptions, the calling code should be prepared to catch any exceptions thrown by the dynamic method.</para>
+          <para>Executing a dynamic method with a delegate created by the <see cref="Overload:System.Reflection.Emit.DynamicMethod.CreateDelegate" /> method is more efficient than executing it with the <see cref="M:System.Reflection.Emit.DynamicMethod.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method. </para>
+          <para>Calling the <see cref="M:System.Reflection.Emit.DynamicMethod.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method or the <see cref="M:System.Reflection.Emit.DynamicMethod.CreateDelegate(System.Type)" /> method completes the dynamic method. Any further attempt to alter the dynamic method, such as modifying parameter definitions or emitting more Microsoft intermediate language (MSIL), is ignored; no exception is thrown.</para>
+          <para>All dynamic methods are static, so the <paramref name="obj" /> parameter is always ignored. To treat a dynamic method as if it were an instance method, use the <see cref="M:System.Reflection.Emit.DynamicMethod.CreateDelegate(System.Type,System.Object)" /> overload that takes an object instance. </para>
+          <para>If the dynamic method has no parameters, the value of <paramref name="parameters" /> should be null. Otherwise the number, type, and order of elements in the parameters array should be identical to the number, type, and order of parameters of the dynamic method.</para>
+          <block subset="none" type="note">
+            <para>This method overload is called by the <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Object[])" /> method overload inherited from the <see cref="T:System.Reflection.MethodBase" /> class, so the preceding remarks apply to both overloads.</para>
+          </block>
+          <para>This method does not demand permissions directly, but invoking the dynamic method can result in security demands, depending on the method. For example, no demands are made for anonymously hosted dynamic methods that are created with the <paramref name="restrictedSkipVisibility" /> parameter set to false. On the other hand, if you create a method with <paramref name="restrictedSkipVisibility" /> set to true so it can access a hidden member of a target assembly, the method will cause a demand for the permissions of the target assembly plus <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag. </para>
+          <block subset="none" type="note">
+            <para>Prior to the net_v20sp1_long, this method required <see cref="T:System.Security.Permissions.ReflectionPermission" /> with the <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" /> flag.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the dynamic method using the specified parameters, under the constraints of the specified binder, with the specified culture information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> containing the return value of the invoked method.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored for dynamic methods, because they are static. Specify null. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values.</param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.Binder" /> object that enables the binding, coercion of argument types, invocation of members, and retrieval of <see cref="T:System.Reflection.MemberInfo" /> objects through reflection. If <paramref name="binder" /> is null, the default binder is used. For more details, see <see cref="T:System.Reflection.Binder" />. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list. This is an array of arguments with the same number, order, and type as the parameters of the method to be invoked. If there are no parameters this parameter should be null. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of <see cref="T:System.Globalization.CultureInfo" /> used to govern the coercion of types. If this is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. For example, this information is needed to correctly convert a <see cref="T:System.String" /> that represents 1000 to a <see cref="T:System.Double" /> value, because 1000 is represented differently by different cultures. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public override bool IsDefined (Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IsDefined(class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="C#" Value="public override bool IsDefined (Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -574,154 +1057,222 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For dynamic methods, specifying true for <paramref name="inherit" /> has no effect. Dynamic methods have no inheritance chain.</para>
+          <block subset="none" type="note">
+            <para>Custom attributes are not currently supported on dynamic methods.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specified custom attribute type is defined.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified custom attribute type is defined; otherwise, false.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of custom attribute to search for. </param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to search the method's inheritance chain to find the custom attributes; false to check only the current method. </param>
       </Docs>
+    </Member>
+    <Member MemberName="MethodHandle">
+      <MemberSignature Language="C#" Value="public override RuntimeMethodHandle MethodHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.RuntimeMethodHandle MethodHandle" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MethodHandle">
-      <MemberSignature Language="C#" Value="public override RuntimeMethodHandle MethodHandle { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeMethodHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for dynamic methods.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Module">
+      <MemberSignature Language="C#" Value="public override System.Reflection.Module Module { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.Module Module" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Module">
-      <MemberSignature Language="C#" Value="public override System.Reflection.Module Module { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a module was specified when the dynamic method was created, this property returns that module. If a type was specified as the owner when the dynamic method was created, this property returns the module which contains that type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the module with which the dynamic method is logically associated.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public override string Name { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>It is not necessary to name dynamic methods.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the dynamic method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ReflectedType">
+      <MemberSignature Language="C#" Value="public override Type ReflectedType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ReflectedType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReflectedType">
-      <MemberSignature Language="C#" Value="public override Type ReflectedType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns null for dynamic methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class that was used in reflection to obtain the method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ReturnParameter">
+      <MemberSignature Language="C#" Value="public override System.Reflection.ParameterInfo ReturnParameter { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.ParameterInfo ReturnParameter" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReturnParameter">
-      <MemberSignature Language="C#" Value="public override System.Reflection.ParameterInfo ReturnParameter { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ParameterInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns null for dynamic methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return parameter of the dynamic method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ReturnType">
+      <MemberSignature Language="C#" Value="public override Type ReturnType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ReturnType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReturnType">
-      <MemberSignature Language="C#" Value="public override Type ReturnType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If null was specified for the return type when the dynamic method was created, this property returns <see cref="T:System.Void" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of return value for the dynamic method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ReturnTypeCustomAttributes">
+      <MemberSignature Language="C#" Value="public override System.Reflection.ICustomAttributeProvider ReturnTypeCustomAttributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.ICustomAttributeProvider ReturnTypeCustomAttributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReturnTypeCustomAttributes">
-      <MemberSignature Language="C#" Value="public override System.Reflection.ICustomAttributeProvider ReturnTypeCustomAttributes { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ICustomAttributeProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom attributes are not supported on the return type of a dynamic method, so the array of custom attributes returned by the <see cref="Overload:System.Reflection.ICustomAttributeProvider.GetCustomAttributes" /> method is always empty.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes of the return type for the dynamic method.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The signature includes only types and the method name, if any. Parameter names are not included.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the signature of the method, represented as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the method signature.</para>
+        </returns>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

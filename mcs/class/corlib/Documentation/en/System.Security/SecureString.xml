@@ -1,12 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecureString" FullName="System.Security.SecureString">
-  <TypeSignature Language="C#" Value="public sealed class SecureString : System.Runtime.ConstrainedExecution.CriticalFinalizerObject, IDisposable" />
+  <TypeSignature Language="C#" Value="public sealed class SecureString : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecureString extends System.Object implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Runtime.ConstrainedExecution.CriticalFinalizerObject</BaseTypeName>
+    <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces>
     <Interface>
@@ -14,28 +16,47 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of the <see cref="T:System.String" /> class is both immutable and, when no longer needed, cannot be programmatically scheduled for garbage collection; that is, the instance is read-only after it is created and it is not possible to predict when the instance will be deleted from computer memory. Consequently, if a <see cref="T:System.String" /> object contains sensitive information such as a password, credit card number, or personal data, there is a risk the information could be revealed after it is used because your application cannot delete the data from computer memory. </para>
+      <para>A <see cref="T:System.Security.SecureString" /> object is similar to a <see cref="T:System.String" /> object in that it has a text value. However, the value of a <see cref="T:System.Security.SecureString" /> object is automatically encrypted, can be modified until your application marks it as read-only, and can be deleted from computer memory by either your application or the .NET Framework garbage collector. </para>
+      <para>The value of an instance of <see cref="T:System.Security.SecureString" /> is automatically encrypted when the instance is initialized or when the value is modified. Your application can render the instance immutable and prevent further modification by invoking the <see cref="M:System.Security.SecureString.MakeReadOnly" /> method. </para>
+      <para>Note that <see cref="T:System.Security.SecureString" /> has no members that inspect, compare, or convert the value of a <see cref="T:System.Security.SecureString" />. The absence of such members helps protect the value of the instance from accidental or malicious exposure. Use appropriate members of the <see cref="T:System.Runtime.InteropServices.Marshal" /> class, such as the <see cref="M:System.Runtime.InteropServices.Marshal.SecureStringToBSTR(System.Security.SecureString)" /> method, to manipulate the value of a <see cref="T:System.Security.SecureString" /> object.</para>
+      <para>The <see cref="T:System.Security.SecureString" /> class and its members are not visible to COM. For more information, see <see cref="T:System.Runtime.InteropServices.ComVisibleAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents text that should be kept confidential. The text is encrypted for privacy when being used, and deleted from computer memory when no longer needed. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecureString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecureString" /> class.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecureString (char* value, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char* value, int32 length) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -46,20 +67,35 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the new <see cref="T:System.Security.SecureString" /> object to the number of characters in <paramref name="value" /> specified by <paramref name="length" />; the value of the instance is then encrypted.</para>
+          <para>In C#, this constructor is defined only in the context of unsafe code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecureString" /> class from a subarray of <see cref="T:System.Char" /> objects.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to an array of <see cref="T:System.Char" /> objects.</param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements of <paramref name="value" /> to include in the new instance.</param>
       </Docs>
+    </Member>
+    <Member MemberName="AppendChar">
+      <MemberSignature Language="C#" Value="public void AppendChar (char c);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AppendChar(char c) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendChar">
-      <MemberSignature Language="C#" Value="public void AppendChar (char c);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -67,71 +103,109 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this secure string, if any, is decrypted; <paramref name="c" /> is appended; then the new value of the secure string is encrypted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a character to the end of the current secure string.</para>
+        </summary>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />A character to append to this secure string.</param>
       </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clear">
-      <MemberSignature Language="C#" Value="public void Clear ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computer memory that contains the value of this secure string is zeroed, then the length of the value of this secure string is set to zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the value of the current secure string.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="public System.Security.SecureString Copy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.SecureString Copy() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="C#" Value="public System.Security.SecureString Copy ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.SecureString</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an instance of a <see cref="T:System.Security.SecureString" /> is marked read-only, the copy of that instance will not be read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current secure string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplicate of this secure string.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.SecureString.Dispose" /> method writes binary zeroes to the allocated memory that contains the value of this <see cref="T:System.Security.SecureString" /> object, then frees the allocated memory. </para>
+          <para>For more information, see <format type="text/html"><a href="fd376774-1643-499b-869e-9546a3aeea70">Finalize Methods and Destructors</a></format> and <format type="text/html"><a href="22b6cb97-0c80-4eeb-a2cf-5ed7655e37f9">Garbage Collection</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current <see cref="T:System.Security.SecureString" /> object.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="InsertAt">
+      <MemberSignature Language="C#" Value="public void InsertAt (int index, char c);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void InsertAt(int32 index, char c) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InsertAt">
-      <MemberSignature Language="C#" Value="public void InsertAt (int index, char c);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -140,72 +214,113 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index is zero-based and the first character in this secure string is at index position zero. </para>
+          <para>The value of the secure string, if any, is decrypted; <paramref name="c" /> is inserted at the specified location; then the new value is encrypted. The <see cref="M:System.Security.SecureString.InsertAt(System.Int32,System.Char)" /> method yields the same results as the <see cref="M:System.Security.SecureString.AppendChar(System.Char)" /> method, which inserts a character at the end of a secure string, if the <paramref name="index" /> parameter of <see cref="M:System.Security.SecureString.InsertAt(System.Int32,System.Char)" /> is set to the length of this instance. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a character in this secure string at the specified index position.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index position where parameter <paramref name="c" /> is inserted.</param>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to insert.</param>
       </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsReadOnly() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="C#" Value="public bool IsReadOnly ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After an instance of <see cref="T:System.Security.SecureString" /> is marked read-only by the <see cref="M:System.Security.SecureString.MakeReadOnly" /> method, any attempt to modify the value of the instance throws an <see cref="T:System.InvalidOperationException" />. Use the <see cref="M:System.Security.SecureString.IsReadOnly" /> method to test whether a <see cref="T:System.Security.SecureString" /> is read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this secure string is marked read-only.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this secure string is marked read-only; otherwise, false.</para>
+        </returns>
       </Docs>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Length">
-      <MemberSignature Language="C#" Value="public int Length { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.SecureString.Length" /> property returns the number of <see cref="T:System.Char" /> objects in this instance, not the number of Unicode characters. The reason is that a Unicode character might be represented by more than one <see cref="T:System.Char" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of characters in the current secure string.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="MakeReadOnly">
+      <MemberSignature Language="C#" Value="public void MakeReadOnly ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MakeReadOnly() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MakeReadOnly">
-      <MemberSignature Language="C#" Value="public void MakeReadOnly ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initialize the text value of an instance of the <see cref="T:System.Security.SecureString" /> class with the <see cref="Overload:System.Security.SecureString.#ctor" /> constructors, and modify the value with the <see cref="M:System.Security.SecureString.Clear" />, <see cref="M:System.Security.SecureString.RemoveAt(System.Int32)" />, <see cref="M:System.Security.SecureString.SetAt(System.Int32,System.Char)" />, <see cref="M:System.Security.SecureString.InsertAt(System.Int32,System.Char)" />, and <see cref="M:System.Security.SecureString.AppendChar(System.Char)" /> methods. </para>
+          <para>After you have made your final modifications, use the <see cref="M:System.Security.SecureString.MakeReadOnly" /> method to make the value of the instance immutable (read-only). After the value is marked as read-only, any further attempt to modify it throws an <see cref="T:System.InvalidOperationException" />. </para>
+          <para>The effect of invoking <see cref="M:System.Security.SecureString.MakeReadOnly" /> is permanent because no means is provided to make the secure string modifiable again. Use the <see cref="M:System.Security.SecureString.IsReadOnly" /> method to test whether an instance of <see cref="T:System.Security.SecureString" /> is read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes the text value of this secure string read-only.   </para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveAt">
+      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAt(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveAt">
-      <MemberSignature Language="C#" Value="public void RemoveAt (int index);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -213,19 +328,33 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index is zero-based and the first character in this instance is at index position zero.</para>
+          <para>The value of this secure string, if any, is decrypted; the character at the specified index position is removed; then the new value is encrypted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the character at the specified index position from this secure string.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index position of a character in this secure string.</param>
       </Docs>
+    </Member>
+    <Member MemberName="SetAt">
+      <MemberSignature Language="C#" Value="public void SetAt (int index, char c);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAt(int32 index, char c) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetAt">
-      <MemberSignature Language="C#" Value="public void SetAt (int index, char c);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -234,16 +363,21 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index is zero-based and the first character in this instance is at index position zero.</para>
+          <para>The value of the secure string, if any, is decrypted; <paramref name="c" /> is assigned to the specified index position; then the new value is encrypted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the existing character at the specified index position with another character.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index position of an existing character in this secure string</param>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />A character that replaces the existing character.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

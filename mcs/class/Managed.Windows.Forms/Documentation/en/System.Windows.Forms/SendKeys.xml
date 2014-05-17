@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SendKeys" FullName="System.Windows.Forms.SendKeys">
   <TypeSignature Language="C#" Value="public class SendKeys" />
   <AssemblyInfo>
@@ -10,8 +11,403 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Windows.Forms.SendKeys" /> to send keystrokes and keystroke combinations to the active application. This class cannot be instantiated. To send a keystroke to a class and immediately continue with the flow of your program, use <see cref="M:System.Windows.Forms.SendKeys.Send(System.String)" />. To wait for any processes started by the keystroke, use <see cref="M:System.Windows.Forms.SendKeys.SendWait(System.String)" />.</para>
+      <para>Each key is represented by one or more characters. To specify a single keyboard character, use the character itself. For example, to represent the letter A, pass in the string "A" to the method. To represent more than one character, append each additional character to the one preceding it. To represent the letters A, B, and C, specify the parameter as "ABC".</para>
+      <para>The plus sign (+), caret (^), percent sign (%), tilde (~), and parentheses () have special meanings to <see cref="T:System.Windows.Forms.SendKeys" />. To specify one of these characters, enclose it within braces ({}). For example, to specify the plus sign, use "{+}". To specify brace characters, use "{{}" and "{}}". Brackets ([ ]) have no special meaning to <see cref="T:System.Windows.Forms.SendKeys" />, but you must enclose them in braces. In other applications, brackets do have a special meaning that might be significant when dynamic data exchange (DDE) occurs.</para>
+      <block subset="none" type="note">
+        <para>If your application is intended for international use with a variety of keyboards, the use of <see cref="M:System.Windows.Forms.SendKeys.Send(System.String)" /> could yield unpredictable results and should be avoided.</para>
+      </block>
+      <para>To specify characters that aren't displayed when you press a key, such as ENTER or TAB, and keys that represent actions rather than characters, use the codes in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Key </para>
+            </term>
+            <description>
+              <para>Code </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>BACKSPACE </para>
+          </term>
+          <description>
+            <para>{BACKSPACE}, {BS}, or {BKSP} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>BREAK </para>
+          </term>
+          <description>
+            <para>{BREAK} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>CAPS LOCK </para>
+          </term>
+          <description>
+            <para>{CAPSLOCK} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DEL or DELETE </para>
+          </term>
+          <description>
+            <para>{DELETE} or {DEL} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DOWN ARROW </para>
+          </term>
+          <description>
+            <para>{DOWN} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>END </para>
+          </term>
+          <description>
+            <para>{END} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ENTER </para>
+          </term>
+          <description>
+            <para>{ENTER}or ~ </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ESC </para>
+          </term>
+          <description>
+            <para>{ESC} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HELP </para>
+          </term>
+          <description>
+            <para>{HELP} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>HOME </para>
+          </term>
+          <description>
+            <para>{HOME} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>INS or INSERT </para>
+          </term>
+          <description>
+            <para>{INSERT} or {INS} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>LEFT ARROW </para>
+          </term>
+          <description>
+            <para>{LEFT} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>NUM LOCK </para>
+          </term>
+          <description>
+            <para>{NUMLOCK} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>PAGE DOWN </para>
+          </term>
+          <description>
+            <para>{PGDN} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>PAGE UP </para>
+          </term>
+          <description>
+            <para>{PGUP} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>PRINT SCREEN </para>
+          </term>
+          <description>
+            <para>{PRTSC} (reserved for future use) </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>RIGHT ARROW </para>
+          </term>
+          <description>
+            <para>{RIGHT} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>SCROLL LOCK </para>
+          </term>
+          <description>
+            <para>{SCROLLLOCK} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>TAB </para>
+          </term>
+          <description>
+            <para>{TAB} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>UP ARROW </para>
+          </term>
+          <description>
+            <para>{UP} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F1 </para>
+          </term>
+          <description>
+            <para>{F1} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F2 </para>
+          </term>
+          <description>
+            <para>{F2} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F3 </para>
+          </term>
+          <description>
+            <para>{F3} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F4 </para>
+          </term>
+          <description>
+            <para>{F4} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F5 </para>
+          </term>
+          <description>
+            <para>{F5} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F6 </para>
+          </term>
+          <description>
+            <para>{F6} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F7 </para>
+          </term>
+          <description>
+            <para>{F7} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F8 </para>
+          </term>
+          <description>
+            <para>{F8} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F9 </para>
+          </term>
+          <description>
+            <para>{F9} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F10 </para>
+          </term>
+          <description>
+            <para>{F10} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F11 </para>
+          </term>
+          <description>
+            <para>{F11} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F12 </para>
+          </term>
+          <description>
+            <para>{F12} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F13 </para>
+          </term>
+          <description>
+            <para>{F13} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F14 </para>
+          </term>
+          <description>
+            <para>{F14} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F15 </para>
+          </term>
+          <description>
+            <para>{F15} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>F16 </para>
+          </term>
+          <description>
+            <para>{F16} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Keypad add </para>
+          </term>
+          <description>
+            <para>{ADD} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Keypad subtract </para>
+          </term>
+          <description>
+            <para>{SUBTRACT} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Keypad multiply </para>
+          </term>
+          <description>
+            <para>{MULTIPLY} </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Keypad divide </para>
+          </term>
+          <description>
+            <para>{DIVIDE} </para>
+          </description>
+        </item>
+      </list>
+      <para>To specify keys combined with any combination of the SHIFT, CTRL, and ALT keys, precede the key code with one or more of the following codes.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Key </para>
+            </term>
+            <description>
+              <para>Code </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>SHIFT </para>
+          </term>
+          <description>
+            <para>+ </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>CTRL </para>
+          </term>
+          <description>
+            <para>^ </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ALT </para>
+          </term>
+          <description>
+            <para>% </para>
+          </description>
+        </item>
+      </list>
+      <para>To specify that any combination of SHIFT, CTRL, and ALT should be held down while several other keys are pressed, enclose the code for those keys in parentheses. For example, to specify to hold down SHIFT while E and C are pressed, use "+(EC)". To specify to hold down SHIFT while E is pressed, followed by C without SHIFT, use "+EC".</para>
+      <para>To specify repeating keys, use the form {key number}. You must put a space between key and number. For example, {LEFT 42} means press the LEFT ARROW key 42 times; {h 10} means press H 10 times.</para>
+      <block subset="none" type="note">
+        <para>Because there is no managed method to activate another application, you can either use this class within the current application or use native Windows methods, such as FindWindow and SetForegroundWindow, to force focus on other applications.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.SendKeys" /> class has been updated for the .NET Framework 3.0 to enable its use in applications that run on Windows Vista. The enhanced security of Windows Vista (known as User Account Control or UAC) prevents the previous implementation from working as expected. </para>
+        <para>The <see cref="T:System.Windows.Forms.SendKeys" /> class is susceptible to timing issues, which some developers have had to work around. The updated implementation is still susceptible to timing issues, but is slightly faster and may require changes to the workarounds. The <see cref="T:System.Windows.Forms.SendKeys" /> class tries to use the previous implementation first, and if that fails, uses the new implementation. As a result, the <see cref="T:System.Windows.Forms.SendKeys" /> class may behave differently on different operating systems. Additionally, when the <see cref="T:System.Windows.Forms.SendKeys" /> class uses the new implementation, the <see cref="M:System.Windows.Forms.SendKeys.SendWait(System.String)" /> method will not wait for messages to be processed when they are sent to another process. </para>
+        <para>If your application relies on consistent behavior regardless of the operating system, you can force the <see cref="T:System.Windows.Forms.SendKeys" /> class to use the new implementation by adding the following application setting to your app.config file.</para>
+        <para>&lt;appSettings&gt;</para>
+        <para>    &lt;add key="SendKeys" value="SendInput"/&gt;</para>
+        <para>&lt;/appSettings&gt;</para>
+        <para>To force the <see cref="T:System.Windows.Forms.SendKeys" /> class to use the previous implementation, use the value "JournalHook" instead.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for sending keystrokes to an application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Flush">
@@ -22,8 +418,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Windows.Forms.SendKeys.Flush" /> to wait for the application to process keystrokes and other operating system messages that are in the message queue. This is equivalent to calling <see cref="M:System.Windows.Forms.Application.DoEvents" /> until there are no more keys to process.</para>
+          <block subset="none" type="note">
+            <para>Because there is no managed method to activate another application, you can either use this class within the current application or use native Windows methods, such as FindWindow and SetForegroundWindow, to force focus on other applications.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes all the Windows messages currently in the message queue.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +445,404 @@
         <Parameter Name="keys" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each key is represented by one or more characters. To specify a single keyboard character, use the character itself. For example, to represent the letter A, pass in the string "A" to the method. To represent more than one character, append each additional character to the one preceding it. To represent the letters A, B, and C, specify the parameter as "ABC".</para>
+          <para>The plus sign (+), caret (^), percent sign (%), tilde (~), and parentheses () have special meanings to <see cref="T:System.Windows.Forms.SendKeys" />. To specify one of these characters, enclose it within braces ({}). For example, to specify the plus sign, use "{+}". To specify brace characters, use "{{}" and "{}}". Brackets ([ ]) have no special meaning to <see cref="T:System.Windows.Forms.SendKeys" />, but you must enclose them in braces. In other applications, brackets do have a special meaning that might be significant when dynamic data exchange (DDE) occurs.</para>
+          <block subset="none" type="note">
+            <para>If your application is intended for international use with a variety of keyboards, the use of <see cref="M:System.Windows.Forms.SendKeys.Send(System.String)" /> could yield unpredictable results and should be avoided.</para>
+          </block>
+          <para>To specify characters that aren't displayed when you press a key, such as ENTER or TAB, and keys that represent actions rather than characters, use the codes in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Key </para>
+                </term>
+                <description>
+                  <para>Code </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>BACKSPACE </para>
+              </term>
+              <description>
+                <para>{BACKSPACE}, {BS}, or {BKSP} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BREAK </para>
+              </term>
+              <description>
+                <para>{BREAK} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CAPS LOCK </para>
+              </term>
+              <description>
+                <para>{CAPSLOCK} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DEL or DELETE </para>
+              </term>
+              <description>
+                <para>{DELETE} or {DEL} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DOWN ARROW </para>
+              </term>
+              <description>
+                <para>{DOWN} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>END </para>
+              </term>
+              <description>
+                <para>{END} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ENTER </para>
+              </term>
+              <description>
+                <para>{ENTER}or ~ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ESC </para>
+              </term>
+              <description>
+                <para>{ESC} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>HELP </para>
+              </term>
+              <description>
+                <para>{HELP} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>HOME </para>
+              </term>
+              <description>
+                <para>{HOME} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>INS or INSERT </para>
+              </term>
+              <description>
+                <para>{INSERT} or {INS} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>LEFT ARROW </para>
+              </term>
+              <description>
+                <para>{LEFT} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NUM LOCK </para>
+              </term>
+              <description>
+                <para>{NUMLOCK} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PAGE DOWN </para>
+              </term>
+              <description>
+                <para>{PGDN} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PAGE UP </para>
+              </term>
+              <description>
+                <para>{PGUP} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>PRINT SCREEN </para>
+              </term>
+              <description>
+                <para>{PRTSC} (reserved for future use) </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>RIGHT ARROW </para>
+              </term>
+              <description>
+                <para>{RIGHT} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>SCROLL LOCK </para>
+              </term>
+              <description>
+                <para>{SCROLLLOCK} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TAB </para>
+              </term>
+              <description>
+                <para>{TAB} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>UP ARROW </para>
+              </term>
+              <description>
+                <para>{UP} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F1 </para>
+              </term>
+              <description>
+                <para>{F1} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F2 </para>
+              </term>
+              <description>
+                <para>{F2} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F3 </para>
+              </term>
+              <description>
+                <para>{F3} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F4 </para>
+              </term>
+              <description>
+                <para>{F4} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F5 </para>
+              </term>
+              <description>
+                <para>{F5} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F6 </para>
+              </term>
+              <description>
+                <para>{F6} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F7 </para>
+              </term>
+              <description>
+                <para>{F7} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F8 </para>
+              </term>
+              <description>
+                <para>{F8} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F9 </para>
+              </term>
+              <description>
+                <para>{F9} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F10 </para>
+              </term>
+              <description>
+                <para>{F10} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F11 </para>
+              </term>
+              <description>
+                <para>{F11} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F12 </para>
+              </term>
+              <description>
+                <para>{F12} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F13 </para>
+              </term>
+              <description>
+                <para>{F13} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F14 </para>
+              </term>
+              <description>
+                <para>{F14} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F15 </para>
+              </term>
+              <description>
+                <para>{F15} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F16 </para>
+              </term>
+              <description>
+                <para>{F16} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Keypad add </para>
+              </term>
+              <description>
+                <para>{ADD} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Keypad subtract </para>
+              </term>
+              <description>
+                <para>{SUBTRACT} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Keypad multiply </para>
+              </term>
+              <description>
+                <para>{MULTIPLY} </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Keypad divide </para>
+              </term>
+              <description>
+                <para>{DIVIDE} </para>
+              </description>
+            </item>
+          </list>
+          <para>To specify keys combined with any combination of the SHIFT, CTRL, and ALT keys, precede the key code with one or more of the following codes.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Key </para>
+                </term>
+                <description>
+                  <para>Code </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>SHIFT </para>
+              </term>
+              <description>
+                <para>+ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CTRL </para>
+              </term>
+              <description>
+                <para>^ </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ALT </para>
+              </term>
+              <description>
+                <para>% </para>
+              </description>
+            </item>
+          </list>
+          <para>To specify that any combination of SHIFT, CTRL, and ALT should be held down while several other keys are pressed, enclose the code for those keys in parentheses. For example, to specify to hold down SHIFT while E and C are pressed, use "+(EC)". To specify to hold down SHIFT while E is pressed, followed by C without SHIFT, use "+EC".</para>
+          <para>To specify repeating keys, use the form {key number}. You must put a space between key and number. For example, {LEFT 42} means press the LEFT ARROW key 42 times; {h 10} means press H 10 times.</para>
+          <block subset="none" type="note">
+            <para>Because there is no managed method to activate another application, you can either use this class within the current application or use native Windows methods, such as FindWindow and SetForegroundWindow, to force focus on other applications.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.SendKeys" /> class has been updated for the .NET Framework 3.0 to enable its use in applications that run on Windows Vista. The enhanced security of Windows Vista (known as User Account Control or UAC) prevents the previous implementation from working as expected. </para>
+            <para>The <see cref="T:System.Windows.Forms.SendKeys" /> class is susceptible to timing issues, which some developers have had to work around. The updated implementation is still susceptible to timing issues, but is slightly faster and may require changes to the workarounds. The <see cref="T:System.Windows.Forms.SendKeys" /> class tries to use the previous implementation first, and if that fails, uses the new implementation. As a result, the <see cref="T:System.Windows.Forms.SendKeys" /> class may behave differently on different operating systems. Additionally, when the <see cref="T:System.Windows.Forms.SendKeys" /> class uses the new implementation, the <see cref="M:System.Windows.Forms.SendKeys.SendWait(System.String)" /> method will not wait for messages to be processed when they are sent to another process. </para>
+            <para>If your application relies on consistent behavior regardless of the operating system, you can force the <see cref="T:System.Windows.Forms.SendKeys" /> class to use the new implementation by adding the following application setting to your app.config file.</para>
+            <para>&lt;appSettings&gt;</para>
+            <para>    &lt;add key="SendKeys" value="SendInput"/&gt;</para>
+            <para>&lt;/appSettings&gt;</para>
+            <para>To force the <see cref="T:System.Windows.Forms.SendKeys" /> class to use the previous implementation, use the value "JournalHook" instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends keystrokes to the active application.</para>
+        </summary>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string of keystrokes to send. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +859,28 @@
         <Parameter Name="keys" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keys">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Windows.Forms.SendKeys.SendWait(System.String)" /> to send keystrokes or combinations of keystrokes to the active application and wait for the keystroke messages to be processed. You can use this method to send keystrokes to an application and wait for any processes that are started by the keystrokes to be completed. This can be important if the other application must finish before your application can continue.</para>
+          <block subset="none" type="note">
+            <para>Because there is no managed method to activate another application, you can either use this class within the current application or use native Windows methods, such as FindWindow and SetForegroundWindow, to force focus on other applications.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.SendKeys" /> class has been updated for the .NET Framework 3.0 to enable its use in applications that run on Windows Vista. The enhanced security of Windows Vista (known as User Account Control or UAC) prevents the previous implementation from working as expected. </para>
+            <para>The <see cref="T:System.Windows.Forms.SendKeys" /> class is susceptible to timing issues, which some developers have had to work around. The updated implementation is still susceptible to timing issues, but is slightly faster and may require changes to the workarounds. The <see cref="T:System.Windows.Forms.SendKeys" /> class tries to use the previous implementation first, and if that fails, uses the new implementation. As a result, the <see cref="T:System.Windows.Forms.SendKeys" /> class may behave differently on different operating systems. Additionally, when the <see cref="T:System.Windows.Forms.SendKeys" /> class uses the new implementation, the <see cref="M:System.Windows.Forms.SendKeys.SendWait(System.String)" /> method will not wait for messages to be processed when they are sent to another process. </para>
+            <para>If your application relies on consistent behavior regardless of the operating system, you can force the <see cref="T:System.Windows.Forms.SendKeys" /> class to use the new implementation by adding the following application setting to your app.config file.</para>
+            <para>&lt;appSettings&gt;</para>
+            <para>    &lt;add key="SendKeys" value="SendInput"/&gt;</para>
+            <para>&lt;/appSettings&gt;</para>
+            <para>To force the <see cref="T:System.Windows.Forms.SendKeys" /> class to use the previous implementation, use the value "JournalHook" instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the given keys to the active application, and then waits for the messages to be processed.</para>
+        </summary>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string of keystrokes to send. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

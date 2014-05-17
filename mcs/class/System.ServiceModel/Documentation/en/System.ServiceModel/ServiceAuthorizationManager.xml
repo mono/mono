@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="ServiceAuthorizationManager" FullName="System.ServiceModel.ServiceAuthorizationManager">
+  <TypeSignature Language="C#" Value="public class ServiceAuthorizationManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceAuthorizationManager extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is responsible for evaluating all policies (rules that define what a user is allowed to do), comparing the policies to claims made by a client, setting the resulting <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> to the <see cref="T:System.ServiceModel.ServiceSecurityContext" />, and providing the authorization decision whether to allow or deny access for a given service operation for a caller.</para>
+      <para>The <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" /> method is called by the indigo1 infrastructure each time an attempt to access a resource is made. The method returns true or false to allow or deny access, respectively.</para>
+      <para>The <see cref="T:System.ServiceModel.ServiceAuthorizationManager" /> is part of the indigo2 <newTerm>Identity Model</newTerm> infrastructure. The Identity Model enables you to create custom authorization policies and custom authorization schemes. crabout how the Identity Model works, see <format type="text/html"><a href="099defbb-5d35-434e-9336-1a49b9ec7663">Claims and Authorization</a></format>.</para>
+      <format type="text/html">
+        <h2>Custom Authorization</h2>
+      </format>
+      <para>This class does not perform any authorization and allows users to access all service operations. To provide more restrictive authorization, you must create a custom authorization manager that checks custom policies. To do this, inherit from this class and override the <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" /> method. Specify the instance of the derived class through the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.ServiceAuthorizationManager" /> property. </para>
+      <para>In <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" />, the application can use the <see cref="T:System.ServiceModel.OperationContext" /> object to access the caller identity (<see cref="P:System.ServiceModel.OperationContext.ServiceSecurityContext" />). </para>
+      <para>By getting the <see cref="P:System.ServiceModel.OperationContext.IncomingMessageHeaders" /> property, which returns a <see cref="T:System.ServiceModel.Channels.MessageHeaders" /> object, the application can access the service (<see cref="P:System.ServiceModel.Channels.MessageHeaders.To" />), and the operation (<see cref="P:System.ServiceModel.Channels.MessageHeaders.Action" />). </para>
+      <para>By getting the <see cref="P:System.ServiceModel.OperationContext.RequestContext" /> property, which returns a <see cref="T:System.ServiceModel.Channels.RequestContext" /> object, the application can access the entire request message (<see cref="P:System.ServiceModel.Channels.RequestContext.RequestMessage" />) and perform the authorization decision accordingly. </para>
+      <para>For an example, see <format type="text/html"><a href="6214afde-44c1-4bf5-ba07-5ad6493620ea">How To: Create a Custom AuthorizationManager for a Service</a></format>.</para>
+      <para>To create custom authorization policies, implement the <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" /> class.  For an example, see <format type="text/html"><a href="05b0549b-882d-4660-b6f0-5678543e5475">How To: Create a Custom Authorization Policy</a></format>.</para>
+      <para>To create a custom claim, use the <see cref="T:System.IdentityModel.Claims.Claim" /> class.  For an example, see <format type="text/html"><a href="d619976b-eda3-475e-ac23-c7988a2dceb0">How To: Create a Custom Claim</a></format>. To compare custom claims, you must compare claims, as shown in <format type="text/html"><a href="0c4ec84d-53df-408f-8953-9bc437f56c28">How To: Compare Claims</a></format>.</para>
+      <para>crdefault <format type="text/html"><a href="4f90311a-2593-462e-9174-2f7ac78217b9">Custom Authorization</a></format>.</para>
+      <para>You can set the type of a custom authorization manager using the <format type="text/html"><a href="18cddad5-ddcb-4839-a0ac-1d6f6ab783ca">&lt;serviceAuthorization&gt; element</a></format> in a client application configuration file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides authorization access checking for service operations.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceAuthorizationManager ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceAuthorizationManager" /> class.  </para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckAccess">
+      <MemberSignature Language="C#" Value="public virtual bool CheckAccess (System.ServiceModel.OperationContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CheckAccess(class System.ServiceModel.OperationContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.OperationContext" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In general, applications should override <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" /> instead of this method. </para>
+          <para>Override <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccess(System.ServiceModel.OperationContext)" /> if the application associates or introduces a different set of policies for the resulting <see cref="T:System.ServiceModel.ServiceSecurityContext" /> or provide a different policy evaluation (chaining) model.</para>
+          <para>This method is responsible for calling <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks authorization for the given operation context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if access is granted; otherwise; otherwise false. The default is true.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckAccess">
+      <MemberSignature Language="C#" Value="public virtual bool CheckAccess (System.ServiceModel.OperationContext context, ref System.ServiceModel.Channels.Message message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool CheckAccess(class System.ServiceModel.OperationContext context, class System.ServiceModel.Channels.Message message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.OperationContext" />
+        <Parameter Name="message" Type="System.ServiceModel.Channels.Message&amp;" RefType="ref" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <param name="message">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckAccessCore">
+      <MemberSignature Language="C#" Value="protected virtual bool CheckAccessCore (System.ServiceModel.OperationContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool CheckAccessCore(class System.ServiceModel.OperationContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.OperationContext" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.OperationContext.ServiceSecurityContext" /> is generally the result from the default policy evaluation.</para>
+          <para>Override this method to provide custom authorization decisions.</para>
+          <para>This method can be used to make authorization decisions based on claim sets that are inferred based on incoming tokens, or added through external authorization policies. It can also make authorization decisions based on properties of the incoming message: for example, the action header.</para>
+          <para>In this method, the application can use the <paramref name="operationContext" /> parameter to access the caller identity (<see cref="P:System.ServiceModel.OperationContext.ServiceSecurityContext" />). By returning the <see cref="T:System.ServiceModel.Channels.RequestContext" /> object from the <see cref="P:System.ServiceModel.OperationContext.RequestContext" /> property, the application can access the entire request message (<see cref="P:System.ServiceModel.Channels.RequestContext.RequestMessage" />). By returning the <see cref="T:System.ServiceModel.Channels.MessageHeaders" /> object from the <see cref="P:System.ServiceModel.OperationContext.IncomingMessageHeaders" /> property, the application can access the service URL (<see cref="P:System.ServiceModel.Channels.MessageHeaders.To" />) and the operation (<see cref="P:System.ServiceModel.Channels.MessageHeaders.Action" />). With this information, the application can perform the authorization decision accordingly. </para>
+          <para>The claims made by a user are found in the <see cref="T:System.IdentityModel.Claims.ClaimSet" /> returned by the <see cref="P:System.IdentityModel.Policy.AuthorizationContext.ClaimSets" /> property of the AuthorizationContext. The current AuthorizationContext is returned by the <see cref="P:System.ServiceModel.OperationContext.ServiceSecurityContext" /> property of the <see cref="T:System.ServiceModel.OperationContext" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks authorization for the given operation context based on default policy evaluation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if access is granted; otherwise, false. The default is true.</para>
+        </returns>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAuthorizationPolicies">
+      <MemberSignature Language="C#" Value="protected virtual System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt; GetAuthorizationPolicies (System.ServiceModel.OperationContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.Policy.IAuthorizationPolicy&gt; GetAuthorizationPolicies(class System.ServiceModel.OperationContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.ServiceModel.OperationContext" />
+      </Parameters>
+      <Docs>
+        <param name="context">To be added.</param>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The indigo1 implementation provides a default set of authorization policies. These include the primary token that contains the credentials of the requester and all supporting tokens, transport tokens, and external policies if specified. </para>
+          <para>You can override this implementation and provide a different set of policies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the set of policies that participate in policy evaluation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" />.</para>
+        </returns>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

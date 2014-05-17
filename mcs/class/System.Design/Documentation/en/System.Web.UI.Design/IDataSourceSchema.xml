@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataSourceSchema" FullName="System.Web.UI.Design.IDataSourceSchema">
   <TypeSignature Language="C#" Value="public interface IDataSourceSchema" />
   <AssemblyInfo>
@@ -6,8 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.Web.UI.Design.IDataSourceSchema" /> interface to describe a custom data source at design time. For example, the <see cref="T:System.Web.UI.Design.DataSetSchema" />, <see cref="T:System.Web.UI.Design.XmlDocumentSchema" />, and <see cref="T:System.Web.UI.Design.TypeSchema" /> classes implement the <see cref="T:System.Web.UI.Design.IDataSourceSchema" /> interface.</para>
+      <para>Classes that implement the <see cref="T:System.Web.UI.Design.IDataSourceSchema" /> are used by custom control designer components to provide lists of fields and views for data-bound controls at design time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides basic functionality for describing the structure of a data source at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetViews">
@@ -21,9 +29,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A class that implements the <see cref="M:System.Web.UI.Design.IDataSourceSchema.GetViews" /> method returns an array of objects that implement the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> interface. For example, in the array returned by the <see cref="M:System.Web.UI.Design.DataSetSchema.GetViews" /> method, each element of the array is a <see cref="T:System.Web.UI.Design.DataSetViewSchema" /> object that implements <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of schema descriptors for views contained in the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InvalidTimeZoneException" FullName="System.InvalidTimeZoneException">
   <TypeSignature Language="C#" Value="public class InvalidTimeZoneException : Exception" />
   <AssemblyInfo>
@@ -9,8 +10,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This exception is thrown when a <see cref="T:System.TimeZoneInfo" /> object contains invalid, incomplete, or missing data. It is thrown by the <see cref="M:System.TimeZoneInfo.FindSystemTimeZoneById(System.String)" /> method when a time zone is found in the registry but contains corrupted data. It can also be thrown by the <see cref="M:System.TimeZoneInfo.CreateCustomTimeZone(System.String,System.TimeSpan,System.String,System.String)" /> method under any of the following conditions:</para>
+      <list type="bullet">
+        <item>
+          <para>The adjustment rules overlap.</para>
+        </item>
+        <item>
+          <para>The adjustment rules contain one or more null elements.</para>
+        </item>
+        <item>
+          <para>The sum of the Coordinated Universal Time (UTC) offset and daylight delta is out of range. (It is either greater than 14 hours or less than -14 hours.) </para>
+        </item>
+        <item>
+          <para>A single date has multiple adjustment rules applied to it.</para>
+        </item>
+      </list>
+      <para>This exception is not thrown to indicate that the time zone is not defined on a particular system; the <see cref="T:System.TimeZoneNotFoundException" /> is used for this purpose.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when time zone information is invalid.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +43,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor of the <see cref="T:System.InvalidTimeZoneException" /> class. It initializes the <see cref="P:System.Exception.Message" /> property of the new instance to a system-supplied message that describes the error, such as "Exception of type 'System.InvalidTimeZoneException' was thrown." This message is localized for the current system culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.InvalidTimeZoneException" /> class with a system-supplied message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -35,9 +63,16 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string supplied as the <paramref name="message" /> parameter is assigned to the <see cref="P:System.Exception.Message" /> property. It should be localized for the current culture. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.InvalidTimeZoneException" /> class with the specified message string.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that describes the exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -51,10 +86,17 @@
         <Parameter Name="sc" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
         <param name="sc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not called directly by your code to instantiate the <see cref="T:System.InvalidTimeZoneException" /> object. Instead, it is called by the <see cref="T:System.Runtime.Serialization.IFormatter" /> object's <see cref="M:System.Runtime.Serialization.IFormatter.Deserialize(System.IO.Stream)" /> method when deserializing the <see cref="T:System.InvalidTimeZoneException" /> object from a stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.InvalidTimeZoneException" /> class from serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the serialized data. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -68,10 +110,18 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
         <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you use this overload of the <see cref="T:System.InvalidTimeZoneException" /> class to handle an exception in a try…catch block. The <paramref name="innerException" /> parameter should be a reference to the exception object handled in the catch block, or it can be null. This value is then assigned to the <see cref="T:System.InvalidTimeZoneException" /> object's <see cref="P:System.Exception.InnerException" /> property.</para>
+          <para>The <paramref name="message" /> string is assigned to the <see cref="P:System.Exception.Message" /> property. The string should be localized for the current culture.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.InvalidTimeZoneException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that describes the exception.    </param>
       </Docs>
     </Member>
   </Members>

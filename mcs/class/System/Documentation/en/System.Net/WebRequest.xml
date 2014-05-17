@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebRequest" FullName="System.Net.WebRequest" FullNameSP="System_Net_WebRequest" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable WebRequest extends System.MarshalByRefObject" />
   <TypeSignature Language="C#" Value="public abstract class WebRequest : MarshalByRefObject, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable WebRequest extends System.MarshalByRefObject implements class System.Runtime.Serialization.ISerializable" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +10,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -19,117 +22,6 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>
-      <para>Makes a request to a Uniform Resource Identifier
-      (URI).</para>
-    </summary>
-    <remarks>
-      <para>
-        <see cref="T:System.Net.WebRequest" /> is an abstract
-   class that models
-   the request side of transactions used for accessing data from the
-   Internet.</para>
-      <para> Classes that derive from <see cref="T:System.Net.WebRequest" /> are required to override the following members
-of the <see cref="T:System.Net.WebRequest" /> class in a
-protocol-specific manner: </para>
-      <list type="bullet">
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.Method" /> 
-   -- Gets or sets the protocol method to use in the current instance.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.RequestUri" /> --
-      Gets the <see cref="T:System.Uri" /> of the resource associated with the current instance.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.Headers" /> 
-   -- Gets or sets the collection of header name/value pairs associated with the
-   request.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.ContentLength" /> -- Gets or sets the content length of 
-      the request data being sent.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.ContentType" /> -- Gets or sets the content type of the 
-      request data being sent.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.Credentials" /> -- Gets or sets the credentials used 
-      for authenticating the client using the current instance.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="P:System.Net.WebRequest.PreAuthenticate" /> -- Gets or 
-      sets a value that indicates whether to send authentication information with a
-      request for resources.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="M:System.Net.WebRequest.GetRequestStream" /> -- Returns a <see cref="T:System.IO.Stream" /> for writing data to a 
-      resource.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> -- Begins 
-      an asynchronous request for a stream in which to write data to be sent in the
-      current request.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> -- Returns
-      a <see cref="T:System.IO.Stream" /> for writing data to the
-      resource accessed by the current instance.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="M:System.Net.WebRequest.GetResponse" /> -- Returns a response to a request.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> -- Begins 
-      an asynchronous request for a resource.</term>
-        </item>
-        <item>
-          <term>
-            <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> -- Returns a <see cref="T:System.Net.WebResponse" /> that
-      contains a response to a specified pending request.</term>
-        </item>
-      </list>
-      <para>In addition, derived classes are required to
-   support the <see cref="T:System.Net.IWebRequestCreate" /> interface.</para>
-      <block subset="none" type="note">
-        <para> An application
-      that uses the request/response model can request data be
-      sent from the Internet in a protocol-agnostic manner, in which the application works with
-      instances of the <see cref="T:System.Net.WebRequest" /> class while classes that derive from <see cref="T:System.Net.WebRequest" /> and
-      
-      implement
-      specific protocols perform the details of
-      the request.</para>
-        <para> Requests are sent from an application to a particular Uniform Resource Identifier (URI), such as
-      a Web page on a server. Using the URI, the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method creates an instance of a type
-      derived from <see cref="T:System.Net.WebRequest" /> to handle the request. The type is selected from the
-      set of registered types. Types may be registered to handle a specific
-      protocol, such as HTTP or FTP, or to handle a request to a specific server or
-      path on a server. <block subset="none" type="note">For information on registering types, see <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" />.</block></para>
-        <para>The <see cref="T:System.Net.WebRequest" /> class throws a <see cref="T:System.Net.WebException" /> exception when an error occurs
-   while accessing a resource. </para>
-        <para> Use the <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" /> method to initialize a new instance of a
-class that derives from <see cref="T:System.Net.WebRequest" />
-. Do not use the <see cref="T:System.Net.WebRequest" />
-constructor.</para>
-      </block>
-      <para>
-If the environment variable http_proxy is set, this specifies the proxy to be used for HTTP requests;   The format of this string is the url of the proxy server.
-</para>
-    </remarks>
     <example>
       <para> The following example demonstrates using <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" /> to create an instance of
 <see cref="T:System.Net.HttpWebRequest" /> 
@@ -153,110 +45,139 @@ public class WebRequestExample {
       <para>The output is</para>
       <para>System.Net.HttpWebRequest</para>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Net.WebRequest" /> is the abstract base class for the .NET Framework's request/response model for accessing data from the Internet. An application that uses the request/response model can request data from the Internet in a protocol-agnostic manner, in which the application works with instances of the <see cref="T:System.Net.WebRequest" /> class while protocol-specific descendant classes carry out the details of the request.</para>
+      <para>Requests are sent from an application to a particular URI, such as a Web page on a server. The URI determines the proper descendant class to create from a list of <see cref="T:System.Net.WebRequest" /> descendants registered for the application. <see cref="T:System.Net.WebRequest" /> descendants are typically registered to handle a specific protocol, such as HTTP or FTP, but can be registered to handle a request to a specific server or path on a server.</para>
+      <para>The <see cref="T:System.Net.WebRequest" /> class throws a <see cref="T:System.Net.WebException" /> when errors occur while accessing an Internet resource. The <see cref="P:System.Net.WebException.Status" /> property is one of the <see cref="T:System.Net.WebExceptionStatus" /> values that indicates the source of the error. When <see cref="P:System.Net.WebException.Status" /> is <see cref="F:System.Net.WebExceptionStatus.ProtocolError" />, the <see cref="P:System.Net.WebException.Response" /> property contains the <see cref="T:System.Net.WebResponse" /> received from the Internet resource.</para>
+      <para>Because the <see cref="T:System.Net.WebRequest" /> class is an abstract class, the actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+      <block subset="none" type="note">
+        <para>Use the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method to initialize new <see cref="T:System.Net.WebRequest" /> instances. Do not use the <see cref="T:System.Net.WebRequest" /> constructor.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>If the application that creates the WebRequest object runs with the credentials of a Normal user, the application will not be able to access certificates installed in the local machine store unless permission has been explicitly given to the user to do so.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Makes a request to a Uniform Resource Identifier (URI). This is an abstract class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected WebRequest ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <ReturnValue />
-      <Parameters />
-      <Docs>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.Net.WebRequest" />
-class.</para>
-        </summary>
-        <remarks>
-          <para>This constructor is called only by classes that derive from
- <see cref="T:System.Net.WebRequest" />.</para>
-          <para>
-            <block subset="none" type="note">Use the <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" /> method to initialize a new instance of a class that derives from <see cref="T:System.Net.WebRequest" /> . Do not use
- this constructor.</block>
-          </para>
-        </remarks>
-      </Docs>
-      <Excluded>0</Excluded>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method to initialize new <see cref="T:System.Net.WebRequest" /> instances. Do not use the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.WebRequest" /> class.</para>
+        </summary>
+      </Docs>
+      <Excluded>0</Excluded>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected WebRequest (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext streamingContext) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="streamingContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a descendant class, this constructor implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface for the <see cref="T:System.Net.WebRequest" /> descendant.</para>
+          <para>Notice that an application must run in full trust mode when using serialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.WebRequest" /> class from the specified instances of the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" /> classes.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that contains the information required to serialize the new <see cref="T:System.Net.WebRequest" /> instance. </param>
+        <param name="streamingContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that indicates the source of the serialized stream associated with the new <see cref="T:System.Net.WebRequest" /> instance. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Abort">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Abort()" />
       <MemberSignature Language="C#" Value="public virtual void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Abort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Attempts to cancel an asynchronous request made by the current instance to access a resource.</para>
-        </summary>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is 
-   abstract and does not provide an implementation for this method. This method
-   throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This 
-   method must be overridden by classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this
-   functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to cancel an asynchronous operation started with the
-<see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.Abort" /> method cancels asynchronous requests to Internet resources started with the <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Aborts the Request </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticationLevel">
-      <MemberSignature Language="C#" Value="public System.Net.Security.AuthenticationLevel AuthenticationLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Security.AuthenticationLevel AuthenticationLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.AuthenticationLevel AuthenticationLevel" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.AuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets values indicating the level of authentication and impersonation used for this request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginGetRequestStream">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginGetRequestStream(class System.AsyncCallback callback, object state)" />
       <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginGetRequestStream(class System.AsyncCallback callback, object state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -265,62 +186,39 @@ class.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate to be called when the stream is available. Can be <see langword="null" /> .</param>
-        <param name="state">A <see cref="T:System.Object" /> containing state information for the asynchronous request.</param>
+        <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method starts an asynchronous request for a stream used to send data to an Internet resource. The callback method that implements the <see cref="T:System.AsyncCallback" /> delegate uses the <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> method to return the request stream.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
         <summary>
-          <para>Begins an asynchronous request for a stream in which to write data to be sent
-      in the current request.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, provides an asynchronous version of the <see cref="M:System.Net.WebRequest.GetRequestStream" /> method.</para>
         </summary>
         <returns>
-          <para> A <see cref="T:System.IAsyncResult" /> object that contains information about the asynchronous operation.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
         </returns>
-        <remarks>
-          <para>The <paramref name="state" /> parameter can be any object that the 
-   caller wishes to have available for the duration of the asynchronous operation.
-   This object is available via the <see cref="P:System.IAsyncResult.AsyncState" /> property of the object returned by this
-   method.</para>
-          <block subset="none" type="behaviors">
-            <para>This method starts an asynchronous operation to obtain a stream 
-      used to write data to be sent in the current request. To get the request
-      stream, call the <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> method and specify the <see cref="T:System.IAsyncResult" /> object
-      returned by this method.</para>
-            <para>If the <paramref name="callback" /> parameter is not 
-<see langword="null" /> , the 
-   method referenced by <paramref name="callback" /> is invoked when the asynchronous
-   operation completes. The <see cref="T:System.IAsyncResult" /> object returned by this method is passed as the argument
-   to the method referenced by <paramref name="callback" />.</para>
-          </block>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is 
-abstract and does not provide an implementation for this method. This method
-throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This method must be overridden by classes that inherit from
-<see cref="T:System.Net.WebRequest" /> to provide this 
-   functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to 
-   start an asynchronous request for a stream used to send data to a resource. The
-<paramref name="callback" /> delegate
-   can call
-   the <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> method to
-   obtain the request stream. </block>
-          </para>
-        </remarks>
-        <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing state information for this asynchronous request. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginGetResponse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginGetResponse(class System.AsyncCallback callback, object state)" />
       <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginGetResponse(class System.AsyncCallback callback, object state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -329,205 +227,173 @@ throws <see cref="T:System.NotSupportedException" />.</block>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">A <see cref="T:System.AsyncCallback" /> delegate to be called when the response from the server is available.</param>
-        <param name="state">A <see cref="T:System.Object" /> containing state information for the asynchronous request.</param>
+        <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method starts an asynchronous request for a response. The callback method that implements the <see cref="T:System.AsyncCallback" /> delegate uses the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> method to return the <see cref="T:System.Net.WebResponse" /> from the Internet resource.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If a WebException is thrown, use the <see cref="P:System.Net.WebException.Response" /> and <see cref="P:System.Net.WebException.Status" /> properties of the exception to determine the response from the server.</para>
+          </block>
+        </remarks>
         <summary>
-          <para>Begins sending the current request asynchronously.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, begins an asynchronous request for an Internet resource.</para>
         </summary>
         <returns>
-          <para> A <see cref="T:System.IAsyncResult" /> object that contains information about the asynchronous operation. </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
         </returns>
-        <remarks>
-          <para>The <paramref name="state" /> parameter can be any object that the caller wishes to have 
-   available for the duration of the asynchronous operation. This object is
-   available via the <see cref="P:System.IAsyncResult.AsyncState" /> property of the object returned by this
-   method.</para>
-          <block subset="none" type="behaviors">
-            <para>This method starts an asynchronous operation to send the current request and 
-      receive the response from the server that processed the
-      request. To get the response, call the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> method and specify the <see cref="T:System.IAsyncResult" /> object
-      returned by this method.</para>
-            <para>If the <paramref name="callback" /> parameter is not <see langword="null" /> , the method 
-   referenced by <paramref name="callback" /> is invoked when the asynchronous operation
-   completes. The <see cref="T:System.IAsyncResult" /> object returned by this method is passed as the argument
-   to the method referenced by <paramref name="callback" />.</para>
-          </block>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is abstract and does not 
-provide an implementation for this method. This method throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This method must be overridden by 
-   classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this functionality.
-</block>
-          </para>
-          <block subset="none" type="usage">The <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method starts an asynchronous request for 
-a response. The callback delegate
-can call the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> method to return the <see cref="T:System.Net.WebResponse" /> received from the resource.</block>
-        </remarks>
-        <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing state information for this asynchronous request. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CachePolicy">
-      <MemberSignature Language="C#" Value="public virtual System.Net.Cache.RequestCachePolicy CachePolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.Cache.RequestCachePolicy CachePolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Cache.RequestCachePolicy CachePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Implement the caching system. Currently always returns a policy with the NoCacheNoStore level")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current cache policy and the presence of the requested resource in the cache determine whether a response can be retrieved from the cache. Using cached responses usually improves application performance, but there is a risk that the response in the cache does not match the response on the server. </para>
+          <para>Default cache policy can be specified in the Machine.config configuration file or by setting the <see cref="P:System.Net.HttpWebRequest.DefaultCachePolicy" /> property for requests that use the Hypertext Transfer Protocol (HTTP) or Secure Hypertext Transfer Protocol (HTTPS) URI scheme.</para>
+          <para>A copy of a resource is only added to the cache if the response stream for the resource is retrieved and read to the end of the stream. So another request for the same resource could use a cached copy, depending on the cache policy level for this request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cache policy for this request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionGroupName">
       <MemberSignature Language="ILASM" Value=".property string ConnectionGroupName { public hidebysig virtual specialname string get_ConnectionGroupName() public hidebysig virtual specialname void set_ConnectionGroupName(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string ConnectionGroupName { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string ConnectionGroupName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConnectionGroupName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the name of the connection group for the current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> that contains the name of the connection group for the current instance.</para>
         </value>
-        <remarks>
-          <para>This property associates specific requests within an 
-      application with a <see cref="T:System.Net.ServicePoint" />
-      .</para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property is required to be
-   overridden by classes that inherit from <see cref="T:System.Net.WebRequest" />. The <see cref="P:System.Net.WebRequest.ConnectionGroupName" /> property
-   typically associates a group of requests that share a set of credentials with a
-   connection to an Internet resource to avoid potential security failures.
-</block>
-          </para>
-          <para>
-            <block subset="none" type="usage" />Use this property to get or set the name of the connection group for the current instance.</para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.ConnectionGroupName" /> property associates specific requests within an application to one or more connection pools.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the name of the connection group for the request.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLength">
       <MemberSignature Language="ILASM" Value=".property int64 ContentLength { public hidebysig virtual specialname int64 get_ContentLength() public hidebysig virtual specialname void set_ContentLength(int64 value) }" />
-      <MemberSignature Language="C#" Value="public virtual long ContentLength { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual long ContentLength { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ContentLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or
-      sets the
-      content
-      length of the request data being sent.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Int64" /> containing the number of bytes of request data being sent.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">This property
-      is required to throw a <see cref="T:System.InvalidOperationException" /> exception if data has already been
-      written to the request stream, and a <see cref="T:System.ArgumentOutOfRangeException" /> exception if the property is being set to a value less than zero.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property is required to be
-   overridden by classes that inherit from <see cref="T:System.Net.WebRequest" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this property to get the number of bytes sent to the resource.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
         <exception cref="T:System.InvalidOperationException">Data has already been written to the request stream. </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">This property is being set to a value less than zero. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.ContentLength" /> property contains the number of bytes of data sent to the Internet resource by the <see cref="T:System.Net.WebRequest" /> instance.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the content length of the request data being sent.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentType">
       <MemberSignature Language="ILASM" Value=".property string ContentType { public hidebysig virtual specialname string get_ContentType() public hidebysig virtual specialname void set_ContentType(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string ContentType { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string ContentType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets
-      or
-      sets
-      the content type of the request data being sent.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> that represents the content type of the request data.</para>
         </value>
-        <remarks>
-          <para>The <see cref="P:System.Net.WebRequest.ContentType" />
-property contains the media type of the request.</para>
-          <para>
-            <block subset="none" type="note">This
-   is typically the MIME encoding of the content.</block>
-          </para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property is required to be
-   overridden by classes that inherit from <see cref="T:System.Net.WebRequest" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use
-   this property to get the media type of request.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.ContentType" /> property contains the media type of the request. This is typically the MIME encoding of the content.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the content type of the request data being sent.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.WebRequest Create(string requestUriString)" />
       <MemberSignature Language="C#" Value="public static System.Net.WebRequest Create (string requestUriString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.WebRequest Create(string requestUriString) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -535,48 +401,60 @@ property contains the media type of the request.</para>
         <Parameter Name="requestUriString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="requestUriString">A <see cref="T:System.String" /> that contains a URI.</param>
-        <summary>
-          <para> Constructs a new instance of a class derived from <see cref="T:System.Net.WebRequest" />. The new instance is of the
-   type registered for the scheme
-   of the specified URI.</para>
-        </summary>
-        <returns>
-          <para>A new instance of a class that derived from <see cref="T:System.Net.WebRequest" /> and is registered to handle the
-   scheme of <paramref name="requestUriString" />.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method
-         returns a new instance of a class that derived from
-      <see cref="T:System.Net.WebRequest" /> . The <see cref="T:System.Type" /> of this new instance
-         is determined at run time by the scheme of the URI in
-      <paramref name="requestUriString" />. For example,
-         when a URI beginning with <c>http://</c> is passed in
-   <paramref name="requestUriString" />, a <see cref="T:System.Net.HttpWebRequest" /> instance is returned.</para>
-            <para> Classes that derive from <see cref="T:System.Net.WebRequest" /> that are
-   created to handle other requests are registered
-   with the <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" />
-   method.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="requestUriString " />is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">The request scheme specified in <paramref name="requestUri " /> is not registered.</exception>
         <exception cref="T:System.UriFormatException">The URI specified in <paramref name="requestUriString" /> is not a valid URI.</exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have permission to connect to the requested URI or a URI that the request is redirected to.</exception>
         <permission cref="!:System.Security.Permissions.WebPermission">Requires permission to connect to the requested URI. See <see cref="F:System.Net.NetworkAccess.Connect" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method returns a descendant of the <see cref="T:System.Net.WebRequest" /> class determined at run time as the closest registered match for <paramref name="requestUri" />.</para>
+          <para>For example, when a URI beginning with http:// or https:// is passed in <paramref name="requestUri" />, an <see cref="T:System.Net.HttpWebRequest" /> is returned by <see cref="M:System.Net.WebRequest.Create(System.Uri)" />. If a URI beginning with ftp:// is passed instead, the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method will return a <see cref="T:System.Net.FileWebRequest" /> instance. If a URI beginning with file:// is passed instead, the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method will return a <see cref="T:System.Net.FileWebRequest" /> instance.</para>
+          <para>The pre-registered reserve types already registered include the following:</para>
+          <list type="bullet">
+            <item>
+              <para>http://</para>
+            </item>
+            <item>
+              <para>https://</para>
+            </item>
+            <item>
+              <para>ftp://</para>
+            </item>
+            <item>
+              <para>file://</para>
+            </item>
+          </list>
+          <para>The .NET Framework includes support for the http://, https://, ftp://, and file:// URI schemes. Custom <see cref="T:System.Net.WebRequest" /> descendants to handle other requests are registered with the <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" /> method.</para>
+          <para>The <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method uses the <paramref name="requestUriString" /> parameter to create a <see cref="T:System.Uri" /> instance that it passes to the new <see cref="T:System.Net.WebRequest" />.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Net.WebRequest" /> instance for the specified URI scheme.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> descendant for the specific URI scheme.</para>
+        </returns>
+        <param name="requestUriString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI that identifies the Internet resource. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.WebRequest Create(class System.Uri requestUri)" />
       <MemberSignature Language="C#" Value="public static System.Net.WebRequest Create (Uri requestUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.WebRequest Create(class System.Uri requestUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -584,38 +462,60 @@ property contains the media type of the request.</para>
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="requestUri">A <see cref="T:System.Uri" /> containing the URI of the requested resource.</param>
-        <summary>
-   Constructs a new instance of a class derived from <see cref="T:System.Net.WebRequest" />.
-</summary>
-        <returns>
-          <para> A new instance of a class derived from <see cref="T:System.Net.WebRequest" /> that is registered to handle the closest registered
-   match for <paramref name="requestUri" />.</para>
-        </returns>
-        <remarks>
-          <para>To 
-      determine the closest match, this method checks the registered URIs for the
-      longest URI prefix that matches <paramref name="requestUri" />. </para>
-          <block subset="none" type="note">
-            <para>For an example that demonstrates this method, see <see cref="M:System.Net.WebRequest.CreateDefault(System.Uri)" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="requestUri " />is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">The request scheme specified in <paramref name="requestUri " /> is not registered.</exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have permission to connect to the requested URI or a URI that the request is redirected to.</exception>
         <permission cref="!:System.Security.Permissions.WebPermission">Requires permission to connect to the requested URI. See <see cref="F:System.Net.NetworkAccess.Connect" />.</permission>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method returns a descendant of the <see cref="T:System.Net.WebRequest" /> class determined at run time as the closest registered match for <paramref name="requestUri" />.</para>
+          <para>For example, if you create a <see cref="T:System.Net.WebRequest" /> descendant, Handler1, to handle requests to http://www.contoso.com/text/ and another named Handler2 to handle requests to http://www.contoso.com/code/, you can use <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method to return the WebRequest descendant associated with either specified URI.</para>
+          <para>To return a descendant of the <see cref="T:System.Net.WebRequest" /> class based on only the scheme portion of a URI, use the <see cref="M:System.Net.WebRequest.CreateDefault(System.Uri)" /> method.</para>
+          <para>For example, when a URI beginning with http:// or https:// is passed in <paramref name="requestUri" />, an <see cref="T:System.Net.HttpWebRequest" /> is returned by <see cref="M:System.Net.WebRequest.Create(System.Uri)" />. If a URI beginning with ftp:// is passed instead, the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method will return a <see cref="T:System.Net.FileWebRequest" /> instance. If a URI beginning with file:// is passed instead, the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method will return a <see cref="T:System.Net.FileWebRequest" /> instance.</para>
+          <para>The pre-registered reserve types already registered include the following:</para>
+          <list type="bullet">
+            <item>
+              <para>http://</para>
+            </item>
+            <item>
+              <para>https://</para>
+            </item>
+            <item>
+              <para>ftp://</para>
+            </item>
+            <item>
+              <para>file://</para>
+            </item>
+          </list>
+          <para>The .NET Framework includes support for the http://, https://, ftp://, and file:// URI schemes. Custom <see cref="T:System.Net.WebRequest" /> descendants to handle other requests are registered with the <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" /> method.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Net.WebRequest" /> instance for the specified URI scheme.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> descendant for the specified URI scheme.</para>
+        </returns>
+        <param name="requestUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> containing the URI of the requested resource. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDefault">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.WebRequest CreateDefault(class System.Uri requestUri)" />
       <MemberSignature Language="C#" Value="public static System.Net.WebRequest CreateDefault (Uri requestUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.WebRequest CreateDefault(class System.Uri requestUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -623,24 +523,6 @@ property contains the media type of the request.</para>
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="requestUri">A <see cref="T:System.Uri" /> containing the URI of the requested resource.</param>
-        <summary>
-          <para> Constructs a new instance of a class derived from <see cref="T:System.Net.WebRequest" />. The new instance is of
-   the type registered for the scheme of the specified URI.</para>
-        </summary>
-        <returns>
-          <para> A new instance of the type derived from <see cref="T:System.Net.WebRequest" /> that is registered for the scheme of the specified <see cref="T:System.Uri" /> .</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="note">When this method is
-      invoked, only the scheme portion of <paramref name="requestUri " />is checked against the
-      list of URIs registered for the current instance. Conversely, when <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" />
-      is invoked, the entire URI is checked against the
-      list of registered URIs.
-   </block>
-          </para>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="requestUri" /> is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">The request scheme specified in <paramref name="requestUri " /> is not registered.</exception>
@@ -682,90 +564,207 @@ public class CreateDefaultExample
       ContosoTextRequest</para>
           </c>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.CreateDefault(System.Uri)" /> method returns a <see cref="T:System.Net.WebRequest" /> descendant instance based on only the scheme portion of a URI.</para>
+          <para>For example, when a URI beginning with http:// is passed in <paramref name="requestUri" />, an <see cref="T:System.Net.HttpWebRequest" /> is returned by <see cref="M:System.Net.WebRequest.CreateDefault(System.Uri)" />. If a URI beginning with file:// is passed instead, the <see cref="M:System.Net.WebRequest.CreateDefault(System.Uri)" /> method will return a <see cref="T:System.Net.FileWebRequest" />.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Net.WebRequest" /> instance for the specified URI scheme.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> descendant for the specified URI scheme.</para>
+        </returns>
+        <param name="requestUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> containing the URI of the requested resource. </param>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CreateHttp">
+      <MemberSignature Language="C#" Value="public static System.Net.HttpWebRequest CreateHttp (string requestUriString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.HttpWebRequest CreateHttp(string requestUriString) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("for portable library support")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpWebRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="requestUriString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.CreateHttp(System.String)" /> method returns an instance of the <see cref="T:System.Net.HttpWebRequest" /> class for the <paramref name="requestUriString" />.</para>
+          <para>When a URI that begins with http:// or http:// is passed in the <paramref name="requestUriString" /> parameter, a <see cref="T:System.Net.HttpWebRequest" /> is returned by <see cref="M:System.Net.WebRequest.CreateHttp(System.String)" />. Another other scheme will throw an <see cref="T:System.NotSupportedException" />. </para>
+          <para>The <see cref="M:System.Net.WebRequest.CreateHttp(System.String)" /> method uses the <paramref name="requestUriString" /> parameter to create a <see cref="T:System.Uri" /> instance that it passes to the new <see cref="T:System.Net.HttpWebRequest" />. If the method is successful, the <see cref="P:System.Net.HttpWebRequest.AllowReadStreamBuffering" /> property on the returned <see cref="T:System.Net.HttpWebRequest" /> instance is set to false.</para>
+          <para>The .NET Framework includes support for the http:// and  https:// URI schemes. Custom <see cref="T:System.Net.WebRequest" /> descendants to handle other requests are registered with the <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" /> method. The <see cref="M:System.Net.WebRequest.Create(System.String)" /> method can be used to create a descendant of the <see cref="T:System.Net.WebRequest" /> class for other schemes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Net.HttpWebRequest" /> instance for the specified URI string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.HttpWebRequest" />.</para>
+          <para>An <see cref="T:System.Net.HttpWebRequest" />  instance for the specific URI string.</para>
+        </returns>
+        <param name="requestUriString">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI string that identifies the Internet resource. </param>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateHttp">
+      <MemberSignature Language="C#" Value="public static System.Net.HttpWebRequest CreateHttp (Uri requestUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.HttpWebRequest CreateHttp(class System.Uri requestUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("for portable library support")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpWebRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="requestUri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.CreateHttp(System.Uri)" /> method returns an instance of the <see cref="T:System.Net.HttpWebRequest" /> class for the <paramref name="requestUri" />.</para>
+          <para>When a URI that begins with http:// or http:// is passed in the <paramref name="requestUri" /> parameter, an <see cref="T:System.Net.HttpWebRequest" /> is returned by <see cref="M:System.Net.WebRequest.CreateHttp(System.Uri)" />. Another other scheme will throw a <see cref="T:System.NotSupportedException" />. </para>
+          <para>The <see cref="M:System.Net.WebRequest.CreateHttp(System.Uri)" /> method uses the <paramref name="requestUri" /> parameter to create a new <see cref="T:System.Net.HttpWebRequest" /> instance. If the method is successful, the <see cref="P:System.Net.HttpWebRequest.AllowReadStreamBuffering" /> property on the returned <see cref="T:System.Net.HttpWebRequest" /> instance is set to false.</para>
+          <para>The .NET Framework includes support for the http:// and  https:// URI schemes. Custom <see cref="T:System.Net.WebRequest" /> descendants to handle other requests are registered with the <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" /> method. The <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method can be used to create a descendant of the <see cref="T:System.Net.WebRequest" /> class for other schemes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.Net.HttpWebRequest" /> instance for the specified URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.HttpWebRequest" />.</para>
+          <para>An <see cref="T:System.Net.HttpWebRequest" /> instance for the specific URI string.</para>
+        </returns>
+        <param name="requestUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI that identifies the Internet resource.</param>
+      </Docs>
     </Member>
     <Member MemberName="Credentials">
       <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig virtual specialname class System.Net.ICredentials get_Credentials() public hidebysig virtual specialname void set_Credentials(class System.Net.ICredentials value) }" />
-      <MemberSignature Language="C#" Value="public virtual System.Net.ICredentials Credentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.ICredentials Credentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the credentials used for
-      authenticating the client using the current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Net.ICredentials" /> object containing the authentication credentials
    associated with the request. The default is <see langword="null" /> .</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This
-      property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This
-      property is required to be overridden by classes that inherit from
-   <see cref="T:System.Net.WebRequest" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this property
-      to store or access the user, password, and domain information of the current instance.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.Credentials" /> property contains the authentication credentials required to access the Internet resource.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the network credentials used for authenticating the request with the Internet resource.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultCachePolicy">
-      <MemberSignature Language="C#" Value="public static System.Net.Cache.RequestCachePolicy DefaultCachePolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.Cache.RequestCachePolicy DefaultCachePolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.Cache.RequestCachePolicy DefaultCachePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This policy is used for this request if the following conditions exist:</para>
+          <list type="bullet">
+            <item>
+              <para>There is no <see cref="P:System.Net.HttpWebRequest.DefaultCachePolicy" /> property specified for this request.</para>
+            </item>
+            <item>
+              <para>The machine and application configuration files do not specify a cache policy that is applicable to the Uniform Resource Identifier (URI) used to create this request.</para>
+            </item>
+          </list>
+          <para>The cache policy determines whether the requested resource can be taken from a cache instead of sending the request to the resource host computer.</para>
+          <para>A copy of a resource is only added to the cache if the response stream for the resource is retrieved and read to the end of the stream. So another request for the same resource could use a cached copy, depending on the cache policy level for this request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default cache policy for this request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultWebProxy">
-      <MemberSignature Language="C#" Value="public static System.Net.IWebProxy DefaultWebProxy { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.IWebProxy DefaultWebProxy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.IWebProxy DefaultWebProxy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.DefaultWebProxy" /> property gets or sets the global proxy. The <see cref="P:System.Net.WebRequest.DefaultWebProxy" /> property determines the default proxy that all <see cref="T:System.Net.WebRequest" /> instances use if the request supports proxies and no proxy is set explicitly using the <see cref="P:System.Net.HttpWebRequest.Proxy" /> property. Proxies are currently supported by <see cref="T:System.Net.FtpWebRequest" /> and <see cref="T:System.Net.HttpWebRequest" />.</para>
+          <para>The <see cref="P:System.Net.WebRequest.DefaultWebProxy" /> property reads proxy settings from the app.config file. If there is no config file, the current user's Internet Explorer (IE) proxy settings are used.</para>
+          <para>If the <see cref="P:System.Net.WebRequest.DefaultWebProxy" /> property is set to null, all subsequent instances of the <see cref="T:System.Net.WebRequest" /> class created by the <see cref="M:System.Net.WebRequest.Create(System.String)" /> or <see cref="M:System.Net.WebRequest.CreateDefault(System.Uri)" /> methods do not have a proxy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the global HTTP proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndGetRequestStream">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream EndGetRequestStream(class System.IAsyncResult asyncResult)" />
       <MemberSignature Language="C#" Value="public virtual System.IO.Stream EndGetRequestStream (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream EndGetRequestStream(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -773,36 +772,6 @@ public class CreateDefaultExample
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">A <see cref="T:System.IAsyncResult" /> object that references a request for a <see cref="T:System.IO.Stream" /> started with <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> .</param>
-        <summary>
-          <para> Returns a <see cref="T:System.IO.Stream" /> for writing data to the resource identified by the
-<see cref="P:System.Net.WebRequest.RequestUri" /> property of the current instance.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> to write data
-   to.</para>
-        </returns>
-        <remarks>
-          <para> This method completes an asynchronous
-      request for a stream that was started by the <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method.</para>
-          <para>
-            <block subset="none" type="behaviors">As described above.
-   </block>
-          </para>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is
-   abstract and does not provide an implementation for this method. This method
-   throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This
-   method must be overridden by classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this
-   functionality. </block>
-          </para>
-          <block subset="none" type="usage">
-            <para>Use this method to complete an asynchronous request for a stream that was started with the <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="asyncResult" /> was not returned by a call to <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />.</exception>
@@ -814,17 +783,39 @@ public class CreateDefaultExample
           <para>No stream is available.</para>
         </exception>
         <exception cref="T:System.Net.WebException">An error occurred while processing the request.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> method completes an asynchronous stream request that was started by the <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method.</para>
+          <block subset="none" type="note">
+            <para>To avoid timing issues with garbage collection, be sure to close the response stream by calling the <see cref="M:System.IO.Stream.Close" /> method on the stream returned by <see cref="M:System.Net.WebResponse.GetResponseStream" /> after calling <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" />.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> to write data to.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that references a pending request for a stream. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndGetResponse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.WebResponse EndGetResponse(class System.IAsyncResult asyncResult)" />
       <MemberSignature Language="C#" Value="public virtual System.Net.WebResponse EndGetResponse (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.WebResponse EndGetResponse(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebResponse</ReturnType>
       </ReturnValue>
@@ -832,36 +823,6 @@ public class CreateDefaultExample
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">A <see cref="T:System.IAsyncResult" /> object that references a pending request that was started with <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</param>
-        <summary>
-          <para> Returns a <see cref="T:System.Net.WebResponse" /> that contains a response to a specified
-   pending request.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Net.WebResponse" /> that contains a response to the request
-   referenced by <paramref name="asyncResult" />.</para>
-        </returns>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described
-      above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is
-   abstract and does not provide an implementation for this method. This method
-   throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This
-   method must be overridden by classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this
-   functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to complete an asynchronous request
-   for an Internet resource that was started with the <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method.
-</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="asyncResult" /> was not returned by a call to <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</exception>
@@ -873,18 +834,33 @@ public class CreateDefaultExample
           <para>This method was called previously using <paramref name="asyncResult." /></para>
         </exception>
         <exception cref="T:System.Net.WebException">An error occurred while processing the request.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> method completes an asynchronous request for an Internet resource that was started with the <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, returns a <see cref="T:System.Net.WebResponse" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains a response to the Internet request.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that references a pending request for a response. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetObjectData">
       <MemberSignature Language="C#" Value="protected virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext streamingContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -894,246 +870,292 @@ public class CreateDefaultExample
         <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="streamingContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any objects included in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> are automatically tracked and serialized by the formatter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        <param name="streamingContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that specifies the destination for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="GetRequestStream">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream GetRequestStream()" />
       <MemberSignature Language="C#" Value="public virtual System.IO.Stream GetRequestStream ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetRequestStream() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Returns a <see cref="T:System.IO.Stream" /> for writing data to a
-   resource.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> for writing data to
-   a resource.</para>
-        </returns>
+        <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <remarks>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is abstract and does not 
-   provide an implementation for this method. This method throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This method is required to be 
-   overridden by classes that inherit from <see cref="T:System.Net.WebRequest" />.</block>
-          </para>
-          <block subset="none" type="usage">
-            <para> Use this method to initiate a request to send
-      data to a resource and obtain a <see cref="T:System.IO.Stream" /> instance for sending data to
-      that resource. </para>
-            <para>The <see cref="M:System.Net.WebRequest.GetRequestStream" /> method provides synchronous access to the <see cref="T:System.IO.Stream" />. For
-   asynchronous access, use the <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> methods.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.GetRequestStream" /> method initiates a request to send data to the Internet resource and returns a <see cref="T:System.IO.Stream" /> instance for sending data to the Internet resource.</para>
+          <para>The <see cref="M:System.Net.WebRequest.GetRequestStream" /> method provides synchronous access to the <see cref="T:System.IO.Stream" />. For asynchronous access, use the <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.WebRequest.EndGetRequestStream(System.IAsyncResult)" /> methods.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
           </block>
         </remarks>
-        <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> for writing data to the Internet resource.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetRequestStreamAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.IO.Stream&gt; GetRequestStreamAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.IO.Stream&gt; GetRequestStreamAsync() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.IO.Stream&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />object will complete when the <see cref="T:System.IO.Stream" /> for writing data to the Internet resource is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetResponse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.WebResponse GetResponse()" />
       <MemberSignature Language="C#" Value="public virtual System.Net.WebResponse GetResponse ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.WebResponse GetResponse() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebResponse</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Returns a
-      response to a request.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Net.WebResponse" /> containing the response to the request.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="behaviors">
-            <para> This method returns an instance of a type
-         derived from <see cref="T:System.Net.WebResponse" /> that is registered for the <see cref="P:System.Net.WebRequest.RequestUri" /> property of the current instance. This new
-         instance is required to contain a response from the resource to the current request. </para>
-            <para>If the timeout period for the request expires, or an
-         error occurs while processing the request, this method is required to throw a
-      <see cref="T:System.Net.WebException" /> exception.</para>
-          </block>
-          <para>
-            <block subset="none" type="default">The <see cref="T:System.Net.WebRequest" /> class is
-   abstract and does not provide an implementation for this method. This method
-   throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This
-   method must be overridden by classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this
-   functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method for synchronous access to a resource.
-   For asynchronous access, use the <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> methods.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <exception cref="T:System.Net.WebException">
           <para> The request timed out.</para>
           <para>-or-</para>
           <para>An error occurred while processing the request.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.GetResponse" /> method sends a request to an Internet resource and returns a <see cref="T:System.Net.WebResponse" /> instance. If the request has already been initiated by a call to <see cref="M:System.Net.WebRequest.GetRequestStream" />, the <see cref="M:System.Net.WebRequest.GetResponse" /> method completes the request and returns any response.</para>
+          <para>The <see cref="M:System.Net.WebRequest.GetResponse" /> method provides synchronous access to the <see cref="T:System.Net.WebResponse" />. For asynchronous access, use the <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResult)" /> methods.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If a WebException is thrown, use the <see cref="P:System.Net.WebException.Response" /> and <see cref="P:System.Net.WebException.Status" /> properties of the exception to determine the response from the server.</para>
+            <para />
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, returns a response to an Internet request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> containing the response to the Internet request.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetResponseAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.Net.WebResponse&gt; GetResponseAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Net.WebResponse&gt; GetResponseAsync() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.WebResponse&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after a response to an Internet request is available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, returns a response to an Internet request as an asynchronous operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="GetSystemWebProxy">
       <MemberSignature Language="C#" Value="public static System.Net.IWebProxy GetSystemWebProxy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.IWebProxy GetSystemWebProxy() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Look in other places for proxy config info")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.WebRequest.GetSystemWebProxy" /> method reads the current user's Internet Explorer (IE) proxy settings. This process includes the IE options to automatically detect proxy settings, use an automatic configuration script, manual proxy server settings, and advanced manual proxy server settings.</para>
+          <para>If your application is impersonating several users, you can use the <see cref="M:System.Net.WebRequest.GetSystemWebProxy" /> method to retrieve a proxy for each impersonated user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a proxy configured with the Internet Explorer settings of the currently impersonated user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IWebProxy" /> used by every call to instances of <see cref="T:System.Net.WebRequest" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
       <MemberSignature Language="ILASM" Value=".property class System.Net.WebHeaderCollection Headers { public hidebysig virtual specialname class System.Net.WebHeaderCollection get_Headers() public hidebysig virtual specialname void set_Headers(class System.Net.WebHeaderCollection value) }" />
-      <MemberSignature Language="C#" Value="public virtual System.Net.WebHeaderCollection Headers { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.WebHeaderCollection Headers { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.WebHeaderCollection Headers" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebHeaderCollection</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets
- or
- sets the collection of header name/value pairs associated with the
- request.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Net.WebHeaderCollection" /> containing the header name/value pairs associated
  with the current instance.</para>
         </value>
-        <remarks>
-          <para>This property contains a <see cref="T:System.Net.WebHeaderCollection" /> instance containing
- the header information to send to resources. </para>
-          <para>
-            <block subset="none" type="behaviors">As described above.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This property
- throws a <see cref="T:System.NotSupportedException" />
- exception.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property must be overridden by classes that inherit from
-<see cref="T:System.Net.WebRequest" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this property 
- to determine the header information of a request.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.Headers" /> property contains a <see cref="T:System.Net.WebHeaderCollection" /> instance containing the header information to send to the Internet resource.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the collection of header name/value pairs associated with the request.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImpersonationLevel">
-      <MemberSignature Language="C#" Value="public System.Security.Principal.TokenImpersonationLevel ImpersonationLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Principal.TokenImpersonationLevel ImpersonationLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Principal.TokenImpersonationLevel ImpersonationLevel" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Principal.TokenImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The impersonation level determines how the server can use the client's credentials.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the impersonation level for the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Method">
       <MemberSignature Language="ILASM" Value=".property string Method { public hidebysig virtual specialname string get_Method() public hidebysig virtual specialname void set_Method(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string Method { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string Method { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Method" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets
-      or sets the protocol method to use in the current
-      instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> containing the protocol method to use in the current instance.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">The default value of this property is required to
-      be a protocol method that does not require protocol-specific properties
-      to be set. For the HTTP protocol, this
-      value is GET.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property must be overridden by 
-   classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this property
-   to set the protocol-specific method that will be used to make a request.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, the <see cref="P:System.Net.WebRequest.Method" /> property contains the request method to use in this request.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the protocol method to use in this request.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreAuthenticate">
       <MemberSignature Language="ILASM" Value=".property bool PreAuthenticate { public hidebysig virtual specialname bool get_PreAuthenticate() public hidebysig virtual specialname void set_PreAuthenticate(bool value) }" />
-      <MemberSignature Language="C#" Value="public virtual bool PreAuthenticate { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool PreAuthenticate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PreAuthenticate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets a <see cref="T:System.Boolean" /> value that determines whether to send authentication information with the current request instead of waiting
-   for an authentication challenge
-   from the requested resource.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if
@@ -1143,92 +1165,64 @@ public class CreateDefaultExample
    the requested resource;
    otherwise, <see langword="false" />.</para>
         </value>
-        <remarks>
-          <para>
-            <block subset="none" type="behaviors">If <see cref="P:System.Net.WebRequest.PreAuthenticate" /> is <see langword="true" /> , the current instance sends authentication
-   credentials without waiting to be challenged by the server specified by the
-<see cref="P:System.Net.WebRequest.RequestUri" /> 
-property of the current instance. When
-this property is <see langword="false" /> , the
-current instance waits for
-a challenge from the server before sending credentials.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This
-   property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property must be overridden by 
-   classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this
-   property to ensure that authentication information is sent with every
-   request. Setting this property to <see langword="true " /> allows clients to improve
-   server efficiency by avoiding extra round trips caused by authentication challenges.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With the exception of the first request, the <see cref="P:System.Net.WebRequest.PreAuthenticate" /> property indicates whether to send authentication information with subsequent requests without waiting to be challenged by the server. When <see cref="P:System.Net.WebRequest.PreAuthenticate" /> is false, the <see cref="T:System.Net.WebRequest" /> waits for an authentication challenge before sending authentication information.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, indicates whether to pre-authenticate the request.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Proxy">
       <MemberSignature Language="ILASM" Value=".property class System.Net.IWebProxy Proxy { public hidebysig virtual specialname class System.Net.IWebProxy get_Proxy() public hidebysig virtual specialname void set_Proxy(class System.Net.IWebProxy value) }" />
-      <MemberSignature Language="C#" Value="public virtual System.Net.IWebProxy Proxy { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.IWebProxy Proxy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.IWebProxy Proxy" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the
-      network proxy to use to access resources.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Net.IWebProxy" /> to use to access resources.</para>
         </value>
-        <remarks>
-          <para>The <see cref="P:System.Net.WebRequest.Proxy" /> property identifies the network proxy
-   that the request uses to access resources. The request is made through the
-   proxy server rather than directly to the server hosting the resource.</para>
-          <block subset="none" type="behaviors">
-            <para>If the <see cref="P:System.Net.WebRequest.Proxy" />
-property of the current instance has not been set, the value of this property is
-required to be <see langword="null" />
-.</para>
-            <para>If the property is being set to <see langword="null" />, it is required to
-throw a <see cref="T:System.ArgumentNullException" /> exception.</para>
-          </block>
-          <para>
-            <block subset="none" type="default">This
-   property throws <see cref="T:System.NotSupportedException" />.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property must be overridden by 
-   classes that inherit from <see cref="T:System.Net.WebRequest" /> to provide this functionality. </block>
-          </para>
-          <para>
-            <block subset="none" type="usage">Use this method to
-   obtain a <see cref="T:System.Net.IWebProxy" /> instance that represents the proxy server used by the current instance.</block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.Proxy" /> property identifies the network proxy that the request uses to access the Internet resource. The request is made through the proxy server rather than directly to the Internet resource.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets the network proxy to use to access this Internet resource.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RegisterPrefix">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool RegisterPrefix(string prefix, class System.Net.IWebRequestCreate creator)" />
       <MemberSignature Language="C#" Value="public static bool RegisterPrefix (string prefix, System.Net.IWebRequestCreate creator);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool RegisterPrefix(string prefix, class System.Net.IWebRequestCreate creator) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1237,38 +1231,6 @@ throw a <see cref="T:System.ArgumentNullException" /> exception.</para>
         <Parameter Name="creator" Type="System.Net.IWebRequestCreate" />
       </Parameters>
       <Docs>
-        <param name="prefix">A <see cref="T:System.String" /> containing the URI that the derived type services. Can specify a scheme or a complete URI.</param>
-        <param name="creator">An instance of a type that implements the <see cref="T:System.Net.IWebRequestCreate" /> interface.</param>
-        <summary>
-          <para> Registers a type derived from <see cref="T:System.Net.WebRequest" />, and associates the
-   type with the specified URI.</para>
-        </summary>
-        <returns>
-          <para>
-            <see langword="true " /> if registration is successful;
-<see langword="false" />, if 
-<paramref name="prefix" /> 
-is already registered.</para>
-        </returns>
-        <remarks>
-          <para>
-            <see cref="T:System.Net.HttpWebRequest" /> is registered
-   to service requests for HTTP and HTTPS schemes. Attempts to register a different
-   type for these schemes will
-   fail.</para>
-          <block subset="none" type="note">
-            <para>This method registers types that derive from <see cref="T:System.Net.WebRequest" /> 
-to service requests. These derived types are
-typically registered to handle a specific protocol, such HTTP or FTP, but can be
-registered to handle a request to a specific server or path on a server.
-Therefore, <paramref name="prefix" />
-can be either a scheme or a complete
-URI.</para>
-            <para>The <see cref="T:System.Net.WebRequest" /> class calls the <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> 
-method to create additional instances of the same type as
-<paramref name="creator" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="prefix" /> is <see langword="null" /> or 
@@ -1308,73 +1270,88 @@ public class RegisterPrefixExample
           <para>The output is</para>
           <para>ftpWebRequest</para>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" /> method registers <see cref="T:System.Net.WebRequest" /> descendants to service requests. <see cref="T:System.Net.WebRequest" /> descendants are typically registered to handle a specific protocol, such HTTP or FTP, but can be registered to handle a request to a specific server or path on a server.</para>
+          <para>The pre-registered reserve types already registered include the following:</para>
+          <list type="bullet">
+            <item>
+              <para>http://</para>
+            </item>
+            <item>
+              <para>https://</para>
+            </item>
+            <item>
+              <para>ftp://</para>
+            </item>
+            <item>
+              <para>file://</para>
+            </item>
+          </list>
+          <para>For more information, see the <see cref="M:System.Net.WebRequest.Create(System.String)" /> and <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> methods.</para>
+          <para>Duplicate prefixes are not allowed. <see cref="M:System.Net.WebRequest.RegisterPrefix(System.String,System.Net.IWebRequestCreate)" /> returns false if an attempt is made to register a duplicate prefix.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.HttpWebRequest" /> class is registered to service requests for HTTP and HTTPS schemes by default. Attempts to register a different <see cref="T:System.Net.WebRequest" /> descendant for these schemes will fail.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a <see cref="T:System.Net.WebRequest" /> descendant for the specified URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if registration is successful; otherwise, false.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The complete URI or URI prefix that the <see cref="T:System.Net.WebRequest" /> descendant services. </param>
+        <param name="creator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The create method that the <see cref="T:System.Net.WebRequest" /> calls to create the <see cref="T:System.Net.WebRequest" /> descendant. </param>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestUri">
       <MemberSignature Language="ILASM" Value=".property class System.Uri RequestUri { public hidebysig virtual specialname class System.Uri get_RequestUri() }" />
       <MemberSignature Language="C#" Value="public virtual Uri RequestUri { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri RequestUri" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the <see cref="T:System.Uri" />
-of the resource associated with the
-current instance.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Uri" /> containing the URI 
    of
    the resource associated with the current instance</para>
         </value>
-        <remarks>
-          <para>This property is read-only.</para>
-          <para>
-            <block subset="none" type="behaviors">
-              <see cref="P:System.Net.WebRequest.RequestUri" /> is required to 
-   contain the URI passed to
-   the <see cref="M:System.Net.WebRequest.Create(System.Uri,System.Boolean)" />
-   methods. If the protocol implemented
-   by a derived class supports redirection, the derived class is required
-   to provide a property to contain the URI that actually services the request.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This property
-   throws a <see cref="T:System.NotSupportedException" />
-   exception.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property 
-   must be overridden by classes that inherit from <see cref="T:System.Net.WebRequest" /> to
-   provide this functionality. </block>]</para>
-          <para>
-            <block subset="none" type="usage">Use this property 
-   to determine the URI that the request was addressed to. For information about
-   the URI that actually serviced the request, see <see cref="P:System.Net.WebResponse.ResponseUri" />
-   . </block>
-          </para>
-        </remarks>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, the <see cref="P:System.Net.WebRequest.RequestUri" /> property contains the <see cref="T:System.Uri" /> instance that <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method uses to create the request.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets the URI of the Internet resource associated with the request.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
       <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext streamingContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1384,72 +1361,72 @@ current instance.</para>
         <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="serializationInfo">To be added.</param>
-        <param name="streamingContext">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> instance with the data needed to serialize the <see cref="T:System.Net.WebRequest" />.</para>
+        </summary>
+        <param name="serializationInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" />, which holds the serialized data for the <see cref="T:System.Net.WebRequest" />. </param>
+        <param name="streamingContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the destination of the serialized stream associated with the new <see cref="T:System.Net.WebRequest" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Timeout">
       <MemberSignature Language="ILASM" Value=".property int32 Timeout { public hidebysig virtual specialname int32 get_Timeout() public hidebysig virtual specialname void set_Timeout(int32 value) }" />
-      <MemberSignature Language="C#" Value="public virtual int Timeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual int Timeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the length of time before requests for resources time out.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Int32" /> containing the length of time, in milliseconds, before the current request
    will time out, or <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> to indicate that the request does not time out.</para>
         </value>
+        <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
         <remarks>
-          <para>
-            <block subset="none" type="behaviors">Classes that
-      derive from <see cref="T:System.Net.WebRequest" /> are required to indicate a timeout by throwing a <see cref="T:System.Net.WebException" /> with
-      the <see cref="P:System.Net.WebException.Status" /> field set to <see cref="F:System.Net.WebExceptionStatus.Timeout" qualify="true" /> if a request times out.</block>
-          </para>
-          <para>
-            <block subset="none" type="default">This
-      property throws a <see cref="T:System.NotSupportedException" />
-      exception.</block>
-          </para>
-          <para>
-            <block subset="none" type="overrides">This property 
-      must be overridden by classes that inherit from <see cref="T:System.Net.WebRequest" /> to
-      provide this functionality. </block>
-          </para>
-          <block subset="none" type="usage">
-            <para>Use this property to set the timeout period for requests for resources.</para>
-            <para>The <see cref="P:System.Net.WebRequest.Timeout" /> property affects only synchronous
-      requests made with the <see cref="M:System.Net.WebRequest.GetResponse" /> method. To time out asynchronous
-      requests, use the <see cref="M:System.Net.WebRequest.Abort" /> method.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.WebRequest.Timeout" /> property indicates the length of time, in milliseconds, until the request times out and throws a <see cref="T:System.Net.WebException" />. The <see cref="P:System.Net.WebRequest.Timeout" /> property affects only synchronous requests made with the <see cref="M:System.Net.WebRequest.GetResponse" /> method. To time out asynchronous requests, use the <see cref="M:System.Net.WebRequest.Abort" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Net.WebRequest" /> class is an abstract class. The actual behavior of <see cref="T:System.Net.WebRequest" /> instances at run time is determined by the descendant class returned by the <see cref="M:System.Net.WebRequest.Create(System.Uri)" /> method. For more information about default values and exceptions, see the documentation for the descendant classes, such as <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.FileWebRequest" />.</para>
           </block>
         </remarks>
-        <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the length of time, in milliseconds, before the request times out.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UseDefaultCredentials">
-      <MemberSignature Language="C#" Value="public virtual bool UseDefaultCredentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool UseDefaultCredentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseDefaultCredentials" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to true when requests made by this <see cref="T:System.Net.WebRequest" /> object should, if requested by the server, be authenticated using the credentials of the currently logged on user. For client applications, this is the desired behavior in most scenarios. For middle tier applications, such as ASP.NET applications, instead of using this property, you would typically set the <see cref="P:System.Net.WebRequest.Credentials" /> property to the credentials of the client on whose behalf the request is made.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a descendant class, gets or sets a <see cref="T:System.Boolean" /> value that controls whether <see cref="P:System.Net.CredentialCache.DefaultCredentials" /> are sent with requests.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

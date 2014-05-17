@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GenericParameterAttributes" FullName="System.Reflection.GenericParameterAttributes">
   <TypeSignature Language="C#" Value="public enum GenericParameterAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed GenericParameterAttributes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,150 +16,168 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Enumerates the attributes on a generic parameter.</para>
-    </summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The members of the <see cref="T:System.Reflection.GenericParameterAttributes" /> enumeration are divided into two groups, the variance group and the special constraints group. To test a <see cref="T:System.Reflection.GenericParameterAttributes" /> value for variance flags, first perform a bitwise AND operation with <see cref="F:System.Reflection.GenericParameterAttributes.VarianceMask" />. If the result is <see cref="F:System.Reflection.GenericParameterAttributes.None" />, there are no variance flags. Similarly, use <see cref="F:System.Reflection.GenericParameterAttributes.SpecialConstraintMask" /> to test for constraint flags. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the constraints on a generic type parameter of a generic type or method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Contravariant">
       <MemberSignature Language="C#" Value="Contravariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes Contravariant = int32(2)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the generic parameter is contravariant.    </para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generic type parameter is contravariant. A contravariant type parameter can appear as a parameter type in method signatures. </para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Covariant">
       <MemberSignature Language="C#" Value="Covariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes Covariant = int32(1)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the generic parameter is covariant.    </para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The generic type parameter is covariant. A covariant type parameter can appear as the result type of a method, the type of a read-only field, a declared base type, or an implemented interface.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="DefaultConstructorConstraint">
       <MemberSignature Language="C#" Value="DefaultConstructorConstraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes DefaultConstructorConstraint = int32(16)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the generic parameter has the "<see langword=".ctor" />"   special constraint.</para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type can be substituted for the generic type parameter only if it has a parameterless constructor.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes None = int32(0)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the generic parameter is nonvariant and has no special constraints.    </para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are no special flags.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="NotNullableValueTypeConstraint">
       <MemberSignature Language="C#" Value="NotNullableValueTypeConstraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes NotNullableValueTypeConstraint = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the generic parameter has the "<see langword="valuetype" />"  special constraint.</para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type can be substituted for the generic type parameter only if it is a value type and is not nullable.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ReferenceTypeConstraint">
       <MemberSignature Language="C#" Value="ReferenceTypeConstraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes ReferenceTypeConstraint = int32(4)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies that the generic parameter has the "<see langword="class" />"  special constraint.</para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type can be substituted for the generic type parameter only if it is a reference type.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="SpecialConstraintMask">
       <MemberSignature Language="C#" Value="SpecialConstraintMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes SpecialConstraintMask = int32(28)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies a bit-mask that when combined with a generic parameter's flags value yields  the special constraints bits.
-      </para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the combination of all special constraint flags. This value is the result of using logical OR to combine the following flags: <see cref="F:System.Reflection.GenericParameterAttributes.DefaultConstructorConstraint" />, <see cref="F:System.Reflection.GenericParameterAttributes.ReferenceTypeConstraint" />, and <see cref="F:System.Reflection.GenericParameterAttributes.NotNullableValueTypeConstraint" />.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="VarianceMask">
       <MemberSignature Language="C#" Value="VarianceMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes VarianceMask = int32(3)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-          <para>Specifies a bit-mask that when combined with a generic parameter's flags value yields  the variance bits.
-      </para>
-        </summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the combination of all variance flags. This value is the result of using logical OR to combine the following flags: <see cref="F:System.Reflection.GenericParameterAttributes.Contravariant" /> and <see cref="F:System.Reflection.GenericParameterAttributes.Covariant" />.</para>
+        </summary>
+      </Docs>
     </Member>
   </Members>
 </Type>

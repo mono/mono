@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityElement" FullName="System.Security.SecurityElement" FullNameSP="System_Security_SecurityElement" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SecurityElement extends System.Object" />
   <TypeSignature Language="C#" Value="public sealed class SecurityElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit SecurityElement extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,99 +16,102 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
-    <summary>
-      <para> Represents the XML object model for encoding security objects.</para>
-    </summary>
     <remarks>
-      <para>The simple XML object model for an element consists of the following
- parts:</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is intended to be a lightweight implementation of a simple XML object model for use within the security system, and not for use as a general XML object model. This documentation assumes a basic knowledge of XML.</para>
+      <para>The simple XML object model for an element consists of the following parts: </para>
       <list type="bullet">
         <item>
-          <term>
- 
- The tag is the element name.</term>
+          <para>The tag is the element name.</para>
         </item>
         <item>
-          <term>
- 
- The attributes are zero or more name/value attribute
- pairs on the element.</term>
+          <para>The attributes are zero or more name/value attribute pairs on the element.</para>
         </item>
         <item>
-          <term>
- 
- The children are zero or more elements nested within
- <c>&lt;tag&gt;</c> and <c>&lt;/tag&gt;</c>.</term>
+          <para>The children are zero or more elements nested within &lt;tag&gt; and &lt;/tag&gt;.</para>
         </item>
       </list>
-      <para> An attribute name must be at least one character,
- and cannot be <see langword="null" /> . If element-based value representation is
- used, elements with a text string that is <see langword="null" />
- are represented in the <c>&lt;tag/&gt;</c> form; otherwise, text is
- delimited by the <c>&lt;tag&gt;</c> and <c>&lt;/tag&gt;</c> tokens. Both forms
-can be combined with attributes, which are shown if present.</para>
-      <para> The tags, attributes, and
- text are case-sensitive. The XML form contains quotation marks and
- escape sequences where necessary. String values that include characters invalid for use
- in XML result in a <see cref="T:System.ArgumentException" />.
- These rules apply to all properties and methods.</para>
+      <para>It is strongly suggested that attribute based XML representation is used to express security elements and their values. This means properties of an element are expressed as attributes and property values are expressed as attribute values. Avoid nesting text within tags. For any &lt;tag&gt;text&lt;/tag&gt; representation a representation of type &lt;tag value="text"/&gt; is usually available. Using this attribute-based XML representation increases readability and allows easy WMI portability of the resulting XML serialization.</para>
+      <para>An attribute name must be one character or longer, and cannot be null. If element-based value representation is used, elements with a text string that is null are represented in the &lt;tag/&gt; form; otherwise, text is delimited by the &lt;tag&gt; and &lt;/tag&gt; tokens. Both forms can be combined with attributes, which are shown if present.</para>
+      <para>The tags, attributes, and text of elements, if present, are always case-sensitive. The XML form contains quotations and escapes where necessary. String values that include characters invalid for use in XML result in an <see cref="T:System.ArgumentException" />. These rules apply to all properties and methods.</para>
       <block subset="none" type="note">
-        <para>This class is intended to be a lightweight implementation of a simple XML
- object model for use within the security system, and not for use as a general
- XML object model.</para>
-        <para>It is strongly suggested that properties of a security element are expressed
- as attributes, and property values are expressed as attribute values.
- Specifically, avoid nesting text within tags. For any <c>&lt;tag&gt;text&lt;/tag&gt;</c> representation a
- representation of type <c>&lt;tag
- value="text"/&gt;</c> is usually available. Using attribute-based XML
-representations aids in readability.</para>
-        <para>For performance reasons, character validity is checked only when the element
- is encoded into XML form, and not on every set of a property or method call.
- Static methods allow explicit checking where needed. </para>
+        <para>For performance reasons, character validity is only checked when the element is encoded into XML text form, and not on every set of a property or method. Static methods allow explicit checking where needed.</para>
       </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the XML object model for encoding security objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecurityElement (string tag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string tag) cil managed" />
       <MemberType>Constructor</MemberType>
-      <Parameters>
-        <Parameter Name="tag" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="tag">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="tag" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="tag" /> parameter must consist of a valid XML tag name. Use <see cref="M:System.Security.SecurityElement.Escape(System.String)" /> to remove invalid characters from the string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecurityElement" /> class with the specified tag.</para>
+        </summary>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag name of an XML element. </param>
+      </Docs>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecurityElement (string tag, string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string tag, string text) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="tag" Type="System.String" />
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tag">To be added.</param>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="text" /> parameter is null this constructor produces an element identical to the default constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecurityElement" /> class with the specified tag and text.</para>
+        </summary>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the XML element. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text content within the element. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddAttribute">
+      <MemberSignature Language="C#" Value="public void AddAttribute (string name, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAttribute(string name, string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddAttribute">
-      <MemberSignature Language="C#" Value="public void AddAttribute (string name, string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -115,20 +120,30 @@ representations aids in readability.</para>
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Names and values in attributes should only contain valid XML attribute characters. XML attribute names must be unique. Use <see cref="M:System.Security.SecurityElement.Escape(System.String)" /> to remove invalid characters from the string.</para>
+          <para>There is no support for quoted strings, so strings for name/value pairs should not contain quotes or other characters requiring quoting.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a name/value attribute to an XML element.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute. </param>
       </Docs>
+    </Member>
+    <Member MemberName="AddChild">
+      <MemberSignature Language="C#" Value="public void AddChild (System.Security.SecurityElement child);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddChild(class System.Security.SecurityElement child) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddChild">
-      <MemberSignature Language="C#" Value="public void AddChild (System.Security.SecurityElement child);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -136,19 +151,27 @@ representations aids in readability.</para>
         <Parameter Name="child" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="child">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child element is added following any previously existing child elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a child element to the XML element.</para>
+        </summary>
+        <param name="child">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child element to add. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Attribute">
+      <MemberSignature Language="C#" Value="public string Attribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Attribute(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Attribute">
-      <MemberSignature Language="C#" Value="public string Attribute (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -156,64 +179,77 @@ representations aids in readability.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With XML as follows, Attribute("B") would return "456".</para>
+          <code>&lt;thetag A="123" B="456" C="789"&gt;text&lt;/thetag&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds an attribute by name in an XML element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with the named attribute, or null if no attribute with <paramref name="name" /> exists.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute for which to search. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="C#" Value="public System.Collections.Hashtable Attributes { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Hashtable Attributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Attributes">
-      <MemberSignature Language="C#" Value="public System.Collections.Hashtable Attributes { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.Hashtable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each attribute is stored in the <see cref="T:System.Collections.Hashtable" /> as a name/value pair.</para>
+          <para>Names and values in attributes should contain only valid XML attribute characters. Use <see cref="M:System.Security.SecurityElement.Escape(System.String)" /> to remove invalid characters from the string.</para>
+          <para>There is no support for quoted strings, so strings for name/value pairs should not contain quotes or other characters requiring quoting.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the attributes of an XML element as name/value pairs.</para>
+        </summary>
       </Docs>
+    </Member>
+    <Member MemberName="Children">
+      <MemberSignature Language="C#" Value="public System.Collections.ArrayList Children { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ArrayList Children" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Children">
-      <MemberSignature Language="C#" Value="public System.Collections.ArrayList Children { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.ArrayList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a <see cref="T:System.Security.SecurityElement" /> contains both <see cref="P:System.Security.SecurityElement.Text" /> and <see cref="P:System.Security.SecurityElement.Children" />, <see cref="P:System.Security.SecurityElement.Text" /> will appear first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the array of child elements of the XML element.</para>
+        </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Copy">
       <MemberSignature Language="C#" Value="public System.Security.SecurityElement Copy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.SecurityElement Copy() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Security.SecurityElement</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -223,10 +259,35 @@ representations aids in readability.</para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Security.SecurityElement</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The copy includes both the <see cref="P:System.Security.SecurityElement.Children" /> and <see cref="P:System.Security.SecurityElement.Attributes" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns an identical copy of the current <see cref="T:System.Security.SecurityElement" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current <see cref="T:System.Security.SecurityElement" /> object.</para>
+        </returns>
+      </Docs>
     </Member>
     <Member MemberName="Equal">
       <MemberSignature Language="C#" Value="public bool Equal (System.Security.SecurityElement other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equal(class System.Security.SecurityElement other) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -234,20 +295,32 @@ representations aids in readability.</para>
         <Parameter Name="other" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there are child elements, comparison extends recursively to them.</para>
+          <para>There is no support for comparing different XML representations of the same characters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two XML element objects for equality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tag, attribute names and values, child elements, and text fields in the current XML element are identical to their counterparts in the <paramref name="other" /> parameter; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XML element object to which to compare the current XML element object. </param>
       </Docs>
+    </Member>
+    <Member MemberName="Escape">
+      <MemberSignature Language="C#" Value="public static string Escape (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Escape(string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Escape">
-      <MemberSignature Language="C#" Value="public static string Escape (string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -255,20 +328,83 @@ representations aids in readability.</para>
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to replace invalid characters in a string before using the string in a <see cref="T:System.Security.SecurityElement" />. If invalid characters are used in a <see cref="T:System.Security.SecurityElement" /> without being escaped, an <see cref="T:System.ArgumentException" /> is thrown.</para>
+          <para>The following table shows the invalid XML characters and their escaped equivalents.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>invalid XML Character </para>
+                </term>
+                <description>
+                  <para>Replaced With </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>"&lt;" </para>
+              </term>
+              <description>
+                <para>"&amp;lt;" </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"&gt;" </para>
+              </term>
+              <description>
+                <para>"&amp;gt;" </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"\"" </para>
+              </term>
+              <description>
+                <para>"&amp;quot;" </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"\'" </para>
+              </term>
+              <description>
+                <para>"&amp;apos;" </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>"&amp;" </para>
+              </term>
+              <description>
+                <para>"&amp;amp;" </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces invalid XML characters in a string with their valid XML equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input string with invalid characters replaced.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string within which to escape invalid characters. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromString">
       <MemberSignature Language="C#" Value="public static System.Security.SecurityElement FromString (string xml);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.SecurityElement FromString(string xml) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
@@ -276,20 +412,33 @@ representations aids in readability.</para>
         <Parameter Name="xml" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xml">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use single quotation marks in the XML string; instead, use escaped double quotation marks. For example, instead of "&lt;value name='Company'&gt;Microsoft&lt;/value&gt;" use "&lt;value name=\"Company\"&gt;Microsoft&lt;/value&gt;".</para>
+          <para>Using single quotation marks can result in either an exception being thrown or, in some cases, the single quotation marks being treated as text in the string. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a security element from an XML-encoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> created from the XML.</para>
+        </returns>
+        <param name="xml">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML-encoded string from which to create the security element.</param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidAttributeName">
       <MemberSignature Language="C#" Value="public static bool IsValidAttributeName (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidAttributeName(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -297,20 +446,31 @@ representations aids in readability.</para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to test an attribute before adding it to a security element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a string is a valid attribute name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="name" /> parameter is a valid XML attribute name; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute name to test for validity. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsValidAttributeValue">
+      <MemberSignature Language="C#" Value="public static bool IsValidAttributeValue (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidAttributeValue(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsValidAttributeValue">
-      <MemberSignature Language="C#" Value="public static bool IsValidAttributeValue (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -318,20 +478,31 @@ representations aids in readability.</para>
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to test an attribute before adding it to a security element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a string is a valid attribute value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid XML attribute value; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute value to test for validity. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsValidTag">
+      <MemberSignature Language="C#" Value="public static bool IsValidTag (string tag);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidTag(string tag) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsValidTag">
-      <MemberSignature Language="C#" Value="public static bool IsValidTag (string tag);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -339,20 +510,31 @@ representations aids in readability.</para>
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tag">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This can be used to test a <see cref="P:System.Security.SecurityElement.Tag" /> before setting it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a string is a valid tag.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="tag" /> parameter is a valid XML tag; otherwise, false.</para>
+        </returns>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag to test for validity. </param>
       </Docs>
+    </Member>
+    <Member MemberName="IsValidText">
+      <MemberSignature Language="C#" Value="public static bool IsValidText (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidText(string text) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsValidText">
-      <MemberSignature Language="C#" Value="public static bool IsValidText (string text);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -360,20 +542,31 @@ representations aids in readability.</para>
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to test <see cref="P:System.Security.SecurityElement.Text" /> before setting it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a string is valid as text within an XML element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="text" /> parameter is a valid XML text element; otherwise, false.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to test for validity. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SearchForChildByTag">
+      <MemberSignature Language="C#" Value="public System.Security.SecurityElement SearchForChildByTag (string tag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.SecurityElement SearchForChildByTag(string tag) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SearchForChildByTag">
-      <MemberSignature Language="C#" Value="public System.Security.SecurityElement SearchForChildByTag (string tag);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
@@ -381,20 +574,33 @@ representations aids in readability.</para>
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tag">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With XML as follows, SearchForChildByTag("second") would return the child element &lt;second&gt;.</para>
+          <code>&lt;thetag A="123" B="456" C="789"&gt; &lt;first&gt;text1&lt;/first&gt;
+       &lt;second&gt;text2&lt;/second&gt;&lt;/thetag&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a child by its tag name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first child XML element with the specified tag value, or null if no child element with <paramref name="tag" /> exists.</para>
+        </returns>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag for which to search in child elements. </param>
       </Docs>
+    </Member>
+    <Member MemberName="SearchForTextOfTag">
+      <MemberSignature Language="C#" Value="public string SearchForTextOfTag (string tag);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string SearchForTextOfTag(string tag) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SearchForTextOfTag">
-      <MemberSignature Language="C#" Value="public string SearchForTextOfTag (string tag);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -402,88 +608,108 @@ representations aids in readability.</para>
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tag">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is equivalent to the following:</para>
+          <para>code reference: System.Security.SecurityElement#1</para>
+          <para>With XML as follows, SearchForTextOfTag("second") would return "text2".</para>
+          <code>&lt;thetag A="123" B="456" C="789"&gt; &lt;first&gt;text1&lt;/first&gt;
+    &lt;second&gt;text2&lt;/second&gt;&lt;/thetag&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a child by its tag name and returns the contained text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contents of the first child element with the specified tag value.</para>
+        </returns>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tag for which to search in child elements. </param>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Tag">
-      <MemberSignature Language="C#" Value="public string Tag { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Tag { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Tag" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In XML, the tag appears in the script as appears below: </para>
+          <code>&lt;tag attributes&gt;text&lt;/tag&gt;</code>
+          <para>If this element has child elements, the children will replace text.</para>
+          <para>Assign only valid XML tag strings to this property. Use <see cref="M:System.Security.SecurityElement.Escape(System.String)" /> to remove invalid characters from the string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tag name of an XML element.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="Text">
-      <MemberSignature Language="C#" Value="public string Text { set; get; }" />
+      <MemberSignature Language="C#" Value="public string Text { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Text" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <value>To be added.</value>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text should not contain XML special characters. Use <see cref="M:System.Security.SecurityElement.Escape(System.String)" /> to remove invalid characters from the string.</para>
+          <para>If a <see cref="T:System.Security.SecurityElement" /> contains both <see cref="P:System.Security.SecurityElement.Text" /> and <see cref="P:System.Security.SecurityElement.Children" />, <see cref="P:System.Security.SecurityElement.Text" /> will appear first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text within an XML element.</para>
+        </summary>
+      </Docs>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful in debugging to see the XML representation of the element.</para>
+        </remarks>
         <summary>
-          <para>Returns a <see cref="T:System.String" /> representation of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Produces a string representation of an XML element and its constituent attributes, child elements, and text.</para>
         </summary>
         <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML element and its contents.</para>
         </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para> The XML in the <see cref="T:System.String" /> returned by this method represents the state of
- a permission object. To obtain the XML schema used to encode that object, see the class page for
- the particular permission object .</para>
-            <para>This method
- overrides <see cref="M:System.Object.ToString" qualify="true" />.</para>
-          </block>
-        </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

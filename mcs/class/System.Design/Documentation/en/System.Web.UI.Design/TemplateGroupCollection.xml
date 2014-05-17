@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplateGroupCollection" FullName="System.Web.UI.Design.TemplateGroupCollection">
   <TypeSignature Language="C#" Value="public sealed class TemplateGroupCollection : System.Collections.IList" />
   <AssemblyInfo>
@@ -13,8 +14,46 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class, and any derived class, defines the <see cref="P:System.Web.UI.Design.ControlDesigner.TemplateGroups" /> property as a <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> object. The <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> property is typically used only by a design host such as vsprvslong.</para>
+      <para>The collection dynamically increases in size as objects are added. Indexes in this collection are zero-based. Use the <see cref="P:System.Web.UI.Design.TemplateGroupCollection.Count" /> property to determine how many groups are in the collection.</para>
+      <para>Additionally, use the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> methods and properties to provide the following functionality: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Add(System.Web.UI.Design.TemplateGroup)" /> method to add a single group to the collection. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Insert(System.Int32,System.Web.UI.Design.TemplateGroup)" /> method to add a group at a particular index within the collection. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Remove(System.Web.UI.Design.TemplateGroup)" /> method to remove a group. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.RemoveAt(System.Int32)" /> method to remove the group at a particular index.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Contains(System.Web.UI.Design.TemplateGroup)" /> method to determine whether a particular group is already in the collection. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.IndexOf(System.Web.UI.Design.TemplateGroup)" /> method to retrieve the index of a group within the collection. </para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.Design.TemplateGroupCollection.Item(System.Int32)" /> indexer to get or set the group at a particular index, using array notation.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.AddRange(System.Web.UI.Design.TemplateGroupCollection)" /> method to add multiple groups to the collection. </para>
+          <para>You can add multiple groups either as an array of groups or as a <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> object that you retrieve through the <see cref="P:System.Web.UI.Design.ControlDesigner.TemplateGroups" /> property of another control designer. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Clear" /> method to remove all groups from the collection.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.UI.Design.TemplateGroup" /> objects within a control designer. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +64,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.#ctor" /> constructor to create an empty collection. You can add elements to the collection by using the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Add(System.Web.UI.Design.TemplateGroup)" />, <see cref="M:System.Web.UI.Design.TemplateGroupCollection.AddRange(System.Web.UI.Design.TemplateGroupCollection)" />, or <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Insert(System.Int32,System.Web.UI.Design.TemplateGroup)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -42,10 +87,21 @@
         <Parameter Name="group" Type="System.Web.UI.Design.TemplateGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Add(System.Web.UI.Design.TemplateGroup)" /> method adds the specified <see cref="T:System.Web.UI.Design.TemplateGroup" /> object to the end of the collection. To add a <see cref="T:System.Web.UI.Design.TemplateGroup" /> object to the collection at a specific index location, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Insert(System.Int32,System.Web.UI.Design.TemplateGroup)" /> method.</para>
+          <para>To add multiple groups to the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.AddRange(System.Web.UI.Design.TemplateGroupCollection)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.UI.Design.TemplateGroup" /> object to the end of the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the <see cref="T:System.Web.UI.Design.TemplateGroup" /> was added to the collection.</para>
+        </returns>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -61,9 +117,16 @@
         <Parameter Name="groups" Type="System.Web.UI.Design.TemplateGroupCollection" />
       </Parameters>
       <Docs>
-        <param name="groups">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.AddRange(System.Web.UI.Design.TemplateGroupCollection)" /> method adds multiple groups to the collection. To add a single <see cref="T:System.Web.UI.Design.TemplateGroup" /> object to the end of the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Add(System.Web.UI.Design.TemplateGroup)" /> method. To add a <see cref="T:System.Web.UI.Design.TemplateGroup" /> object to the collection at a specific index location, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Insert(System.Int32,System.Web.UI.Design.TemplateGroup)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the template groups in an existing <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> object to the current <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> object.</para>
+        </summary>
+        <param name="groups">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> that contains the groups to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -77,8 +140,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Clear" /> method to remove all groups from the collection. To remove a specific group from the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Remove(System.Web.UI.Design.TemplateGroup)" /> method. To remove a group at a particular index, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.RemoveAt(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all groups from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -94,10 +163,21 @@
         <Parameter Name="group" Type="System.Web.UI.Design.TemplateGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Contains(System.Web.UI.Design.TemplateGroup)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.TemplateGroup" /> objects.</para>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Contains(System.Web.UI.Design.TemplateGroup)" /> method performs a linear search; therefore, the average execution time is proportional to the <see cref="P:System.Web.UI.Design.TemplateGroupCollection.Count" /> property. Because template group collections typically are small, the performance of the linear search operation is not critical.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified group is contained within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="group" /> is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to locate within the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -114,10 +194,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The group elements are copied to the <see cref="T:System.Array" /> object in the same order in which the group elements are indexed within the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the groups in the collection to a compatible one-dimensional array, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> that is the destination of the copied groups. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -130,9 +218,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.TemplateGroupCollection.Count" /> property generally is used to determine the upper boundary index when iterating through objects in the collection. Because the collection indexes are zero-based, the first element is at index 0 and the last element is at index Count-1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.Web.UI.Design.TemplateGroup" /> objects in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -148,10 +242,21 @@
         <Parameter Name="group" Type="System.Web.UI.Design.TemplateGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.IndexOf(System.Web.UI.Design.TemplateGroup)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.TemplateGroup" /> objects.</para>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.IndexOf(System.Web.UI.Design.TemplateGroup)" /> performs a linear search; therefore, the average execution time is proportional to the <see cref="P:System.Web.UI.Design.TemplateGroupCollection.Count" /> property. Because template group collections typically are small, the performance of the linear search operation is not critical.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the specified <see cref="T:System.Web.UI.Design.TemplateGroup" /> object within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="group" /> within the collection; otherwise, -1, if <paramref name="group" /> is not in the collection.</para>
+        </returns>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to locate within the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -168,10 +273,21 @@
         <Parameter Name="group" Type="System.Web.UI.Design.TemplateGroup" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Insert(System.Int32,System.Web.UI.Design.TemplateGroup)" /> method adds a <see cref="T:System.Web.UI.Design.TemplateGroup" /> object to the collection at a specific index location. To add a single <see cref="T:System.Web.UI.Design.TemplateGroup" /> to the end of the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Add(System.Web.UI.Design.TemplateGroup)" /> method. To add multiple groups to the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.AddRange(System.Web.UI.Design.TemplateGroupCollection)" /> method.</para>
+          <block subset="none" type="note">
+            <para>When you insert an item into the collection, the indexes change for subsequent items in the collection.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Web.UI.Design.TemplateGroup" /> object into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index within the collection at which to insert <paramref name="group" />.</param>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to insert into the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -206,9 +322,22 @@
         <Parameter Name="group" Type="System.Web.UI.Design.TemplateGroup" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Remove(System.Web.UI.Design.TemplateGroup)" /> method removes the first occurrence of <paramref name="group" /> from the collection. If the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> object does not contain <paramref name="group" />, the collection remains unchanged. No exception is thrown.</para>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Remove(System.Web.UI.Design.TemplateGroup)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.TemplateGroup" /> objects.</para>
+          <para>The <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Remove(System.Web.UI.Design.TemplateGroup)" /> method performs a linear search; therefore, the average execution time is proportional to the <see cref="P:System.Web.UI.Design.TemplateGroupCollection.Count" /> property. Because template group collections typically are small, the performance of the linear search operation is not critical.</para>
+          <para>To remove a group at a particular index from the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.RemoveAt(System.Int32)" /> method. To remove all the groups from the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Clear" /> method.</para>
+          <block subset="none" type="note">
+            <para>When you remove an item from the collection, the indexes change for subsequent items in the collection.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.UI.Design.TemplateGroup" /> object from the collection. </para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to remove from the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -224,9 +353,19 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.RemoveAt(System.Int32)" /> method to remove a group at a particular index from the collection. To remove a specified group from the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Remove(System.Web.UI.Design.TemplateGroup)" /> method. To remove all the groups from the collection, use the <see cref="M:System.Web.UI.Design.TemplateGroupCollection.Clear" /> method.</para>
+          <block subset="none" type="note">
+            <para>When you remove an item from the collection, the indexes change for subsequent items in the collection.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.Design.TemplateGroup" /> object at the specified index within the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index within the collection of the <see cref="T:System.Web.UI.Design.TemplateGroup" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.CopyTo">
@@ -243,10 +382,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.ICollection.CopyTo(System.Array,System.Int32)" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> that is the destination of the copied groups. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.Count">
@@ -259,9 +406,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.Count" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -274,9 +427,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.IsSynchronized" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -289,9 +448,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.ICollection.SyncRoot" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -305,9 +470,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> to use to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -323,10 +497,20 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which <paramref name="o" /> was added to the collection.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Clear">
@@ -340,8 +524,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Clear" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -357,10 +547,20 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Contains(System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if <paramref name="o" /> is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to locate within the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -376,10 +576,20 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="o" /> within the collection; otherwise, -1, if <paramref name="o" /> is not in the collection.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.TemplateGroup" /> to locate within the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -396,10 +606,18 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Insert(System.Int32,System.Object)" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index within the collection at which to insert <paramref name="o" />.</param>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to insert into the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsFixedSize">
@@ -412,9 +630,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.IList.IsFixedSize" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IsReadOnly">
@@ -427,9 +651,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Collections.IList.IsReadOnly" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Item">
@@ -464,9 +694,16 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.Remove(System.Object)" />.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove from the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.RemoveAt">
@@ -482,9 +719,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.TemplateGroupCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" />.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index within the collection of the object to remove.</param>
       </Docs>
     </Member>
   </Members>

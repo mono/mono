@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Type Name="AssemblyContentType" FullName="System.Reflection.AssemblyContentType">
+  <TypeSignature Language="C#" Value="public enum AssemblyContentType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AssemblyContentType extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about the type of code contained in an assembly.</para>
+    </summary>
+  </Docs>
+  <Members>
+    <Member MemberName="Default">
+      <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyContentType Default = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.AssemblyContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly contains .NET Framework code.</para>
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="WindowsRuntime">
+      <MemberSignature Language="C#" Value="WindowsRuntime" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyContentType WindowsRuntime = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.AssemblyContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly contains wrt code.</para>
+        </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
