@@ -7,7 +7,7 @@
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
-
+#if NET_4_5
 using NUnit.Framework;
 using System;
 using System.Security.Claims;
@@ -25,3 +25,4 @@ namespace MonoTests.System.Security.Claims {
 		}
 	}
 }
+#endif
