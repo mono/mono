@@ -353,7 +353,7 @@
 			Properties="%(ProjectReferenceWithConfigurationExistent.SetConfiguration); %(ProjectReferenceWithConfigurationExistent.SetPlatform)"
 			Condition="'@(ProjectReferenceWithConfigurationExistent)' != '' and ('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true')">
 
-			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
+			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" Condition="'%(ProjectReferenceWithConfigurationExistent.ReferenceOutputAssembly)' != 'false'"/>
 		</MSBuild>
 
 		<!-- Building a project directly, build the referenced the projects also -->
@@ -362,7 +362,7 @@
 			Properties="%(ProjectReferenceWithConfigurationExistent.SetConfiguration); %(ProjectReferenceWithConfigurationExistent.SetPlatform)"
 			Condition="'@(ProjectReferenceWithConfigurationExistent)' != '' and '$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true' ">
 
-			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
+			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" Condition="'%(ProjectReferenceWithConfigurationExistent.ReferenceOutputAssembly)' != 'false'"/>
 		</MSBuild>
 
 		<Warning Text="Referenced Project %(ProjectReferenceWithConfigurationNonExistent.Identity) not found, ignoring."
