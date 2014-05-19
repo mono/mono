@@ -346,12 +346,28 @@ namespace Microsoft.Build.Evaluation
 		
 		static IEnumerable<T> GetWellKnownProperties<T> (Func<string,string,T> create)
 		{
+			yield return create ("OS", OS);
 			var ext = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath") ?? DefaultExtensionsPath;
 			yield return create ("MSBuildExtensionsPath", ext);
 			var ext32 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath32") ?? ext;
 			yield return create ("MSBuildExtensionsPath32", ext32);
 			var ext64 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath64") ?? ext;
 			yield return create ("MSBuildExtensionsPath64", ext64);
+		}
+
+		static string OS {
+			get {
+				PlatformID pid = Environment.OSVersion.Platform;
+				switch ((int) pid) {
+				case 128:
+				case 4:
+					return "Unix";
+				case 6:
+					return "OSX";
+				default:
+					return "Windows_NT";
+				}
+			}
 		}
 
 		static string extensions_path;
