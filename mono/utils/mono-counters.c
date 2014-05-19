@@ -413,11 +413,12 @@ mono_counters_foreach (CountersEnumCallback cb, gpointer user_data)
 	}
 }
 
-#define COPY_COUNTER(type,functype) do {	\
+#define COPY_COUNTER(type,functype) do { \
+		type __var; \
 		size = sizeof (type);	\
 		if (buffer_size < size)	\
-			return -1;	\
-		type __var = cb ? ((functype)counter->addr) () : *(type*)counter->addr;	\
+		return -1;	\
+		__var = cb ? ((functype)counter->addr) () : *(type*)counter->addr;	\
 		memcpy (buffer, &__var, size);	\
 	} while (0);
 
