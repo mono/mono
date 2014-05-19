@@ -5123,22 +5123,12 @@ namespace Mono.CSharp {
 							if (dup_args)
 								t = TypeManager.GetReferenceType (iexpr_type);
 						} else {
-
-#if GMCS_SOURCE
-							if(instance_expr is IMemoryLocation)
-							{
-								((IMemoryLocation)instance_expr).AddressOf(ec, AddressOp.LoadStore);
-								if(dup_args)
-									t = TypeManager.GetReferenceType(iexpr_type);
-							}
-							else
-#endif
-							{
-								instance_expr.Emit (ec);
+							instance_expr.Emit (ec);
 							
-								ig.Emit (OpCodes.Box, instance_expr.Type);
-								t = TypeManager.object_type;
-							}
+							// FIXME: should use instance_expr is IMemoryLocation + constraint.
+							// to help JIT to produce better code
+							ig.Emit (OpCodes.Box, instance_expr.Type);
+							t = TypeManager.object_type;
 						}
 					} else {
 						instance_expr.Emit (ec);
@@ -5165,7 +5155,7 @@ namespace Mono.CSharp {
 				call_op = OpCodes.Callvirt;
 				
 #if GMCS_SOURCE
-				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter || (TypeManager.IsValueType(instance_expr.Type) && instance_expr is IMemoryLocation)))
+				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
 					ig.Emit (OpCodes.Constrained, instance_expr.Type);
 #endif
 			}
