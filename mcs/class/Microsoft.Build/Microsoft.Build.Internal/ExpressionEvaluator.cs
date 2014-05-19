@@ -42,25 +42,11 @@ namespace Microsoft.Build.Internal.Expressions
 		public ExpressionEvaluator (Project project)
 		{
 			Project = project;
-			/*
-			GetItems = (name) => project.GetItems (name).Select (i => new KeyValuePair<string,string> (i.ItemType, i.EvaluatedInclude));
-			GetProperty = (name) => {
-				var prop = project.GetProperty (name);
-				return new KeyValuePair<string,string> (prop != null ? prop.Name : null, prop != null ? prop.EvaluatedValue : null);
-				};
-			*/
 		}
 		
 		public ExpressionEvaluator (ProjectInstance project)
 		{
 			ProjectInstance = project;
-			/*
-			GetItems = (name) => project.GetItems (name).Select (i => new KeyValuePair<string,string> (i.ItemType, i.EvaluatedInclude));
-			GetProperty = (name) => {
-				var prop = project.GetProperty (name);
-				return new KeyValuePair<string,string> (prop != null ? prop.Name : null, prop != null ? prop.EvaluatedValue : null);
-				};
-			*/
 		}
 		
 		EvaluationContext CreateContext (string source)
@@ -70,9 +56,7 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public Project Project { get; private set; }
 		public ProjectInstance ProjectInstance { get; set; }
-		//public Func<string,IEnumerable<KeyValuePair<string,string>>> GetItems { get; private set; }
-		//public Func<string,KeyValuePair<string,string>> GetProperty { get; private set; }
-		
+
 		List<ITaskItem> evaluated_task_items = new List<ITaskItem> ();
 
 		public IList<ITaskItem> EvaluatedTaskItems {
