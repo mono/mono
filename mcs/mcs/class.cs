@@ -424,7 +424,7 @@ namespace Mono.CSharp
 			}
 
 			public TypeSpec CurrentType {
-				get { return tc.Parent.CurrentType; }
+				get { return tc.PartialContainer.CurrentType; }
 			}
 
 			public TypeParameters CurrentTypeParameters {

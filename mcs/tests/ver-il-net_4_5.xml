@@ -29255,6 +29255,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-partial-010.cs">
+    <type name="A.C">
+      <method name="Int32 A.IA&lt;A.C.NA&gt;.Foo(NA)" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Int32 A.IA&lt;A.C.NB&gt;.Foo(NB)" attrs="481">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.C+NA">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.C+NB">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-02.cs">
     <type name="A`1[T]">
       <method name="Void Test()" attrs="129">
