@@ -214,7 +214,7 @@ namespace Microsoft.Build.Evaluation
 			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
 			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
 			// properties and they will be expanded.
-			var elements = EvaluatePropertiesAndImports (Xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
+			var elements = EvaluatePropertiesAndImportsAndChooses (Xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
 			
 			// next, evaluate items
 			EvaluateItems (elements);
@@ -223,7 +223,7 @@ namespace Microsoft.Build.Evaluation
 			EvaluateTargets (elements);
 		}
 		
-		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
+		IEnumerable<ProjectElement> EvaluatePropertiesAndImportsAndChooses (IEnumerable<ProjectElement> elements)
 		{
 			// First step: evaluate Properties
 			foreach (var child in elements) {
@@ -248,6 +248,20 @@ namespace Microsoft.Build.Evaluation
 				if (inc != null && Evaluate (inc.Condition))
 					foreach (var e in Import (inc))
 						yield return e;
+				var choose = child as ProjectChooseElement;
+				if (choose != null && Evaluate (choose.Condition)) {
+					bool done = false;
+					foreach (ProjectWhenElement when in choose.WhenElements)
+						if (Evaluate (when.Condition)) {
+							foreach (var e in EvaluatePropertiesAndImportsAndChooses (when.Children))
+								yield return e;
+							done = true;
+							break;
+						}
+					if (!done && choose.OtherwiseElement != null)
+						foreach (var e in EvaluatePropertiesAndImportsAndChooses (choose.OtherwiseElement.Children))
+							yield return e;
+				}
 			}
 		}
 		
@@ -314,7 +328,7 @@ namespace Microsoft.Build.Evaluation
 				using (var reader = XmlReader.Create (path)) {
 					var root = ProjectRootElement.Create (reader, ProjectCollection);
 					raw_imports.Add (new ResolvedImport (import, root, true));
-					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
+					return this.EvaluatePropertiesAndImportsAndChooses (root.Children).ToArray ();
 				}
 			} finally {
 				ProjectCollection.OngoingImports.Pop ();

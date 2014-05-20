@@ -191,7 +191,7 @@ namespace Microsoft.Build.Execution
 			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
 			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
 			// properties and they will be expanded.
-			var elements = EvaluatePropertiesUsingTasksAndImports (xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
+			var elements = EvaluatePropertiesAndUsingTasksAndImportsAndChooses (xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
 			
 			// next, evaluate items
 			EvaluateItems (xml, elements);
@@ -200,7 +200,7 @@ namespace Microsoft.Build.Execution
 			EvaluateTargets (elements);
 		}
 		
-		IEnumerable<ProjectElement> EvaluatePropertiesUsingTasksAndImports (IEnumerable<ProjectElement> elements)
+		IEnumerable<ProjectElement> EvaluatePropertiesAndUsingTasksAndImportsAndChooses (IEnumerable<ProjectElement> elements)
 		{
 			foreach (var child in elements) {
 				yield return child;
@@ -230,6 +230,20 @@ namespace Microsoft.Build.Execution
 				if (inc != null && EvaluateCondition (inc.Condition))
 					foreach (var e in Import (inc))
 						yield return e;
+				var choose = child as ProjectChooseElement;
+				if (choose != null && EvaluateCondition (choose.Condition)) {
+					bool done = false;
+					foreach (ProjectWhenElement when in choose.WhenElements)
+						if (EvaluateCondition (when.Condition)) {
+							foreach (var e in EvaluatePropertiesAndUsingTasksAndImportsAndChooses (when.Children))
+								yield return e;
+							done = true;
+							break;
+						}
+					if (!done && choose.OtherwiseElement != null)
+						foreach (var e in EvaluatePropertiesAndUsingTasksAndImportsAndChooses (choose.OtherwiseElement.Children))
+							yield return e;
+				}
 			}
 		}
 		
@@ -291,7 +305,7 @@ namespace Microsoft.Build.Execution
 				using (var reader = XmlReader.Create (path)) {
 					var root = ProjectRootElement.Create (reader, projects);
 					raw_imports.Add (new ResolvedImport (import, root, true));
-					return this.EvaluatePropertiesUsingTasksAndImports (root.Children).ToArray ();
+					return this.EvaluatePropertiesAndUsingTasksAndImportsAndChooses (root.Children).ToArray ();
 				}
 			} finally {
 				projects.OngoingImports.Pop ();
