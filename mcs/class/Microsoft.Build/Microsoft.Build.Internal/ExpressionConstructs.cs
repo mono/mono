@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Build.Internal.Expressions
 {
@@ -89,6 +90,11 @@ namespace Microsoft.Build.Internal.Expressions
 			list.Insert (pos, expr);
 			return this;
 		}
+
+		public override string ToString ()
+		{
+			return string.Join (" ", list.Select (i => i.ToString ()));
+		}
 	}
 
 	abstract partial class Expression : Locatable, ILocation
@@ -125,21 +131,35 @@ namespace Microsoft.Build.Internal.Expressions
 		public Operator Operator { get; set; }
 		public Expression Left { get; set; }
 		public Expression Right { get; set; }
+
+		public override string ExpressionString {
+			get { return string.Format ("{0} {1} {2}", Left, Operator, Right); }
+		}
 	}
 	
 	partial class BooleanLiteral : Expression
 	{
 		public bool Value { get; set; }
+
+		public override string ExpressionString {
+			get { return Value ? "true" : "false"; }
+		}
 	}
 
 	partial class NotExpression : Expression
 	{
 		public Expression Negated { get; set; }
+		public override string ExpressionString {
+			get { return string.Format ("!{0}", Negated); }
+		}
 	}
 
 	partial class PropertyAccessExpression : Expression
 	{
 		public PropertyAccess Access { get; set; }
+		public override string ExpressionString {
+			get { return Access.ExpressionString; }
+		}
 	}
 	
 	enum PropertyTargetType
@@ -154,44 +174,71 @@ namespace Microsoft.Build.Internal.Expressions
 		public Expression Target { get; set; }
 		public PropertyTargetType TargetType { get; set; }
 		public ExpressionList Arguments { get; set; }
+		public string ExpressionString {
+			get { return string.Format ("$([{0}][{1}][{2}][{3}])", Target, TargetType, Name, Arguments != null && Arguments.Any () ? string.Join (", ", Arguments.Select (e => e.ExpressionString)) : null); }
+		}
 	}
 
 	partial class ItemAccessExpression : Expression
 	{
 		public ItemApplication Application { get; set; }
+		public override string ExpressionString {
+			get { return Application.ExpressionString; }
+		}
 	}
 	
 	class ItemApplication : Locatable
 	{
 		public NameToken Name { get; set; }
 		public ExpressionList Expressions { get; set; }
+		public string ExpressionString {
+			get { return string.Format ("@([{0}][{1}])", Name, Expressions != null && Expressions.Any () ? string.Join (" ||| ", Expressions.Select (e => e.ExpressionString)) : null); }
+		}
 	}
 
 	partial class MetadataAccessExpression : Expression
 	{
 		public MetadataAccess Access { get; set; }
+		public override string ExpressionString {
+			get { return Access.ExpressionString; }
+		}
 	}
 	
 	class MetadataAccess : Locatable
 	{
 		public NameToken Metadata { get; set; }
 		public NameToken ItemType { get; set; }
+		public string ExpressionString {
+			get { return string.Format ("%([{0}].[{1}])", ItemType, Metadata); }
+		}
 	}
 	
 	partial class StringLiteral : Expression
 	{
 		public NameToken Value { get; set; }
+
+		public override string ExpressionString {
+			get { return '"' + Value.ToString () + '"'; }
+		}
 	}
 
 	partial class RawStringLiteral : Expression
 	{
 		public NameToken Value { get; set; }
+
+		public override string ExpressionString {
+			get { return "[rawstr] " + Value; }
+		}
 	}
 	
 	partial class FunctionCallExpression : Expression
 	{
 		public NameToken Name { get; set; }
 		public ExpressionList Arguments { get; set; }
+
+		public override string ExpressionString {
+			get { return string.Format ("[func] {0}({1})", Name, string.Join (", ", Arguments.Select (e => e.ExpressionString))); }
+		}
 	}
 }
 

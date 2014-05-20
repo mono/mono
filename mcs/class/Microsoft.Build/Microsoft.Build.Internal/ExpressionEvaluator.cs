@@ -171,10 +171,11 @@ namespace Microsoft.Build.Internal.Expressions
 	
 	abstract partial class Expression
 	{
+		public abstract string ExpressionString { get; }
 		public abstract string EvaluateAsString (EvaluationContext context);
 		public abstract bool EvaluateAsBoolean (EvaluationContext context);
 		public abstract object EvaluateAsObject (EvaluationContext context);
-		
+
 		public bool EvaluateStringAsBoolean (EvaluationContext context, string ret)
 		{
 			if (ret != null) {
@@ -183,7 +184,7 @@ namespace Microsoft.Build.Internal.Expressions
 				else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
 					return false;
 			}
-			throw new InvalidProjectFileException (this.Location, string.Format ("Condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
+			throw new InvalidProjectFileException (this.Location, string.Format ("Part of condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
 		}
 	}
 	
