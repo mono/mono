@@ -297,12 +297,13 @@ namespace System.IO.MemoryMappedFiles
 
 		const int ENAMETOOLONG = 63;
 #else
-		/* MONOTOUCH */
+		/* MONOTOUCH - usr/include/sys/fcntl.h */
 		const int O_CREAT = 0x0200;
 		const int O_TRUNC = 0x0400;
 		const int O_EXCL  = 0x0800;
 
-		const int ENAMETOOLONG = 36;
+		// usr/include/sys/errno.h
+		const int ENAMETOOLONG = 63;
 #endif
 
 		static int ToUnixMode (FileMode mode)
