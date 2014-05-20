@@ -67,3 +67,7 @@ TEST_HARNESS_EXCLUDES += $(extra_test_flags)
 
 CLEAN_FILES = $(system_core_plain_libdir)/System.Core.dll
 
+ifndef intermediate
+csproj-local:
+	$(MAKE) csproj-local intermediate=plaincore/
+endif

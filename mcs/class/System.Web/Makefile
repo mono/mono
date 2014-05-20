@@ -441,5 +441,8 @@ ifdef STANDALONE_TEST_COMPILABLE_TESTS
 		$(MAKE) -C Test/standalone/$$d clean ; \
 	done
 endif
- 
- 
+
+ifndef intermediate
+csproj-local:
+	$(MAKE) csproj-local intermediate=plainweb/
+endif

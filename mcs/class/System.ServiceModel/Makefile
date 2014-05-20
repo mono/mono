@@ -83,3 +83,8 @@ endif
 .NOTPARALLEL: $(servicemodel_deps)
 
 CLEAN_FILES = $(the_libdir_base)plainservice/System.ServiceModel.dll
+
+ifndef intermediate
+csproj-local:
+	$(MAKE) csproj-local intermediate=plainservice/
+endif
