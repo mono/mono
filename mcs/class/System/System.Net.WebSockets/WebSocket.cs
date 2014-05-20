@@ -48,10 +48,9 @@ namespace System.Net.WebSockets
 		public abstract WebSocketState State { get; }
 		public abstract string SubProtocol { get; }
 
-		[MonoTODO]
 		public static TimeSpan DefaultKeepAliveInterval {
 			get {
-				throw new NotImplementedException ();
+				return TimeSpan.FromSeconds (30);
 			}
 		}
 

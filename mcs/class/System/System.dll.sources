@@ -888,6 +888,7 @@ System.Net/WebUtility.cs
 System.Net.WebSockets/ClientWebSocket.cs
 System.Net.WebSockets/ClientWebSocketOptions.cs
 System.Net.WebSockets/HttpListenerWebSocketContext.cs
+System.Net.WebSockets/StreamWebSocket.cs
 System.Net.WebSockets/WebSocket.cs
 System.Net.WebSockets/WebSocketCloseStatus.cs
 System.Net.WebSockets/WebSocketContext.cs
