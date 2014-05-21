@@ -19069,6 +19069,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-611.cs">
+    <type name="X">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X2">
+      <method name="Void Main()" attrs="150">
+        <size>24</size>
+      </method>
+      <method name="Void Foo[T1,T2](T2[])" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void Foo[T1,T2](T2[][])" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

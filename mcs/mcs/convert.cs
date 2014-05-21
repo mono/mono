@@ -1901,10 +1901,23 @@ namespace Mono.CSharp {
 					if (source_array.Rank == target_array.Rank) {
 
 						source_type = source_array.Element;
-						if (!TypeSpec.IsReferenceType (source_type))
-							return null;
-
 						var target_element = target_array.Element;
+
+						//
+						// LAMESPEC: Type parameters are special cased somehow but
+						// only when both source and target elements are type parameters
+						//
+						if ((source_type.Kind & target_element.Kind & MemberKind.TypeParameter) == MemberKind.TypeParameter) {
+							//
+							// Conversion is allowed unless source element type has struct constrain
+							//
+							if (TypeSpec.IsValueType (source_type))
+								return null;
+						} else {
+							if (!TypeSpec.IsReferenceType (source_type))
+								return null;
+						}
+
 						if (!TypeSpec.IsReferenceType (target_element))
 							return null;
 
