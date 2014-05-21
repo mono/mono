@@ -123,6 +123,8 @@ $(the_libdir_base)System.Configuration.dll:
 
 
 ifndef intermediate
+ifneq ($(PROFILE),basic)
 csproj-local:
 	$(MAKE) csproj-local intermediate=bare/
+endif
 endif

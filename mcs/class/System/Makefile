@@ -148,7 +148,9 @@ fresh: clean
 	rm -rf ../../class/lib/$(PROFILE)/bare ../../class/lib/$(PROFILE)/bare/ $(system_library_deps)
 
 ifndef intermediate
+ifneq ($(PROFILE),basic)
 csproj-local:
 	$(MAKE) csproj-local intermediate=bare/
 	$(MAKE) csproj-local intermediate=secxml/
+endif
 endif

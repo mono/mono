@@ -443,6 +443,8 @@ ifdef STANDALONE_TEST_COMPILABLE_TESTS
 endif
 
 ifndef intermediate
+ifneq ($(PROFILE),basic)
 csproj-local:
 	$(MAKE) csproj-local intermediate=plainweb/
+endif
 endif
