@@ -33,173 +33,67 @@ using System.Threading;
 
 namespace System.Net
 {
-	class WebAsyncResult : IAsyncResult
+	class WebAsyncResult : SimpleAsyncResult
 	{
-		ManualResetEvent handle;
-		bool synch;
-		bool isCompleted;
-		AsyncCallback cb;
-		object state;
 		int nbytes;
 		IAsyncResult innerAsyncResult;
-		bool callbackDone;
-		Exception exc;
 		HttpWebResponse response;
 		Stream writeStream;
 		byte [] buffer;
 		int offset;
 		int size;
-		object locker = new object ();
 		public bool EndCalled;
 		public bool AsyncWriteAll;
 
 		public WebAsyncResult (AsyncCallback cb, object state)
+			: base (cb, state)
 		{
-			this.cb = cb;
-			this.state = state;
 		}
 
 		public WebAsyncResult (HttpWebRequest request, AsyncCallback cb, object state)
+			: base (cb, state)
 		{
-			this.cb = cb;
-			this.state = state;
 		}
 
 		public WebAsyncResult (AsyncCallback cb, object state, byte [] buffer, int offset, int size)
+			: base (cb, state)
 		{
-			this.cb = cb;
-			this.state = state;
 			this.buffer = buffer;
 			this.offset = offset;
 			this.size = size;
 		}
 
-		internal void SetCompleted (bool synch, Exception e)
-		{
-			this.synch = synch;
-			exc = e;
-			lock (locker) {
-				isCompleted = true;
-				if (handle != null)
-					handle.Set ();
-			}
-		}
-		
 		internal void Reset ()
 		{
-			callbackDone = false;
-			exc = null;
-			response = null;
-			writeStream = null;
-			exc = null;
-			lock (locker) {
-				isCompleted = false;
-				if (handle != null)
-					handle.Reset ();
-			}
+			this.nbytes = 0;
+			this.response = null;
+			this.buffer = null;
+			this.offset = 0;
+			this.size = 0;
+			Reset_internal ();
 		}
 
 		internal void SetCompleted (bool synch, int nbytes)
 		{
-			this.synch = synch;
 			this.nbytes = nbytes;
-			exc = null;
-			lock (locker) {
-				isCompleted = true;
-				if (handle != null)
-					handle.Set ();
-			}
+			SetCompleted_internal (synch);
 		}
 		
 		internal void SetCompleted (bool synch, Stream writeStream)
 		{
-			this.synch = synch;
 			this.writeStream = writeStream;
-			exc = null;
-			lock (locker) {
-				isCompleted = true;
-				if (handle != null)
-					handle.Set ();
-			}
+			SetCompleted_internal (synch);
 		}
 		
 		internal void SetCompleted (bool synch, HttpWebResponse response)
 		{
-			this.synch = synch;
 			this.response = response;
-			exc = null;
-			lock (locker) {
-				isCompleted = true;
-				if (handle != null)
-					handle.Set ();
-			}
+			SetCompleted_internal (synch);
 		}
-		
+
 		internal void DoCallback ()
 		{
-			if (!callbackDone && cb != null) {
-				callbackDone = true;
-				if (synch)
-					cb (this);
-				else
-					ThreadPool.QueueUserWorkItem (CB, null);
-			}
-		}
-
-		void CB (object unused)
-		{
-			cb (this);
-		}
-		
-		internal void WaitUntilComplete ()
-		{
-			if (IsCompleted)
-				return;
-
-			AsyncWaitHandle.WaitOne ();
-		}
-
-		internal bool WaitUntilComplete (int timeout, bool exitContext)
-		{
-			if (IsCompleted)
-				return true;
-
-			return AsyncWaitHandle.WaitOne (timeout, exitContext);
-		}
-
-		public object AsyncState {
-			get { return state; }
-		}
-
-		public WaitHandle AsyncWaitHandle {
-			get {
-				lock (locker) {
-					if (handle == null)
-						handle = new ManualResetEvent (isCompleted);
-				}
-				
-				return handle;
-			}
-		}
-
-		public bool CompletedSynchronously {
-			get { return synch; }
-		}
-
-		public bool IsCompleted {
-			get {
-				lock (locker) {
-					return isCompleted;
-				}
-			}
-		}
-
-		internal bool GotException {
-			get { return (exc != null); }
-		}
-		
-		internal Exception Exception {
-			get { return exc; }
+			DoCallback_internal ();
 		}
 		
 		internal int NBytes {
