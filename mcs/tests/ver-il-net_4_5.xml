@@ -19040,6 +19040,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-610.cs">
+    <type name="G1`2[T1,T2]">
+      <method name="T2 Test1(B)" attrs="150">
+        <size>15</size>
+      </method>
+      <method name="T2 Test2(A)" attrs="150">
+        <size>15</size>
+      </method>
+      <method name="T2 Test3(System.Object)" attrs="150">
+        <size>77</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()" attrs="145">
+        <size>31</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

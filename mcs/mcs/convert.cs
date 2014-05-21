@@ -126,30 +126,35 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static Expression ExplicitTypeParameterConversion (Expression source, TypeSpec source_type, TypeSpec target_type)
+		static Expression ExplicitTypeParameterConversionFromT (Expression source, TypeSpec source_type, TypeSpec target_type)
 		{
 			var target_tp = target_type as TypeParameterSpec;
 			if (target_tp != null) {
+				//
+				// From a type parameter U to T, provided T depends on U
+				//
 				if (target_tp.TypeArguments != null && target_tp.HasDependencyOn (source_type)) {
 					return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 				}
-
-/*
-				if (target_tp.Interfaces != null) {
-					foreach (TypeSpec iface in target_tp.Interfaces) {
-						if (!TypeManager.IsGenericParameter (iface))
-							continue;
-
-						if (TypeManager.IsSubclassOf (source_type, iface))
-							return source == null ? EmptyExpression.Null : new ClassCast (source, target_type, true);
-					}
-				}
-*/
-				return null;
 			}
 
+			//
+			// From T to any interface-type I provided there is not already an implicit conversion from T to I
+			//
 			if (target_type.IsInterface)
 				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type, true);
+
+			return null;
+		}
+
+		static Expression ExplicitTypeParameterConversionToT (Expression source, TypeSpec source_type, TypeParameterSpec target_type)
+		{
+			//
+			// From the effective base class C of T to T and from any base class of C to T
+			//
+			var effective = target_type.GetEffectiveBase ();
+			if (TypeSpecComparer.IsEqual (effective, source_type) || TypeSpec.IsBaseClass (effective, source_type, false))
+				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
 			return null;
 		}
@@ -1812,10 +1817,10 @@ namespace Mono.CSharp {
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
-			// Explicit type parameter conversion.
+			// Explicit type parameter conversion from T
 			//
 			if (source_type.Kind == MemberKind.TypeParameter)
-				return ExplicitTypeParameterConversion (source, source_type, target_type);
+				return ExplicitTypeParameterConversionFromT (source, source_type, target_type);
 
 			bool target_is_value_type = target_type.Kind == MemberKind.Struct || target_type.Kind == MemberKind.Enum;
 
@@ -1848,6 +1853,9 @@ namespace Mono.CSharp {
 			//
 			// From any interface-type S to to any class type T, provided T is not
 			// sealed, or provided T implements S.
+			//
+			// This also covers Explicit conversions involving type parameters
+			// section From any interface type to T
 			//
 			if (source_type.Kind == MemberKind.Interface) {
 				if (!target_type.IsSealed || target_type.ImplementsInterface (source_type, true)) {
@@ -1970,6 +1978,10 @@ namespace Mono.CSharp {
 				if (i == tparams.Length)
 					return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 			}
+
+			var tps = target_type as TypeParameterSpec;
+			if (tps != null)
+				return ExplicitTypeParameterConversionToT (source, source_type, tps);
 
 			return null;
 		}
