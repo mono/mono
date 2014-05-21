@@ -7,7 +7,12 @@ namespace Mono.Debugger.Soft
 	public class ThreadMirror : ObjectMirror
 	{
 		string name;
+		bool framesCacheIsInvalid = true;
+		bool fetchingInProgress;
+		object fetchingLocker = new object ();
+		ManualResetEvent fetchingEvent = new ManualResetEvent (false);
 		ThreadInfo info;
+		StackFrame[] frames;
 
 		internal ThreadMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -15,22 +20,47 @@ namespace Mono.Debugger.Soft
 		internal ThreadMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id, type, domain) {
 		}
 
-		// FIXME: Cache, invalidate when the thread/runtime is resumed
 		public StackFrame[] GetFrames () {
-			FrameInfo[] frame_info = vm.conn.Thread_GetFrameInfo (id, 0, -1);
+			FetchFrames (true);
+			fetchingEvent.WaitOne ();
+			return frames;
+		}
 
-			var frames = new List<StackFrame> ();
+		internal void InvalidateFrames () {
+			framesCacheIsInvalid = true;
+		}
 
-			for (int i = 0; i < frame_info.Length; ++i) {
-				FrameInfo info = (FrameInfo)frame_info [i];
-				MethodMirror method = vm.GetMethod (info.method);
-				var f = new StackFrame (vm, info.id, this, method, info.il_offset, info.flags);
-				if (!(f.IsNativeTransition && !NativeTransitions))
-					frames.Add (f);
+		internal void FetchFrames (bool mustFetch = false) {
+			lock (fetchingLocker) {
+				if (fetchingInProgress || !framesCacheIsInvalid)
+					return;
+				framesCacheIsInvalid = false;
+				fetchingInProgress = true;
+				fetchingEvent.Reset ();
 			}
-
-			return frames.ToArray ();
-	    }
+			vm.conn.Thread_GetFrameInfo (id, 0, -1, (frame_info) => {
+				var framesList = new List<StackFrame> ();
+				for (int i = 0; i < frame_info.Length; ++i) {
+					var frameInfo = (FrameInfo)frame_info [i];
+					var method = vm.GetMethod (frameInfo.method);
+					var f = new StackFrame (vm, frameInfo.id, this, method, frameInfo.il_offset, frameInfo.flags);
+					if (!(f.IsNativeTransition && !NativeTransitions))
+						framesList.Add (f);
+				}
+				lock (fetchingLocker) {
+					vm.AddThreadToInvalidateList (this);
+					fetchingInProgress = false;
+					//In case it was invalidated during waiting for response from
+					//runtime and mustFetch was set refetch
+					if (framesCacheIsInvalid && mustFetch) {
+						FetchFrames (mustFetch);
+						return;
+					}
+					frames = framesList.ToArray ();
+					fetchingEvent.Set ();
+				}
+			});
+		}
 
 		public string Name {
 			get {
@@ -38,7 +68,7 @@ namespace Mono.Debugger.Soft
 					name = vm.conn.Thread_GetName (id);
 				return name;
 			}
-	    }
+		}
 
 		public new long Id {
 			get {
