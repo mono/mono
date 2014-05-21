@@ -258,7 +258,7 @@ namespace Microsoft.Build.Internal.Expressions
 		MetadataAccessExpression EvaluateMetadataExpression (int start, int end)
 		{
 			int idx = source.IndexOf ('.', start, end - start);
-			string item = idx < 0 ? null : source.Substring (start, idx);
+			string item = idx < 0 ? null : source.Substring (start, idx - start);
 			string meta = idx < 0 ? source.Substring (start, end - start) : source.Substring (idx + 1, end - idx - 1);
 			var access = new MetadataAccess () {
 					ItemType = item == null ? null : new NameToken () { Column = start, Name = item },
