@@ -6,7 +6,7 @@
     <members>
         <member name="T:I">
             <summary>
-            Test base <see cref="M:System.Object.ToString" /></summary>
+            Test base <see cref="!:ToString" /></summary>
         </member>
         <member name="M:X.Main">
             <returns>
