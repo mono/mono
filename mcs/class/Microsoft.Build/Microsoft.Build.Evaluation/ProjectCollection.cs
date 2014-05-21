@@ -42,6 +42,8 @@ using System.Linq;
 using System.Xml;
 using System.Reflection;
 using System.Globalization;
+using Mono.XBuild.Utilities;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -370,6 +372,8 @@ namespace Microsoft.Build.Evaluation
 			}
 		}
 
+		#region Extension Paths resolution
+
 		static string extensions_path;
 		internal static string DefaultExtensionsPath {
 			get {
@@ -388,7 +392,69 @@ namespace Microsoft.Build.Evaluation
 				return extensions_path;
 			}
 		}
-		
+
+		static string DotConfigExtensionsPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
+			Path.Combine ("xbuild", "tasks"));
+		const string MacOSXExternalXBuildDir = "/Library/Frameworks/Mono.framework/External/xbuild";
+		static string PathSeparatorAsString = Path.PathSeparator.ToString ();
+
+		// Gives a list of extensions paths to try for $(MSBuildExtensionsPath),
+		// *in-order*
+		internal static IEnumerable<string> GetApplicableExtensionsPaths (Action<string> logMessage)
+		{
+			string envvar = String.Join (PathSeparatorAsString, new string [] {
+				// For mac osx, look in the 'External' dir on macosx,
+				// see bug #663180
+				MSBuildUtils.RunningOnMac ? MacOSXExternalXBuildDir : String.Empty,
+				DotConfigExtensionsPath,
+				DefaultExtensionsPath});
+
+			var pathsTable = new Dictionary<string, string> ();
+			foreach (string extn_path in envvar.Split (new char [] {Path.PathSeparator}, StringSplitOptions.RemoveEmptyEntries)) {
+				if (pathsTable.ContainsKey (extn_path))
+					continue;
+
+				if (!Directory.Exists (extn_path)) {
+					logMessage (string.Format ("Extension path '{0}' not found, ignoring.", extn_path));
+					continue;
+				}
+
+				pathsTable [extn_path] = extn_path;
+				yield return extn_path;
+			}
+		}
+
+		internal static string FindFileInSeveralExtensionsPath (ref string extensionsPathOverride, Func<string,string> expandString, string file, Action<string> logMessage)
+		{
+			string ret = null;
+			string ex = extensionsPathOverride;
+			Func<bool> action = () => {
+				string path = WindowsCompatibilityExtensions.FindMatchingPath (expandString (file));
+				if (File.Exists (path))
+					ret = path;
+				else
+					return false;
+				return true;
+			};
+
+			try {
+				if (!action ()) {
+					foreach (var s in ProjectCollection.GetApplicableExtensionsPaths (logMessage)) {
+						extensionsPathOverride = s;
+						ex = s;
+						if (action ())
+							break;
+					}
+				}
+			} finally {
+				extensionsPathOverride = null;
+			}
+
+			return ret ?? WindowsCompatibilityExtensions.FindMatchingPath (expandString (file));
+		}
+
+		#endregion
+
 		internal IEnumerable<ReservedProjectProperty> GetReservedProperties (Toolset toolset, Project project)
 		{
 			Func<string,Func<string>,ReservedProjectProperty> create = (name, value) => new ReservedProjectProperty (project, name, value);

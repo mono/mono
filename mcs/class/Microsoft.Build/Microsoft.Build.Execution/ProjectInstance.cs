@@ -296,7 +296,8 @@ namespace Microsoft.Build.Execution
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = projects.GetEvaluationTimeThisFileDirectory (() => FullPath);
-			string path = WindowsCompatibilityExtensions.FindMatchingPath (ExpandString (import.Project));
+			// FIXME: use appropriate logger (but cannot be instantiated here...?)
+			string path = ProjectCollection.FindFileInSeveralExtensionsPath (ref extensions_path_override, ExpandString, import.Project, TextWriter.Null.WriteLine);
 			path = Path.IsPathRooted (path) ? path : dir != null ? Path.Combine (dir, path) : Path.GetFullPath (path);
 			if (projects.OngoingImports.Contains (path))
 				throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
@@ -475,8 +476,12 @@ namespace Microsoft.Build.Execution
 			throw new NotImplementedException ();
 		}
 
+		string extensions_path_override;
+
 		public ProjectPropertyInstance GetProperty (string name)
 		{
+			if (extensions_path_override != null && (name.Equals ("MSBuildExtensionsPath") || name.Equals ("MSBuildExtensionsPath32") || name.Equals ("MSBuildExtensionsPath64")))
+				return new ProjectPropertyInstance (name, true, extensions_path_override);
 			return properties.Values.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 		}
 		
