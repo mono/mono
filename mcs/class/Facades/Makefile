@@ -21,7 +21,7 @@ xammac_SUBDIRS = $(net_4_5_SUBDIRS)
 
 PROFILE_SUBDIRS = $(net_4_5_SUBDIRS)
 
-OVERRIDE_TARGET_ALL = yes
+#OVERRIDE_TARGET_ALL = yes
 
 # 
 # The output directory for the facade assemblies
@@ -39,7 +39,7 @@ target_libraries = $(patsubst %,$(target_dir)/%.dll,$(SUBDIRS))
 $(target_dir)/%.dll: 
 	(cd `basename $@ .dll`; $(MAKE))
 
-all.override: $(target_libraries)
+#all.override: $(target_libraries)
 
 include $(MCS_BUILD_DIR)/rules.make
 
