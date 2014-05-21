@@ -526,6 +526,7 @@ System.Net/SecurityProtocolType.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
 System.Net/ServicePointManager.extra.cs
+System.Net/SimpleAsyncResult.cs
 System.Net/SocketAddress.cs
 System.Net/TransportContext.cs
 System.Net/TransportType.cs
