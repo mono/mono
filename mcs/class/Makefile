@@ -75,7 +75,6 @@ common_dirs := \
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
 	CustomMarshalers		\
-	OpenSystem.C			\
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
 	Mono.Debugger.Soft		\
