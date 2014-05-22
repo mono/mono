@@ -1234,7 +1234,15 @@ namespace Mono.CSharp.Nullable
 				unwrap.EmitCheck (ec);
 				ec.Emit (OpCodes.Brfalse, is_null_label);
 
-				left.Emit (ec);
+				//
+				// When both expressions are nullable the unwrap
+				// is needed only for null check not for value uwrap
+				//
+				if (type.IsNullableType)
+					unwrap.Load (ec);
+				else
+					left.Emit (ec);
+
 				ec.Emit (OpCodes.Br, end_label);
 
 				ec.MarkLabel (is_null_label);
