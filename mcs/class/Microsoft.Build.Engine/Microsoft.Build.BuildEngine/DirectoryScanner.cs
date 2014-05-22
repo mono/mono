@@ -98,7 +98,9 @@ namespace Microsoft.Build.BuildEngine {
 				int offset = 0;
 				string full_path;
 				if (Path.IsPathRooted (name)) {
-					full_path = name;
+					// The path may start with a root indicator, but at the same time can
+					// contain relative paths inbetween
+					full_path = Path.GetFullPath (name);
 					baseDirectory = new DirectoryInfo (Path.GetPathRoot (name));
 					if (IsRunningOnWindows)
 						// skip the "drive:"
