@@ -67,8 +67,8 @@ namespace System.Web.Security
 			BinaryWriter writer = new BinaryWriter (ms);
 			writer.Write (version);
 			writer.Write (persistent);
-			writer.Write (issue_date.Ticks);
-			writer.Write (expiration.Ticks);
+			writer.Write (issue_date.ToUniversalTime().Ticks);
+			writer.Write (expiration.ToUniversalTime().Ticks);
 			writer.Write (name != null);
 			if (name != null)
 				writer.Write (name);
@@ -95,8 +95,8 @@ namespace System.Web.Security
 			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket ();
 			ticket.version = reader.ReadInt32 ();
 			ticket.persistent = reader.ReadBoolean ();
-			ticket.issue_date = new DateTime (reader.ReadInt64 ());
-			ticket.expiration = new DateTime (reader.ReadInt64 ());
+			ticket.issue_date = new DateTime (reader.ReadInt64 (), DateTimeKind.Utc);
+			ticket.expiration = new DateTime (reader.ReadInt64 (), DateTimeKind.Utc);
 			if (reader.ReadBoolean ())
 				ticket.name = reader.ReadString ();
 
