@@ -169,6 +169,34 @@ namespace Mono.Unix.Native {
 
 		ENOMEDIUM       = 123, // No medium found 
 		EMEDIUMTYPE     = 124, // Wrong medium type 
+
+		ECANCELED       = 125,
+		ENOKEY          = 126,
+		EKEYEXPIRED     = 127,
+		EKEYREVOKED     = 128,
+		EKEYREJECTED    = 129,
+
+		EOWNERDEAD      = 130,
+		ENOTRECOVERABLE = 131,
+
+		// OS X-specific values: OS X value + 1000
+		EPROCLIM        = 1067, // Too many processes
+		EBADRPC         = 1072,	// RPC struct is bad
+		ERPCMISMATCH    = 1073,	// RPC version wrong
+		EPROGUNAVAIL    = 1074,	// RPC prog. not avail
+		EPROGMISMATCH   = 1075,	// Program version wrong
+		EPROCUNAVAIL    = 1076,	// Bad procedure for program
+		EFTYPE          = 1079,	// Inappropriate file type or format
+		EAUTH           = 1080,	// Authentication error
+		ENEEDAUTH       = 1081,	// Need authenticator
+		EPWROFF         = 1082,	// Device power is off
+		EDEVERR         = 1083,	// Device error, e.g. paper out
+		EBADEXEC        = 1085,	// Bad executable
+		EBADARCH        = 1086,	// Bad CPU type in executable
+		ESHLIBVERS      = 1087,	// Shared library version mismatch
+		EBADMACHO       = 1088,	// Malformed Macho file
+		ENOATTR         = 1093,	// Attribute not found
+		ENOPOLICY       = 1103,	// No such policy registered
 	}
 
 	#endregion
