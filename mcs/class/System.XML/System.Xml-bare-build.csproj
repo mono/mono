@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3FFA80F7-ACB9-480C-828F-7C9BA7A17EE3}</ProjectGuid>
+    <ProjectGuid>{8C65BF8D-256A-44B0-BF9A-8052C075DC31}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,642</NoWarn>
-    <OutputPath>./../../class/lib/net_4_0</OutputPath>
+    <OutputPath>./../../class/lib/build/bare</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -432,8 +432,8 @@
     <Compile Include="System.Xml\XmlWriter.cs" />
     <Compile Include="System.Xml\XmlWriterSettings.cs" />
     <Compile Include="System.Xml\XQueryConvert.cs" />
-    <Compile Include="Mono.Xml.Xsl\PatternParser.cs" />
-    <Compile Include="Mono.Xml.Xsl\PatternTokenizer.cs" />
+    <Compile Include="Mono.Xml.Xsl\build_PatternParser.cs" />
+    <Compile Include="Mono.Xml.Xsl\build_PatternTokenizer.cs" />
     <Compile Include="System.Xml.XPath\Parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -443,15 +443,25 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
-$(ProjectDir)\..\..\..\mono\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
-$(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay > $(ProjectDir)\System.Xml.XPath\Parser.cs
-echo #define XSLT_PATTERN > $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
-$(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay >> $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
-echo #define XSLT_PATTERN > $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
-type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
-
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+mono $(ProjectDir)\..\..\..\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay > $(ProjectDir)\System.Xml.XPath\Parser.cs
+echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay >> $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+cat $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+ $(ProjectDir)\..\..\..\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay > $(ProjectDir)\System.Xml.XPath\Parser.cs
+echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay >> $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
+echo "#define XSLT_PATTERN" > $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -460,13 +470,13 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
-      <Name>corlib\corlib-net_4_0</Name>
+    <ProjectReference Include="../corlib/corlib-build.csproj">
+      <Project>{0CAF787F-F70B-4556-987A-67E036CD71C1}</Project>
+      <Name>corlib\corlib-build</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{3391D58D-26E9-48D2-9A76-4BC1A2F06BE9}</Project>
-      <Name>System\System-net_4_0-2</Name>
+    <ProjectReference Include="../System/System-bare-build.csproj">
+      <Project>{6E4F4BFB-2900-4663-B922-F176B2358C12}</Project>
+      <Name>System\System-bare-build</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

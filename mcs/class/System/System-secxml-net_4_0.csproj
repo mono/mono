@@ -5,18 +5,18 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CE10AD5A-9645-496F-8369-7B687E84456B}</ProjectGuid>
+    <ProjectGuid>{ED114F49-84B3-4EF9-80EC-90D4EEF7FF8E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>./../../class/lib/basic</OutputPath>
-    <NoStdLib>False</NoStdLib>
+    <OutputPath>./../../class/lib/net_4_0/secxml</OutputPath>
+    <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;BOOTSTRAP_BASIC;CONFIGURATION_2_0;XML_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;CONFIGURATION_2_0;SECURITY_DEP;XML_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;BOOTSTRAP_BASIC;CONFIGURATION_2_0;XML_DEP</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;CONFIGURATION_2_0;SECURITY_DEP;XML_DEP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -44,20 +44,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\corlib\Mono\DataConverter.cs" />
-    <Compile Include="..\corlib\System.Collections.Generic\CollectionDebuggerView.cs" />
-    <Compile Include="..\corlib\System.Collections\CollectionDebuggerView.cs" />
-    <Compile Include="..\corlib\System.IO\MonoFileType.cs" />
-    <Compile Include="..\corlib\System.IO\MonoIO.cs" />
-    <Compile Include="..\corlib\System.IO\MonoIOError.cs" />
-    <Compile Include="..\corlib\System.IO\MonoIOStat.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\CyclicDeque.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\IConcurrentDeque.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\PopResult.cs" />
-    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeCompiler.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
@@ -857,6 +843,7 @@
     <Compile Include="System.Net.WebSockets\ClientWebSocket.cs" />
     <Compile Include="System.Net.WebSockets\ClientWebSocketOptions.cs" />
     <Compile Include="System.Net.WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="System.Net.WebSockets\StreamWebSocket.cs" />
     <Compile Include="System.Net.WebSockets\WebSocket.cs" />
     <Compile Include="System.Net.WebSockets\WebSocketCloseStatus.cs" />
     <Compile Include="System.Net.WebSockets\WebSocketContext.cs" />
@@ -959,6 +946,7 @@
     <Compile Include="System.Net\ServicePoint.cs" />
     <Compile Include="System.Net\ServicePointManager.cs" />
     <Compile Include="System.Net\ServicePointManager.extra.cs" />
+    <Compile Include="System.Net\SimpleAsyncResult.cs" />
     <Compile Include="System.Net\SocketAddress.cs" />
     <Compile Include="System.Net\SocketPermission.cs" />
     <Compile Include="System.Net\SocketPermissionAttribute.cs" />
@@ -1151,9 +1139,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -1162,10 +1154,22 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.XML\System.Xml-basic.csproj">
-      <Project>{06F3B5C3-F72F-4F26-8479-AA29015E0CCA}</Project>
-      <Name>System.XML\System.Xml-basic</Name>
+    <ProjectReference Include="../corlib/corlib-net_4_0.csproj">
+      <Project>{5889848E-305B-4B11-B3B1-A25761DAFE45}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-bare-net_2_0.csproj">
+      <Project>{0E9DD462-944B-426E-BC1E-96EF270EF7E2}</Project>
+      <Name>System.XML\System.Xml-bare-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="System-bare-net_4_0.csproj">
+      <Project>{56906835-C767-4E75-B610-D9F7E824329D}</Project>
+      <Name>System\System-bare-net_4_0</Name>
+      <Aliases>PrebuiltSystem</Aliases>    </ProjectReference>
+    <ProjectReference Include="../Mono.Security/Mono.Security-net_2_0.csproj">
+      <Project>{ECDB1158-526C-46EE-896E-9BFB6F85C0A3}</Project>
+      <Name>Mono.Security\Mono.Security-net_2_0</Name>
+      <Aliases>MonoSecurity</Aliases>    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

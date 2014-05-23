@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1F3B168C-A4D0-44AA-B116-792D8804971F}</ProjectGuid>
+    <ProjectGuid>{E474AE8F-9163-4A93-A5E7-D93B56468E32}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>./../../class/lib/net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/build/bare</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -16,7 +16,7 @@
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>System</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;CONFIGURATION_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;CONFIGURATION_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -843,6 +843,7 @@
     <Compile Include="System.Net.WebSockets\ClientWebSocket.cs" />
     <Compile Include="System.Net.WebSockets\ClientWebSocketOptions.cs" />
     <Compile Include="System.Net.WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="System.Net.WebSockets\StreamWebSocket.cs" />
     <Compile Include="System.Net.WebSockets\WebSocket.cs" />
     <Compile Include="System.Net.WebSockets\WebSocketCloseStatus.cs" />
     <Compile Include="System.Net.WebSockets\WebSocketContext.cs" />
@@ -945,6 +946,7 @@
     <Compile Include="System.Net\ServicePoint.cs" />
     <Compile Include="System.Net\ServicePointManager.cs" />
     <Compile Include="System.Net\ServicePointManager.extra.cs" />
+    <Compile Include="System.Net\SimpleAsyncResult.cs" />
     <Compile Include="System.Net\SocketAddress.cs" />
     <Compile Include="System.Net\SocketPermission.cs" />
     <Compile Include="System.Net\SocketPermissionAttribute.cs" />
@@ -1137,9 +1139,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PostBuildEvent>
@@ -1148,25 +1154,9 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
-      <Name>corlib\corlib-net_2_0</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.XML\System.Xml-net_2_0.csproj">
-      <Project>{E89F34AB-7AE2-41CA-B891-C8D1C9F02EB8}</Project>
-      <Name>System.XML\System.Xml-net_2_0</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{2695A2F2-2271-423D-8E0D-553DAB84E917}</Project>
-      <Name>System.Configuration\System.Configuration-net_2_0</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System\System-net_2_0-1.csproj">
-      <Project>{5A1ED72C-ADAB-4396-AB03-D0E26AA91E90}</Project>
-      <Name>System\System-net_2_0-1</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{57CFE851-81AC-4269-B24A-965A53D87248}</Project>
-      <Name>Mono.Security\Mono.Security-net_2_0</Name>
+    <ProjectReference Include="../corlib/corlib-build.csproj">
+      <Project>{0CAF787F-F70B-4556-987A-67E036CD71C1}</Project>
+      <Name>corlib\corlib-build</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
