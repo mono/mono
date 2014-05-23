@@ -4295,6 +4295,24 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointI
 	}
 }
 
+
+static gboolean
+is_parentframe_managed(DebuggerTlsData* tls)
+{
+	// if we have 0 frames, that should never happen anyway.
+	// if we have 1 frame, our parent is defenitely native.
+	if (tls->frame_count < 2)
+		return FALSE;
+
+	//if we have at least two frames, the parent could be native.  if it is, then the tls->invoke_addr,
+	//which is the value of the stackpointer when the last mono_runtime_invoke was done, should be "more pushed"
+	//on the stack than the stackpointer of the candidate parent frame.
+	if (tls->invoke_addr <= MONO_CONTEXT_GET_SP(&tls->frames[1]->ctx))
+		return FALSE;
+
+	return TRUE;
+}
+
 /*
  * Start single stepping of thread THREAD
  */
@@ -4340,6 +4358,12 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 
 		g_assert (tls->frame_count);
 		frame = tls->frames [0];
+
+		if (ss_req->depth == STEP_DEPTH_OUT && !is_parentframe_managed(tls))
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
 
 		ss_req->last_method = frame->method;
 		ss_req->last_line = -1;
