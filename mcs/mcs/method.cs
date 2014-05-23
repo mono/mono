@@ -1101,61 +1101,61 @@ namespace Mono.CSharp {
 			}
 
 			for (int i = 0; i < tparams.Count; ++i) {
-				var tp = tparams[i];
+				var tp = tparams [i];
 
-				if (!tp.ResolveConstraints (this))
+				if (base_tparams == null) {
+					tp.ResolveConstraints (this);
 					continue;
+				}
 
 				//
 				// Copy base constraints for override/explicit methods
 				//
-				if (base_tparams != null) {
-					var base_tparam = base_tparams[i];
-					var local_tparam = tp.Type;
-					local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
+				var base_tparam = base_tparams [i];
+				var local_tparam = tp.Type;
+				local_tparam.SpecialConstraint = base_tparam.SpecialConstraint;
 
-					var inflator = new TypeParameterInflator (this, CurrentType, base_decl_tparams, base_targs);
-					base_tparam.InflateConstraints (inflator, local_tparam);
+				var inflator = new TypeParameterInflator (this, CurrentType, base_decl_tparams, base_targs);
+				base_tparam.InflateConstraints (inflator, local_tparam);
 
-					//
-					// Check all type argument constraints for possible collision or unification
-					// introduced by inflating inherited constraints in this context
-					//
-					// Conflict example:
-					//
-					// class A<T> { virtual void Foo<U> () where U : class, T {} }
-					// class B : A<int> { override void Foo<U> {} }
-					//
-					var local_tparam_targs = local_tparam.TypeArguments;
-					if (local_tparam_targs != null) {
-						for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
-							var ta = local_tparam_targs [ii];
-							if (!ta.IsClass && !ta.IsStruct)
-								continue;
+				//
+				// Check all type argument constraints for possible collision or unification
+				// introduced by inflating inherited constraints in this context
+				//
+				// Conflict example:
+				//
+				// class A<T> { virtual void Foo<U> () where U : class, T {} }
+				// class B : A<int> { override void Foo<U> {} }
+				//
+				var local_tparam_targs = local_tparam.TypeArguments;
+				if (local_tparam_targs != null) {
+					for (int ii = 0; ii < local_tparam_targs.Length; ++ii) {
+						var ta = local_tparam_targs [ii];
+						if (!ta.IsClass && !ta.IsStruct)
+							continue;
 
-							TypeSpec[] unique_tparams = null;
-							for (int iii = ii + 1; iii < local_tparam_targs.Length; ++iii) {
-								//
-								// Remove any identical or unified constraint types
-								//
-								var tparam_checked = local_tparam_targs[iii];
-								if (TypeSpecComparer.IsEqual (ta, tparam_checked) || TypeSpec.IsBaseClass (ta, tparam_checked, false)) {
-									unique_tparams = new TypeSpec[local_tparam_targs.Length - 1];
-									Array.Copy (local_tparam_targs, 0, unique_tparams, 0, iii);
-									Array.Copy (local_tparam_targs, iii + 1, unique_tparams, iii, local_tparam_targs.Length - iii - 1);
-								} else if (!TypeSpec.IsBaseClass (tparam_checked, ta, false)) {
-									Constraints.Error_ConflictingConstraints (this, local_tparam, ta, tparam_checked, Location);
-								}
+						TypeSpec[] unique_tparams = null;
+						for (int iii = ii + 1; iii < local_tparam_targs.Length; ++iii) {
+							//
+							// Remove any identical or unified constraint types
+							//
+							var tparam_checked = local_tparam_targs [iii];
+							if (TypeSpecComparer.IsEqual (ta, tparam_checked) || TypeSpec.IsBaseClass (ta, tparam_checked, false)) {
+								unique_tparams = new TypeSpec[local_tparam_targs.Length - 1];
+								Array.Copy (local_tparam_targs, 0, unique_tparams, 0, iii);
+								Array.Copy (local_tparam_targs, iii + 1, unique_tparams, iii, local_tparam_targs.Length - iii - 1);
+							} else if (!TypeSpec.IsBaseClass (tparam_checked, ta, false)) {
+								Constraints.Error_ConflictingConstraints (this, local_tparam, ta, tparam_checked, Location);
 							}
-
-							if (unique_tparams != null) {
-								local_tparam_targs = unique_tparams;
-								local_tparam.TypeArguments = local_tparam_targs;
-								continue;
-							}
-
-							Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
 						}
+
+						if (unique_tparams != null) {
+							local_tparam_targs = unique_tparams;
+							local_tparam.TypeArguments = local_tparam_targs;
+							continue;
+						}
+
+						Constraints.CheckConflictingInheritedConstraint (local_tparam, ta, this, Location);
 					}
 				}
 			}
