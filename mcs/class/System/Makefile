@@ -47,7 +47,8 @@ endif
 # Flags used to build the secxml version of System.
 #
 ifeq (secxml/, $(intermediate))
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -lib:$(bare_libdir) -r:PrebuiltSystem=$(bare_libdir)/System.dll -r:System.Xml.dll -r:MonoSecurity=Mono.Security.dll
+LOCAL_MCS_FLAGS = -lib:$(bare_libdir) 
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll -r:System.Xml.dll -r:MonoSecurity=Mono.Security.dll
 endif
 
 #
