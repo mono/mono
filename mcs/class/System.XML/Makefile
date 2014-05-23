@@ -29,7 +29,7 @@ ifneq (bare/,$(intermediate))
 LIB_MCS_FLAGS += $(FINAL_MCS_FLAGS)
 endif
 
-LIB_MCS_FLAGS += -lib:$(bare_libdir)
+LOCAL_MCS_FLAGS += -lib:$(bare_libdir)
 
 nist_dom_files = \
 	ChangeLog ITest.cs readme.txt util.cs \
