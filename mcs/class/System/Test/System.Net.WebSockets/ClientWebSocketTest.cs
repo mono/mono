@@ -40,7 +40,7 @@ namespace MonoTests.System.Net.WebSockets
 			}
 			if (socket != null) {
 				if (socket.State == WebSocketState.Open)
-					socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
+					socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (2000);
 				socket.Dispose ();
 				socket = null;
 			}
@@ -51,7 +51,7 @@ namespace MonoTests.System.Net.WebSockets
 		{
 			HandleHttpRequestAsync ((req, resp) => resp.StatusCode = 418);
 			try {
-				socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait ();
+				Assert.IsTrue (socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
 				AssertWebSocketException (e, WebSocketError.Success, typeof (WebException));
 				return;
@@ -67,7 +67,7 @@ namespace MonoTests.System.Net.WebSockets
 					resp.Headers["Upgrade"] = "gtfo";
 				});
 			try {
-				socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait ();
+				Assert.IsTrue (socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
 				AssertWebSocketException (e, WebSocketError.Success);
 				return;
@@ -85,7 +85,7 @@ namespace MonoTests.System.Net.WebSockets
 					//ForceSetHeader (resp.Headers, "Connection", "Foo");
 				});
 			try {
-				socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait ();
+				Assert.IsTrue (socket.ConnectAsync (new Uri ("ws://localhost:" + Port), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
 				AssertWebSocketException (e, WebSocketError.Success);
 				return;
@@ -103,7 +103,7 @@ namespace MonoTests.System.Net.WebSockets
 			Assert.AreEqual (WebSocketState.Open, socket.State);
 
 			var sendBuffer = Encoding.ASCII.GetBytes (Payload);
-			socket.SendAsync (new ArraySegment<byte> (sendBuffer), WebSocketMessageType.Text, true, CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.SendAsync (new ArraySegment<byte> (sendBuffer), WebSocketMessageType.Text, true, CancellationToken.None).Wait (5000));
 
 			var receiveBuffer = new byte[Payload.Length];
 			var resp = socket.ReceiveAsync (new ArraySegment<byte> (receiveBuffer), CancellationToken.None).Result;
@@ -113,17 +113,17 @@ namespace MonoTests.System.Net.WebSockets
 			Assert.AreEqual (WebSocketMessageType.Text, resp.MessageType);
 			Assert.AreEqual (Payload, Encoding.ASCII.GetString (receiveBuffer, 0, resp.Count));
 
-			socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
 			Assert.AreEqual (WebSocketState.Closed, socket.State);
 		}
 
 		[Test]
 		public void CloseOutputAsyncTest ()
 		{
-			socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
 			Assert.AreEqual (WebSocketState.Open, socket.State);
 
-			socket.CloseOutputAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.CloseOutputAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
 			Assert.AreEqual (WebSocketState.CloseSent, socket.State);
 
 			var resp = socket.ReceiveAsync (new ArraySegment<byte> (new byte[0]), CancellationToken.None).Result;
@@ -136,10 +136,10 @@ namespace MonoTests.System.Net.WebSockets
 		[Test]
 		public void CloseAsyncTest ()
 		{
-			socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
 			Assert.AreEqual (WebSocketState.Open, socket.State);
 
-			socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
 			Assert.AreEqual (WebSocketState.Closed, socket.State);
 		}
 
@@ -152,7 +152,7 @@ namespace MonoTests.System.Net.WebSockets
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void SendAsyncArgTest_NoArray ()
 		{
-			socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
 			socket.SendAsync (new ArraySegment<byte> (), WebSocketMessageType.Text, true, CancellationToken.None);
 		}
 
@@ -165,7 +165,7 @@ namespace MonoTests.System.Net.WebSockets
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void ReceiveAsyncArgTest_NoArray ()
 		{
-			socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
+			Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
 			socket.ReceiveAsync (new ArraySegment<byte> (), CancellationToken.None);
 		}
 
@@ -173,9 +173,9 @@ namespace MonoTests.System.Net.WebSockets
 		public void ReceiveAsyncWrongState_Closed ()
 		{
 			try {
-				socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
-				socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
-				socket.ReceiveAsync (new ArraySegment<byte> (new byte[0]), CancellationToken.None).Wait ();
+				Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
+				Assert.IsTrue (socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
+				Assert.IsTrue (socket.ReceiveAsync (new ArraySegment<byte> (new byte[0]), CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
 				AssertWebSocketException (e, WebSocketError.Success);
 				return;
@@ -187,9 +187,9 @@ namespace MonoTests.System.Net.WebSockets
 		public void SendAsyncWrongState_Closed ()
 		{
 			try {
-				socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
-				socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
-				socket.SendAsync (new ArraySegment<byte> (new byte[0]), WebSocketMessageType.Text, true, CancellationToken.None).Wait ();
+				Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
+				Assert.IsTrue (socket.CloseAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
+				Assert.IsTrue (socket.SendAsync (new ArraySegment<byte> (new byte[0]), WebSocketMessageType.Text, true, CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
 				AssertWebSocketException (e, WebSocketError.Success);
 				return;
@@ -201,9 +201,9 @@ namespace MonoTests.System.Net.WebSockets
 		public void SendAsyncWrongState_CloseSent ()
 		{
 			try {
-				socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait ();
-				socket.CloseOutputAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait ();
-				socket.SendAsync (new ArraySegment<byte> (new byte[0]), WebSocketMessageType.Text, true, CancellationToken.None).Wait ();
+				Assert.IsTrue (socket.ConnectAsync (new Uri (EchoServerUrl), CancellationToken.None).Wait (5000));
+				Assert.IsTrue (socket.CloseOutputAsync (WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait (5000));
+				Assert.IsTrue (socket.SendAsync (new ArraySegment<byte> (new byte[0]), WebSocketMessageType.Text, true, CancellationToken.None).Wait (5000));
 			} catch (AggregateException e) {
 				AssertWebSocketException (e, WebSocketError.Success);
 				return;
