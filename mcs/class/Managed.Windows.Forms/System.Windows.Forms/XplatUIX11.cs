@@ -6390,7 +6390,7 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		
-#if TRACE
+#if TRACE && false
 		
 #region Xcursor imports
 		[DllImport ("libXcursor", EntryPoint = "XcursorLibraryLoadCursor")]
