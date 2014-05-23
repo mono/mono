@@ -158,6 +158,7 @@ namespace Microsoft.Build.Utilities
 			throw new NotImplementedException ();
 		}
 
+		#if NET_4_0
 		public static string GetPathToStandardLibraries (string targetFrameworkIdentifier,
 								 string targetFrameworkVersion,
 								 string targetFrameworkProfile)
@@ -209,6 +210,7 @@ namespace Microsoft.Build.Utilities
 			// I'm not sure if this is completely valid assumption...
 			return path;
 		}
+		#endif
 
 		[MonoTODO]
 		public static string GetPathToSystemFile (string fileName)
