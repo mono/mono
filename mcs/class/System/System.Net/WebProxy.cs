@@ -172,7 +172,7 @@ namespace System.Net
 				return true;
 
 			// LAMESPEC
-			if (bypassOnLocal) {
+			if (!bypassOnLocal) {
 				if (String.Compare (server, "localhost", true, CultureInfo.InvariantCulture) == 0)
 					return true;
 				if (String.Compare (server, "loopback", true, CultureInfo.InvariantCulture) == 0)
