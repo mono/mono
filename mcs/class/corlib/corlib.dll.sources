@@ -1296,6 +1296,7 @@ System.Security.AccessControl/SystemAcl.cs
 System.Security.Claims/Claim.cs
 System.Security.Claims/ClaimsIdentity.cs
 System.Security.Claims/ClaimsPrincipal.cs
+System.Security.Claims/ClaimTypes.cs
 System.Security.Claims/ClaimValueTypes.cs
 System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
