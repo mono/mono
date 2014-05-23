@@ -111,17 +111,18 @@ namespace Microsoft.Build.Execution
 		Dictionary<string, ProjectTargetInstance> targets;
 		string tools_version;
 		
-		List<string> GetDefaultTargets (ProjectRootElement xml)
+		// FIXME: this is a duplicate code between Project and ProjectInstance
+		string [] GetDefaultTargets (ProjectRootElement xml)
 		{
 			var ret = GetDefaultTargets (xml, true, true);
 			return ret.Any () ? ret : GetDefaultTargets (xml, false, true);
 		}
 		
-		List<string> GetDefaultTargets (ProjectRootElement xml, bool fromAttribute, bool checkImports)
+		string [] GetDefaultTargets (ProjectRootElement xml, bool fromAttribute, bool checkImports)
 		{
 			if (fromAttribute) {
-				var ret = xml.DefaultTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToList ();
-				if (checkImports && ret.Count == 0) {
+				var ret = xml.DefaultTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToArray ();
+				if (checkImports && ret.Length == 0) {
 					foreach (var imp in this.raw_imports) {
 						ret = GetDefaultTargets (imp.ImportedProject, true, false);
 						if (ret.Any ())
@@ -131,7 +132,7 @@ namespace Microsoft.Build.Execution
 				return ret;
 			} else {
 				if (xml.Targets.Any ())
-					return new String [] { xml.Targets.First ().Name }.ToList ();
+					return new String [] { xml.Targets.First ().Name };
 				if (checkImports) {
 					foreach (var imp in this.raw_imports) {
 						var ret = GetDefaultTargets (imp.ImportedProject, false, false);
@@ -139,7 +140,7 @@ namespace Microsoft.Build.Execution
 							return ret;
 					}
 				}
-				return new List<string> ();
+				return new string [0];
 			}
 		}
 
@@ -174,7 +175,7 @@ namespace Microsoft.Build.Execution
 
 			ProcessXml (xml);
 			
-			DefaultTargets = GetDefaultTargets (xml);
+			DefaultTargets = GetDefaultTargets (xml).ToList ();
 		}
 		
 		static readonly char [] item_target_sep = {';'};

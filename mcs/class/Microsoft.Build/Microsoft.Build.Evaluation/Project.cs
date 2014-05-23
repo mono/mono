@@ -382,12 +382,12 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build ()
 		{
-			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries));
+			return Build (GetDefaultTargets (Xml));
 		}
 
 		public bool Build (IEnumerable<ILogger> loggers)
 		{
-			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries), loggers);
+			return Build (GetDefaultTargets (Xml), loggers);
 		}
 
 		public bool Build (string target)
@@ -402,7 +402,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (ILogger logger)
 		{
-			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries), new ILogger [] {logger});
+			return Build (GetDefaultTargets (Xml), new ILogger [] {logger});
 		}
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers)
@@ -412,7 +412,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries), loggers, remoteLoggers);
+			return Build (GetDefaultTargets (Xml), loggers, remoteLoggers);
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers)
@@ -432,6 +432,41 @@ namespace Microsoft.Build.Evaluation
 		public bool Build (string target, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
 			return Build (new string [] { target }, loggers, remoteLoggers);
+		}
+
+		// FIXME: this is a duplicate code between Project and ProjectInstance
+		static readonly char [] item_target_sep = {';'};
+		
+		string [] GetDefaultTargets (ProjectRootElement xml)
+		{
+			var ret = GetDefaultTargets (xml, true, true);
+			return ret.Any () ? ret : GetDefaultTargets (xml, false, true);
+		}
+		
+		string [] GetDefaultTargets (ProjectRootElement xml, bool fromAttribute, bool checkImports)
+		{
+			if (fromAttribute) {
+				var ret = xml.DefaultTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToArray ();
+				if (checkImports && ret.Length == 0) {
+					foreach (var imp in this.raw_imports) {
+						ret = GetDefaultTargets (imp.ImportedProject, true, false);
+						if (ret.Any ())
+							break;
+					}
+				}
+				return ret;
+			} else {
+				if (xml.Targets.Any ())
+					return new String [] { xml.Targets.First ().Name };
+				if (checkImports) {
+					foreach (var imp in this.raw_imports) {
+						var ret = GetDefaultTargets (imp.ImportedProject, false, false);
+						if (ret.Any ())
+							return ret;
+					}
+				}
+				return new string [0];
+			}
 		}
 
 		public ProjectInstance CreateProjectInstance ()
