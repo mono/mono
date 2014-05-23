@@ -150,7 +150,7 @@ namespace System.Net
 		void DoCallback_private ()
 		{
 			if (callbackDone)
-				throw new InvalidOperationException ();
+				return;
 			callbackDone = true;
 			if (cb == null)
 				return;
