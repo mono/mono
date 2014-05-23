@@ -62,7 +62,7 @@ namespace System.Net
 	class WebConnection
 	{
 		ServicePoint sPoint;
-		internal Stream nstream;
+		Stream nstream;
 		internal Socket socket;
 		object socketLock = new object ();
 		IWebConnectionState state;

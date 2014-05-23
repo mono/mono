@@ -25,22 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System.ComponentModel;
-using System.Net.Mime;
 
 #if SECURITY_DEP
 
-using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Security.Principal;
 using System.Text;
-
-#if NET_4_5
-using System.Net.Sockets;
-using System.Net.WebSockets;
-using System.Threading.Tasks;
-#endif
 namespace System.Net {
 	public sealed class HttpListenerContext {
 		HttpListenerRequest request;
@@ -103,7 +94,7 @@ namespace System.Net {
 			}
 			// TODO: throw if malformed -> 400 bad request
 		}
-
+	
 		internal IPrincipal ParseBasicAuthentication (string authData) {
 			try {
 				// Basic AUTH Data is a formatted Base64 String
@@ -112,7 +103,7 @@ namespace System.Net {
 				string password = null;
 				int pos = -1;
 				string authString = System.Text.Encoding.Default.GetString (Convert.FromBase64String (authData));
-
+	
 				// The format is DOMAIN\username:password
 				// Domain is optional
 
@@ -120,7 +111,7 @@ namespace System.Net {
 	
 				// parse the password off the end
 				password = authString.Substring (pos+1);
-
+				
 				// discard the password
 				authString = authString.Substring (0, pos);
 	
@@ -142,52 +133,6 @@ namespace System.Net {
 				return null;
 			} 
 		}
-#if NET_4_5
-		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol)
-		{
-			return AcceptWebSocketAsync (subProtocol, System.Net.WebSockets.WebSocket.DefaultKeepAliveInterval);
-		}
-
-		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, TimeSpan keepAliveInterval)
-		{
-			// Default receiveBuffersize is documented on MSDN Library.
-			// http://msdn.microsoft.com/ja-jp/library/hh159274(v=vs.110).aspx
-			return AcceptWebSocketAsync (subProtocol, 16385, keepAliveInterval);
-		}
-
-		public async Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval)
-		{
-			if (subProtocol != null && subProtocol == "") {
-				throw new ArgumentException ("subProtocol must not empty string");
-			}
-			if (receiveBufferSize < 16 || receiveBufferSize > 64 * 1024) {
-				throw new ArgumentOutOfRangeException ("receiveBufferSize should be >=16 and <=64K bytes");
-			}
-			if (!request.IsWebSocketRequest) {
-				throw new WebSocketException ("Request is not WebSocket Handshake");
-			}
-			string secKey = request.Headers ["Sec-WebSocket-Key"];
-			if (secKey == null) {
-				throw new WebSocketException ("Request doesn't contain Sec-WebSocket-Key header");
-			}
-			string acceptKey = StreamWebSocket.CreateAcceptKey (secKey);
-			ArraySegment<byte> preloaded;
-			var stream = new NetworkStream (cnc.Hijack (out preloaded));
-			string header = "HTTP/1.1 101 Switching Protocols\r\n" +
-				"Upgrade: websocket\r\n" +
-				"Connection: Upgrade\r\n" +
-				"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
-			var headerBytes = Encoding.ASCII.GetBytes (header);
-			await stream.WriteAsync (headerBytes, 0, headerBytes.Length);
-			var ws = new StreamWebSocket (stream, stream, null, subProtocol, false, preloaded);
-			return new HttpListenerWebSocketContext (ws, request, user);
-		}
-
-		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol, int receiveBufferSize, TimeSpan keepAliveInterval, ArraySegment<byte> internalBuffer)
-		{
-			return AcceptWebSocketAsync (subProtocol, receiveBufferSize, keepAliveInterval);
-		}
-#endif
 	}
 }
 #endif

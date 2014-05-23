@@ -30,9 +30,7 @@
 #if SECURITY_DEP
 
 using System;
-using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Security.Principal;
@@ -43,62 +41,59 @@ namespace System.Net.WebSockets
 {
 	public class HttpListenerWebSocketContext : WebSocketContext
 	{
-		HttpListenerRequest request;
-		StreamWebSocket websocket;
-		IPrincipal user;
-
-		internal HttpListenerWebSocketContext(StreamWebSocket websocket, HttpListenerRequest request, IPrincipal user)
-		{
-			this.websocket = websocket;
-			this.request = request;
-			this.user = user;
-		}
-
+		[MonoTODO]
 		public override CookieCollection CookieCollection {
 			get {
-				return request.Cookies;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override NameValueCollection Headers {
 			get {
-				return request.Headers;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override bool IsAuthenticated {
 			get {
-				return request.IsAuthenticated;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override bool IsLocal {
 			get {
-				return request.IsLocal;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override bool IsSecureConnection {
 			get {
-				return request.IsSecureConnection;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override string Origin {
 			get {
-				return request.Headers ["Origin"];
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override Uri RequestUri {
 			get {
-				return request.Url;
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override string SecWebSocketKey {
 			get {
-				return request.Headers ["Sec-WebSocket-Key"];
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -109,19 +104,24 @@ namespace System.Net.WebSockets
 			}
 		}
 
+		[MonoTODO]
 		public override string SecWebSocketVersion {
 			get {
-				return request.Headers ["Sec-WebSocket-Version"];
+				throw new NotImplementedException ();
 			}
 		}
 
+		[MonoTODO]
 		public override IPrincipal User {
-			get { return user; }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
+		[MonoTODO]
 		public override WebSocket WebSocket {
 			get {
-				return websocket;
+				throw new NotImplementedException ();
 			}
 		}
 	}

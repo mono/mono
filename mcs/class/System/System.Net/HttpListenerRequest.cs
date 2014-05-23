@@ -525,17 +525,10 @@ namespace System.Net {
 #endif
 		
 #if NET_4_5
+		[MonoTODO]
 		public bool IsWebSocketRequest {
 			get {
-				string connection = headers.Get ("Connection");
-				if (connection == null || ! connection.Equals ("upgrade", StringComparison.OrdinalIgnoreCase)) {
-					return false;
-				}
-				string upgrade = headers.Get ("Upgrade");
-				if (upgrade == null || ! upgrade.Equals ("websocket", StringComparison.OrdinalIgnoreCase)) {
-					return false;
-				}
-				return true;
+				return false;
 			}
 		}
 
