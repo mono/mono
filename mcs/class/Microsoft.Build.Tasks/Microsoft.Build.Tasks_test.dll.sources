@@ -3,6 +3,7 @@ Microsoft.Build.Tasks/AssignCultureTest.cs
 Microsoft.Build.Tasks/AssignProjectConfigurationTest.cs
 Microsoft.Build.Tasks/AssignTargetPathTest.cs
 Microsoft.Build.Tasks/CombinePathTest.cs
+Microsoft.Build.Tasks/CodeTaskFactoryTest.cs
 Microsoft.Build.Tasks/CopyTest.cs
 ../../Microsoft.Build.Engine/Test/Microsoft.Build.BuildEngine/Consts.cs
 Microsoft.Build.Tasks/CreateCSharpManifestResourceNameTest.cs

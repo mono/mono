@@ -12,6 +12,7 @@ Microsoft.Build.Tasks/AssignTargetPath.cs
 Microsoft.Build.Tasks/CallTarget.cs
 Microsoft.Build.Tasks/CombinePath.cs
 Microsoft.Build.Tasks/CommandLineBuilderExtension.cs
+Microsoft.Build.Tasks/CodeTaskFactory.cs
 Microsoft.Build.Tasks/Copy.cs
 Microsoft.Build.Tasks/CreateCSharpManifestResourceName.cs
 Microsoft.Build.Tasks/CreateItem.cs
