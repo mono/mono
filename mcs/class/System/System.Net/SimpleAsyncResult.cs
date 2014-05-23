@@ -161,10 +161,10 @@ namespace System.Net
 		{
 			if (!callbackDone && cb != null) {
 				callbackDone = true;
-				if (true || synch)
+//				if (true || synch)
 					cb (this);
-				else
-					ThreadPool.QueueUserWorkItem (CB, null);
+//				else
+//					ThreadPool.QueueUserWorkItem (CB, null);
 			}
 		}
 
