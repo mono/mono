@@ -307,7 +307,9 @@ namespace Microsoft.Build.Internal
 			factoryIdentityParameters ["MSBuildArchitecture"] = taskInstance.MSBuildArchitecture;
 			#endif
 			var task = args.BuildTaskFactory.CreateTask (taskInstance.Name, factoryIdentityParameters, this);
-			LogMessageEvent (new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
+			if (task == null)
+				throw new InvalidOperationException (string.Format ("TaskFactory {0} returned null Task", args.BuildTaskFactory));
+			LogMessageEvent (new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ()), null, null, MessageImportance.Low));
 			task.HostObject = host;
 			task.BuildEngine = this;
 			
