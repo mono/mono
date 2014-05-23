@@ -8,6 +8,12 @@ class X
 	{
 		C<X, X, X>.Test (new X ());
 	}
+
+	public int Prop {
+		get {
+			return 5;
+		}
+	}
 }
 
 class Y
@@ -22,5 +28,6 @@ class C<T1, T2, T3>
 	public static void Test (T3 t3)
 	{
 		X.Foo (t3);
+		var g = t3.Prop;
 	}
 }

@@ -1317,12 +1317,17 @@ namespace Mono.CSharp {
 
 			if (targs != null) {
 				foreach (var ta in targs) {
-					var b_type = ta.BaseType;
-					if (b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
-						cache.AddBaseType (b_type);
-
 					var tps = ta as TypeParameterSpec;
-					var ifaces = tps != null ? tps.InterfacesDefined : ta.Interfaces;
+					IList<TypeSpec> ifaces;
+					if (tps != null) {
+						var b_type = tps.GetEffectiveBase ();
+						if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType)
+							cache.AddBaseType (b_type);
+
+						ifaces = tps.InterfacesDefined;
+					} else {
+						ifaces = ta.Interfaces;
+					}
 
 					if (ifaces != null) {
 						foreach (var iface_type in ifaces) {
