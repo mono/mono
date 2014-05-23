@@ -27,6 +27,8 @@
 
 using System;
 using System.IO;
+using System.Xml;
+using System.Linq;
 
 namespace Microsoft.Build.Utilities
 {
@@ -154,6 +156,58 @@ namespace Microsoft.Build.Utilities
 								      TargetDotNetFrameworkVersion version)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public static string GetPathToStandardLibraries (string targetFrameworkIdentifier,
+								 string targetFrameworkVersion,
+								 string targetFrameworkProfile)
+		{
+			return GetPathToStandardLibraries (targetFrameworkIdentifier, targetFrameworkVersion, targetFrameworkProfile, null);
+		}
+
+		[MonoTODO]
+		#if XBUILD_12
+		public
+		#endif
+		static string GetPathToStandardLibraries (string targetFrameworkIdentifier,
+		                                          string targetFrameworkVersion,
+		                                          string targetFrameworkProfile,
+		                                          string platformTarget)
+		{
+			// FIXME: support platformTarget
+			if (platformTarget != null)
+				throw new NotImplementedException ("platformTarget support is not implemented");
+			
+			var ext = Environment.GetEnvironmentVariable ("XBUILD_FRAMEWORK_FOLDERS_PATH");
+			var ret = ext != null ? GetPathToStandardLibrariesWith (ext, targetFrameworkIdentifier, targetFrameworkVersion, targetFrameworkProfile) : null;
+			return ret ?? GetPathToStandardLibrariesWith (Path.GetFullPath (Path.Combine (lib_mono_dir, "xbuild-frameworks")), targetFrameworkIdentifier, targetFrameworkVersion, targetFrameworkProfile);
+		}
+			
+		static string GetPathToStandardLibrariesWith (string xbuildFxDir,
+							      string targetFrameworkIdentifier,
+		                                              string targetFrameworkVersion,
+		                                              string targetFrameworkProfile)
+		{
+			var path = Path.Combine (xbuildFxDir, targetFrameworkIdentifier);
+			if (targetFrameworkVersion != null) {
+				path = Path.Combine (path, targetFrameworkVersion);
+				if (targetFrameworkProfile != null)
+					path = Path.Combine (path, "Profile", targetFrameworkProfile);
+			}
+			if (!Directory.Exists (path))
+				return null;
+			var flist = Path.Combine (path, "RedistList", "FrameworkList.xml");
+			if (!File.Exists (flist))
+				return null;
+			
+			var xml = XmlReader.Create (flist);
+			xml.MoveToContent ();
+			var targetFxDir = xml.GetAttribute ("TargetFrameworkDirectory");
+			targetFxDir = targetFxDir != null ? Path.GetFullPath (Path.Combine (path, "dummy", targetFxDir.Replace ('\\', Path.DirectorySeparatorChar))) : null;
+			if (Directory.Exists (targetFxDir))
+				return targetFxDir;
+			// I'm not sure if this is completely valid assumption...
+			return path;
 		}
 
 		[MonoTODO]
