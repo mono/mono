@@ -5,3 +5,4 @@
 ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
 ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/SymbolWriterImpl.cs
+AssemblyInfo.cs
