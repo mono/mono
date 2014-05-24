@@ -125,4 +125,3 @@
 ../../../external/cecil/Mono.Cecil/CallSite.cs
 ../../../external/cecil/Mono.Cecil/AssemblyDefinition.cs
 ../../../external/cecil/Mono.Cecil/GenericParameterAttributes.cs
-AssemblyInfo.cs
