@@ -170,7 +170,8 @@
     <Compile Include="..\..\..\external\cecil\Mono\Actions.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Empty.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Funcs.cs" />
-    <Compile Include="..\..\..\external\cecil\System.Runtime.CompilerServices\ExtensionAttribute.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\cecil\System.Runtime.CompilerServices\ExtensionAttribute.cs" />
+    <Compile Include="AssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
