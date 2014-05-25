@@ -231,7 +231,9 @@
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs">
       <Link>CryptoConvert.cs</Link>
     </Compile>
-    <Compile Include="cs-parser.cs" />
+    <Compile Include="..\..\mcs\cs-parser.cs">
+      <Link>cs-parser.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
