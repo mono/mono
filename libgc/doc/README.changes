@@ -1269,7 +1269,7 @@ Since 6.0alpha6:
    many places.  (Thanks to Benjamin Lerman.)
  - Made win32_threads.c more tolerant of detaching a thread that it didn't
    know about.  (Thanks to Paul Nash.)
- - Added Makefile.am and configure.in from gcc to the distribution, with
+ - Added Makefile.am and configure.ac from gcc to the distribution, with
    minimal changes.  For the moment, those are just placeholders.  In the
    future, we're planning to switch to a GNU-style build environment for
    Un*x-like systems, though the old Makefile will remain as a backup.
@@ -1491,7 +1491,7 @@ Since 6.1alpha3:
  - Fixed a formatting error in dbg_mlc.c.  Added prototype to GC_abort()
    declaration.   (Thanks to Michael Smith.)
  - Removed "source" argument to GC_find_start().  Eliminate GC_FIND_START().
- - Added win32 recognition code in configure.in.  Changed some of the
+ - Added win32 recognition code in configure.ac.  Changed some of the
    dllimport/export defines in gc.h.  (Thanks to Adam Megacz.)
  - GC_malloc_many didn't set hb_last_reclaimed when it called 
    GC_reclaim_generic.  (I'm not sure this matters much, but ...)
@@ -1629,7 +1629,7 @@ Since 6.1alpha4:
 
 Since 6.1alpha5:
  - Added GC_MAXIMUM_HEAP_SIZE environment variable.
- - Fix configure.in for MIPS/LINUX. (Thanks to H.J. Lu.)
+ - Fix configure.ac for MIPS/LINUX. (Thanks to H.J. Lu.)
  - Double page hash table size for -DLARGE_CONFIG.
  - Integrated Bo Thorsen's X86-64 support.
  - STACKBOTTOM definition for LINUX/MIPS was partially changed back.
@@ -1942,7 +1942,7 @@ Since 6.3alpha1:
    There is also still some code duplication with pthread_support.c.
    (Thread descriptors did become much smaller, since Ben Hutchings
    removed the thread context from them.)
- - Integrated a Solaris configure.in patch from Rainer Orth.
+ - Integrated a Solaris configure.ac patch from Rainer Orth.
  - Added GC_IGNORE_FB and associated warning to very partially address
    the issue of the collector treating a mapped frame buffer as part
    of the root set.  (Thanks to David Peroutka for providing some
@@ -2151,7 +2151,7 @@ Since 6.3:
    it seems to be incorrect if the preceding memory op is a load.
  - Fixed print_block_list to print the correct kind number for
    STUBBORN.  (Thanks to Rutger Ovidus.)
- - Have configure.in generate an error if it is asked to support
+ - Have configure.ac generate an error if it is asked to support
    pthreads, but doesn't know how to.
  - Added Kazuhiro Inaoka's patch for Renesas M32R support.
  - Have the GNU build mechanism link with -ldl.  Rename THREADLIBS
