@@ -566,9 +566,14 @@ namespace System.Runtime.Serialization
 		}
 #endif
 
-		private bool IsAny() {
+		private bool IsAny ()
+		{
 			var xpa = type.GetCustomAttribute<XmlSchemaProviderAttribute> (true);
-			return xpa.IsAny;
+
+			if (xpa != null)
+				return xpa.IsAny;
+
+			return false;
 		}
 	}
 }
