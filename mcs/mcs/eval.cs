@@ -1233,13 +1233,15 @@ namespace Mono.CSharp
 			if (undo_actions == null)
 				undo_actions = new List<Action> ();
 
-			var existing = current_container.Containers.FirstOrDefault (l => l.Basename == tc.Basename);
-			if (existing != null) {
-				current_container.RemoveContainer (existing);
-				undo_actions.Add (() => current_container.AddTypeContainer (existing));
-			}
+			if (current_container.Containers != null){
+				var existing = current_container.Containers.FirstOrDefault (l => l.Basename == tc.Basename);
+				if (existing != null) {
+					current_container.RemoveContainer (existing);
+					undo_actions.Add (() => current_container.AddTypeContainer (existing));
+				}
 
-			undo_actions.Add (() => current_container.RemoveContainer (tc));
+				undo_actions.Add (() => current_container.RemoveContainer (tc));
+			}
 		}
 
 		public void ExecuteUndo ()
