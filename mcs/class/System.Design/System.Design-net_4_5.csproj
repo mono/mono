@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -395,39 +396,39 @@
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
-      <Name>System\System-net_4_5</Name>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
-      <Name>System.XML\System.Xml-net_4_5</Name>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
       <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
-      <Name>System.Web\System.Web-net_4_5</Name>
+      <Name>System.Web-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
-      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
+      <Name>System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Drawing/System.Drawing-net_4_5.csproj">
       <Project>{CB1CB976-AA54-4553-B0E7-05665B199EC4}</Project>
-      <Name>System.Drawing\System.Drawing-net_4_5</Name>
+      <Name>System.Drawing-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../Accessibility/Accessibility-net_4_5.csproj">
       <Project>{FACE8136-C95A-4788-90B2-DB0ECF7A020A}</Project>
-      <Name>Accessibility\Accessibility-net_4_5</Name>
+      <Name>Accessibility-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Data/System.Data-net_4_5.csproj">
       <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
-      <Name>System.Data\System.Data-net_4_5</Name>
+      <Name>System.Data-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
       <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
-      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+      <Name>System.Configuration-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

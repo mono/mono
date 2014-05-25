@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -268,19 +269,19 @@
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
-      <Name>System\System-net_4_5</Name>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
-      <Name>System.XML\System.Xml-net_4_5</Name>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Xaml/System.Xaml-net_4_5.csproj">
       <Project>{F574F9BD-1838-4C13-8722-7D6D33DE1781}</Project>
-      <Name>System.Xaml\System.Xaml-net_4_5</Name>
+      <Name>System.Xaml-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

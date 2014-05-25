@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -82,27 +83,27 @@
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
-      <Name>System\System-net_4_5</Name>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
-      <Name>System.XML\System.Xml-net_4_5</Name>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
       <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
-      <Name>System.Web\System.Web-net_4_5</Name>
+      <Name>System.Web-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib-net_4_5.csproj">
       <Project>{0B587DBA-BA92-4B92-821A-AA200C612A7E}</Project>
-      <Name>ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_4_5</Name>
+      <Name>ICSharpCode.SharpZipLib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_5.csproj">
       <Project>{D68D4FED-CA32-4800-A628-58BAE485562C}</Project>
-      <Name>Mono.Security\Mono.Security-net_4_5</Name>
+      <Name>Mono.Security-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

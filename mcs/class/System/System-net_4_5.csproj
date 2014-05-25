@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -1155,23 +1156,23 @@
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
-      <Name>System.XML\System.Xml-net_4_5</Name>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
       <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
-      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+      <Name>System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="System-secxml-net_4_5.csproj">
       <Project>{46F151F2-A422-4A1B-9D29-2E148CE73629}</Project>
-      <Name>System\System-secxml-net_4_5</Name>
+      <Name>System-secxml-net_4_5</Name>
       <Aliases>PrebuiltSystem</Aliases>    </ProjectReference>
     <ProjectReference Include="../Mono.Security/Mono.Security-net_4_5.csproj">
       <Project>{D68D4FED-CA32-4800-A628-58BAE485562C}</Project>
-      <Name>Mono.Security\Mono.Security-net_4_5</Name>
+      <Name>Mono.Security-net_4_5</Name>
       <Aliases>MonoSecurity</Aliases>    </ProjectReference>
   </ItemGroup>
   <ItemGroup>

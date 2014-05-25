@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -97,19 +98,19 @@
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System/System-net_4_5.csproj">
       <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
-      <Name>System\System-net_4_5</Name>
+      <Name>System-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Configuration.Install/System.Configuration.Install-net_4_5.csproj">
       <Project>{E6E1740E-37DD-487C-8947-F1C0612D4738}</Project>
-      <Name>System.Configuration.Install\System.Configuration.Install-net_4_5</Name>
+      <Name>System.Configuration.Install-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../Managed.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
-      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
+      <Name>System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

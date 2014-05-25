@@ -19,6 +19,12 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+    <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>../mono.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -50,8 +56,7 @@
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
-    <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\SymbolWriterImpl.cs" />
-    <Compile Include="AssemblyInfo.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\SymbolWriterImpl.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
