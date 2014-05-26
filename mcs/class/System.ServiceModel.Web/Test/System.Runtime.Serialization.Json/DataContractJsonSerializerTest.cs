@@ -1453,7 +1453,24 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.AreEqual (1, dict.Count, "#2");
 			Assert.AreEqual ("value", dict ["key"], "#3");
 		}
-		
+
+		[Test]
+		public void ExplicitCustomDictionarySerialization ()
+		{
+			var dict = new MyExplicitDictionary<string,string> ();
+			dict.Add ("key", "value");
+			var serializer = new DataContractJsonSerializer (dict.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, dict);
+			stream.Position = 0;
+
+			Assert.AreEqual ("[{\"Key\":\"key\",\"Value\":\"value\"}]", new StreamReader (stream).ReadToEnd (), "#1");
+			stream.Position = 0;
+			dict = (MyExplicitDictionary<string,string>) serializer.ReadObject (stream);
+			Assert.AreEqual (1, dict.Count, "#2");
+			Assert.AreEqual ("value", dict ["key"], "#3");
+		}
+
 		[Test]
 		public void Bug13485 ()
 		{
@@ -2057,6 +2074,91 @@ public class MyDictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
 	}
 
 	public ICollection<V> Values {
+		get { return dic.Values; }
+	}
+
+	public V this [K key] {
+		get { return dic [key]; }
+		set { dic [key] = value; }
+	}
+
+	IEnumerator IEnumerable.GetEnumerator ()
+	{
+		return dic.GetEnumerator ();
+	}
+
+	ICollection<KeyValuePair<K,V>> Coll {
+		get { return (ICollection<KeyValuePair<K,V>>) dic; }
+	}
+
+	public void Add (KeyValuePair<K, V> item)
+	{
+		Coll.Add (item);
+	}
+
+	public void Clear ()
+	{
+		dic.Clear ();
+	}
+
+	public bool Contains (KeyValuePair<K, V> item)
+	{
+		return Coll.Contains (item);
+	}
+
+	public void CopyTo (KeyValuePair<K, V> [] array, int arrayIndex)
+	{
+		Coll.CopyTo (array, arrayIndex);
+	}
+
+	public int Count {
+		get { return dic.Count; }
+	}
+
+	public bool IsReadOnly {
+		get { return Coll.IsReadOnly; }
+	}
+
+	public bool Remove (KeyValuePair<K, V> item)
+	{
+		return Coll.Remove (item);
+	}
+
+	public IEnumerator<KeyValuePair<K, V>> GetEnumerator ()
+	{
+		return Coll.GetEnumerator ();
+	}
+}
+
+public class MyExplicitDictionary<K, V> : IDictionary<K, V> {
+
+	Dictionary<K,V> dic = new Dictionary<K,V> ();
+
+	public void Add (K key, V value)
+	{
+		dic.Add (key,  value);
+	}
+
+	public bool ContainsKey (K key)
+	{
+		return dic.ContainsKey (key);
+	}
+
+	ICollection<K> IDictionary<K, V>.Keys {
+		get { return dic.Keys; }
+	}
+
+	public bool Remove (K key)
+	{
+		return dic.Remove (key);
+	}
+
+	public bool TryGetValue (K key, out V value)
+	{
+		return dic.TryGetValue (key, out value);
+	}
+
+	ICollection<V> IDictionary<K, V>.Values {
 		get { return dic.Values; }
 	}
 
