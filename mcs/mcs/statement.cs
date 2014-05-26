@@ -688,11 +688,7 @@ namespace Mono.CSharp {
 				infinite = true;
 			}
 
-			base.Resolve (bc);
-
-			Iterator.Resolve (bc);
-
-			return true;
+			return base.Resolve (bc) && Iterator.Resolve (bc);
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
@@ -859,11 +855,11 @@ namespace Mono.CSharp {
 			var prev_loop = bc.EnclosingLoop;
 			var prev_los = bc.EnclosingLoopOrSwitch;
 			bc.EnclosingLoopOrSwitch = bc.EnclosingLoop = this;
-			Statement.Resolve (bc);
+			var ok = Statement.Resolve (bc);
 			bc.EnclosingLoopOrSwitch = prev_los;
 			bc.EnclosingLoop = prev_loop;
 
-			return true;
+			return ok;
 		}
 
 		//
