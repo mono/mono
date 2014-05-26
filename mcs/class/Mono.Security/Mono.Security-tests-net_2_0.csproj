@@ -75,10 +75,12 @@
     <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type1MessageTest.cs" />
     <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type2MessageTest.cs" />
     <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type3MessageTest.cs" />
+    <Compile Include="Test\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtensionTest.cs" />
     <Compile Include="Test\Mono.Security.X509.Extensions\BasicConstraintsExtensionTest.cs" />
     <Compile Include="Test\Mono.Security.X509.Extensions\ExtendedKeyUsageExtensionTest.cs" />
     <Compile Include="Test\Mono.Security.X509.Extensions\KeyUsageExtensionTest.cs" />
     <Compile Include="Test\Mono.Security.X509.Extensions\SubjectAltNameExtensionTest.cs" />
+    <Compile Include="Test\Mono.Security.X509.Extensions\SubjectKeyIdentifierExtensionTest.cs" />
     <Compile Include="Test\Mono.Security.X509\PKCS12Test.cs" />
     <Compile Include="Test\Mono.Security.X509\X501NameTest.cs" />
     <Compile Include="Test\Mono.Security.X509\X509CertificateTest.cs" />

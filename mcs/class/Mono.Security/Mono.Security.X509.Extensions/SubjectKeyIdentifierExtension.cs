@@ -77,8 +77,8 @@ namespace Mono.Security.X509.Extensions {
 
 		protected override void Encode ()
 		{
-			if (Identifier == null) {
-				throw new ArgumentException ("Invalid SubjectKeyIdentifier extension");
+			if (ski == null) {
+				throw new InvalidOperationException ("Invalid SubjectKeyIdentifier extension");
 			}
 
 			var seq = new ASN1 (0x04, ski);

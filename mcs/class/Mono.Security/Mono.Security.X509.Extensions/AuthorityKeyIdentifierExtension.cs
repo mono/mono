@@ -85,8 +85,8 @@ namespace Mono.Security.X509.Extensions {
 		protected override void Encode ()
 		{
 			ASN1 seq = new ASN1 (0x30);
-			if (Identifier == null) {
-				throw new ArgumentException ("Invalid AuthorityKeyIdentifier extension");
+			if (aki == null) {
+				throw new InvalidOperationException ("Invalid AuthorityKeyIdentifier extension");
 			}
 
 			seq.Add (new ASN1 (0x80, aki));
