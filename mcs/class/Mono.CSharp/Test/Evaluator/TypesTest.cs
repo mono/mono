@@ -98,5 +98,13 @@ namespace MonoTests.EvaluatorTest
 			Evaluator.Run ("struct B { public string foo; public int bar; }");
 			Evaluator.Run ("B aStruct = new B { foo = \"foo\", bar = 1 };");
 		}
+
+		[Test]
+		public void NestedType ()
+		{
+			Evaluator.Run ("class A { class B { } }");
+			Evaluator.Run ("var x = new A ();");
+
+		}
 	}
 }
