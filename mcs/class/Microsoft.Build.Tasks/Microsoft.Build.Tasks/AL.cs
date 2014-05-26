@@ -60,7 +60,7 @@ namespace Microsoft.Build.Tasks {
 			if (EmbedResources != null) {
 				foreach (ITaskItem item in EmbedResources) {
 					string logical_name = item.GetMetadata ("LogicalName");
-					if (logical_name.Length > 0)
+					if (!string.IsNullOrEmpty (logical_name))
 						commandLine.AppendSwitchIfNotNull ("/embed:", string.Format ("{0},{1}", item.ItemSpec, logical_name));
 					else
 						commandLine.AppendSwitchIfNotNull ("/embed:", item.ItemSpec);
