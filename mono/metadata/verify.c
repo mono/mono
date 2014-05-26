@@ -6295,43 +6295,112 @@ get_field_end (MonoClassField *field)
 	return size + field->offset;
 }
 
-static gboolean
-verify_class_for_overlapping_reference_fields (MonoClass *class)
+typedef struct
 {
-	int i = 0, j;
+	gboolean is_valuetype;
+	int start_offset;
+	int end_offset;
+} FieldOverlapInfo;
+
+static void
+flattened_fieldinfo_for (MonoClass* class, int base_offset, GSList** list)
+{
 	gpointer iter = NULL;
 	MonoClassField *field;
-	gboolean is_fulltrust = mono_verifier_is_class_full_trust (class);
-	/*We can't skip types with !has_references since this is calculated after we have run.*/
-	if (!((class->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT))
-		return TRUE;
 
+	//structs misreport their field's offset. they assume there will be a MonoObject header. we need to know the offsets from the
+	//start of the data instead, so we remove the sizeof(MonoObject) when we are a struct.
+	if (MONO_TYPE_ISSTRUCT (&class->byval_arg))
+		base_offset -= sizeof(MonoObject);
 
-	/*We must check for stuff overlapping reference fields.
-	  The outer loop uses mono_class_get_fields to ensure that MonoClass:fields get inited.
-	*/
 	while ((field = mono_class_get_fields (class, &iter))) {
-		int fieldEnd = get_field_end (field);
-		gboolean is_valuetype = !MONO_TYPE_IS_REFERENCE (field->type);
-		++i;
+		FieldOverlapInfo* fieldInfo;
 
 		if (mono_field_is_deleted (field) || (field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 			continue;
 
-		for (j = i; j < class->field.count; ++j) {
-			MonoClassField *other = &class->fields [j];
-			int otherEnd = get_field_end (other);
-			if (mono_field_is_deleted (other) || (is_valuetype && !MONO_TYPE_IS_REFERENCE (other->type)) || (other->type->attrs & FIELD_ATTRIBUTE_STATIC))
-				continue;
-
-			if (!is_valuetype && MONO_TYPE_IS_REFERENCE (other->type) && field->offset == other->offset && is_fulltrust)
-				continue;
-
-			if ((otherEnd > field->offset && otherEnd <= fieldEnd) || (other->offset >= field->offset && other->offset < fieldEnd))
-				return FALSE;
+		if (MONO_TYPE_ISSTRUCT (field->type))
+		{
+			flattened_fieldinfo_for (mono_class_from_mono_type (mono_field_get_type(field)), field->offset + base_offset, list);
+			continue;
 		}
+
+		fieldInfo = g_malloc (sizeof(FieldOverlapInfo));
+
+		fieldInfo->end_offset = get_field_end(field) + base_offset;
+		fieldInfo->start_offset = field->offset + base_offset;
+		
+		fieldInfo->is_valuetype = !MONO_TYPE_IS_REFERENCE (field->type);
+
+		*list = g_slist_prepend (*list, fieldInfo);
 	}
+}
+
+static gboolean
+fields_overlap_is_legal (FieldOverlapInfo* f1, FieldOverlapInfo* f2, gboolean is_fulltrust)
+{
+	if (f1->is_valuetype && f2->is_valuetype)
+		return TRUE;
+	
+	if (!f1->is_valuetype && !f2->is_valuetype && f1->start_offset == f2->start_offset && is_fulltrust)
+		return TRUE;
+	
+	//if F1 lives completely before F2, we're good.
+	if (f1->end_offset <= f2->start_offset)
+		return TRUE;
+
+	//if F2 lives completely after F2, we're also good.
+	if (f1->start_offset >= f2->end_offset)
+		return TRUE;	
+
+	//in all other cases there is some overlap -> not good.
+	return FALSE;	
+}
+
+static void
+destroy_fieldinfo (void* data, void* user_data)
+{
+	g_free (data);
+}
+
+static gboolean
+all_fields_overlap_is_legal (GSList* list, gboolean is_fulltrust)
+{
+	GSList* curr = list;
+	while (curr)
+	{
+		GSList* other = curr->next;
+		while (other)
+		{
+			if (!fields_overlap_is_legal ((FieldOverlapInfo*)curr->data, (FieldOverlapInfo*)other->data, is_fulltrust))
+				return FALSE;
+
+			other = other->next;
+		}
+
+		curr = curr->next;
+	}
+
 	return TRUE;
+}
+
+static gboolean
+verify_class_for_overlapping_reference_fields (MonoClass *class)
+{
+	GSList* list = NULL;
+	gboolean result;
+	/*We can't skip types with !has_references since this is calculated after we have run.*/
+	if (!((class->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT))
+		return TRUE;
+
+	flattened_fieldinfo_for (class, 0, &list);
+
+	result = all_fields_overlap_is_legal (list, mono_verifier_is_class_full_trust (class));
+
+	g_slist_foreach (list, destroy_fieldinfo, NULL);
+	g_slist_free (list);
+
+	return result;
 }
 
 static guint
