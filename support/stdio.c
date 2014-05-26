@@ -26,7 +26,7 @@ Mono_Posix_Syscall_L_ctermid (void)
 gint32
 Mono_Posix_Syscall_L_cuserid (void)
 {
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined (__OpenBSD__)
 	return -1;
 #else
 	return L_cuserid;
