@@ -6892,7 +6892,7 @@ doc_cref
 	  }	  
 	| OPERATOR overloadable_operator opt_doc_method_sig
 	  {
-		var p = (List<DocumentationParameter>)$3 ?? new List<DocumentationParameter> (1);
+		var p = (List<DocumentationParameter>)$3;
 		module.DocumentationBuilder.ParsedParameters = p;
 		module.DocumentationBuilder.ParsedOperator = (Operator.OpType) $2;
 		$$ = null;
