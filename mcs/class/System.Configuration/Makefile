@@ -4,8 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Configuration.dll
 
-LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll -nowarn:618 
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll -nowarn:618  -lib:$(secxml_libdir) -lib:$(bare_libdir)
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make
