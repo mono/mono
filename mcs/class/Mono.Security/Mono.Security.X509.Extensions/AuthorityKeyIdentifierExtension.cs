@@ -87,6 +87,18 @@ namespace Mono.Security.X509.Extensions {
 			}
 		}
 
+		protected override void Encode ()
+		{
+			ASN1 seq = new ASN1 (0x30);
+			if (aki == null) {
+				throw new InvalidOperationException ("Invalid AuthorityKeyIdentifier extension");
+			}
+
+			seq.Add (new ASN1 (0x80, aki));
+			extnValue = new ASN1 (0x04);
+			extnValue.Add (seq);
+		}
+
 		public override string Name {
 			get { return "Authority Key Identifier"; }
 		}
@@ -97,6 +109,7 @@ namespace Mono.Security.X509.Extensions {
 					return null;
 				return (byte[]) aki.Clone (); 
 			}
+			set { aki = value; }
 		}
 
 		public override string ToString () 
