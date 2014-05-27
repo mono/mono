@@ -49126,6 +49126,16 @@
       </method>
     </type>
   </test>
+  <test name="test-859.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>40</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-86.cs">
     <type name="T.T">
       <method name="Int32 method1(System.Type, Int32)" attrs="145">
