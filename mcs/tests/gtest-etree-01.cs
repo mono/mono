@@ -254,6 +254,12 @@ enum MyEnumUlong : ulong
 	Value_1 = 1
 }
 
+enum EnumInt
+{
+	A,
+	B,
+	C
+}
 
 class NewTest<T>
 {
@@ -1203,6 +1209,14 @@ class Tester
 		AssertNodeType (e, ExpressionType.Equal);
 		Assert (false, e.Compile ().Invoke (null, 0));
 		Assert (true, e.Compile ().Invoke (4, 4));
+	}
+
+	void EqualTest_16 ()
+	{
+		Expression<Func<EnumInt?, EnumInt, bool?>> e = (x, y) => x == y;
+		AssertNodeType (e, ExpressionType.Convert);
+		Assert (false, e.Compile () (null, 0));
+		Assert (true, e.Compile () (EnumInt.B, EnumInt.B));
 	}
 
 	void EqualTestDelegate ()

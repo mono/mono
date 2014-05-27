@@ -2962,8 +2962,8 @@ namespace Mono.CSharp
 							}
 						}
 
-						left = ConvertEnumOperandToUnderlyingType (rc, left);
-						right = ConvertEnumOperandToUnderlyingType (rc, right);
+						left = ConvertEnumOperandToUnderlyingType (rc, left, r.IsNullableType);
+						right = ConvertEnumOperandToUnderlyingType (rc, right, l.IsNullableType);
 						return expr;
 					}
 				} else if ((oper == Operator.Addition || oper == Operator.Subtraction)) {
@@ -2978,8 +2978,8 @@ namespace Mono.CSharp
 						// which is not ambiguous with predefined enum operators
 						//
 						if (expr != null) {
-							left = ConvertEnumOperandToUnderlyingType (rc, left);
-							right = ConvertEnumOperandToUnderlyingType (rc, right);
+							left = ConvertEnumOperandToUnderlyingType (rc, left, false);
+							right = ConvertEnumOperandToUnderlyingType (rc, right, false);
 
 							return expr;
 						}
@@ -3782,7 +3782,7 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		static Expression ConvertEnumOperandToUnderlyingType (ResolveContext rc, Expression expr)
+		static Expression ConvertEnumOperandToUnderlyingType (ResolveContext rc, Expression expr, bool liftType)
 		{
 			TypeSpec underlying_type;
 			if (expr.Type.IsNullableType) {
@@ -3806,7 +3806,7 @@ namespace Mono.CSharp
 				break;
 			}
 
-			if (expr.Type.IsNullableType)
+			if (expr.Type.IsNullableType || liftType)
 				underlying_type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { underlying_type });
 
 			if (expr.Type == underlying_type)

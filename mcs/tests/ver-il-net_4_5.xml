@@ -21198,6 +21198,11 @@
         <size>0</size>
       </method>
     </type>
+    <type name="Tester">
+      <method name="Void EqualTest_16()" attrs="129">
+        <size>185</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-etree-02.cs">
     <type name="M">
