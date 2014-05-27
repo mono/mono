@@ -633,9 +633,9 @@ namespace System.Net
 		{
 		}
 
-		internal SimpleAsyncResult SetHeadersAsync (bool setInternalLength, SimpleAsyncCallback callback)
+		internal void SetHeadersAsync (bool setInternalLength, SimpleAsyncCallback callback)
 		{
-			return SimpleAsyncResult.Run (r => SetHeadersAsync (r, setInternalLength), callback);
+			SimpleAsyncResult.Run (r => SetHeadersAsync (r, setInternalLength), callback);
 		}
 
 		bool SetHeadersAsync (SimpleAsyncResult result, bool setInternalLength)
@@ -715,7 +715,7 @@ namespace System.Net
 					WebExceptionStatus.ServerProtocolViolation, null);
 			}
 
-			var ret = SetHeadersAsync (true, inner => {
+			SetHeadersAsync (true, inner => {
 				if (inner.GotException) {
 					result.SetCompleted (inner.CompletedSynchronously, inner.Exception);
 					return;

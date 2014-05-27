@@ -1328,9 +1328,9 @@ namespace System.Net
 			});
 		}
 
-		SimpleAsyncResult SetWriteStreamInner (SimpleAsyncCallback callback)
+		void SetWriteStreamInner (SimpleAsyncCallback callback)
 		{
-			return SimpleAsyncResult.Run (result => {
+			SimpleAsyncResult.Run (result => {
 				if (bodyBuffer != null) {
 					// The body has been written and buffered. The request "user"
 					// won't write it again, so we must do it.

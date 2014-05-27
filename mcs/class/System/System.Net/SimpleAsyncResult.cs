@@ -1,5 +1,5 @@
 //
-// System.Net.WebAsyncResult
+// SimpleAsyncResult.cs
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -63,7 +63,7 @@ namespace System.Net
 			};
 		}
 
-		public static SimpleAsyncResult Run (SimpleAsyncFunc func, SimpleAsyncCallback callback)
+		public static void Run (SimpleAsyncFunc func, SimpleAsyncCallback callback)
 		{
 			var result = new SimpleAsyncResult (callback);
 			try {
@@ -72,12 +72,11 @@ namespace System.Net
 			} catch (Exception ex) {
 				result.SetCompleted (true, ex);
 			}
-			return result;
 		}
 
-		public static SimpleAsyncResult RunWithLock (object locker, SimpleAsyncFunc func, SimpleAsyncCallback callback)
+		public static void RunWithLock (object locker, SimpleAsyncFunc func, SimpleAsyncCallback callback)
 		{
-			return Run (inner => {
+			Run (inner => {
 				bool running = func (inner);
 				if (running)
 					Monitor.Exit (locker);
@@ -104,7 +103,6 @@ namespace System.Net
 		protected void Reset_internal ()
 		{
 			callbackDone = false;
-			exc = null;
 			exc = null;
 			lock (locker) {
 				isCompleted = false;
