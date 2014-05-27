@@ -4692,7 +4692,10 @@ namespace Mono.CSharp {
 								++arg_count;
 								temp = null;
 							} else {
-								temp = arguments[index];
+								if (index == arg_count) 
+									return (i + 1) * 3;
+
+								temp = arguments [index];
 
 								// The slot has been taken by positional argument
 								if (temp != null && !(temp is NamedArgument))
@@ -5442,8 +5445,7 @@ namespace Mono.CSharp {
 			// For candidates which match on parameters count report more details about incorrect arguments
 			//
 			if (pm != null) {
-				int unexpanded_count = ((IParametersMember) best_candidate).Parameters.HasParams ? pm.Parameters.Count - 1 : pm.Parameters.Count;
-				if (pm.Parameters.Count == arg_count || params_expanded || unexpanded_count == arg_count) {
+				if (pm.Parameters.Count == arg_count || params_expanded || HasUnfilledParams (best_candidate, pm, args)) {
 					// Reject any inaccessible member
 					if (!best_candidate.IsAccessible (rc) || !best_candidate.DeclaringType.IsAccessible (rc)) {
 						rc.Report.SymbolRelatedToPreviousError (best_candidate);
@@ -5495,6 +5497,39 @@ namespace Mono.CSharp {
 				rc.Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
 					name, arg_count.ToString ());
 			}
+		}
+
+		static bool HasUnfilledParams (MemberSpec best_candidate, IParametersMember pm, Arguments args)
+		{
+			var p = ((IParametersMember)best_candidate).Parameters;
+			if (!p.HasParams)
+				return false;
+
+			string name = null;
+			for (int i = p.Count - 1; i != 0; --i) {
+				var fp = p.FixedParameters [i];
+				if ((fp.ModFlags & Parameter.Modifier.PARAMS) == 0)
+					continue;
+
+				name = fp.Name;
+				break;
+			}
+
+			foreach (var arg in args) {
+				var na = arg as NamedArgument;
+				if (na == null)
+					continue;
+
+				if (na.Name == name) {
+					name = null;
+					break;
+				}
+			}
+
+			if (name == null)
+				return false;
+
+			return args.Count + 1 == pm.Parameters.Count;
 		}
 
 		bool VerifyArguments (ResolveContext ec, ref Arguments args, MemberSpec member, IParametersMember pm, bool chose_params_expanded)
