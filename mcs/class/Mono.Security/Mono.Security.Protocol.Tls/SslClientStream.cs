@@ -428,6 +428,8 @@ namespace Mono.Security.Protocol.Tls
 		private void NegotiateAsyncWorker (IAsyncResult result)
 		{
 			NegotiateAsyncResult negotiate = result.AsyncState as NegotiateAsyncResult;
+			Alert alert = null;
+			Exception exception = null;
 
 			try
 			{
@@ -588,14 +590,28 @@ namespace Mono.Security.Protocol.Tls
 			}
 			catch (TlsException ex)
 			{
-				// FIXME: should the send alert also be done asynchronously here and below?
-				this.protocol.SendAlert(ex.Alert);
-				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
+				alert = ex.Alert;
+				exception = ex;
 			}
 			catch (Exception ex)
 			{
-				this.protocol.SendAlert(AlertDescription.InternalError);
-				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
+				alert = new Alert(AlertDescription.InternalError);
+				exception = ex;
+			}
+
+			if (exception != null)
+			{
+				try
+				{
+					// FIXME: should the send alert also be done asynchronously here and below?
+					this.protocol.SendAlert(alert);
+				}
+				catch
+				{
+					// TODO: can't create AggregateException here
+				}
+
+				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", exception));
 			}
 		}
 
