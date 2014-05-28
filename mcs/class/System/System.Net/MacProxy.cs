@@ -3,7 +3,7 @@
 //  
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 // 
-// Copyright (c) 2012 Xamarin Inc.
+// Copyright (c) 2012-2014 Xamarin Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,7 @@ namespace System.Net
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static IntPtr CFRelease (IntPtr handle);
+		extern static void CFRelease (IntPtr handle);
 
 		void Release ()
 		{
@@ -110,7 +110,7 @@ namespace System.Net
 		public CFArray (IntPtr handle, bool own) : base (handle, own) { }
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static IntPtr CFArrayCreate (IntPtr allocator, IntPtr values, int numValues, IntPtr callbacks);
+		extern static IntPtr CFArrayCreate (IntPtr allocator, IntPtr values, /* CFIndex */ IntPtr numValues, IntPtr callbacks);
 		static readonly IntPtr kCFTypeArrayCallbacks;
 
 		static CFArray ()
@@ -132,7 +132,7 @@ namespace System.Net
 				throw new ArgumentNullException ("values");
 
 			fixed (IntPtr *pv = values) {
-				IntPtr handle = CFArrayCreate (IntPtr.Zero, (IntPtr) pv, values.Length, kCFTypeArrayCallbacks);
+				IntPtr handle = CFArrayCreate (IntPtr.Zero, (IntPtr) pv, (IntPtr) values.Length, kCFTypeArrayCallbacks);
 
 				return new CFArray (handle, false);
 			}
@@ -151,18 +151,18 @@ namespace System.Net
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static int CFArrayGetCount (IntPtr handle);
+		extern static /* CFIndex */ IntPtr CFArrayGetCount (IntPtr handle);
 
 		public int Count {
-			get { return CFArrayGetCount (Handle); }
+			get { return (int) CFArrayGetCount (Handle); }
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static IntPtr CFArrayGetValueAtIndex (IntPtr handle, int index);
+		extern static IntPtr CFArrayGetValueAtIndex (IntPtr handle, /* CFIndex */ IntPtr index);
 
 		public IntPtr this[int index] {
 			get {
-				return CFArrayGetValueAtIndex (Handle, index);
+				return CFArrayGetValueAtIndex (Handle, (IntPtr) index);
 			}
 		}
 	}
@@ -172,7 +172,8 @@ namespace System.Net
 		public CFNumber (IntPtr handle, bool own) : base (handle, own) { }
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static bool CFNumberGetValue (IntPtr handle, int type, out bool value);
+		[return: MarshalAs (UnmanagedType.I1)]
+		extern static bool CFNumberGetValue (IntPtr handle, /* CFNumberType */ IntPtr type, [MarshalAs (UnmanagedType.I1)] out bool value);
 
 		public static bool AsBool (IntPtr handle)
 		{
@@ -181,7 +182,7 @@ namespace System.Net
 			if (handle == IntPtr.Zero)
 				return false;
 
-			CFNumberGetValue (handle, 1, out value);
+			CFNumberGetValue (handle, (IntPtr) 1, out value);
 
 			return value;
 		}
@@ -192,7 +193,8 @@ namespace System.Net
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static bool CFNumberGetValue (IntPtr handle, int type, out int value);
+		[return: MarshalAs (UnmanagedType.I1)]
+		extern static bool CFNumberGetValue (IntPtr handle, /* CFNumberType */ IntPtr type, out int value);
 
 		public static int AsInt32 (IntPtr handle)
 		{
@@ -201,7 +203,8 @@ namespace System.Net
 			if (handle == IntPtr.Zero)
 				return 0;
 
-			CFNumberGetValue (handle, 9, out value);
+			// 9 == kCFNumberIntType == C int
+			CFNumberGetValue (handle, (IntPtr) 9, out value);
 
 			return value;
 		}
@@ -213,12 +216,12 @@ namespace System.Net
 	}
 
 	internal struct CFRange {
-		public int Location, Length;
+		public IntPtr Location, Length;
 		
 		public CFRange (int loc, int len)
 		{
-			Location = loc;
-			Length = len;
+			Location = (IntPtr) loc;
+			Length = (IntPtr) len;
 		}
 	}
 
@@ -229,7 +232,7 @@ namespace System.Net
 		public CFString (IntPtr handle, bool own) : base (handle, own) { }
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static IntPtr CFStringCreateWithCharacters (IntPtr alloc, IntPtr chars, int length);
+		extern static IntPtr CFStringCreateWithCharacters (IntPtr alloc, IntPtr chars, /* CFIndex */ IntPtr length);
 
 		public static CFString Create (string value)
 		{
@@ -237,7 +240,7 @@ namespace System.Net
 
 			unsafe {
 				fixed (char *ptr = value) {
-					handle = CFStringCreateWithCharacters (IntPtr.Zero, (IntPtr) ptr, value.Length);
+					handle = CFStringCreateWithCharacters (IntPtr.Zero, (IntPtr) ptr, (IntPtr) value.Length);
 				}
 			}
 
@@ -248,14 +251,14 @@ namespace System.Net
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static int CFStringGetLength (IntPtr handle);
+		extern static /* CFIndex */ IntPtr CFStringGetLength (IntPtr handle);
 
 		public int Length {
 			get {
 				if (str != null)
 					return str.Length;
 
-				return CFStringGetLength (Handle);
+				return (int) CFStringGetLength (Handle);
 			}
 		}
 
@@ -270,7 +273,7 @@ namespace System.Net
 			if (handle == IntPtr.Zero)
 				return null;
 			
-			int len = CFStringGetLength (handle);
+			int len = (int) CFStringGetLength (handle);
 			
 			if (len == 0)
 				return string.Empty;
