@@ -1,5 +1,5 @@
 // Copyright (C) 2010 Novell, Inc (http://www.novell.com)
-// Copyright 2012 Xamarin Inc.
+// Copyright 2012-2014 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,26 +42,27 @@ namespace System.Security.Cryptography.X509Certificates {
 		extern static IntPtr SecCertificateCreateWithData (IntPtr allocator, IntPtr nsdataRef);
 		
 		[DllImport (SecurityLibrary)]
-		extern static int SecTrustCreateWithCertificates (IntPtr certOrCertArray, IntPtr policies, out IntPtr sectrustref);
+		extern static /* OSStatus */ int SecTrustCreateWithCertificates (IntPtr certOrCertArray, IntPtr policies, out IntPtr sectrustref);
 		
 		[DllImport (SecurityLibrary)]
-		extern static IntPtr SecPolicyCreateSSL (bool server, IntPtr cfStringHostname);
+		extern static IntPtr SecPolicyCreateSSL ([MarshalAs (UnmanagedType.I1)] bool server, IntPtr cfStringHostname);
 		
 		[DllImport (SecurityLibrary)]
-		extern static int SecTrustEvaluate (IntPtr secTrustRef, out SecTrustResult secTrustResultTime);
+		extern static /* OSStatus */ int SecTrustEvaluate (IntPtr secTrustRef, out SecTrustResult secTrustResultTime);
 
 		[DllImport (CoreFoundationLibrary, CharSet=CharSet.Unicode)]
-		extern static IntPtr CFStringCreateWithCharacters (IntPtr allocator, string str, int count);
+		extern static IntPtr CFStringCreateWithCharacters (IntPtr allocator, string str, /* CFIndex */ IntPtr count);
 
 		[DllImport (CoreFoundationLibrary)]
-		unsafe extern static IntPtr CFDataCreate (IntPtr allocator, byte *bytes, IntPtr length);
+		unsafe extern static IntPtr CFDataCreate (IntPtr allocator, byte *bytes, /* CFIndex */ IntPtr length);
 
 		[DllImport (CoreFoundationLibrary)]
-		unsafe extern static void CFRelease (IntPtr handle);
+		extern static void CFRelease (IntPtr handle);
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static IntPtr CFArrayCreate (IntPtr allocator, IntPtr values, IntPtr numValues, IntPtr callbacks);
-		
+		extern static IntPtr CFArrayCreate (IntPtr allocator, IntPtr values, /* CFIndex */ IntPtr numValues, IntPtr callbacks);
+
+		// uint32_t
 		public enum SecTrustResult {
 			Invalid,
 			Proceed,
@@ -125,7 +126,7 @@ namespace System.Security.Cryptography.X509Certificates {
 						return SecTrustResult.Deny;
 				}
 				certArray = FromIntPtrs (secCerts);
-				host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, hostName.Length);
+				host = CFStringCreateWithCharacters (IntPtr.Zero, hostName, (IntPtr) hostName.Length);
 				sslsecpolicy = SecPolicyCreateSSL (true, host);
 
 				int code = SecTrustCreateWithCertificates (certArray, sslsecpolicy, out sectrust);
