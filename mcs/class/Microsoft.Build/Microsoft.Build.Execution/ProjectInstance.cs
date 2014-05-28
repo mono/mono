@@ -435,6 +435,7 @@ namespace Microsoft.Build.Execution
 			var parameters = new BuildParameters (projects) {
 				ForwardingLoggers = remoteLoggers,
 				Loggers = loggers,
+				DefaultToolsVersion = projects.DefaultToolsVersion,
 			};
 			var requestData = new BuildRequestData (this, targets ?? DefaultTargets.ToArray ());
 			var result = manager.Build (parameters, requestData);
