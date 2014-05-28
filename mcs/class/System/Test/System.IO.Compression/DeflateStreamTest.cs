@@ -14,6 +14,9 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace MonoTests.System.IO.Compression
 {
@@ -296,6 +299,60 @@ namespace MonoTests.System.IO.Compression
 					Console.WriteLine(len == 1);
 				}
 			}
+		}
+		
+		[Test]
+		public void Bug19313 ()
+		{
+			// Thread was blocking on DeflateStream.Read because
+			// DeflateStream.Read calls NetworkStream.Read which
+			// calls Socket.Receive which blocks the thread waiting 
+			// for at least one byte to return. 
+			// So Socket.Receive cannot be called an additional 
+			// time after reading all the data.
+
+			byte[] data = {0x41, 0x42, 0x43};
+			var result = new byte[data.Length];
+			var resultTimedOut = false;
+
+			var ipep = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), 9000);
+
+			var serverSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			serverSocket.Bind (ipep);
+			serverSocket.Listen (-1);
+
+			var connEnd = new AutoResetEvent (false);
+
+			serverSocket.BeginAccept (ar =>
+			{
+				var listener = (Socket)ar.AsyncState;
+				
+				using(var connectionSocket = listener.EndAccept (ar))
+				using(var ns1 = new NetworkStream (connectionSocket))
+				using(var dsd = new DeflateStream (ns1, CompressionMode.Decompress))
+				{
+					var readTask = dsd.ReadAsync (result, 0, data.Length);
+					if (!readTask.Wait (500))
+						resultTimedOut = true;
+				}
+				
+				connEnd.Set ();
+			}
+			, serverSocket);
+
+			var clientSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			clientSocket.Connect (ipep);
+			
+			using(var ns2 = new NetworkStream (clientSocket))
+			using(var dsc = new DeflateStream (ns2, CompressionMode.Compress))
+				dsc.Write (data, 0, data.Length);
+
+			Assert.IsTrue (connEnd.WaitOne (1000), "Server did not accept connection.");
+			Assert.IsFalse (resultTimedOut, "DeflateStream.Read blocked thread");
+			Assert.AreEqual (Convert.ToBase64String (data), Convert.ToBase64String (result));
+			
+			clientSocket.Close ();
+			serverSocket.Close ();
 		}
 	}
 }
