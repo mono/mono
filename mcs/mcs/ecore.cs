@@ -4485,11 +4485,11 @@ namespace Mono.CSharp {
 					//
 					// LAMESPEC:
 					//
-					// void Foo (params int[]) is better than void Foo (int i = 0) for Foo ()
+					// void Foo (int i = 0) is better than void Foo (params int[]) for Foo ()
 					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null) or Foo ()
 					//
 					if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
-						return !candidate_params;
+						return cand_param.HasDefaultValue;
 
 					if (cand_param.HasDefaultValue) {
 						++j;
