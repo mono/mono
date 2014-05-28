@@ -36,10 +36,7 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
-
-#if !NET_2_1
 using System.Security.AccessControl;
-#endif
 
 namespace System.IO {
 
@@ -93,7 +90,6 @@ namespace System.IO {
 			}
 		}
 
-#if !NET_2_1
 		public bool IsReadOnly {
 			get {
 				if (!Exists)
@@ -138,7 +134,6 @@ namespace System.IO {
 			// handling this exception to work properly.
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
-#endif
 
 		public long Length {
 			get {
@@ -265,15 +260,9 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-#if NET_2_1
-			// for Moonlight we *never* return paths, since ToString is not [SecurityCritical] we simply return the Name
-			return Name;
-#else
 			return OriginalPath;
-#endif
 		}
 
-#if !NET_2_1
 		public FileSecurity GetAccessControl ()
 		{
 			return File.GetAccessControl (FullPath); 
@@ -329,6 +318,5 @@ namespace System.IO {
 		{
 			File.SetAccessControl (FullPath, fileSecurity);
 		}
-#endif
 	}
 }
