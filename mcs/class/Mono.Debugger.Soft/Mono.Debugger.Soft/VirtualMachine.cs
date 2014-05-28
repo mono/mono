@@ -187,12 +187,6 @@ namespace Mono.Debugger.Soft
 					threadsCache = new ThreadMirror [ids.Length];
 					for (int i = 0; i < ids.Length; ++i)
 						threadsCache [i] = GetThread (ids [i]);
-					if (Version.AtLeast (2, 34)) {
-						conn.StartBuffering ();
-						foreach (var thread in threadsCache)
-							thread.FetchFrames ();
-						conn.StopBuffering ();
-					}
 				}
 				return threadsCache;
 			}

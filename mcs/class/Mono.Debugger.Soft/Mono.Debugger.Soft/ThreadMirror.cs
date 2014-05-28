@@ -62,6 +62,17 @@ namespace Mono.Debugger.Soft
 			});
 		}
 
+		public static void FetchFrames(IList<ThreadMirror> threads)
+		{
+			if (threads.Count == 0)
+				return;
+			threads [0].vm.conn.StartBuffering ();
+			foreach (var thread in threads) {
+				thread.FetchFrames ();
+			}
+			threads [0].vm.conn.StopBuffering ();
+		}
+
 		public string Name {
 			get {
 				if (name == null)
