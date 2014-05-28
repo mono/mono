@@ -411,6 +411,9 @@ namespace System.IO.Compression
 					length -= n;
 					total += n;
 				}
+				
+				if(n < count)
+					break;
 			}
 			return total;
 		}
