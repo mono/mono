@@ -7,8 +7,8 @@ namespace Mono.Debugger.Soft
 	public class ThreadMirror : ObjectMirror
 	{
 		string name;
-		bool framesCacheIsInvalid = true;
-		bool fetchingInProgress;
+		bool cacheInvalid = true;
+		bool fetching;
 		object fetchingLocker = new object ();
 		ManualResetEvent fetchingEvent = new ManualResetEvent (false);
 		ThreadInfo info;
@@ -27,15 +27,15 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal void InvalidateFrames () {
-			framesCacheIsInvalid = true;
+			cacheInvalid = true;
 		}
 
 		internal void FetchFrames (bool mustFetch = false) {
 			lock (fetchingLocker) {
-				if (fetchingInProgress || !framesCacheIsInvalid)
+				if (fetching || !cacheInvalid)
 					return;
-				framesCacheIsInvalid = false;
-				fetchingInProgress = true;
+				cacheInvalid = false;
+				fetching = true;
 				fetchingEvent.Reset ();
 			}
 			vm.conn.Thread_GetFrameInfo (id, 0, -1, (frame_info) => {
@@ -49,10 +49,10 @@ namespace Mono.Debugger.Soft
 				}
 				lock (fetchingLocker) {
 					vm.AddThreadToInvalidateList (this);
-					fetchingInProgress = false;
+					fetching = false;
 					//In case it was invalidated during waiting for response from
 					//runtime and mustFetch was set refetch
-					if (framesCacheIsInvalid && mustFetch) {
+					if (cacheInvalid && mustFetch) {
 						FetchFrames (mustFetch);
 						return;
 					}
@@ -152,8 +152,8 @@ namespace Mono.Debugger.Soft
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
 					throw new ArgumentException ("loc doesn't refer to a location in the current method of this thread.", "loc");
-				else
-					throw;
+
+				throw;
 			}
 		}
     }

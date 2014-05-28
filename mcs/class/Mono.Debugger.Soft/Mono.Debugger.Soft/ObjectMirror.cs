@@ -301,15 +301,15 @@ namespace Mono.Debugger.Soft
 				} catch (CommandException ex) {
 					if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
 						throw new ArgumentException ("Incorrect number or types of arguments", "arguments");
-					else
-						throw;
+
+					throw;
 				}
 				throw new NotImplementedException ();
 			} else {
 				if (r.Exception != null)
 					throw new InvocationException ((ObjectMirror)r.VM.DecodeValue (r.Exception));
-				else
-					return r.VM.DecodeValue (r.Value);
+
+				return r.VM.DecodeValue (r.Value);
 			}
 		}
 

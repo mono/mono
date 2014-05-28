@@ -121,13 +121,13 @@ namespace Mono.Debugger.Soft
 
 		public void Resume () {
 			try {
-				InvalidateThreadsAndFramesCache ();
+				InvalidateThreadAndFrameCaches ();
 				conn.VM_Resume ();
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.NOT_SUSPENDED)
 					throw new VMNotSuspendedException ();
-				else
-					throw;
+
+				throw;
 			}
 	    }
 
@@ -153,23 +153,23 @@ namespace Mono.Debugger.Soft
 		}
 
 		HashSet<ThreadMirror> threadsToInvalidate = new HashSet<ThreadMirror> ();
-		ThreadMirror[] threadsCache;
-		object threadCacheLocker=new object();
+		ThreadMirror[] threadCache;
+		object threadCacheLocker = new object ();
 
-		internal void InvalidateThreadsAndFramesCache () {
+		void InvalidateThreadAndFrameCaches () {
 			lock (threadsToInvalidate) {
 				foreach (var thread in threadsToInvalidate)
 					thread.InvalidateFrames ();
 				threadsToInvalidate.Clear ();
 			}
 			lock (threadCacheLocker) {
-				threadsCache = null;
+				threadCache = null;
 			}
 		}
 
-		internal void InvalidateThreadsCache () {
+		internal void InvalidateThreadCache () {
 			lock (threadCacheLocker) {
-				threadsCache = null;
+				threadCache = null;
 			}
 		}
 
@@ -182,13 +182,13 @@ namespace Mono.Debugger.Soft
 
 		public IList<ThreadMirror> GetThreads () {
 			lock (threadCacheLocker) {
-				if (threadsCache == null) {
+				if (threadCache == null) {
 					long[] ids = vm.conn.VM_GetThreads ();
-					threadsCache = new ThreadMirror [ids.Length];
+					threadCache = new ThreadMirror [ids.Length];
 					for (int i = 0; i < ids.Length; ++i)
-						threadsCache [i] = GetThread (ids [i]);
+						threadCache [i] = GetThread (ids [i]);
 				}
-				return threadsCache;
+				return threadCache;
 			}
 		}
 
@@ -708,11 +708,11 @@ namespace Mono.Debugger.Soft
 					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null, ei.ExitCode);
 					break;
 				case EventType.ThreadStart:
-					vm.InvalidateThreadsCache ();
+					vm.InvalidateThreadCache ();
 					l.Add (new ThreadStartEvent (vm, req_id, id));
 					break;
 				case EventType.ThreadDeath:
-					vm.InvalidateThreadsCache ();
+					vm.InvalidateThreadCache ();
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;
 				case EventType.AssemblyLoad:
@@ -752,8 +752,6 @@ namespace Mono.Debugger.Soft
 					break;
 				case EventType.UserLog:
 					l.Add (new UserLogEvent (vm, req_id, thread_id, ei.Level, ei.Category, ei.Message));
-					break;
-				default:
 					break;
 				}
 			}
