@@ -127,8 +127,10 @@ namespace Microsoft.Build.Internal
 				LogMessageEvent (new BuildMessageEventArgs (initialItemsFormatted, null, null, MessageImportance.Low));
 				
 				// null targets -> success. empty targets -> success(!)
+				foreach (var targetName in (request.ProjectInstance.InitialTargets).Where (t => t != null))
+					BuildTargetByName (targetName, args);
 				if (request.TargetNames == null)
-					args.Result.OverallResult = BuildResultCode.Success;
+					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 				else {
 					foreach (var targetName in (args.TargetNames ?? request.TargetNames).Where (t => t != null))
 						BuildTargetByName (targetName, args);
@@ -574,10 +576,11 @@ namespace Microsoft.Build.Internal
 		// To NOT reuse this IBuildEngine instance for different build, we create another BuildManager and BuildSubmisson and then run it.
 		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs, string toolsVersion)
 		{
+			toolsVersion = string.IsNullOrEmpty (toolsVersion) ? project.ToolsVersion : toolsVersion;
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
-			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames, null));
+			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames ?? new String [0], this.submission.BuildRequest.HostServices));
 			foreach (var p in result.ResultsByTarget)
 				targetOutputs [p.Key] = p.Value.Items;
 			return result.OverallResult == BuildResultCode.Success;
