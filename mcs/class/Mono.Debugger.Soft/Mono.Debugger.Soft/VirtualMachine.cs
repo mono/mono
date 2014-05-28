@@ -121,6 +121,7 @@ namespace Mono.Debugger.Soft
 
 		public void Resume () {
 			try {
+				InvalidateThreadsAndFramesCache ();
 				conn.VM_Resume ();
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.NOT_SUSPENDED)
@@ -151,12 +152,44 @@ namespace Mono.Debugger.Soft
 			conn.ForceDisconnect ();
 		}
 
+		HashSet<ThreadMirror> threadsToInvalidate = new HashSet<ThreadMirror> ();
+		ThreadMirror[] threadsCache;
+		object threadCacheLocker=new object();
+
+		internal void InvalidateThreadsAndFramesCache () {
+			lock (threadsToInvalidate) {
+				foreach (var thread in threadsToInvalidate)
+					thread.InvalidateFrames ();
+				threadsToInvalidate.Clear ();
+			}
+			lock (threadCacheLocker) {
+				threadsCache = null;
+			}
+		}
+
+		internal void InvalidateThreadsCache () {
+			lock (threadCacheLocker) {
+				threadsCache = null;
+			}
+		}
+
+		internal void AddThreadToInvalidateList (ThreadMirror threadMirror)
+		{
+			lock (threadsToInvalidate) {
+				threadsToInvalidate.Add (threadMirror);
+			}
+		}
+
 		public IList<ThreadMirror> GetThreads () {
-			long[] ids = vm.conn.VM_GetThreads ();
-			ThreadMirror[] res = new ThreadMirror [ids.Length];
-			for (int i = 0; i < ids.Length; ++i)
-				res [i] = GetThread (ids [i]);
-			return res;
+			lock (threadCacheLocker) {
+				if (threadsCache == null) {
+					long[] ids = vm.conn.VM_GetThreads ();
+					threadsCache = new ThreadMirror [ids.Length];
+					for (int i = 0; i < ids.Length; ++i)
+						threadsCache [i] = GetThread (ids [i]);
+				}
+				return threadsCache;
+			}
 		}
 
 		// Same as the mirrorOf methods in JDI
@@ -675,9 +708,11 @@ namespace Mono.Debugger.Soft
 					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null, ei.ExitCode);
 					break;
 				case EventType.ThreadStart:
+					vm.InvalidateThreadsCache ();
 					l.Add (new ThreadStartEvent (vm, req_id, id));
 					break;
 				case EventType.ThreadDeath:
+					vm.InvalidateThreadsCache ();
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;
 				case EventType.AssemblyLoad:
