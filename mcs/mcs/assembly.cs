@@ -357,6 +357,11 @@ namespace Mono.CSharp
 						vi_product_version, a.Name);
 					return;
 				}
+
+				// File version info decoding from blob is not supported
+				var cab = new CustomAttributeBuilder ((ConstructorInfo) ctor.GetMetaInfo (), new object[] { vi_product_version });
+				Builder.SetCustomAttribute (cab);
+				return;
 			} else if (a.Type == pa.AssemblyProduct) {
 				vi_product = a.GetString ();
 			} else if (a.Type == pa.AssemblyCompany) {
