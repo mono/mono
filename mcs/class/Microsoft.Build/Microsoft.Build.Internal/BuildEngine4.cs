@@ -37,6 +37,7 @@ using Microsoft.Build.Exceptions;
 using System.Globalization;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Internal.Expressions;
+using System.Xml;
 
 namespace Microsoft.Build.Internal
 {
@@ -121,8 +122,10 @@ namespace Microsoft.Build.Internal
 			
 			try {
 				
-				var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
-				LogMessageEvent (new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+				var initialGlobalPropertiesFormatted = "Initial Global Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Where (p => p.IsImmutable).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
+				LogMessageEvent (new BuildMessageEventArgs (initialGlobalPropertiesFormatted, null, null, MessageImportance.Low));
+				var initialProjectPropertiesFormatted = "Initial Project Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Where (p => !p.IsImmutable).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
+				LogMessageEvent (new BuildMessageEventArgs (initialProjectPropertiesFormatted, null, null, MessageImportance.Low));
 				var initialItemsFormatted = "Initial Items:\n" + string.Join (Environment.NewLine, project.Items.OrderBy (i => i.ItemType).Select (i => string.Format ("{0} : {1}", i.ItemType, i.EvaluatedInclude)).ToArray ());
 				LogMessageEvent (new BuildMessageEventArgs (initialItemsFormatted, null, null, MessageImportance.Low));
 				
@@ -580,10 +583,12 @@ namespace Microsoft.Build.Internal
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
-			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames ?? new String [0], this.submission.BuildRequest.HostServices));
-			foreach (var p in result.ResultsByTarget)
-				targetOutputs [p.Key] = p.Value.Items;
-			return result.OverallResult == BuildResultCode.Success;
+			var projectToBuild = new ProjectInstance (ProjectRootElement.Create (XmlReader.Create (projectFileName)), globalPropertiesThatMakeSense, toolsVersion, Projects);
+			IDictionary<string,TargetResult> outs;
+			var ret = projectToBuild.Build (targetNames ?? new string [] {"Build"}, Projects.Loggers, out outs);
+			foreach (var p in outs)
+				targetOutputs [p.Key] = p.Value.Items ?? new ITaskItem [0];
+			return ret;
 		}
 
 		public bool BuildProjectFilesInParallel (string[] projectFileNames, string[] targetNames, IDictionary[] globalProperties, IDictionary[] targetOutputsPerProject, string[] toolsVersion, bool useResultsCache, bool unloadProjectsOnCompletion)
