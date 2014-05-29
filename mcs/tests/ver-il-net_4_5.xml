@@ -14947,7 +14947,7 @@
   <test name="gtest-433.cs">
     <type name="M">
       <method name="Void Main()" attrs="150">
-        <size>38</size>
+        <size>42</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -15271,7 +15271,7 @@
         <size>28</size>
       </method>
       <method name="Void ThisWorksFine()" attrs="150">
-        <size>39</size>
+        <size>41</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -21649,7 +21649,7 @@
         <size>33</size>
       </method>
       <method name="T Value[T]()" attrs="145">
-        <size>84</size>
+        <size>86</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -35780,7 +35780,7 @@
   <test name="test-279.cs">
     <type name="FlagsAttributeDemo">
       <method name="Int32 Main()" attrs="150">
-        <size>51</size>
+        <size>55</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -38239,7 +38239,7 @@
   <test name="test-376.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>90</size>
+        <size>99</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -39644,7 +39644,7 @@
     </type>
     <type name="Test">
       <method name="Void Main()" attrs="150">
-        <size>72</size>
+        <size>76</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -39896,7 +39896,7 @@
   <test name="test-453.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
-        <size>34</size>
+        <size>38</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -45109,7 +45109,7 @@
     </type>
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>197</size>
+        <size>204</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -59187,7 +59187,7 @@
     </type>
     <type name="Tester+&lt;CallTest_4&gt;c__async15">
       <method name="Void MoveNext()" attrs="486">
-        <size>234</size>
+        <size>240</size>
       </method>
     </type>
     <type name="Tester+&lt;CallTest_5&gt;c__async16">

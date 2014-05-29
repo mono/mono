@@ -1036,7 +1036,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStruct)) {
+			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStructOrEnum)) {
 				ec.Emit (OpCodes.Constrained, InstanceExpression.Type);
 			}
 
@@ -1076,7 +1076,7 @@ namespace Mono.CSharp
 			//
 			// Push the instance expression
 			//
-			if ((instance_type.IsStruct && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
+			if ((instance_type.IsStructOrEnum && (callOpcode == OpCodes.Callvirt || (callOpcode == OpCodes.Call && declaringType.IsStruct))) ||
 				instance_type.IsGenericParameter || declaringType.IsNullableType) {
 				//
 				// If the expression implements IMemoryLocation, then
@@ -1098,7 +1098,7 @@ namespace Mono.CSharp
 				return ReferenceContainer.MakeType (ec.Module, instance_type);
 			}
 
-			if (instance_type.IsEnum || instance_type.IsStruct) {
+			if (instance_type.IsStructOrEnum) {
 				instance.Emit (ec);
 				ec.Emit (OpCodes.Box, instance_type);
 				return ec.BuiltinTypes.Object;
