@@ -192,7 +192,7 @@ namespace Microsoft.Build.Execution
 			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
 			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
 			// properties and they will be expanded.
-			var elements = EvaluatePropertiesAndUsingTasksAndImportsAndChooses (xml.ChildrenReversed).ToArray (); // ToArray(): to not lazily evaluate elements.
+			var elements = EvaluatePropertiesAndUsingTasksAndImportsAndChooses (xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
 			
 			// next, evaluate items
 			EvaluateItems (xml, elements);
@@ -256,7 +256,7 @@ namespace Microsoft.Build.Execution
 
 		void EvaluateItems (ProjectRootElement xml, IEnumerable<ProjectElement> elements)
 		{
-			foreach (var child in elements) {
+			foreach (var child in elements.Reverse ()) {
 				var ige = child as ProjectItemGroupElement;
 				if (ige != null) {
 					foreach (var p in ige.Items) {
