@@ -512,7 +512,16 @@ namespace Mono.CSharp
 			// Check base property accessors conflict
 			//
 			var base_prop = (PropertySpec) base_member;
-			if (Get != null) {
+			if (Get == null) {
+				if ((ModFlags & Modifiers.SEALED) != 0 && base_prop.HasGet && !base_prop.Get.IsAccessible (this)) {
+					// TODO: Should be different error code but csc uses for some reason same
+					Report.SymbolRelatedToPreviousError (base_prop);
+					Report.Error (545, Location,
+						"`{0}': cannot override because `{1}' does not have accessible get accessor",
+						GetSignatureForError (), base_prop.GetSignatureForError ());
+					ok = false;
+				}
+			} else {
 				if (!base_prop.HasGet) {
 					if (ok) {
 						Report.SymbolRelatedToPreviousError (base_prop);
@@ -529,7 +538,16 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (Set != null) {
+			if (Set == null) {
+				if ((ModFlags & Modifiers.SEALED) != 0 && base_prop.HasSet && !base_prop.Set.IsAccessible (this)) {
+					// TODO: Should be different error code but csc uses for some reason same
+					Report.SymbolRelatedToPreviousError (base_prop);
+					Report.Error (546, Location,
+						"`{0}': cannot override because `{1}' does not have accessible set accessor",
+						GetSignatureForError (), base_prop.GetSignatureForError ());
+					ok = false;
+				}
+			} else {
 				if (!base_prop.HasSet) {
 					if (ok) {
 						Report.SymbolRelatedToPreviousError (base_prop);
