@@ -335,6 +335,22 @@ namespace MonoTests.Microsoft.Build.Internal
 			var result = p.Build (new ILogger [] { new ConsoleLogger (LoggerVerbosity.Minimal, sw.WriteLine, null, null)});
 			Assert.IsTrue (result, "#1: " + sw);
 		}
+
+		[Test]
+		public void FunctionCall ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Foo'>
+    <Warning Text=""$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToStandardLibraries ('$(TargetFrameworkIdentifier)', '$(TargetFrameworkVersion)', '$(TargetFrameworkProfile)'))\mscorlib.dll'"" />
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var p = new ProjectInstance (root, null, "4.0", ProjectCollection.GlobalProjectCollection);
+			var sw = new StringWriter ();
+			var result = p.Build (new ILogger [] { new ConsoleLogger (LoggerVerbosity.Minimal, sw.WriteLine, null, null)});
+			Assert.IsTrue (result, "#1: " + sw);
+		}
 	}
 }
 

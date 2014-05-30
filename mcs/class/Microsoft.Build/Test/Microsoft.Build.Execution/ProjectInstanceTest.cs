@@ -291,6 +291,24 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.IsNotNull (p, "#1");
 			Assert.AreEqual ("False", p.EvaluatedValue, "#2");
 		}
+
+		[Test]
+		public void ConditionalExpression ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<PropertyGroup>
+		<NoCompilerStandardLib>true</NoCompilerStandardLib>
+                <ResolveAssemblyReferencesDependsOn>$(ResolveAssemblyReferencesDependsOn);_AddCorlibReference</ResolveAssemblyReferencesDependsOn>
+        </PropertyGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ConditionalExpression.proj";
+			var proj = new ProjectInstance (root);
+			var p = proj.GetProperty ("ResolveAssemblyReferencesDependsOn");
+			Assert.IsNotNull (p, "#1");
+			Assert.AreEqual (";_AddCorlibReference", p.EvaluatedValue, "#2");
+		}
 	}
 	
 	namespace SubNamespace
