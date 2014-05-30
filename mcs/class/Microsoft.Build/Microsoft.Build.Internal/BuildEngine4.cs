@@ -258,6 +258,7 @@ namespace Microsoft.Build.Internal
 							var value = args.Project.ExpandString (p.Value);
 							project.SetProperty (p.Name, value);
 						}
+						continue;
 					}
 
 					var ii = child as ProjectItemGroupTaskInstance;
@@ -269,6 +270,7 @@ namespace Microsoft.Build.Internal
 								continue;
 							project.AddItem (item.ItemType, project.ExpandString (item.Include));
 						}
+						continue;
 					}
 					
 					var task = child as ProjectTaskInstance;
@@ -280,7 +282,10 @@ namespace Microsoft.Build.Internal
 						}
 						if (!RunBuildTask (target, task, targetResult, args))
 							return false;
+						continue;
 					}
+
+					throw new NotSupportedException (string.Format ("Unexpected Target element children \"{0}\"", child.GetType ()));
 				}
 			} catch (Exception ex) {
 				// fallback task specified by OnError element
