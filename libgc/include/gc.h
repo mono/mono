@@ -778,6 +778,10 @@ GC_API int GC_unregister_long_link GC_PROTO((GC_PTR * /* link */));
 GC_API void GC_toggleref_register_callback GC_PROTO((int (*proccess_toggleref) (GC_PTR obj)));
 GC_API void GC_toggleref_add (GC_PTR object, int strong_ref);
 
+/* finalizer callback support */
+GC_API void GC_set_finalizer_notify_proc GC_PROTO((void (*object_finalized) (GC_PTR obj)));
+
+
 /* Returns !=0  if GC_invoke_finalizers has something to do. 		*/
 GC_API int GC_should_invoke_finalizers GC_PROTO((void));
 
