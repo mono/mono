@@ -97,12 +97,13 @@ namespace System.Collections.Concurrent
 		public bool TryDequeue (out T result)
 		{
 			result = default (T);
+			Node oldNext = null;
 			bool advanced = false;
 
 			while (!advanced) {
 				Node oldHead = head;
 				Node oldTail = tail;
-				Node oldNext = oldHead.Next;
+				oldNext = oldHead.Next;
 				
 				if (oldHead == head) {
 					// Empty case ?
@@ -121,6 +122,8 @@ namespace System.Collections.Concurrent
 					}
 				}
 			}
+
+			oldNext.Value = default (T);
 
 			Interlocked.Decrement (ref count);
 
