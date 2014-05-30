@@ -280,6 +280,12 @@ namespace Cairo {
 			}
 		}
 
+		public bool HasCurrentPoint {
+			get {
+				return NativeMethods.cairo_has_current_point (handle);
+			}
+		}
+
 		[Obsolete ("Use GetTarget/SetTarget")]
 		public Cairo.Surface Target {
 			set {
