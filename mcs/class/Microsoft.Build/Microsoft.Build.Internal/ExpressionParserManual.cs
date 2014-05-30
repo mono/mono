@@ -60,14 +60,13 @@ namespace Microsoft.Build.Internal.Expressions
 			while (start < end) {
 				int bak = start;
 				ret.Add (ParseSingle (ref start, end));
-				SkipSpaces (ref start);
 				if (bak == start)
 					throw new Exception ("Parser failed to progress token position: " + source);
 			}
 			return ret;
 		}
 		
-		static readonly char [] token_starters = "$@%(),".ToCharArray ();
+		static readonly char [] token_starters = "$@%(),'\"".ToCharArray ();
 		
 		Expression ParseSingle (ref int start, int end)
 		{
