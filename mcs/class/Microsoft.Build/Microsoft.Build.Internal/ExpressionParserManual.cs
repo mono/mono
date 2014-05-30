@@ -169,7 +169,7 @@ namespace Microsoft.Build.Internal.Expressions
 		{
 			int n = 0;
 			for (int i = start; i < end; i++) {
-				if (i < end + 1 && source [i] == '\\' && source [i + 1] == quote)
+				if (i < end + 1 && source [i] == '\\' && (source [i + 1] == quote || source [i + 1] == '\\'))
 					n += 2;
 				else if (source [i] == quote) {
 					if (n-- == 0)
