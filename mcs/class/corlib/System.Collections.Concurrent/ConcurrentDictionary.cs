@@ -262,7 +262,11 @@ namespace System.Collections.Concurrent
 
 		bool ICollection<KeyValuePair<TKey,TValue>>.Contains (KeyValuePair<TKey, TValue> pair)
 		{
-			return ContainsKey (pair.Key);
+			TValue value;
+			if (!TryGetValue (pair.Key, out value))
+				return false;
+
+			return EqualityComparer<TValue>.Default.Equals (value, pair.Value);
 		}
 
 		public KeyValuePair<TKey,TValue>[] ToArray ()
