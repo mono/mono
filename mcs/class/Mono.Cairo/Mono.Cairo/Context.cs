@@ -548,6 +548,11 @@ namespace Cairo {
 			NativeMethods.cairo_reset_clip (handle);
 		}
 
+		public bool InClip (double x, double y)
+		{
+			return NativeMethods.cairo_in_clip (handle, x, y);
+		}
+
 		public bool InStroke (double x, double y)
 		{
 			return NativeMethods.cairo_in_stroke (handle, x, y);

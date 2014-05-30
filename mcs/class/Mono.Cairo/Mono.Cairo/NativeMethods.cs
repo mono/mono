@@ -294,6 +294,10 @@ namespace Cairo
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		[return: MarshalAs (UnmanagedType.U1)]
+		internal static extern bool cairo_in_clip (IntPtr cr, double x, double y);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		[return: MarshalAs (UnmanagedType.U1)]
 		internal static extern bool cairo_in_fill (IntPtr cr, double x, double y);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
