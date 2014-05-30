@@ -36,7 +36,10 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
+
+#if !MOBILE
 using System.Security.AccessControl;
+#endif
 
 namespace System.IO {
 
@@ -263,6 +266,7 @@ namespace System.IO {
 			return OriginalPath;
 		}
 
+#if !MOBILE
 		public FileSecurity GetAccessControl ()
 		{
 			return File.GetAccessControl (FullPath); 
@@ -318,5 +322,6 @@ namespace System.IO {
 		{
 			File.SetAccessControl (FullPath, fileSecurity);
 		}
+#endif
 	}
 }
