@@ -212,6 +212,16 @@ namespace Microsoft.Build.Internal.Expressions
 			get { return string.Format ("%([{0}].[{1}])", ItemType, Metadata); }
 		}
 	}
+
+	partial class QuotedExpression : Expression
+	{
+		public char QuoteChar { get; set; }
+		public ExpressionList Contents { get; set; }
+
+		public override string ExpressionString {
+			get { return QuoteChar + string.Concat (Contents.Select (e => e.ExpressionString)).Replace (QuoteChar.ToString (), "\\" + QuoteChar) + QuoteChar; }
+		}
+	}
 	
 	partial class StringLiteral : Expression
 	{

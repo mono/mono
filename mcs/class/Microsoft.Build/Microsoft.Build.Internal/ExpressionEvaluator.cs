@@ -346,12 +346,12 @@ namespace Microsoft.Build.Internal.Expressions
 						var args = Access.Arguments.Select (e => e.EvaluateAsObject (context)).ToArray ();
 						var method = FindMethod (type, Access.Name.Name, args);
 						if (method == null)
-							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static method '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static method '{0}' of '{1}' at {2}", Access.Name.Name, type, Location));
 						return method.Invoke (null, AdjustArgsForCall (method, args));
 					} else {
 						var prop = type.GetProperty (Access.Name.Name);
 						if (prop == null)
-							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static property '{0}' of '{1}' at {2}", Access.Name.Name, type, Location));
 						return prop.GetValue (null, null);
 					}
 				}
@@ -486,6 +486,30 @@ namespace Microsoft.Build.Internal.Expressions
 			throw new InvalidProjectFileException ("raw string literal cannot be evaluated as boolean");
 		}
 		
+		public override object EvaluateAsObject (EvaluationContext context)
+		{
+			return EvaluateAsString (context);
+		}
+	}
+
+	partial class QuotedExpression : Expression
+	{
+		public override string EvaluateAsString (EvaluationContext context)
+		{
+			return QuoteChar + EvaluateAsStringWithoutQuote (context) + QuoteChar;
+		}
+
+		public string EvaluateAsStringWithoutQuote (EvaluationContext context)
+		{
+			return string.Concat (Contents.Select (e => e.EvaluateAsString (context)));
+		}
+
+		public override bool EvaluateAsBoolean (EvaluationContext context)
+		{
+			var ret = EvaluateAsStringWithoutQuote (context);
+			return EvaluateStringAsBoolean (context, ret);
+		}
+
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
 			return EvaluateAsString (context);
