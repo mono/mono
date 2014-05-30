@@ -45,6 +45,7 @@ include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
 
+SUBDIRS = $(net_4_5_SUBDIRS)
 
 doc-update-local:
 	@echo "not doing docs"
