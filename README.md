@@ -34,6 +34,10 @@ a. Build Requirements
   * libzlib - This library and the development headers are required for compression
 file support in the 2.0 profile.
 
+ 4. Mono is required to build Mono. Use a system package or mono-lite (explained further below)
+ 
+ 5. Now that you most likely already have an existing system Mono installation you will need to read this: http://mono-project.com/Parallel_Mono_Environments#Setting_up_a_Build_Environment
+
 b. Building the Software
 ------------------------
 
