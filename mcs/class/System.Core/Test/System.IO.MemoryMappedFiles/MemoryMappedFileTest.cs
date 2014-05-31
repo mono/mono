@@ -93,6 +93,43 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		}
 
 		[Test]
+		public void CreateNew ()
+		{
+			// This must succeed
+			MemoryMappedFile.CreateNew (Path.Combine (tempDir, "createNew.test"), 8192);
+		}
+
+		[Test]
+		[ExpectedException (typeof (IOException))]
+		public void CreateNew_OnExistingFile ()
+		{
+			// This must succeed
+			MemoryMappedFile.CreateNew (Path.Combine (tempDir, "createNew.test"), 8192);
+			
+			// This should fail, the file exists
+			MemoryMappedFile.CreateNew (Path.Combine (tempDir, "createNew.test"), 8192);
+		}
+
+		// Call this twice, it should always work
+		[Test]
+		public void CreateOrOpen_Multiple ()
+		{
+			MemoryMappedFile.CreateOrOpen (Path.Combine (tempDir, "createOrOpen.test"), 8192);
+			MemoryMappedFile.CreateOrOpen (Path.Combine (tempDir, "createOrOpen.test"), 8192);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateFromFileWithSmallerCapacityThanFile ()
+		{
+			var f = Path.Combine (tempDir, "8192-file");
+			File.WriteAllBytes (f, new byte [8192]);
+
+			// We are requesting fewer bytes to map.
+			MemoryMappedFile.CreateFromFile (f, FileMode.Open, "myMap", 4192);
+		}
+	
+		[Test]
 		public void CreateFromFile_Null () {
 			AssertThrows<ArgumentNullException> (delegate () {
 					MemoryMappedFile.CreateFromFile (null);
