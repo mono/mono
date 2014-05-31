@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_4_0
 
 using System;
@@ -44,8 +43,21 @@ using System.Runtime.CompilerServices;
 
 namespace System.IO.MemoryMappedFiles
 {
+	internal static partial class MemoryMapImpl {
+		static Exception ArgumentCapacity ()
+		{
+			return new ArgumentException ("A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
+		}
+
+		static Exception CapacitySmallerThanSize ()
+		{
+			return new ArgumentOutOfRangeException ("The capacity may not be smaller than the file size.");
+		}
+	}
+	
+	
 #if !MOBILE
-	internal static class MemoryMapImpl {
+	partial class MemoryMapImpl {
 		//
 		// Turns the FileMode into the first half of open(2) flags
 		//
@@ -121,25 +133,39 @@ namespace System.IO.MemoryMappedFiles
 		{
 			if (MonoUtil.IsUnix){
 				Stat buf;
-				if (Syscall.stat (path, out buf) == -1)
-					UnixMarshal.ThrowExceptionForLastError ();
 
-				if (capacity == 0) {
-					// Special files such as FIFOs, sockets, and devices can
-					// have a size of 0. Specifying a capacity for these
-					// also makes little sense, so don't do the check if the
-					// file is one of these.
-					if (buf.st_size == 0 &&
-						(buf.st_mode & (FilePermissions.S_IFCHR |
-						                FilePermissions.S_IFBLK |
-						                FilePermissions.S_IFIFO |
-						                FilePermissions.S_IFSOCK)) == 0) {
-						throw new ArgumentException ("A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
+				int result = Syscall.stat (path, out buf);
+
+				if (mode == FileMode.Truncate || mode == FileMode.Append || mode == FileMode.Open){
+					if (result == -1)
+						UnixMarshal.ThrowExceptionForLastError ();
+				}
+				if (mode == FileMode.CreateNew && result == 0)
+					throw new IOException ("The file already exists");
+				
+				if (result == 0){
+					if (capacity == 0) {
+						// Special files such as FIFOs, sockets, and devices can
+						// have a size of 0. Specifying a capacity for these
+						// also makes little sense, so don't do the check if the
+						// file is one of these.
+						if (buf.st_size == 0 &&
+						    (buf.st_mode & (FilePermissions.S_IFCHR |
+								    FilePermissions.S_IFBLK |
+								    FilePermissions.S_IFIFO |
+								    FilePermissions.S_IFSOCK)) == 0) {
+							throw ArgumentCapacity ();
+						}
+						
+						capacity = buf.st_size;
+					} else if (capacity < buf.st_size) {
+						throw CapacitySmallerThanSize ();
 					}
-
-					capacity = buf.st_size;
-				} else if (capacity < buf.st_size) {
-					throw new ArgumentException ("The capacity may not be smaller than the file size.");
+				} else {
+					if (mode == FileMode.CreateNew){
+						if (capacity == 0)
+							throw ArgumentCapacity ();
+					}
 				}
 
 				int fd = Syscall.open (path, ToUnixMode (mode) | ToUnixMode (access), FilePermissions.DEFFILEMODE);
@@ -232,7 +258,7 @@ namespace System.IO.MemoryMappedFiles
 
 	}
 #else
-	internal static class MemoryMapImpl {
+	partial class MemoryMapImpl {
 		[DllImport ("libc")]
 		static extern int fsync (int fd);
 
@@ -383,11 +409,23 @@ namespace System.IO.MemoryMappedFiles
 		internal static int Open (string path, FileMode mode, ref long capacity, MemoryMappedFileAccess access)
 		{
 			long file_size = mono_filesize_from_path (path);
-			if (file_size < 0)
-				throw new FileNotFoundException (path);
 
-			if (capacity > file_size)
-				throw new ArgumentException ("capacity");
+			Console.WriteLine ("{0} is {1} big", path, file_size);
+			if (mode == FileMode.Truncate || mode == FileMode.Append || mode == FileMode.Open){
+				if (file_size < 0)
+					throw new FileNotFoundException (path);
+				if (capacity == 0)
+					capacity = file_size;
+				if (capacity < file_size)
+					throw CapacitySmallerThanSize ();
+			} else {
+				if (mode == FileMode.CreateNew){
+					if (file_size >= 0)
+						throw new IOException ("The file already exists");
+					if (capacity == 0)
+						throw ArgumentCapacity ();
+				}
+			}
 
 			int fd = open (path, ToUnixMode (mode) | ToUnixMode (access), DEFFILEMODE);
 
