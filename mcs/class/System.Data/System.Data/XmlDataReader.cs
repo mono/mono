@@ -28,6 +28,14 @@ using System.Data;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using XmlAttribute = System.Xml.Linq.XAttribute;
+using XmlElement = System.Xml.Linq.XElement;
+using XmlNode = System.Xml.Linq.XNode;
+using XmlDocument = System.Xml.Linq.XDocument;
+using XmlNodeList = System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>;
+using XmlAttributeCollection = System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute>;
+#endif
 
 namespace System.Data
 {
@@ -135,9 +143,15 @@ namespace System.Data
 				return true;
 
 			XmlDocument doc = new XmlDocument ();
+#if !WINDOWS_PHONE && !NETFX_CORE
 			XmlElement el = (XmlElement) doc.ReadNode (reader);
 			doc.AppendChild (el);
 			reader = new XmlNodeReader (el);
+#else
+			XmlElement el = (XmlElement) XmlNode.ReadFrom (reader);
+			doc.Add (el);
+			reader = doc.CreateReader ();
+#endif
 			reader.MoveToContent ();
 
 			return !XmlDataInferenceLoader.IsDocumentElementTable (
@@ -256,7 +270,11 @@ namespace System.Data
 						break;
 					}
 				}
+#if !WINDOWS_PHONE && !NETFX_CORE
 				string s = reader.ReadString ();
+#else
+				string s = reader.ReadContentAsString ();
+#endif
 				reader.MoveToContent ();
 #if SILLY_MS_COMPATIBLE
 // As to MS, "test string" and "test <!-- comment -->string" are different :P
@@ -269,7 +287,11 @@ namespace System.Data
 #endif
 				break;
 			case XmlNodeType.Whitespace:
+#if !WINDOWS_PHONE && !NETFX_CORE
 				reader.ReadString ();
+#else
+				reader.ReadContentAsString ();
+#endif
 				break;
 			}
 		}
@@ -309,7 +331,9 @@ namespace System.Data
 						IXmlSerializable obj = (IXmlSerializable) Activator.CreateInstance (col.DataType, new object [0]);
 						if (!reader.IsEmptyElement) {
 							obj.ReadXml (reader);
+							if (reader.NodeType == XmlNodeType.EndElement) {
    							reader.ReadEndElement ();
+							}
 						} else {
    							reader.Skip ();
 						}						
@@ -325,7 +349,11 @@ namespace System.Data
 					}
 #endif
 				} else {
+#if !WINDOWS_PHONE && !NETFX_CORE
 					row [col] = StringToObject (col.DataType, reader.ReadElementString ());
+#else
+					row [col] = StringToObject (col.DataType, reader.ReadElementContentAsString ());
+#endif
 				}
 					
 				if (!wasEmpty && reader.Depth > depth) {

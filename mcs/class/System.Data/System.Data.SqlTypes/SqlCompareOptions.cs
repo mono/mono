@@ -37,7 +37,9 @@ namespace System.Data.SqlTypes
 	/// Specifies the compare option values for a SqlString structure.
 	/// </summary>
 	[Flags]
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public enum SqlCompareOptions {
 		BinarySort = 0x8000,
 		IgnoreCase = 0x1,

@@ -22,6 +22,9 @@
 //
 using System;
 using System.Collections;
+#if WINDOWS_PHONE || NETFX_CORE
+using Stack = System.Collections.Generic.Stack<System.Object>;
+#endif
 
 namespace System.Data.Common
 {

@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
@@ -315,3 +316,4 @@ namespace System.Data.Common {
 		#endregion // Methods
 	}
 }
+#endif

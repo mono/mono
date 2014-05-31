@@ -34,7 +34,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public class ConstraintException : DataException
 	{
 		public ConstraintException ()
@@ -53,9 +55,11 @@ namespace System.Data
 		}
 #endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected ConstraintException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }

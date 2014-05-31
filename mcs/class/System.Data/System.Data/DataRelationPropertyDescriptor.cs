@@ -1,3 +1,4 @@
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System;
 using System.ComponentModel;
 
@@ -97,3 +98,4 @@ namespace System.Data
 		#endregion // Methods
 	}
 }
+#endif

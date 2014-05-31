@@ -44,19 +44,29 @@ namespace System.Data
 	/// retrieve a PropertyCollection.
 	/// </summary>
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
 #endif
-	public class PropertyCollection : Hashtable {
+#endif
+	public class PropertyCollection : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		Hashtable
+#else
+		System.Collections.Generic.Dictionary<object, object>
+#endif
+	{
 		public PropertyCollection() 
 		{
 		}
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected PropertyCollection(System.Runtime.Serialization.SerializationInfo info,
 					     System.Runtime.Serialization.StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 #endif
 
 		// the only public methods and properties 

@@ -44,6 +44,7 @@ namespace System.Data
 	/// DataRelation is used for a parent/child relationship
 	/// between two DataTable objects
 	/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("RelationName")]
@@ -51,6 +52,7 @@ namespace System.Data
 	[Serializable]
 #endif
 	[TypeConverterAttribute (typeof (RelationshipConverter))]
+#endif
 	public class DataRelation {
 		private DataSet dataSet;
 		private string relationName;
@@ -123,7 +125,9 @@ namespace System.Data
 						"Parent Columns and Child Columns don't have matching column types");
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public DataRelation (string relationName, string parentTableName, string childTableName, string [] parentColumnNames, string[] childColumnNames, bool nested)
 		{
 			_relationName = relationName;
@@ -136,7 +140,9 @@ namespace System.Data
 		}
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public DataRelation (string relationName, string parentTableName,
 				     string parentTableNamespace, string childTableName,
 				     string childTableNamespace, string[] parentColumnNames,
@@ -199,7 +205,9 @@ namespace System.Data
 
 		#region Properties
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the child columns of this relation.")]
 #endif
@@ -220,14 +228,18 @@ namespace System.Data
 			get { return childColumns [0].Table; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public virtual DataSet DataSet {
 			get { return childColumns [0].Table.DataSet; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The collection that holds custom user information.")]
 #endif
@@ -239,7 +251,9 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether relations are nested.")]
 #endif
@@ -249,7 +263,9 @@ namespace System.Data
 			set { nested = value; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the parent columns of this relation.")]
 #endif
@@ -275,7 +291,9 @@ namespace System.Data
 			get { return parentColumns [0].Table; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The name used to look up this relation in the Relations collection of a DataSet.")]
 #endif

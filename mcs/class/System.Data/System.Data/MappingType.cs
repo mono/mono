@@ -37,7 +37,9 @@ namespace System.Data
 	/// <summary>
 	/// Specifies how a DataColumn is mapped.
 	/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public enum MappingType
 	{
 		Element = 1,

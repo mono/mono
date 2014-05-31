@@ -49,8 +49,12 @@ namespace System.Data.SqlTypes
 	/// to be stored in or retrieved from a database.
 	/// </summary>
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+#else
+	[XmlRoot("boolean")]
+#endif
 #endif
 	public struct SqlBoolean : INullable, IComparable
 #if NET_2_0
@@ -545,11 +549,13 @@ namespace System.Data.SqlTypes
 			return 0;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("boolean", "http://www.w3.org/2001/XMLSchema");
 			return qualifiedName;
 		}
+#endif
 		
 		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()

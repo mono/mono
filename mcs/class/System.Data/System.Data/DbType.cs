@@ -36,7 +36,9 @@ namespace System.Data
 	/// Gets the data type of a field, a property, or a Parameter object of a .NET data provider.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum DbType
 	{

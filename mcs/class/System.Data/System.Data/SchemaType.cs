@@ -38,7 +38,9 @@ namespace System.Data
 	/// Specifies how to handle existing schema mappings when performing a FillSchema operation.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum SchemaType
 	{

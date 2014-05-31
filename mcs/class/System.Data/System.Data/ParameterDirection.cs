@@ -38,7 +38,9 @@ namespace System.Data
 	/// Specifies the type of a parameter within a query relative to the DataSet.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum ParameterDirection
 	{

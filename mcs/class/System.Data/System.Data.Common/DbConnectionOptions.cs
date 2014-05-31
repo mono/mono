@@ -32,6 +32,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Security;
 using System.Text;
@@ -42,7 +43,11 @@ namespace System.Data.Common {
 
 		#region Fields
 
+#if WINDOWS_PHONE || NETFX_CORE
+		internal Dictionary<string, string> options;
+#else
 		internal NameValueCollection options;
+#endif
 		internal string normalizedConnectionString;
 
 		#endregion // Fields
@@ -60,7 +65,11 @@ namespace System.Data.Common {
 
 		public DbConnectionOptions (string connectionString)
 		{
+#if WINDOWS_PHONE || NETFX_CORE
+			options = new Dictionary<string, string> ();
+#else
 			options = new NameValueCollection ();
+#endif
 			ParseConnectionString (connectionString);
 		}
 		
@@ -99,7 +108,11 @@ namespace System.Data.Common {
 
 		public bool ContainsKey (string keyword)
 		{
+#if WINDOWS_PHONE || NETFX_CORE
+			return options.ContainsKey (keyword);
+#else
 			return (options.Get (keyword) != null);
+#endif
 		}
 
 		public bool ConvertValueToBoolean (string keyname, bool defaultvalue)
@@ -129,11 +142,13 @@ namespace System.Data.Common {
 			return defaultValue;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[MonoTODO]
 		protected internal virtual PermissionSet CreatePermissionSet ()
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[MonoTODO]
 		protected internal virtual string Expand ()

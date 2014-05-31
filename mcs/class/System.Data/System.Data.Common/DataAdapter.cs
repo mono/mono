@@ -46,7 +46,11 @@ namespace System.Data.Common
 #if ONLY_1_1
 	abstract
 #endif
-	class DataAdapter : Component, IDataAdapter
+	class DataAdapter : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		Component, 
+#endif
+		IDataAdapter, IDisposable
 	{
 		#region Fields
 
@@ -102,7 +106,9 @@ namespace System.Data.Common
 
 		#region Properties
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Fill")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Whether or not Fill will call DataRow.AcceptChanges.")]
 #endif
@@ -120,7 +126,9 @@ namespace System.Data.Common
 		}
 #endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Update")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Whether or not to continue to the next DataRow when the Update events, RowUpdating and RowUpdated, Status is UpdateStatus.ErrorsOccurred.")]
 #endif
@@ -131,7 +139,9 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public LoadOption FillLoadOption {
 			get { return fillLoadOption; }
 			set {
@@ -145,7 +155,9 @@ namespace System.Data.Common
 			get { return TableMappings; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Mapping")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The action taken when a table or column in the TableMappings is missing.")]
 #endif
@@ -158,7 +170,9 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Mapping")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("The action taken when a table or column in the DataSet is missing.")]
 #endif
@@ -179,11 +193,15 @@ namespace System.Data.Common
 		}
 #endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Mapping")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("How to map source table to DataSet table.")]
 #endif
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 		public DataTableMappingCollection TableMappings {
 			get { return tableMappings; }
 		}
@@ -213,7 +231,13 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		protected override void Dispose (bool disposing)
+		protected 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		override 
+#else
+		virtual
+#endif
+		void Dispose (bool disposing)
 		{
 		}
 
@@ -650,6 +674,13 @@ namespace System.Data.Common
 		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
 		public abstract IDataParameter[] GetFillParameters ();
 		public abstract int Update (DataSet dataSet);
+#endif
+
+#if WINDOWS_PHONE || NETFX_CORE
+		public void Dispose()
+		{
+			Dispose(true);
+		}
 #endif
 
 		#endregion

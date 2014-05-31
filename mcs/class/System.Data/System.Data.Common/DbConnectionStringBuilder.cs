@@ -40,7 +40,10 @@ using System.Text;
 
 namespace System.Data.Common
 {
-	public class DbConnectionStringBuilder : IDictionary, ICollection, IEnumerable, ICustomTypeDescriptor
+	public class DbConnectionStringBuilder : IDictionary, ICollection, IEnumerable
+#if !WINDOWS_PHONE && !NETFX_CORE
+		, ICustomTypeDescriptor
+#endif
 	{
 		#region Fields
 
@@ -65,6 +68,7 @@ namespace System.Data.Common
 
 		#region Properties
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
@@ -73,8 +77,11 @@ namespace System.Data.Common
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+#endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public string ConnectionString {
 			get {
 				IDictionary<string, object> dictionary = (IDictionary <string, object>) _dictionary;
@@ -98,25 +105,33 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
                 public virtual int Count
                 {
                         get { return _dictionary.Count; }
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
                 public virtual bool IsFixedSize
                 {
                         get { return false; }
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
                 public bool IsReadOnly
                 {
                         get { throw new NotImplementedException (); }
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public virtual object this [string keyword] {
 			get {
 				if (ContainsKey (keyword))
@@ -155,7 +170,9 @@ namespace System.Data.Common
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public virtual ICollection Keys
 		{
 			get {
@@ -182,7 +199,9 @@ namespace System.Data.Common
                         set { this [(string) keyword] = value; }
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public virtual ICollection Values {
 			get {
 				object [] values = new object [_dictionary.Values.Count];
@@ -357,6 +376,7 @@ namespace System.Data.Common
                         return ret;
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[MonoTODO]
 		protected virtual void GetProperties (Hashtable propertyDescriptors)
 		{
@@ -368,6 +388,7 @@ namespace System.Data.Common
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public virtual bool Remove (string keyword)
 		{
@@ -416,6 +437,7 @@ namespace System.Data.Common
                         return (IEnumerator) _dictionary.GetEnumerator ();
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
                 private static object _staticAttributeCollection = null;
                 AttributeCollection ICustomTypeDescriptor.GetAttributes ()
                 {
@@ -484,6 +506,7 @@ namespace System.Data.Common
                 {
                         throw new NotImplementedException ();
                 }
+#endif
 
                 public override string ToString ()
                 {

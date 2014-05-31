@@ -34,7 +34,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public class SyntaxErrorException : InvalidExpressionException
 	{
 		public SyntaxErrorException ()
@@ -47,10 +49,12 @@ namespace System.Data
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected SyntaxErrorException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
 #if NET_2_0
 		public SyntaxErrorException (String message, Exception innerException)

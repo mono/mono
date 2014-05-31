@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System;
 using System.ComponentModel;
 
@@ -62,3 +63,4 @@ namespace System.Data {
 		#endregion // Properties
 	}
 }
+#endif

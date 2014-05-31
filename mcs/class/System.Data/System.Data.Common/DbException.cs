@@ -28,6 +28,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -61,4 +62,5 @@ namespace System.Data.Common {
 	}
 }
 
+#endif
 #endif

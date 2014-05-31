@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Globalization;
 
 namespace Mono.Data.SqlExpressions {
 	internal enum AggregationFunction {
@@ -183,14 +184,22 @@ namespace Mono.Data.SqlExpressions {
 			if (count < 2)
 				return DBNull.Value;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			double average = (double)Convert.ChangeType(result, TypeCode.Double) / count;
+#else
+			double average = (double)Convert.ChangeType(result, TypeCode.Double, CultureInfo.CurrentCulture) / count;
+#endif
 			double res = 0.0;
 						
 			foreach (object val in values) {
 				if (val == null)
 					continue;
 					
+#if !WINDOWS_PHONE && !NETFX_CORE
 				double diff = average - (double)Convert.ChangeType(val, TypeCode.Double);
+#else
+				double diff = average - (double)Convert.ChangeType(val, TypeCode.Double, CultureInfo.CurrentCulture);
+#endif
 				res += System.Math.Pow (diff, 2);
 			}
 			res /= (count - 1);

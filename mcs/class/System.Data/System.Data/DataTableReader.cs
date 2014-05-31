@@ -188,7 +188,14 @@ namespace System.Data {
 			if (buffer == null)
 				return value.Length;
 			int copylen = length > value.Length ? value.Length : length;
-			Array.Copy (value, dataIndex, buffer, bufferIndex, copylen);
+
+			// this is checked here just to throw a user friendly message before casting to an int
+			// it is re-checked inside the Array.Copy anyway, so the cast does not affect functionality
+			if (dataIndex < Int32.MinValue || dataIndex > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException("dataIndex",
+					Locale.GetText("Must be in the Int32 range."));
+
+			Array.Copy (value, (int)dataIndex, buffer, bufferIndex, copylen);
 			return copylen;
 		}
 
@@ -205,7 +212,14 @@ namespace System.Data {
 			if (buffer == null)
 				return value.Length;
 			int copylen = length > value.Length ? value.Length : length;
-			Array.Copy (value, dataIndex, buffer, bufferIndex, copylen);
+			
+			// this is checked here just to throw a user friendly message before casting to an int
+			// it is re-checked inside the Array.Copy anyway, so the cast does not affect functionality
+			if (dataIndex < Int32.MinValue || dataIndex > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException("dataIndex",
+					Locale.GetText("Must be in the Int32 range."));
+
+			Array.Copy (value, (int)dataIndex, buffer, bufferIndex, copylen);
 			return copylen;
 		}
 

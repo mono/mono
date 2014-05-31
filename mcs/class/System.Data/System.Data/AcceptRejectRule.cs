@@ -39,7 +39,9 @@ namespace System.Data
 	/// is invoked on a DataTable with a ForeignKeyConstraint.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum AcceptRejectRule
 	{		

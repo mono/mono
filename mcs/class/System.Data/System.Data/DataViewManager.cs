@@ -47,13 +47,21 @@ namespace System.Data
 	/// Contains a default DataViewSettingCollection for each DataTable in a DataSet.
 	/// </summary>
 	//[Designer]
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewManagerDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-	public class DataViewManager : MarshalByValueComponent, IBindingList, ICollection, IList, ITypedList, IEnumerable
+#endif
+	public class DataViewManager : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		MarshalByValueComponent, IBindingList, ITypedList, ICollection, IList, IEnumerable, 
+#endif
+		IDisposable
 	{
 		#region Fields
 
 		DataSet dataSet;
+#if !WINDOWS_PHONE && !NETFX_CORE
 		DataViewManagerListItemTypeDescriptor descriptor;
+#endif
 		DataViewSettingCollection settings;
 		string xml;
 
@@ -104,11 +112,14 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
 #endif
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+#endif
 		public DataViewSettingCollection DataViewSettings {
 			get { return settings; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		int ICollection.Count {
 			get { return 1; }
 		}
@@ -175,6 +186,7 @@ namespace System.Data
 		bool IBindingList.SupportsSorting {
 			get { return false; }
 		}
+#endif
 
 		#endregion // Properties
 
@@ -199,8 +211,8 @@ namespace System.Data
 
 		private void ParseSettingString (string source)
 		{
-			XmlTextReader xtr = new XmlTextReader (source,
-				XmlNodeType.Element, null);
+			XmlReader xtr = XmlReader.Create (new StringReader (source),
+				new XmlReaderSettings {ConformanceLevel = ConformanceLevel.Fragment, IgnoreWhitespace = true});
 
 			xtr.Read ();
 			if (xtr.Name != "DataViewSettingCollectionString")
@@ -294,6 +306,7 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		void IBindingList.AddIndex (PropertyDescriptor property)
 		{
 		}
@@ -400,17 +413,23 @@ namespace System.Data
 			if (ListChanged != null)
 				ListChanged (this, e);
 		}
+#endif
 
 		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			this.OnListChanged (CollectionToListChangeEventArgs (e));
+#endif
 		}
 
 		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			this.OnListChanged (CollectionToListChangeEventArgs (e));
+#endif
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		private ListChangedEventArgs CollectionToListChangeEventArgs (CollectionChangeEventArgs e)
 		{
 			ListChangedEventArgs args;
@@ -435,12 +454,27 @@ namespace System.Data
 			
 			return args;
 		}
+#endif
+
+#if WINDOWS_PHONE || NETFX_CORE
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		protected virtual void Dispose(bool release_all)
+		{
+
+		}
+#endif
 
 		#endregion // Methods
 
 		#region Events
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public event ListChangedEventHandler ListChanged;
+#endif
 
 		#endregion // Events
 	}

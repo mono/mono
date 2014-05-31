@@ -38,7 +38,9 @@ namespace System.Data
 	/// Specifies how query command results are applied to the row being updated.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum UpdateRowSource
 	{

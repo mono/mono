@@ -30,18 +30,26 @@ namespace System.Data
 	/// navigation, searching, and sorting.
 	/// </summary>
 	//[Designer]
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataSourceEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-	public partial class DataView : MarshalByValueComponent, IEnumerable, ISupportInitialize {
+#endif
+	public partial class DataView : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		MarshalByValueComponent, ISupportInitialize,
+#endif
+		IEnumerable {
 		internal DataTable dataTable;
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
 		ListSortDirection [] sortOrder;
+#if !WINDOWS_PHONE && !NETFX_CORE
 		PropertyDescriptor sortProperty;
+#endif
 		DataColumn [] sortColumns;
 		internal DataViewRowState rowState;
 		internal DataRowView[] rowCache = new DataRowView [0];
@@ -109,7 +117,9 @@ namespace System.Data
 			Open ();
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows deletes.")]
 #endif
@@ -119,7 +129,9 @@ namespace System.Data
 			set { allowDelete = value; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows edits.")]
 #endif
@@ -129,7 +141,9 @@ namespace System.Data
 			set { allowEdit = value; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows new rows to be added.")]
 #endif
@@ -139,12 +153,16 @@ namespace System.Data
 			set { allowNew = value; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether to use the default sort if the Sort property is not set.")]
 #endif
 		[DefaultValue (false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[RefreshProperties (RefreshProperties.All)]
+#endif
 		public bool ApplyDefaultSort {
 			get { return applyDefaultSort; }
 			set {
@@ -166,7 +184,9 @@ namespace System.Data
 		}
 		// get the count of rows in the DataView after RowFilter
 		// and RowStateFilter have been applied
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Returns the number of items currently in this view.")]
 #endif
@@ -174,7 +194,9 @@ namespace System.Data
 			get { return rowCache.Length; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("This returns a pointer to back to the DataViewManager that owns this DataSet (if any).")]
 #endif
@@ -194,7 +216,9 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates an expression used to filter the data returned by this DataView.")]
 #endif
@@ -210,7 +234,11 @@ namespace System.Data
 				}
 
 				CultureInfo info = (Table != null) ? Table.Locale : CultureInfo.CurrentCulture;
+#if !WINDOWS_PHONE && !NETFX_CORE
 				if (String.Compare (rowFilter, value, false, info) == 0)
+#else
+				if (String.Compare (rowFilter, value, info, CompareOptions.None) == 0)
+#endif
 					return;
 
 				if (value.Length == 0) {
@@ -227,7 +255,9 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the versions of data returned by this DataView.")]
 #endif
@@ -251,7 +281,9 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the order in which data is returned by this DataView.")]
 #endif
@@ -292,13 +324,15 @@ namespace System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[TypeConverter (typeof (DataTableTypeConverter))]
 		[DataCategory ("Data")]
+		[RefreshProperties (RefreshProperties.All)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
 #endif
 		[DefaultValue (null)]
-		[RefreshProperties (RefreshProperties.All)]
 		public DataTable Table {
 			get { return dataTable; }
 			set {
@@ -487,13 +521,17 @@ namespace System.Data
 			return dataRowViews.GetEnumerator ();
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[DataCategory ("Data")]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates that the data returned by this DataView has somehow changed.")]
 #endif
 		public event ListChangedEventHandler ListChanged;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether the view is open.  ")]
 #endif
@@ -525,12 +563,20 @@ namespace System.Data
 			isOpen = false;
 		}
 
-		protected override void Dispose (bool disposing)
+		protected 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		override 
+#else
+		virtual
+#endif
+		void Dispose (bool disposing)
 		{
 			if (disposing)
 				Close ();
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			base.Dispose (disposing);
+#endif
 		}
 
 		protected virtual void IndexListChanged (object sender, ListChangedEventArgs e)
@@ -795,6 +841,7 @@ namespace System.Data
 				rowCache [size] = new DataRowView (this, _lastAdded, size);
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor [] listAccessors)
 		{
 			if (dataTable == null)
@@ -827,6 +874,7 @@ namespace System.Data
 			return new PropertyDescriptorCollection (descriptors);
 		}
 
+#endif
 
 		private int IndexOf (DataRow dr)
 		{
@@ -897,6 +945,7 @@ namespace System.Data
 		}
 	}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	partial class DataView : ITypedList {
 		string ITypedList.GetListName (PropertyDescriptor [] listAccessors)
 		{
@@ -905,6 +954,7 @@ namespace System.Data
 			return string.Empty;
 		}
 	}
+#endif
 
 	partial class DataView : ICollection {
 		bool ICollection.IsSynchronized {
@@ -978,6 +1028,7 @@ namespace System.Data
 		}
 	}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	partial class DataView : IBindingList {
 		[MonoTODO]
 		void IBindingList.AddIndex (PropertyDescriptor property)
@@ -1071,8 +1122,10 @@ namespace System.Data
 			get { return true; }
 		}
 	}
+#endif
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	partial class DataView : IBindingListView {
 		string IBindingListView.Filter {
 			get { return ((DataView) this).RowFilter; }
@@ -1115,11 +1168,18 @@ namespace System.Data
 			((IBindingListView) this).Filter = string.Empty;
 		}
 	}
+#endif
 
-	partial class DataView : ISupportInitializeNotification {
+	partial class DataView
+#if !WINDOWS_PHONE && !NETFX_CORE
+		: ISupportInitializeNotification 
+#endif
+	{
 		private bool dataViewInitialized = true;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public bool IsInitialized {
 			get { return dataViewInitialized; }
 		}
@@ -1244,6 +1304,15 @@ namespace System.Data
 				newRow.Original = -1;
 			}
 			return newTable;
+		}
+	}
+#endif
+
+#if WINDOWS_PHONE || NETFX_CORE
+	partial class DataView : IDisposable {
+		public void Dispose()
+		{
+			Dispose(true);
 		}
 	}
 #endif

@@ -37,7 +37,11 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
-	public abstract class DbParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
+	public abstract class DbParameterCollection : 
+#if !WINDOWS_PHONE && !NETFX_CORE
+		MarshalByRefObject,
+#endif
+		IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Constructors
 
@@ -49,8 +53,10 @@ namespace System.Data.Common {
 
 		#region Properties
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public abstract int Count {
 			get;
 		}
@@ -65,22 +71,28 @@ namespace System.Data.Common {
 			set { this [index] = (DbParameter) value; }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsFixedSize {
 			get;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsReadOnly {
 			get;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract bool IsSynchronized {
 			get;
@@ -102,8 +114,10 @@ namespace System.Data.Common {
 			set { SetParameter (index, value); }
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract object SyncRoot {
 			get;

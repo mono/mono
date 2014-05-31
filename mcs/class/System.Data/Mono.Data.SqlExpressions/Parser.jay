@@ -13,13 +13,18 @@ using System;
 using System.Collections;
 using System.Data;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using MarshalByRefObject = System.Object;
+#endif
 namespace Mono.Data.SqlExpressions {
 
 	internal class Parser {
 		static Parser ()
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			if (Environment.GetEnvironmentVariable ("MONO_DEBUG_SQLEXPRESSIONS") != null)
 				yacc_verbose_flag = 2;
+#endif
 		}
 
 		bool cacheAggregationResults = false;

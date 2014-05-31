@@ -75,7 +75,9 @@ namespace System.Data
 		/// <summary>
 		/// Gets the total number of elements in a collection.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public virtual int Count {
 			get { return list.Count; }
 		}
@@ -83,7 +85,9 @@ namespace System.Data
 		/// <summary>
 		/// Gets a value indicating whether the InternalDataCollectionBase is read-only.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public bool IsReadOnly {
 			get { return readOnly; }
 		}
@@ -91,7 +95,9 @@ namespace System.Data
 		/// <summary>
 		/// Gets a value indicating whether the InternalDataCollectionBase is synchronized.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public bool IsSynchronized {
 			get { return synchronized; }
 		}
@@ -99,14 +105,21 @@ namespace System.Data
 		/// <summary>
 		/// Gets the items of the collection as a list.
 		/// </summary>
-		protected virtual ArrayList List {
+#if !WINDOWS_PHONE && !NETFX_CORE
+		protected 
+#else
+		internal
+#endif
+		virtual ArrayList List {
 			get { return list; }
 		}
 
 		/// <summary>
 		/// Gets an object that can be used to synchronize the collection.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Browsable (false)]
+#endif
 		public object SyncRoot {
 			get { return this; }
 		}

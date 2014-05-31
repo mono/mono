@@ -36,7 +36,9 @@ namespace System.Data
 	/// Represents the method that will handle the FillError event.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public delegate void FillErrorEventHandler(object sender, FillErrorEventArgs e);
 

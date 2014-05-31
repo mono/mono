@@ -38,7 +38,9 @@ namespace System.Data
 	/// Specifies how to read XML data and a relational schema into a DataSet.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum XmlReadMode
 	{

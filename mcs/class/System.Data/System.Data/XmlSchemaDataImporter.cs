@@ -158,29 +158,32 @@
 
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Xml;
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Xml.Schema;
+#else
+using Mono.Xml.Schema;
+using System.Collections.Generic;
+using XmlAttribute = System.Xml.Linq.XAttribute;
+using XmlElement = System.Xml.Linq.XElement;
+using XmlNode = System.Xml.Linq.XNode;
+using XmlDocument = System.Xml.Linq.XDocument;
+using XmlNodeList = System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>;
+using XmlAttributeCollection = System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute>;
+#endif
 
 
 namespace System.Data
 {
-	internal class TableStructureCollection : CollectionBase
+	internal class TableStructureCollection : Collection<TableStructure>
 	{
-		public void Add (TableStructure table)
-		{
-			List.Add (table);
-		}
-
-		public TableStructure this [int i] {
-			get { return List [i] as TableStructure; }
-		}
-
 		public TableStructure this [string name] {
 			get {
-				foreach (TableStructure ts in List)
+				foreach (TableStructure ts in this)
 					if (ts.Table.TableName == name)
 						return ts;
 				return null;
@@ -188,20 +191,11 @@ namespace System.Data
 		}
 	}
 
-	internal class RelationStructureCollection : CollectionBase
+	internal class RelationStructureCollection : Collection<RelationStructure>
 	{
-		public void Add (RelationStructure rel)
-		{
-			List.Add (rel);
-		}
-
-		public RelationStructure this [int i] {
-			get { return List [i] as RelationStructure; }
-		}
-
 		public RelationStructure this [string parent, string child] {
 			get {
-				foreach (RelationStructure rel in List)
+				foreach (RelationStructure rel in this)
 					if (rel.ParentTableName == parent && rel.ChildTableName == child)
 						return rel;
 				return null;
@@ -281,11 +275,11 @@ namespace System.Data
 			XmlSchema s = new XmlSchema ();
 			XmlSchemaAttribute a = new XmlSchemaAttribute ();
 			a.Name = "foo";
-			a.SchemaTypeName = new XmlQualifiedName ("integer", XmlSchema.Namespace);
+			a.SchemaTypeName = new XmlQualifiedName ("integer", XmlConstants.SchemaNamespace);
 			s.Items.Add (a);
 			XmlSchemaAttribute b = new XmlSchemaAttribute ();
 			b.Name = "bar";
-			b.SchemaTypeName = new XmlQualifiedName ("decimal", XmlSchema.Namespace);
+			b.SchemaTypeName = new XmlQualifiedName ("decimal", XmlConstants.SchemaNamespace);
 			s.Items.Add (b);
 			XmlSchemaElement e = new XmlSchemaElement ();
 			e.Name = "bar";
@@ -336,7 +330,7 @@ namespace System.Data
 			this.forDataSet = forDataSet;
 			dataset.DataSetName = "NewDataSet"; // Initialize always
 			schema = XmlSchema.Read (reader, null);
-			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace)
+			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == XmlConstants.SchemaNamespace)
 				reader.ReadEndElement ();
 			schema.Compile (null);
 		}
@@ -435,8 +429,8 @@ namespace System.Data
 		{
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
-					if (attr.LocalName == "IsDataSet" &&
-						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
+					if (XmlHelper.GetLocalName(attr) == "IsDataSet" &&
+						XmlHelper.GetNamespaceUri(attr) == XmlConstants.MsdataNamespace) {
 						switch (attr.Value) {
 						case "true": // case sensitive
 							return true;
@@ -531,20 +525,20 @@ namespace System.Data
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
 #if NET_2_0
-					if (attr.LocalName == "UseCurrentLocale" &&
-						attr.NamespaceURI == XmlConstants.MsdataNamespace)
+					if (XmlHelper.GetLocalName(attr) == "UseCurrentLocale" &&
+						XmlHelper.GetNamespaceUri(attr) == XmlConstants.MsdataNamespace)
 						useCurrent = true;
 #endif
 
-					if (attr.NamespaceURI == XmlConstants.MspropNamespace && 
+					if (XmlHelper.GetNamespaceUri(attr) == XmlConstants.MspropNamespace && 
 					    !dataset.ExtendedProperties.ContainsKey(attr.Name))
 					{
 						dataset.ExtendedProperties.Add (attr.Name, attr.Value);
 						continue;
 					}
 					
-					if (attr.LocalName == "Locale" &&
-						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
+					if (XmlHelper.GetLocalName(attr) == "Locale" &&
+						XmlHelper.GetNamespaceUri(attr) == XmlConstants.MsdataNamespace) {
 						CultureInfo ci = new CultureInfo (attr.Value);
 						dataset.Locale = ci;
 					}
@@ -602,14 +596,14 @@ namespace System.Data
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
 
-					if (attr.NamespaceURI == XmlConstants.MspropNamespace)
+					if (XmlHelper.GetNamespaceUri(attr) == XmlConstants.MspropNamespace)
 					{
 						table.ExtendedProperties.Add (attr.Name, attr.Value);
 						continue;
 					}
 
-					if (attr.LocalName == "Locale" &&
-						attr.NamespaceURI == XmlConstants.MsdataNamespace)
+					if (XmlHelper.GetLocalName(attr) == "Locale" &&
+						XmlHelper.GetNamespaceUri(attr) == XmlConstants.MsdataNamespace)
 						table.Locale = new CultureInfo (attr.Value);
 				}
 			}
@@ -651,10 +645,18 @@ namespace System.Data
 
 			// add columns to the table in specified order 
 			// (by msdata:Ordinal attributes)
+#if !WINDOWS_PHONE && !NETFX_CORE
 			SortedList sd = new SortedList ();
+#else
+			SortedDictionary<object, object> sd = new SortedDictionary<object, object>();
+#endif
 			foreach (DictionaryEntry de in currentTable.OrdinalColumns)
 				sd.Add (de.Value, de.Key);
+#if !WINDOWS_PHONE && !NETFX_CORE
 			foreach (DictionaryEntry de in sd)
+#else
+			foreach (KeyValuePair<object, object> de in sd)
+#endif
 				table.Columns.Add ((DataColumn) de.Value);
 			foreach (DataColumn dc in currentTable.NonOrdinalColumns)
 				table.Columns.Add (dc);
@@ -798,15 +800,15 @@ namespace System.Data
 		{
 			if (obj.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in obj.UnhandledAttributes) {
-					if (attr.NamespaceURI == XmlConstants.MspropNamespace)
+					if (XmlHelper.GetNamespaceUri(attr) == XmlConstants.MspropNamespace)
 					{
 						col.ExtendedProperties.Add (attr.Name, attr.Value);
 						continue;
 					}
 
-					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
+					if (XmlHelper.GetNamespaceUri(attr) != XmlConstants.MsdataNamespace)
 						continue;
-					switch (attr.LocalName) {
+					switch (XmlHelper.GetLocalName(attr)) {
 					case XmlConstants.Caption:
 						col.Caption = attr.Value;
 						break;
@@ -1070,9 +1072,9 @@ namespace System.Data
 			string constraintName = ic.Name;
 			if (ic.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in ic.UnhandledAttributes) {
-					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
+					if (XmlHelper.GetNamespaceUri(attr) != XmlConstants.MsdataNamespace)
 						continue;
-					switch (attr.LocalName) {
+					switch (XmlHelper.GetLocalName(attr)) {
 					case XmlConstants.ConstraintName:
 						constraintName = attr.Value;
 						break;
@@ -1151,9 +1153,9 @@ namespace System.Data
 			bool isConstraintOnly = false;
 			if (keyref.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in keyref.UnhandledAttributes) {
-					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
+					if (XmlHelper.GetNamespaceUri(attr) != XmlConstants.MsdataNamespace)
 						continue;
-					switch (attr.LocalName) {
+					switch (XmlHelper.GetLocalName(attr)) {
 					case XmlConstants.ConstraintName:
 						constraintName = attr.Value;
 						break;
@@ -1236,7 +1238,7 @@ namespace System.Data
 					// if not use the XmlSchemaUnique name.
 					if (c.UnhandledAttributes != null)
 						foreach (XmlAttribute attr in c.UnhandledAttributes)
-							if (attr.LocalName == "ConstraintName" && attr.NamespaceURI == XmlConstants.MsdataNamespace)
+							if (XmlHelper.GetLocalName(attr) == "ConstraintName" && XmlHelper.GetNamespaceUri(attr) == XmlConstants.MsdataNamespace)
 								constraintName = attr.Value;
 					return (UniqueConstraint) dt.Constraints [constraintName];
 				}
@@ -1254,10 +1256,10 @@ namespace System.Data
 						
 						// #325464 debugging
 						//Console.WriteLine ("Name: " + el.LocalName + " NS: " + el.NamespaceURI + " Const: " + XmlConstants.MsdataNamespace);
-						if (el != null && el.LocalName == "Relationship" && el.NamespaceURI == XmlConstants.MsdataNamespace)
+						if (el != null && XmlHelper.GetLocalName (el) == "Relationship" && XmlHelper.GetNamespaceUri (el) == XmlConstants.MsdataNamespace)
 							HandleRelationshipAnnotation (el, nested);
 #if NET_2_0
-						if (el != null && el.LocalName == "DataSource" && el.NamespaceURI == XmlConstants.MsdatasourceNamespace)
+						if (el != null && XmlHelper.GetLocalName (el) == "DataSource" && XmlHelper.GetNamespaceUri (el) == XmlConstants.MsdatasourceNamespace)
 							HandleDataSourceAnnotation (el, nested);
 #endif
 					}
@@ -1280,7 +1282,7 @@ namespace System.Data
 			DbProviderFactory provider = null;
 			XmlElement e, tablesElement = null, firstChild;
 			
-			foreach (XmlNode n in el.ChildNodes) {
+			foreach (XmlNode n in XmlHelper.GetChildNodes(el)) {
 				e = n as XmlElement;
 				
 				if (e == null)
@@ -1297,12 +1299,12 @@ namespace System.Data
 				// #325464 debugging
 				//Console.WriteLine ("ProviderName: " + providerName + "Connstr: " + connString);
 				
-				if (e.LocalName == "Tables")
+				if (XmlHelper.GetLocalName (e) == "Tables")
 					tablesElement = e;
 			}
 				
 			if (tablesElement != null && provider != null) {
-				foreach (XmlNode node in tablesElement.ChildNodes) {
+				foreach (XmlNode node in XmlHelper.GetChildNodes (tablesElement)) {
 					ProcessTableAdapter (node as XmlElement, provider, connString);
 				}
 			}
@@ -1323,25 +1325,25 @@ namespace System.Data
 			
 			//Console.WriteLine ("Provider: {0}, connection: {1}, adapter: {2}", 
 			//                   provider, currentAdapter.Connection, currentAdapter.Adapter);
-			currentAdapter.BaseClass = el.GetAttribute ("BaseClass");
-			datasetTableName = el.GetAttribute ("Name");
-			currentAdapter.Name = el.GetAttribute ("GeneratorDataComponentClassName");
+			currentAdapter.BaseClass = XmlHelper.GetAttribute (el, "BaseClass");
+			datasetTableName = XmlHelper.GetAttribute (el, "Name");
+			currentAdapter.Name = XmlHelper.GetAttribute (el, "GeneratorDataComponentClassName");
 			
 			if (String.IsNullOrEmpty (currentAdapter.Name))
-				currentAdapter.Name = el.GetAttribute ("DataAccessorName");
+				currentAdapter.Name = XmlHelper.GetAttribute (el, "DataAccessorName");
 
 			//Console.WriteLine ("Name: "+currentAdapter.Name);
-			foreach (XmlNode n in el.ChildNodes) {
+			foreach (XmlNode n in XmlHelper.GetChildNodes(el)) {
 				e = n as XmlElement;
 				
 				//Console.WriteLine ("Children of Tables: "+e.LocalName);
 				if (e == null)
 					continue;
 				
-				switch (e.LocalName) {
+				switch (XmlHelper.GetLocalName (e)) {
 					case "MainSource": 
 					case "Sources": 
-						foreach (XmlNode msn in e.ChildNodes)
+						foreach (XmlNode msn in XmlHelper.GetChildNodes(e))
 							ProcessDbSource (msn as XmlElement);
 						break;
 					
@@ -1350,7 +1352,7 @@ namespace System.Data
 						tableMapping.SourceTable = "Table";
 						tableMapping.DataSetTable = datasetTableName;
 						
-						foreach (XmlNode mps in e.ChildNodes)
+						foreach (XmlNode mps in XmlHelper.GetChildNodes(e))
 							ProcessColumnMapping (mps as XmlElement, tableMapping);
 						
 						currentAdapter.Adapter.TableMappings.Add (tableMapping);
@@ -1369,25 +1371,25 @@ namespace System.Data
 			
 			//Console.WriteLine ("ProcessDbSources: "+el.LocalName);
 
-			tmp = el.GetAttribute ("GenerateShortCommands");
+			tmp = XmlHelper.GetAttribute (el, "GenerateShortCommands");
 			//Console.WriteLine ("GenerateShortCommands: {0}", tmp);
 			if (!String.IsNullOrEmpty (tmp))
 				currentAdapter.ShortCommands = Convert.ToBoolean (tmp);
 		
 			DbCommandInfo cmdInfo = new DbCommandInfo ();
-			tmp = el.GetAttribute ("GenerateMethods");
+			tmp = XmlHelper.GetAttribute (el, "GenerateMethods");
 			if (!String.IsNullOrEmpty (tmp)) {
 				DbSourceMethodInfo mthdInfo = null;
 				
 				switch ((GenerateMethodsType) Enum.Parse (typeof (GenerateMethodsType), tmp)) {
 				case GenerateMethodsType.Get:
 					mthdInfo = new DbSourceMethodInfo ();
-					mthdInfo.Name = el.GetAttribute ("GetMethodName");
-					mthdInfo.Modifier = el.GetAttribute ("GetMethodModifier");
+					mthdInfo.Name = XmlHelper.GetAttribute (el, "GetMethodName");
+					mthdInfo.Modifier = XmlHelper.GetAttribute (el, "GetMethodModifier");
 					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
-					mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
-					mthdInfo.QueryType = el.GetAttribute ("QueryType");
+					mthdInfo.ScalarCallRetval = XmlHelper.GetAttribute (el, "ScalarCallRetval");
+					mthdInfo.QueryType = XmlHelper.GetAttribute (el, "QueryType");
 					mthdInfo.MethodType = GenerateMethodsType.Get;
 					cmdInfo.Methods = new DbSourceMethodInfo [1];
 					cmdInfo.Methods[0] = mthdInfo;
@@ -1395,8 +1397,8 @@ namespace System.Data
 					
 				case GenerateMethodsType.Fill:
 					mthdInfo = new DbSourceMethodInfo ();
-					mthdInfo.Name = el.GetAttribute ("FillMethodName");
-					mthdInfo.Modifier = el.GetAttribute ("FillMethodModifier");
+					mthdInfo.Name = XmlHelper.GetAttribute (el, "FillMethodName");
+					mthdInfo.Modifier = XmlHelper.GetAttribute (el, "FillMethodModifier");
 					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
 					mthdInfo.ScalarCallRetval = null;
@@ -1409,20 +1411,20 @@ namespace System.Data
 				case GenerateMethodsType.Both:
 					mthdInfo = new DbSourceMethodInfo ();
 					// Get
-					mthdInfo.Name = el.GetAttribute ("GetMethodName");
-					mthdInfo.Modifier = el.GetAttribute ("GetMethodModifier");
+					mthdInfo.Name = XmlHelper.GetAttribute (el, "GetMethodName");
+					mthdInfo.Modifier = XmlHelper.GetAttribute (el, "GetMethodModifier");
 					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
-					mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
-					mthdInfo.QueryType = el.GetAttribute ("QueryType");
+					mthdInfo.ScalarCallRetval = XmlHelper.GetAttribute (el, "ScalarCallRetval");
+					mthdInfo.QueryType = XmlHelper.GetAttribute (el, "QueryType");
 					mthdInfo.MethodType = GenerateMethodsType.Get;
 					cmdInfo.Methods = new DbSourceMethodInfo [2];
 					cmdInfo.Methods[0] = mthdInfo;
 					
 					// Fill
 					mthdInfo = new DbSourceMethodInfo ();
-					mthdInfo.Name = el.GetAttribute ("FillMethodName");
-					mthdInfo.Modifier = el.GetAttribute ("FillMethodModifier");
+					mthdInfo.Name = XmlHelper.GetAttribute (el, "FillMethodName");
+					mthdInfo.Modifier = XmlHelper.GetAttribute (el, "FillMethodModifier");
 					if (String.IsNullOrEmpty (mthdInfo.Modifier))
 						mthdInfo.Modifier = "Public";
 					mthdInfo.ScalarCallRetval = null;
@@ -1434,37 +1436,37 @@ namespace System.Data
 			} else {
 				// no Get or Fill methods - non <MainSource> sources
 				DbSourceMethodInfo mthdInfo = new DbSourceMethodInfo ();
-				mthdInfo.Name = el.GetAttribute ("Name");
-				mthdInfo.Modifier = el.GetAttribute ("Modifier");
+				mthdInfo.Name = XmlHelper.GetAttribute (el, "Name");
+				mthdInfo.Modifier = XmlHelper.GetAttribute (el, "Modifier");
 				if (String.IsNullOrEmpty (mthdInfo.Modifier))
 					mthdInfo.Modifier = "Public";
-				mthdInfo.ScalarCallRetval = el.GetAttribute ("ScalarCallRetval");
-				mthdInfo.QueryType = el.GetAttribute ("QueryType");
+				mthdInfo.ScalarCallRetval = XmlHelper.GetAttribute (el, "ScalarCallRetval");
+				mthdInfo.QueryType = XmlHelper.GetAttribute (el, "QueryType");
 				mthdInfo.MethodType = GenerateMethodsType.None;
 				// Add MethodInfo to DbCommandInfo
 				cmdInfo.Methods = new DbSourceMethodInfo [1];
 				cmdInfo.Methods[0] = mthdInfo;
 			}
 			
-			foreach (XmlNode n in el.ChildNodes) {
+			foreach (XmlNode n in XmlHelper.GetChildNodes(el)) {
 				e = n as XmlElement;
 				
 				if (e == null) 
 					continue;
 				
-				switch (e.LocalName) {
+				switch (XmlHelper.GetLocalName (e)) {
 					case "SelectCommand": 
-						cmdInfo.Command = ProcessDbCommand (e.FirstChild as XmlElement);
+						cmdInfo.Command = ProcessDbCommand (XmlHelper.GetFirstElement (e));
 						currentAdapter.Commands.Add (cmdInfo);
 						break;
 					case "InsertCommand": 
-						currentAdapter.Adapter.InsertCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+						currentAdapter.Adapter.InsertCommand = ProcessDbCommand (XmlHelper.GetFirstElement (e));
 						break;
 					case "UpdateCommand": 
-						currentAdapter.Adapter.UpdateCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+						currentAdapter.Adapter.UpdateCommand = ProcessDbCommand (XmlHelper.GetFirstElement (e));
 						break;
 					case "DeleteCommand": 
-						currentAdapter.Adapter.DeleteCommand = ProcessDbCommand (e.FirstChild as XmlElement);
+						currentAdapter.Adapter.DeleteCommand = ProcessDbCommand (XmlHelper.GetFirstElement (e));
 						break;
 				}
 			}
@@ -1481,12 +1483,16 @@ namespace System.Data
 			if (el == null)
 				return null;
 			
-			cmdType = el.GetAttribute ("CommandType");
-			foreach (XmlNode n in el.ChildNodes) {
+			cmdType = XmlHelper.GetAttribute (el, "CommandType");
+			foreach (XmlNode n in XmlHelper.GetChildNodes(el)) {
 				e = n as XmlElement;
-				if (e != null && e.LocalName == "CommandText")
+				if (e != null && XmlHelper.GetLocalName (e) == "CommandText")
+#if !WINDOWS_PHONE && !NETFX_CORE
 					cmdText = e.InnerText;
-				else if (e != null && e.LocalName == "Parameters" && !e.IsEmpty)
+#else
+					cmdText = e.Value;
+#endif
+				else if (e != null && XmlHelper.GetLocalName (e) == "Parameters" && !e.IsEmpty)
 					parameters = ProcessDbParameters (e);
 			}
 			
@@ -1515,36 +1521,36 @@ namespace System.Data
 			if (el == null)
 				return parameters;
 			
-			foreach (XmlNode n in el.ChildNodes) {
+			foreach (XmlNode n in XmlHelper.GetChildNodes(el)) {
 				e = n as XmlElement;
 				
 				if (e == null)
 					continue;
 				param = currentAdapter.Provider.CreateParameter ();
 
-				tmp = e.GetAttribute ("AllowDbNull");
+				tmp = XmlHelper.GetAttribute (e, "AllowDbNull");
 				if (!String.IsNullOrEmpty (tmp))
 					param.IsNullable = Convert.ToBoolean (tmp);
 				
-				param.ParameterName = e.GetAttribute ("ParameterName");
-				tmp = e.GetAttribute ("ProviderType");
+				param.ParameterName = XmlHelper.GetAttribute (e, "ParameterName");
+				tmp = XmlHelper.GetAttribute (e, "ProviderType");
 				if (!String.IsNullOrEmpty (tmp))
-					tmp = e.GetAttribute ("DbType");
+					tmp = XmlHelper.GetAttribute (e, "DbType");
 				param.FrameworkDbType = tmp;
 				
-				tmp = e.GetAttribute ("Direction");
+				tmp = XmlHelper.GetAttribute (e, "Direction");
 				param.Direction = (ParameterDirection) Enum.Parse (typeof (ParameterDirection), tmp);
 				
-				((IDbDataParameter)param).Precision = Convert.ToByte (e.GetAttribute ("Precision"));
-				((IDbDataParameter)param).Scale = Convert.ToByte (e.GetAttribute ("Scale"));
-				param.Size = Convert.ToInt32 (e.GetAttribute ("Size"));
-				param.SourceColumn = e.GetAttribute ("SourceColumn");
+				((IDbDataParameter)param).Precision = Convert.ToByte (XmlHelper.GetAttribute (e, "Precision"));
+				((IDbDataParameter)param).Scale = Convert.ToByte (XmlHelper.GetAttribute (e, "Scale"));
+				param.Size = Convert.ToInt32 (XmlHelper.GetAttribute (e, "Size"));
+				param.SourceColumn = XmlHelper.GetAttribute (e, "SourceColumn");
 				
-				tmp = e.GetAttribute ("SourceColumnNullMapping");
+				tmp = XmlHelper.GetAttribute (e, "SourceColumnNullMapping");
 				if (!String.IsNullOrEmpty (tmp))
 					param.SourceColumnNullMapping = Convert.ToBoolean (tmp);
 				
-				tmp = e.GetAttribute ("SourceVersion");
+				tmp = XmlHelper.GetAttribute (e, "SourceVersion");
 				param.SourceVersion = (DataRowVersion) Enum.Parse (typeof (DataRowVersion), tmp);				
 				parameters.Add (param);
 			}
@@ -1557,19 +1563,19 @@ namespace System.Data
 			if (el == null)
 				return;
 			
-			tableMapping.ColumnMappings.Add (el.GetAttribute ("SourceColumn"), 
-			                                 el.GetAttribute ("DataSetColumn"));
+			tableMapping.ColumnMappings.Add (XmlHelper.GetAttribute (el, "SourceColumn"), 
+			                                 XmlHelper.GetAttribute (el, "DataSetColumn"));
 		}
 		
 #endif
 		
 		private void HandleRelationshipAnnotation (XmlElement el, bool nested)
 		{
-			string name = el.GetAttribute ("name");
-			string ptn = el.GetAttribute ("parent", XmlConstants.MsdataNamespace);
-			string ctn = el.GetAttribute ("child", XmlConstants.MsdataNamespace);
-			string pkn = el.GetAttribute ("parentkey", XmlConstants.MsdataNamespace);
-			string fkn = el.GetAttribute ("childkey", XmlConstants.MsdataNamespace);
+			string name = XmlHelper.GetAttribute (el, "name");
+			string ptn = XmlHelper.GetAttribute (el, "parent", XmlConstants.MsdataNamespace);
+			string ctn = XmlHelper.GetAttribute (el, "child", XmlConstants.MsdataNamespace);
+			string pkn = XmlHelper.GetAttribute (el, "parentkey", XmlConstants.MsdataNamespace);
+			string fkn = XmlHelper.GetAttribute (el, "childkey", XmlConstants.MsdataNamespace);
 
 			RelationStructure rel = new RelationStructure ();
 			rel.ExplicitName = XmlHelper.Decode (name);

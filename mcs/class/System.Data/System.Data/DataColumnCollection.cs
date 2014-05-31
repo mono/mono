@@ -54,12 +54,14 @@ namespace System.Data {
 		public ArrayList columnNames = new ArrayList ();
 	}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if !NET_2_0
 	[Serializable]
 #endif
 	[DefaultEvent ("CollectionChanged")]
+#endif
 	public
 #if NET_2_0
 	sealed
@@ -132,7 +134,12 @@ namespace System.Data {
 		/// <summary>
 		/// Gets a list of the DataColumnCollection items.
 		/// </summary>
-		protected override ArrayList List {
+#if !WINDOWS_PHONE && !NETFX_CORE
+		protected 
+#else
+		internal
+#endif 
+		override ArrayList List {
 			get { return base.List; }
 		}
 
@@ -542,7 +549,9 @@ namespace System.Data {
 #endif
 		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			parentTable.ResetPropertyDescriptorsCache ();
+#endif
 			if (CollectionChanged != null)
 				CollectionChanged (this, ccevent);
 		}
@@ -685,7 +694,9 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs when the columns collection changes, either by adding or removing a column.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
+#endif
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		internal event CollectionChangeEventHandler CollectionMetaDataChanged;
@@ -693,7 +704,9 @@ namespace System.Data {
 
 		private void OnCollectionMetaDataChanged (CollectionChangeEventArgs ccevent)
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			parentTable.ResetPropertyDescriptorsCache ();
+#endif
 			if (CollectionMetaDataChanged != null)
 				CollectionMetaDataChanged (this, ccevent);
 		}

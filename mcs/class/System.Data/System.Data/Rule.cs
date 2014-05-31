@@ -38,7 +38,9 @@ namespace System.Data
 	/// Indicates the action that occurs when a ForeignKeyConstraint is enforced.
 	/// </summary>
 #if !NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #endif
 	public enum Rule
 	{

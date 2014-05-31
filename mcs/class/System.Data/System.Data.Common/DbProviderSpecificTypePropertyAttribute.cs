@@ -33,7 +33,9 @@ using System;
 
 namespace System.Data.Common {
 	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[SerializableAttribute()]
+#endif
 	public sealed class DbProviderSpecificTypePropertyAttribute : Attribute
 	{
 		#region Fields
