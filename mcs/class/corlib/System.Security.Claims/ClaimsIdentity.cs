@@ -97,8 +97,10 @@ namespace System.Security.Claims {
 				foreach (var c in ci.Claims)
 					this.claims.Add (c);
 				
-				foreach (var c in claims)
-					this.claims.Add (c);
+				if (claims != null) {
+					foreach (var c in claims)
+						this.claims.Add (c);
+				}
 				Label = ci.Label;
 				NameClaimType = ci.NameClaimType;
 				RoleClaimType = ci.RoleClaimType;
