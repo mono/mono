@@ -6316,9 +6316,16 @@ namespace Mono.CSharp {
 			public override bool Resolve (BlockContext bc)
 			{
 				ctch.Filter = ctch.Filter.Resolve (bc);
-				var c = ctch.Filter as Constant;
-				if (c != null && !c.IsDefaultValue) {
-					bc.Report.Warning (7095, 1, ctch.Filter.Location, "Exception filter expression is a constant");
+
+				if (ctch.Filter != null) {
+					if (ctch.Filter.ContainsEmitWithAwait ()) {
+						bc.Report.Error (7094, ctch.Filter.Location, "The `await' operator cannot be used in the filter expression of a catch clause");
+					}
+
+					var c = ctch.Filter as Constant;
+					if (c != null && !c.IsDefaultValue) {
+						bc.Report.Warning (7095, 1, ctch.Filter.Location, "Exception filter expression is a constant");
+					}
 				}
 
 				return true;
@@ -6403,7 +6410,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Block.Emit (ec);
+			if (!Block.HasAwait)
+				Block.Emit (ec);
 		}
 
 		void EmitCatchVariableStore (EmitContext ec)
@@ -6424,19 +6432,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			using (ec.Set (ResolveContext.Options.CatchScope)) {
+			using (bc.Set (ResolveContext.Options.CatchScope)) {
 				if (type_expr != null) {
-					type = type_expr.ResolveAsType (ec);
+					type = type_expr.ResolveAsType (bc);
 					if (type == null)
 						return false;
 
-					if (type.BuiltinType != BuiltinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, ec.BuiltinTypes.Exception, false)) {
-						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
+					if (type.BuiltinType != BuiltinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, bc.BuiltinTypes.Exception, false)) {
+						bc.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 					} else if (li != null) {
 						li.Type = type;
-						li.PrepareAssignmentAnalysis (ec);
+						li.PrepareAssignmentAnalysis (bc);
 
 						// source variable is at the top of the stack
 						Expression source = new EmptyExpression (li.Type);
@@ -6456,7 +6464,7 @@ namespace Mono.CSharp {
 				}
 
 				Block.SetCatchBlock ();
-				return Block.Resolve (ec);
+				return Block.Resolve (bc);
 			}
 		}
 
@@ -6602,6 +6610,7 @@ namespace Mono.CSharp {
 		public Block Block;
 		List<Catch> clauses;
 		readonly bool inside_try_finally;
+		List<Catch> catch_sm;
 
 		public TryCatch (Block block, List<Catch> catch_clauses, Location l, bool inside_try_finally)
 			: base (l)
@@ -6645,6 +6654,13 @@ namespace Mono.CSharp {
 				var c = clauses[i];
 
 				ok &= c.Resolve (bc);
+
+				if (c.Block.HasAwait) {
+					if (catch_sm == null)
+						catch_sm = new List<Catch> ();
+
+					catch_sm.Add (c);
+				}
 
 				if (c.Filter != null)
 					continue;
@@ -6702,11 +6718,49 @@ namespace Mono.CSharp {
 
 			Block.Emit (ec);
 
-			foreach (Catch c in clauses)
+			LocalBuilder state_variable = null;
+			foreach (Catch c in clauses) {
 				c.Emit (ec);
+
+				if (catch_sm != null) {
+					if (state_variable == null)
+						state_variable = ec.GetTemporaryLocal (ec.Module.Compiler.BuiltinTypes.Int);
+
+					var index = catch_sm.IndexOf (c);
+					if (index < 0)
+						continue;
+
+					ec.EmitInt (index + 1);
+					ec.Emit (OpCodes.Stloc, state_variable);
+				}
+			}
 
 			if (!inside_try_finally)
 				ec.EndExceptionBlock ();
+
+			if (state_variable != null) {
+				ec.Emit (OpCodes.Ldloc, state_variable);
+
+				var labels = new Label [catch_sm.Count + 1];
+				for (int i = 0; i < labels.Length; ++i) {
+					labels [i] = ec.DefineLabel ();
+				}
+
+				var end = ec.DefineLabel ();
+				ec.Emit (OpCodes.Switch, labels);
+
+				// 0 value is default label
+				ec.MarkLabel (labels [0]);
+
+				for (int i = 0; i < catch_sm.Count; ++i) {
+					ec.Emit (OpCodes.Br, end);
+
+					ec.MarkLabel (labels [i + 1]);
+					catch_sm [i].Block.Emit (ec);
+				}
+
+				ec.MarkLabel (end);
+			}
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)

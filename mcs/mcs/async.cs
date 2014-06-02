@@ -244,7 +244,7 @@ namespace Mono.CSharp
 			var fe_awaiter = new FieldExpr (awaiter, loc);
 			fe_awaiter.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 
-				Label skip_continuation = ec.DefineLabel ();
+			Label skip_continuation = ec.DefineLabel ();
 
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
 				//
@@ -322,10 +322,6 @@ namespace Mono.CSharp
 				bc.Report.Error (1995, loc,
 					"The `await' operator may only be used in a query expression within the first collection expression of the initial `from' clause or within the collection expression of a `join' clause");
 				return false;
-			}
-
-			if (bc.HasSet (ResolveContext.Options.CatchScope)) {
-				bc.Report.Error (1985, loc, "The `await' operator cannot be used in a catch clause");
 			}
 
 			if (!base.Resolve (bc))
