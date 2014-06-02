@@ -285,6 +285,10 @@ namespace Microsoft.Build.Internal
 						continue;
 					}
 
+					var onError = child as ProjectOnErrorInstance;
+					if (onError != null)
+						continue; // evaluated under catch clause.
+
 					throw new NotSupportedException (string.Format ("Unexpected Target element children \"{0}\"", child.GetType ()));
 				}
 			} catch (Exception ex) {
