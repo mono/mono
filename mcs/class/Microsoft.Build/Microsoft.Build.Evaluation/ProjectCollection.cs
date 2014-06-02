@@ -494,6 +494,11 @@ namespace Microsoft.Build.Evaluation
 				});
 			yield return create ("MSBuildToolsPath", () => toolset.ToolsPath);
 			yield return create ("MSBuildToolsVersion", () => toolset.ToolsVersion);
+
+			// This is an implementation specific special property for this Microsoft.Build.dll to differentiate
+			// the build from Microsoft.Build.Engine.dll. It is significantly used in some *.targets file we share
+			// between old and new build engine.
+			yield return create ("MonoUseMicrosoftBuildDll", () => "True");
 		}
 		
 		// These are required for reserved property, represents dynamically changing property values.
