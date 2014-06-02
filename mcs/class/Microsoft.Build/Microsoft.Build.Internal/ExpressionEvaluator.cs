@@ -512,7 +512,7 @@ namespace Microsoft.Build.Internal.Expressions
 
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
-			return EvaluateAsString (context);
+			return EvaluateAsStringWithoutQuote (context);
 		}
 	}
 	
