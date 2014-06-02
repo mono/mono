@@ -66,7 +66,9 @@ namespace System.Security.Claims {
 		{
 			if (identity == null)
 				throw new ArgumentNullException ("identity");
-			// TODO
+
+			identities = new List<ClaimsIdentity> ();
+			identities.Add (new ClaimsIdentity (identity))
 		}
 
 		public ClaimsPrincipal (IPrincipal principal)
