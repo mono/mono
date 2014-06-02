@@ -8,8 +8,9 @@ GCC_PREFIX=arm-linux-androideabi-
 GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
 PREFIX=`pwd`/builds/android
+BUILDSCRIPTSDIR=external/buildscripts
 
-perl PrepareAndroidSDK.pl -ndk=r8e -env=envsetup.sh && source envsetup.sh
+perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r8e -env=envsetup.sh && source envsetup.sh
 
 NDK_ROOT=`cd $ANDROID_NDK_ROOT && pwd`
 

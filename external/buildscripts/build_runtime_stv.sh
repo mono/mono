@@ -1,8 +1,9 @@
 #!/bin/bash
 
 PREFIX=`pwd`/builds/stv
+BUILDSCRIPTSDIR=external/buildscripts
 
-perl SDKDownloader.pm --repo_name=stv-sdk --artifacts_folder=artifacts && source artifacts/SDKDownloader/stv-sdk/env.sh
+perl ${BUILDSCRIPTSDIR}/SDKDownloader.pm --repo_name=stv-sdk --artifacts_folder=artifacts && source artifacts/SDKDownloader/stv-sdk/env.sh
 
 rm -rf builds
 
