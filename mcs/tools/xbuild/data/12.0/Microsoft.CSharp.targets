@@ -44,9 +44,11 @@
 				<Private>false</Private>
 			</_ExplicitReference>
 		</ItemGroup>
-		<_ExplicitReference Include="$(_ExplicitMSCorlibPath)" Condition="Exists('$(_ExplicitMSCorlibPath)')">
-			<Private>false</Private>
-		</_ExplicitReference>
+		<ItemGroup Condition="'$(MonoUseMicrosoftBuildDll)' == 'True'">
+			<_ExplicitReference Include="$(_ExplicitMSCorlibPath)" Condition="Exists('$(_ExplicitMSCorlibPath)')">
+				<Private>false</Private>
+			</_ExplicitReference>
+		</ItemGroup>
 	</Target>
 
 	<Target
