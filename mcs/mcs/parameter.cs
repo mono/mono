@@ -379,6 +379,15 @@ namespace Mono.CSharp {
 			return member.IsAccessibleAs (parameter_type);
 		}
 
+		bool IsValidCallerContext (MemberCore memberContext)
+		{
+			var m = memberContext as Method;
+			if (m != null)
+				return !m.IsPartialImplementation;
+
+			return true;
+		}
+
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
@@ -428,6 +437,7 @@ namespace Mono.CSharp {
 		{
 			var pa = rc.Module.PredefinedAttributes;
 			TypeSpec caller_type;
+			Attribute callerMemberName = null, callerFilePath = null;
 
 			foreach (var attr in attributes.Attrs) {
 				var atype = attr.ResolveTypeForComparison ();
@@ -442,7 +452,14 @@ namespace Mono.CSharp {
 							caller_type.GetSignatureForError (), parameter_type.GetSignatureForError ());
 					}
 
+					if (!IsValidCallerContext (rc.CurrentMemberDefinition)) {
+						rc.Report.Warning (4026, 1, attr.Location,
+							"The CallerMemberName applied to parameter `{0}' will have no effect because it applies to a member that is used in context that do not allow optional arguments",
+							name);
+					}
+
 					modFlags |= Modifier.CallerMemberName;
+					callerMemberName = attr;
 					continue;
 				}
 
@@ -450,8 +467,18 @@ namespace Mono.CSharp {
 					caller_type = rc.BuiltinTypes.Int;
 					if (caller_type != parameter_type && !Convert.ImplicitNumericConversionExists (caller_type, parameter_type)) {
 						rc.Report.Error (4017, attr.Location,
-							"The CallerMemberName attribute cannot be applied because there is no standard conversion from `{0}' to `{1}'",
+							"The CallerLineNumberAttribute attribute cannot be applied because there is no standard conversion from `{0}' to `{1}'",
 							caller_type.GetSignatureForError (), parameter_type.GetSignatureForError ());
+					}
+
+					if (!IsValidCallerContext (rc.CurrentMemberDefinition)) {
+						rc.Report.Warning (4024, 1, attr.Location,
+							"The CallerLineNumberAttribute applied to parameter `{0}' will have no effect because it applies to a member that is used in context that do not allow optional arguments",
+							name);
+					}
+
+					if ((modFlags & Modifier.CallerLineNumber) != 0) {
+						//The CallerFilePathAttribute applied to parameter 'o' will have no effect. It is overridden by the CallerLineNumberAttribute.
 					}
 
 					modFlags |= Modifier.CallerLineNumber;
@@ -466,9 +493,39 @@ namespace Mono.CSharp {
 							caller_type.GetSignatureForError (), parameter_type.GetSignatureForError ());
 					}
 
+					if (!IsValidCallerContext (rc.CurrentMemberDefinition)) {
+						rc.Report.Warning (4025, 1, attr.Location,
+							"The CallerFilePath applied to parameter `{0}' will have no effect because it applies to a member that is used in context that do not allow optional arguments",
+							name);
+					}
+
 					modFlags |= Modifier.CallerFilePath;
+					callerFilePath = attr;
 					continue;
 				}
+			}
+
+			if ((modFlags & Modifier.CallerLineNumber) != 0) {
+				if (callerMemberName != null) {
+					rc.Report.Warning (7081, 1, callerMemberName.Location,
+						"The CallerMemberNameAttribute applied to parameter `{0}' will have no effect. It is overridden by the CallerLineNumberAttribute",
+						Name);
+				}
+
+				if (callerFilePath != null) {
+					rc.Report.Warning (7082, 1, callerFilePath.Location,
+						"The CallerFilePathAttribute applied to parameter `{0}' will have no effect. It is overridden by the CallerLineNumberAttribute",
+						name);
+				}
+			}
+
+			if ((modFlags & Modifier.CallerMemberName) != 0) {
+				if (callerFilePath != null) {
+					rc.Report.Warning (7080, 1, callerFilePath.Location,
+						"The CallerMemberNameAttribute applied to parameter `{0}' will have no effect. It is overridden by the CallerFilePathAttribute",
+						name);
+				}
+
 			}
 		}
 
