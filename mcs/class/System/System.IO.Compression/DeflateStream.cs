@@ -395,24 +395,15 @@ namespace System.IO.Compression
 
 		int UnmanagedRead (IntPtr buffer, int length)
 		{
-			int total = 0;
-			int n = 1;
-			while (length > 0 && n > 0) {
-				if (io_buffer == null)
-					io_buffer = new byte [BufferSize];
+			if (io_buffer == null)
+				io_buffer = new byte [BufferSize];
 
-				int count = Math.Min (length, io_buffer.Length);
-				n = base_stream.Read (io_buffer, 0, count);
-				if (n > 0) {
-					Marshal.Copy (io_buffer, 0, buffer, n);
-					unsafe {
-						buffer = new IntPtr ((byte *) buffer.ToPointer () + n);
-					}
-					length -= n;
-					total += n;
-				}
-			}
-			return total;
+			int count = Math.Min (length, io_buffer.Length);
+			int n = base_stream.Read (io_buffer, 0, count);
+			if (n > 0)
+				Marshal.Copy (io_buffer, 0, buffer, n);
+
+			return n;
 		}
 
 #if MONOTOUCH
