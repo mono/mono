@@ -190,9 +190,9 @@ namespace Microsoft.Build.Utilities
 		                                              string targetFrameworkProfile)
 		{
 			var path = Path.Combine (xbuildFxDir, targetFrameworkIdentifier);
-			if (targetFrameworkVersion != null) {
+			if (!string.IsNullOrEmpty (targetFrameworkVersion)) {
 				path = Path.Combine (path, targetFrameworkVersion);
-				if (targetFrameworkProfile != null)
+				if (!string.IsNullOrEmpty (targetFrameworkProfile))
 					path = Path.Combine (path, "Profile", targetFrameworkProfile);
 			}
 			if (!Directory.Exists (path))
@@ -200,7 +200,6 @@ namespace Microsoft.Build.Utilities
 			var flist = Path.Combine (path, "RedistList", "FrameworkList.xml");
 			if (!File.Exists (flist))
 				return null;
-			
 			var xml = XmlReader.Create (flist);
 			xml.MoveToContent ();
 			var targetFxDir = xml.GetAttribute ("TargetFrameworkDirectory");
