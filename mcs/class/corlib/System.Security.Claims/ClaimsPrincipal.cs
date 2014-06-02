@@ -68,7 +68,7 @@ namespace System.Security.Claims {
 				throw new ArgumentNullException ("identity");
 
 			identities = new List<ClaimsIdentity> ();
-			identities.Add (new ClaimsIdentity (identity))
+			identities.Add (new ClaimsIdentity (identity));
 		}
 
 		public ClaimsPrincipal (IPrincipal principal)
