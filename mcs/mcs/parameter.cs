@@ -477,10 +477,6 @@ namespace Mono.CSharp {
 							name);
 					}
 
-					if ((modFlags & Modifier.CallerLineNumber) != 0) {
-						//The CallerFilePathAttribute applied to parameter 'o' will have no effect. It is overridden by the CallerLineNumberAttribute.
-					}
-
 					modFlags |= Modifier.CallerLineNumber;
 					continue;
 				}
