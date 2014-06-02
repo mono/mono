@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET_4_0
+using System;
 using NUnit.Framework;
 using Microsoft.Build.Utilities;
 
@@ -17,3 +18,4 @@ namespace MonoTests.Microsoft.Build.Utilities
 	}
 }
 
+#endif
