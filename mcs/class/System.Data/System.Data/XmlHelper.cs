@@ -115,7 +115,7 @@ internal class XmlHelper {
 		{
 			return n.NextSibling;
 		}
-		internal static XmlElement GetFirstChild(XmlElement n)
+		internal static XmlElement GetFirstElement (XmlElement n)
 		{
 			return n.FirstChild as XmlElement;
 		}
@@ -178,7 +178,7 @@ internal class XmlHelper {
 		{
 			return n.NextNode;
 		}
-		internal static XElement GetFirstElement(XElement n)
+		internal static XElement GetFirstElement (XElement n)
 		{
 			return n.FirstNode as XElement;
 		}
