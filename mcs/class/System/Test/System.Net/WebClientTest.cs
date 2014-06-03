@@ -2221,6 +2221,7 @@ namespace MonoTests.System.Net
 			});
 		}
 
+#if NET_4_0
 		public void UploadAsyncCancelEventTest (Action<WebClient, Uri, EventWaitHandle> uploadAction)
 		{
 			var ep = new IPEndPoint (IPAddress.Loopback, 8000);
@@ -2244,5 +2245,6 @@ namespace MonoTests.System.Net
 				Assert.IsTrue (cancelEvent.WaitOne (1000));
 			}
 		}
+#endif
 	}
 }
