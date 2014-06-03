@@ -1198,7 +1198,10 @@ namespace Mono.CSharp {
 						var async_type = storey.ReturnType;
 
 						if (async_type == null && async_block.ReturnTypeInference != null) {
-							async_block.ReturnTypeInference.AddCommonTypeBoundAsync (expr.Type);
+							if (expr.Type.Kind == MemberKind.Void && !(this is ContextualReturn))
+								ec.Report.Error (4029, loc, "Cannot return an expression of type `void'");
+							else
+								async_block.ReturnTypeInference.AddCommonTypeBoundAsync (expr.Type);
 							return true;
 						}
 
@@ -1214,18 +1217,14 @@ namespace Mono.CSharp {
 							if (this is ContextualReturn)
 								return true;
 
-							// Same error code as .NET but better error message
 							if (async_block.DelegateType != null) {
-								ec.Report.Error (1997, loc,
-									"`{0}': A return keyword must not be followed by an expression when async delegate returns `Task'. Consider using `Task<T>' return type",
-									async_block.DelegateType.GetSignatureForError ());
+								ec.Report.Error (8031, loc,
+									"Async lambda expression or anonymous method converted to a `Task' cannot return a value. Consider returning `Task<T>'");
 							} else {
 								ec.Report.Error (1997, loc,
 									"`{0}': A return keyword must not be followed by an expression when async method returns `Task'. Consider using `Task<T>' return type",
 									ec.GetSignatureForError ());
-
 							}
-
 							return false;
 						}
 
