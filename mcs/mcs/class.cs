@@ -3736,25 +3736,29 @@ namespace Mono.CSharp
 				Report.SymbolRelatedToPreviousError (MemberType);
 				if (this is Property)
 					Report.Error (53, Location,
-						      "Inconsistent accessibility: property type `" +
-						      MemberType.GetSignatureForError () + "' is less " +
-						      "accessible than property `" + GetSignatureForError () + "'");
+						"Inconsistent accessibility: property type `" +
+						MemberType.GetSignatureForError () + "' is less " +
+						"accessible than property `" + GetSignatureForError () + "'");
 				else if (this is Indexer)
 					Report.Error (54, Location,
-						      "Inconsistent accessibility: indexer return type `" +
-						      MemberType.GetSignatureForError () + "' is less " +
-						      "accessible than indexer `" + GetSignatureForError () + "'");
+						"Inconsistent accessibility: indexer return type `" +
+						MemberType.GetSignatureForError () + "' is less " +
+						"accessible than indexer `" + GetSignatureForError () + "'");
 				else if (this is MethodCore) {
 					if (this is Operator)
 						Report.Error (56, Location,
-							      "Inconsistent accessibility: return type `" +
-							      MemberType.GetSignatureForError () + "' is less " +
-							      "accessible than operator `" + GetSignatureForError () + "'");
+							"Inconsistent accessibility: return type `" +
+							MemberType.GetSignatureForError () + "' is less " +
+							"accessible than operator `" + GetSignatureForError () + "'");
 					else
 						Report.Error (50, Location,
-							      "Inconsistent accessibility: return type `" +
-							      MemberType.GetSignatureForError () + "' is less " +
-							      "accessible than method `" + GetSignatureForError () + "'");
+							"Inconsistent accessibility: return type `" +
+							MemberType.GetSignatureForError () + "' is less " +
+							"accessible than method `" + GetSignatureForError () + "'");
+				} else if (this is Event) {
+					Report.Error (7025, Location,
+						"Inconsistent accessibility: event type `{0}' is less accessible than event `{1}'",
+						MemberType.GetSignatureForError (), GetSignatureForError ());
 				} else {
 					Report.Error (52, Location,
 						      "Inconsistent accessibility: field type `" +

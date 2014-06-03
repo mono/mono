@@ -1,5 +1,5 @@
-// CS0647: Error during emitting `System.Security.Permissions.PrincipalPermissionAttribute' attribute. The reason is `SecurityAction is out of range'
-// Line : 10
+// CS7049: Security attribute `System.Security.Permissions.PrincipalPermissionAttribute' has an invalid SecurityAction value `100'
+// Line: 10
 
 using System;
 using System.Security;

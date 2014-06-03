@@ -1,14 +1,15 @@
-// CS0647: Error during emitting `DebugPermissionAttribute' attribute. The reason is `it is attached to invalid parent'
-// Line : 10
+// CS7070: Security attribute `DebugPermissionAttribute' is not valid on this declaration type. Security attributes are only valid on assembly, type and method declarations
+// Line: 11
 
 using System;
 using System.Security;
 using System.Security.Permissions;
 
 public class Program {
-
+        public delegate int DisplayHandler (string msg);
+     
 	[DebugPermission (SecurityAction.RequestMinimum)]
-        public int i;
+        public event DisplayHandler OnShow;
 }
 
 [AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = false)]

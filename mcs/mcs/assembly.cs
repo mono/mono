@@ -207,7 +207,7 @@ namespace Mono.CSharp
 					return;
 
 				if (Compiler.Settings.Target == Target.Exe) {
-					a.Error_AttributeEmitError ("The executables cannot be satelite assemblies, remove the attribute or keep it empty");
+					Report.Error (7059, a.Location, "Executables cannot be satellite assemblies. Remove the attribute or keep it empty");
 					return;
 				}
 
@@ -231,7 +231,8 @@ namespace Mono.CSharp
 
 				var vinfo = IsValidAssemblyVersion (value, true);
 				if (vinfo == null) {
-					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
+					Report.Error (7034, a.Location, "The specified version string `{0}' does not conform to the required format - major[.minor[.build[.revision]]]",
+						value);
 					return;
 				}
 
@@ -322,13 +323,18 @@ namespace Mono.CSharp
 
 			if (a.Type == pa.InternalsVisibleTo) {
 				string assembly_name = a.GetString ();
+				if (assembly_name == null) {
+					Report.Error (7030, a.Location, "Friend assembly reference cannot have `null' value");
+					return;
+				}
+
 				if (assembly_name.Length == 0)
 					return;
 #if STATIC
 				ParsedAssemblyName aname;
 				ParseAssemblyResult r = Fusion.ParseAssemblyName (assembly_name, out aname);
 				if (r != ParseAssemblyResult.OK) {
-					Report.Warning (1700, 3, a.Location, "Assembly reference `{0}' is invalid and cannot be resolved",
+					Report.Warning (1700, 3, a.Location, "Friend assembly reference `{0}' is invalid and cannot be resolved",
 						assembly_name);
 					return;
 				}
@@ -353,7 +359,7 @@ namespace Mono.CSharp
 			} else if (a.Type == pa.AssemblyFileVersion) {
 				vi_product_version = a.GetString ();
 				if (string.IsNullOrEmpty (vi_product_version) || IsValidAssemblyVersion (vi_product_version, false) == null) {
-					Report.Warning (1607, 1, a.Location, "The version number `{0}' specified for `{1}' is invalid",
+					Report.Warning (7035, 1, a.Location, "The specified version string `{0}' does not conform to the recommended format major.minor.build.revision",
 						vi_product_version, a.Name);
 					return;
 				}
@@ -399,8 +405,8 @@ namespace Mono.CSharp
 				}
 
 				var ci = a.Assembly.GetName ().CultureInfo;
-				if (!ci.Equals (System.Globalization.CultureInfo.InvariantCulture)) {
-					Report.Warning (1607, 1, "Referenced assembly `{0}' has different culture setting of `{1}'",
+				if (!ci.Equals (CultureInfo.InvariantCulture)) {
+					Report.Warning (8009, 1, "Referenced assembly `{0}' has different culture setting of `{1}'",
 						a.Name, ci.Name);
 				}
 

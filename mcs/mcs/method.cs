@@ -563,6 +563,12 @@ namespace Mono.CSharp {
 				if ((ModFlags & extern_static) != extern_static) {
 					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
 				}
+
+				if (MemberName.IsGeneric || Parent.IsGenericOrParentIsGeneric) {
+					Report.Error (7042, a.Location, 
+						"The DllImport attribute cannot be applied to a method that is generic or contained in a generic type");
+				}
+
 				is_external_implementation = true;
 			}
 

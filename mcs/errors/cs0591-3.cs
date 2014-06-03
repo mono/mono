@@ -1,4 +1,4 @@
-// CS0647: Error during emitting `System.Runtime.InteropServices.DllImportAttribute' attribute. The reason is `DllName cannot be empty or null'
+// CS0591: Invalid value for argument to `System.Runtime.InteropServices.DllImportAttribute' attribute
 // Line: 8
 
 using System.Runtime.InteropServices;

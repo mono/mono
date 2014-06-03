@@ -1,5 +1,5 @@
-// CS0647: Error during emitting `DebugPermissionAttribute' attribute. The reason is `it is attached to invalid parent'
-// Line : 11
+// CS7070: Security attribute `DebugPermissionAttribute' is not valid on this declaration type. Security attributes are only valid on assembly, type and method declarations
+// Line: 11
 
 using System;
 using System.Security;

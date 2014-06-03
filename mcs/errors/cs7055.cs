@@ -1,4 +1,4 @@
-// CS0647: Error during emitting `System.Runtime.InteropServices.MarshalAsAttribute' attribute. The reason is `Specified unmanaged type is only valid on fields'
+// CS7055: Unmanaged type `ByValArray' is only valid for fields
 // Line: 10
 
 using System;

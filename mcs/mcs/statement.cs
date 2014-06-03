@@ -1240,12 +1240,9 @@ namespace Mono.CSharp {
 						}
 					}
 				} else {
-					// Same error code as .NET but better error message
 					if (block_return_type.Kind == MemberKind.Void) {
-						ec.Report.Error (127, loc,
-							"`{0}': A return keyword must not be followed by any expression when delegate returns void",
-							am.GetSignatureForError ());
-
+						ec.Report.Error (8030, loc,
+							"Anonymous function or lambda expression converted to a void returning delegate cannot return a value");
 						return false;
 					}
 

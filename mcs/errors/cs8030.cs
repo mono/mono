@@ -1,4 +1,4 @@
-// CS0127: `System.Action': A return keyword must not be followed by any expression when delegate returns void
+// CS8030: Anonymous function or lambda expression converted to a void returning delegate cannot return a value
 // Line: 10
 
 using System;

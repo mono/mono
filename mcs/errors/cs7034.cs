@@ -1,4 +1,4 @@
-// Cs0647: Error during emitting `System.Reflection.AssemblyVersionAttribute' attribute. The reason is `Specified version `0.0.0.80420' is not valid'
+// CS7034: The specified version string `0.0.0.80420' does not conform to the required format - major[.minor[.build[.revision]]]
 // Line: 7
 
 using System;
