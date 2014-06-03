@@ -42,15 +42,16 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.IO;
 #if !WINDOWS_PHONE && !NETFX_CORE
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+#else
+using System.Linq;
+using System.Xml.Linq;
 #endif
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Data.Common;
@@ -1523,7 +1524,10 @@ namespace System.Data
 					throw new InvalidOperationException ();
 				((IXmlSerializable)rowObject).WriteXml (writer);				
 			} else {
-				writer.WriteString (WriteObjectXml (rowObject));
+				string objectXml = WriteObjectXml (rowObject);
+				if (!string.IsNullOrEmpty (objectXml)) {
+					writer.WriteString (objectXml);
+				}
 			}
 
 			writer.WriteEndElement ();

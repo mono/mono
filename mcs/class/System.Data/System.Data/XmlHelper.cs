@@ -29,9 +29,11 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Xml.Linq;
 using System.Collections;
+#if WINDOWS_PHONE || NETFX_CORE
+using System.Xml.Linq;
 using System.Linq;
+#endif
 
 internal class XmlHelper {
 

@@ -414,7 +414,7 @@ namespace System.Data
 				if  ((node.HasChildNodes) && (node.FirstChild.NodeType == XmlNodeType.Element)) {
 					for (int i=0; i<node.ChildNodes.Count; i++) {
 						if (node.ChildNodes[i].NodeType == XmlNodeType.Element) {
-							int childDepth = XmlNodeElementsDepth(node.ChildNodes[i]);
+							int childDepth = XmlNodeElementsDepth(node.ChildNodes[i] as XmlElement);
 							maxDepth = (maxDepth < childDepth) ? childDepth : maxDepth;
 						}
 					}
