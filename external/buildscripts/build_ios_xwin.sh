@@ -51,7 +51,7 @@ if [[ $f_dobuild -eq 1 ]] ; then
 	popd
 
 	echo "arm_*macros generated successfully"
-	root=`dirname "$0"`
+	root="`dirname \"$0\"`/../.."
 	if [[ $UNITY_THISISABUILDMACHINE == 1 ]] ; then
 		echo "On a buildserver, deleting $root/builds in order to have clean build\n"
 		rm -rf "$root/builds"
