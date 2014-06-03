@@ -1405,10 +1405,12 @@ namespace System.Net
 						string data2 = UploadString ((Uri) args [0], (string) args [1], (string) args [2]);
 						OnUploadStringCompleted (
 							new UploadStringCompletedEventArgs (data2, null, false, args [3]));
-					} catch (ThreadInterruptedException){
-						OnUploadStringCompleted (
-							new UploadStringCompletedEventArgs (null, null, true, args [3]));
 					} catch (Exception e){
+						if (e is ThreadInterruptedException || e.InnerException is ThreadInterruptedException) {
+							OnUploadStringCompleted (
+								new UploadStringCompletedEventArgs (null, null, true, args [3]));
+							return;
+						}
 						OnUploadStringCompleted (
 							new UploadStringCompletedEventArgs (null, e, false, args [3]));
 					}});
