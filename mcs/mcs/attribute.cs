@@ -415,7 +415,7 @@ namespace Mono.CSharp {
 			return ((MethodImplOptions) value | all) == all;
 		}
 
-		static bool IsValidArgumentType (TypeSpec t)
+		public static bool IsValidArgumentType (TypeSpec t)
 		{
 			if (t.IsArray) {
 				var ac = (ArrayContainer) t;
@@ -1076,7 +1076,7 @@ namespace Mono.CSharp {
 							}
 						}
 
-						arg_expr.EncodeAttributeValue (context, encoder, pt);
+						arg_expr.EncodeAttributeValue (context, encoder, pt, pt);
 					}
 				}
 
@@ -1090,7 +1090,7 @@ namespace Mono.CSharp {
 
 						encoder.Encode (na.Key.Type);
 						encoder.Encode (na.Value.Name);
-						na.Value.Expr.EncodeAttributeValue (context, encoder, na.Key.Type);
+						na.Value.Expr.EncodeAttributeValue (context, encoder, na.Key.Type, na.Key.Type);
 					}
 				} else {
 					encoder.EncodeEmptyNamedArguments ();
@@ -1540,7 +1540,7 @@ namespace Mono.CSharp {
 			Encode ((byte) 0x54); // property
 			Encode (property.MemberType);
 			Encode (property.Name);
-			value.EncodeAttributeValue (null, this, property.MemberType);
+			value.EncodeAttributeValue (null, this, property.MemberType, property.MemberType);
 		}
 
 		//
@@ -1552,7 +1552,7 @@ namespace Mono.CSharp {
 			Encode ((byte) 0x53); // field
 			Encode (field.MemberType);
 			Encode (field.Name);
-			value.EncodeAttributeValue (null, this, field.MemberType);
+			value.EncodeAttributeValue (null, this, field.MemberType, field.MemberType);
 		}
 
 		public void EncodeNamedArguments<T> (T[] members, Constant[] values) where T : MemberSpec, IInterfaceMemberSpec
@@ -1572,7 +1572,7 @@ namespace Mono.CSharp {
 
 				Encode (member.MemberType);
 				Encode (member.Name);
-				values [i].EncodeAttributeValue (null, this, member.MemberType);
+				values [i].EncodeAttributeValue (null, this, member.MemberType, member.MemberType);
 			}
 		}
 

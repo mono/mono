@@ -1,4 +1,4 @@
-// CS0182: An attribute argument must be a constant expression, typeof expression or array creation expression
+// CS0181: Attribute constructor parameter has type `System.Attribute', which is not a valid attribute parameter type
 // Line: 6
 
 using System;

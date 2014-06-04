@@ -7623,18 +7623,18 @@ namespace Mono.CSharp
 			return await_stack_field;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
 		{
 			// no multi dimensional or jagged arrays
 			if (arguments.Count != 1 || array_element_type.IsArray) {
-				base.EncodeAttributeValue (rc, enc, targetType);
+				base.EncodeAttributeValue (rc, enc, targetType, parameterType);
 				return;
 			}
 
 			// No array covariance, except for array -> object
 			if (type != targetType) {
 				if (targetType.BuiltinType != BuiltinTypeSpec.Type.Object) {
-					base.EncodeAttributeValue (rc, enc, targetType);
+					base.EncodeAttributeValue (rc, enc, targetType, parameterType);
 					return;
 				}
 
@@ -7648,7 +7648,7 @@ namespace Mono.CSharp
 			if (array_data == null) {
 				IntConstant ic = arguments[0] as IntConstant;
 				if (ic == null || !ic.IsDefaultValue) {
-					base.EncodeAttributeValue (rc, enc, targetType);
+					base.EncodeAttributeValue (rc, enc, targetType, parameterType);
 				} else {
 					enc.Encode (0);
 				}
@@ -7658,7 +7658,7 @@ namespace Mono.CSharp
 
 			enc.Encode (array_data.Count);
 			foreach (var element in array_data) {
-				element.EncodeAttributeValue (rc, enc, array_element_type);
+				element.EncodeAttributeValue (rc, enc, array_element_type, parameterType);
 			}
 		}
 		
@@ -8382,7 +8382,7 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
 		{
 			// Target type is not System.Type therefore must be object
 			// and we need to use different encoding sequence

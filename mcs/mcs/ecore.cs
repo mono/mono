@@ -415,8 +415,8 @@ namespace Mono.CSharp {
 
 			// In a member access of the form E.I, if E is a single identifier, and if the meaning of E as a simple-name is
 			// a constant, field, property, local variable, or parameter with the same type as the meaning of E as a type-name
-
-			if (left is MemberExpr || left is VariableReference) {
+			// LAMESPEC: By constant 
+			if (IsSimpleNameExpression (left)) {
 				var identical_type = rc.LookupNamespaceOrType (name.Name, 0, LookupMode.Probing, loc) as TypeExpr;
 				if (identical_type != null && identical_type.Type == left.Type)
 					return identical_type;
@@ -424,6 +424,16 @@ namespace Mono.CSharp {
 
 			return left;
 		}
+
+		static bool IsSimpleNameExpression (Expression left)
+		{
+			if (left is MemberExpr || left is VariableReference)
+				return true;
+
+			var c = left as Constant;
+			return c != null && !c.IsLiteral;
+		}
+
 
 		public virtual string GetSignatureForError ()
 		{
@@ -540,10 +550,16 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
 		{
-			rc.Module.Compiler.Report.Error (182, loc,
-				"An attribute argument must be a constant expression, typeof expression or array creation expression");
+			if (Attribute.IsValidArgumentType (parameterType)) {
+				rc.Module.Compiler.Report.Error (182, loc,
+					"An attribute argument must be a constant expression, typeof expression or array creation expression");
+			} else {
+				rc.Module.Compiler.Report.Error (181, loc,
+					"Attribute constructor parameter has type `{0}', which is not a valid attribute parameter type",
+					targetType.GetSignatureForError ());
+			}
 		}
 
 		/// <summary>
@@ -1582,9 +1598,9 @@ namespace Mono.CSharp {
 			Child.Emit (ec);
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
 		{
-			Child.EncodeAttributeValue (rc, enc, Child.Type);
+			Child.EncodeAttributeValue (rc, enc, Child.Type, parameterType);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
@@ -1702,16 +1718,16 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
 		{
 			// Only boxing to object type is supported
 			if (targetType.BuiltinType != BuiltinTypeSpec.Type.Object) {
-				base.EncodeAttributeValue (rc, enc, targetType);
+				base.EncodeAttributeValue (rc, enc, targetType, parameterType);
 				return;
 			}
 
 			enc.Encode (child.Type);
-			child.EncodeAttributeValue (rc, enc, child.Type);
+			child.EncodeAttributeValue (rc, enc, child.Type, parameterType);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2113,15 +2129,15 @@ namespace Mono.CSharp {
 				return c;
 			}
 
-			public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
+			public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
 			{
 				//
 				// LAMESPEC: Reduced conditional expression is allowed as an attribute argument
 				//
 				if (orig_expr is Conditional)
-					child.EncodeAttributeValue (rc, enc, targetType);
+					child.EncodeAttributeValue (rc, enc, targetType,parameterType);
 				else
-					base.EncodeAttributeValue (rc, enc, targetType);
+					base.EncodeAttributeValue (rc, enc, targetType, parameterType);
 			}
 		}
 
