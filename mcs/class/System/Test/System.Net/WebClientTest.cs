@@ -2156,7 +2156,8 @@ namespace MonoTests.System.Net
 			// and return the same instance as WebRequest.DefaultWebProxy
 			Assert.AreSame (wc.Proxy, WebRequest.DefaultWebProxy);
 		}
-		
+		 
+#if NET_4_5
 		[Test]
 		public void UploadStringAsyncCancelEvent ()
 		{
@@ -2220,6 +2221,7 @@ namespace MonoTests.System.Net
 				webClient.UploadFileAsync (uri, "PUT", tempFile);
 			});
 		}
+#endif
 
 #if NET_4_0
 		public void UploadAsyncCancelEventTest (Action<WebClient, Uri, EventWaitHandle> uploadAction)
