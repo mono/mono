@@ -32,13 +32,17 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Runtime.ConstrainedExecution;
+#endif
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace System.Collections {
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
@@ -49,17 +53,23 @@ namespace System.Collections {
 	internal class Hashtable : IDictionary, ICollection, IEnumerable {
 #endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		internal struct Slot {
 			internal Object key;
 
 			internal Object value;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		internal class KeyMarker
 #if !NET_2_1
+#if !WINDOWS_PHONE && !NETFX_CORE
 			: IObjectReference
+#endif
 #endif
 		{
 			public readonly static KeyMarker Removed = new KeyMarker();
@@ -86,7 +96,9 @@ namespace System.Collections {
 		private HashValues hashValues;
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
+#if !WINDOWS_PHONE && !NETFX_CORE
 		private SerializationInfo serializationInfo;
+#endif
 		private IEqualityComparer equalityComparer;
 
 		private int inUse;
@@ -198,10 +210,12 @@ namespace System.Collections {
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected Hashtable (SerializationInfo info, StreamingContext context)
 		{
 			serializationInfo = info;
 		}
+#endif
 
 		public Hashtable (IDictionary d, IEqualityComparer equalityComparer) : this (d, 1.0f, equalityComparer)
 		{
@@ -400,7 +414,9 @@ namespace System.Collections {
 			PutImpl (key, value, false);
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		public virtual void Clear ()
 		{
 			for (int i = 0;i<table.Length;i++) {
@@ -423,7 +439,9 @@ namespace System.Collections {
 			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
 		public virtual void Remove (Object key)
 		{
 			int i = Find (key);
@@ -478,6 +496,7 @@ namespace System.Collections {
 			return new Hashtable (this);
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -542,6 +561,7 @@ namespace System.Collections {
 			
 			serializationInfo = null;
 		}
+#endif
 
 		/// <summary>
 		///  Returns a synchronized (thread-safe)
@@ -776,7 +796,9 @@ namespace System.Collections {
 
 		private enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
 			private Hashtable host;
@@ -877,7 +899,9 @@ namespace System.Collections {
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 #if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
@@ -933,7 +957,9 @@ namespace System.Collections {
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 #if INSIDE_CORLIB
 		[DebuggerDisplay ("Count={Count}")]
 		[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
@@ -992,7 +1018,9 @@ namespace System.Collections {
 		}
 
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private class SyncHashtable : Hashtable, IEnumerable {
 
 			private Hashtable host;
@@ -1004,6 +1032,7 @@ namespace System.Collections {
 				this.host = host;
 			}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			internal SyncHashtable (SerializationInfo info, StreamingContext context)
 			{
 				host = (Hashtable) info.GetValue("ParentTable", typeof(Hashtable));
@@ -1013,6 +1042,7 @@ namespace System.Collections {
 			{
 				info.AddValue ("ParentTable", host);
 			}
+#endif
 			
 			// ICollection
 

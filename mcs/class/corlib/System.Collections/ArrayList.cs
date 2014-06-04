@@ -30,7 +30,9 @@ using System.Diagnostics;
 
 namespace System.Collections 
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #if INSIDE_CORLIB
 	[ComVisible(true)]
 	[DebuggerDisplay ("Count={Count}")]
@@ -174,7 +176,9 @@ namespace System.Collections
 		/// <summary>
 		/// Adapts various ILists into an ArrayList.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class ArrayListAdapter
 			: ArrayList 
 		{
@@ -817,7 +821,9 @@ namespace System.Collections
 		/// Base wrapper/decorator for ArrayLists.  Simply delegates all methods to
 		/// the underlying wrappee.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private class ArrayListWrapper
 			: ArrayList 
 		{		
@@ -1092,7 +1098,9 @@ namespace System.Collections
 		/// Works by just synchronizing all method calls.  In the future careful optimisation
 		/// could give better performance...
 		/// </remarks>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class SynchronizedArrayListWrapper
 			: ArrayListWrapper 
 		{
@@ -1484,7 +1492,9 @@ namespace System.Collections
 
 		#region FixedSizeArrayListWrapper
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private class FixedSizeArrayListWrapper
 			: ArrayListWrapper 
 		{
@@ -1588,7 +1598,9 @@ namespace System.Collections
 
 		#region ReadOnlyArrayListWrapper
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class ReadOnlyArrayListWrapper
 			: FixedSizeArrayListWrapper 
 		{
@@ -1661,7 +1673,9 @@ namespace System.Collections
 
 		#region RangedArrayList
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class RangedArrayList
 			: ArrayListWrapper 
 		{
@@ -2094,7 +2108,9 @@ namespace System.Collections
 
 		#region SynchronizedListWrapper
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class SynchronizedListWrapper
 			: ListWrapper 
 		{
@@ -2254,7 +2270,9 @@ namespace System.Collections
 
 		#region FixedSizeListWrapper
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 			private class FixedSizeListWrapper
 			: ListWrapper 
 		{
@@ -2309,7 +2327,9 @@ namespace System.Collections
 
 		#region ReadOnlyListWrapper
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private sealed class ReadOnlyListWrapper
 			: FixedSizeListWrapper 
 		{
@@ -2355,7 +2375,9 @@ namespace System.Collections
 		/// <summary>
 		/// Decorates/Wraps any <c>IList</c> implementing object.
 		/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private class ListWrapper
 			: IList 
 		{
@@ -2520,7 +2542,11 @@ namespace System.Collections
 		/// </summary>
 		public ArrayList()
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 			_items = EmptyArray<object>.Value;
+#else
+			_items = new object[0];
+#endif
 		}		
 
 		/// <summary>
