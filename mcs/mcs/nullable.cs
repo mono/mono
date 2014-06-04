@@ -1158,23 +1158,22 @@ namespace Mono.CSharp.Nullable
 					//
 					Constant lc = left as Constant;
 					if (lc != null && !lc.IsDefaultValue)
-						return ReducedExpression.Create (lc, this);
+						return ReducedExpression.Create (lc, this, false);
 
 					//
 					// Reduce (left ?? null) to left OR (null-constant ?? right) to right
 					//
-					if (right.IsNull || lc != null)
-						return ReducedExpression.Create (lc != null ? right : left, this);
+					if (right.IsNull || lc != null) {
+						//
+						// Special case null ?? null
+						//
+						if (right.IsNull && ltype == right.Type)
+							return null;
+
+						return ReducedExpression.Create (lc != null ? right : left, this, false);
+					}
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
-					type = ltype;
-					return this;
-				}
-
-				//
-				// Special case null ?? null
-				//
-				if (ltype == right.Type) {
 					type = ltype;
 					return this;
 				}
@@ -1190,7 +1189,7 @@ namespace Mono.CSharp.Nullable
 			// Reduce (null ?? right) to right
 			//
 			if (left.IsNull)
-				return ReducedExpression.Create (right, this).Resolve (ec);
+				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
 			type = rtype;
