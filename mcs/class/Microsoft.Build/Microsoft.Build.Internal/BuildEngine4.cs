@@ -135,8 +135,10 @@ namespace Microsoft.Build.Internal
 				if (request.TargetNames == null)
 					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 				else {
-					foreach (var targetName in (args.TargetNames ?? request.TargetNames).Where (t => t != null))
-						BuildTargetByName (targetName, args);
+					foreach (var targetName in (args.TargetNames ?? request.TargetNames).Where (t => t != null)) {
+						if (!BuildTargetByName (targetName, args))
+							break;
+					}
 			
 					// FIXME: check .NET behavior, whether cancellation always results in failure.
 					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
@@ -466,7 +468,7 @@ namespace Microsoft.Build.Internal
 			}
 			public void SetMetadataValueLiteral (string metadataName, string metadataValue)
 			{
-				metadata [metadataName] = ProjectCollection.Unescape (metadataValue);
+				metadata [metadataName] = WindowsCompatibilityExtensions.NormalizeFilePath (ProjectCollection.Unescape (metadataValue));
 			}
 			public IDictionary CloneCustomMetadataEscaped ()
 			{
@@ -504,7 +506,7 @@ namespace Microsoft.Build.Internal
 			}
 			public void SetMetadata (string metadataName, string metadataValue)
 			{
-				metadata [metadataName] = metadataValue;
+				metadata [metadataName] = WindowsCompatibilityExtensions.NormalizeFilePath (metadataValue);
 			}
 			public string ItemSpec { get; set; }
 			public int MetadataCount {
