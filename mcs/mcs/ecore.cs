@@ -415,8 +415,8 @@ namespace Mono.CSharp {
 
 			// In a member access of the form E.I, if E is a single identifier, and if the meaning of E as a simple-name is
 			// a constant, field, property, local variable, or parameter with the same type as the meaning of E as a type-name
-			// LAMESPEC: By constant 
-			if (IsSimpleNameExpression (left)) {
+
+			if (left is MemberExpr || left is VariableReference) {
 				var identical_type = rc.LookupNamespaceOrType (name.Name, 0, LookupMode.Probing, loc) as TypeExpr;
 				if (identical_type != null && identical_type.Type == left.Type)
 					return identical_type;
@@ -424,16 +424,6 @@ namespace Mono.CSharp {
 
 			return left;
 		}
-
-		static bool IsSimpleNameExpression (Expression left)
-		{
-			if (left is MemberExpr || left is VariableReference)
-				return true;
-
-			var c = left as Constant;
-			return c != null && !c.IsLiteral;
-		}
-
 
 		public virtual string GetSignatureForError ()
 		{
