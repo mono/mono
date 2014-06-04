@@ -528,6 +528,23 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidProjectFileException (string.Format ("Invalid static method invocation syntax '{0}'", text.Substring (p)));
 
 				name = text.Substring (p, end - p);
+
+				//
+				// It can be instance member on static property
+				//
+				if (name.IndexOf ('.') > 0) {
+					var names = name.Split ('.');
+					int i;
+					for (i = 0; i < names.Length - 1; ++i) {
+						instance = new MemberInvocationReference (type, names [i]) {
+							Instance = instance
+						};
+					}
+
+					type = null;
+					name = names [i];
+				}
+
 				args = null;
 			}
 

@@ -161,6 +161,21 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		public void InstanceMemberOnStaticProperty ()
+		{
+			string documentString = @"
+					<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+						<PropertyGroup>
+							<Prop1>$([System.DateTime]::Now.Year)</Prop1>
+						</PropertyGroup>
+					</Project>
+				";
+
+			proj.LoadXml (documentString);
+			Assert.AreEqual (DateTime.Now.Year.ToString (), proj.GetEvaluatedProperty ("Prop1"), "#1");
+		}
+
+		[Test]
 		public void MSBuildPropertyFunctions ()
 		{
 			string documentString = @"
