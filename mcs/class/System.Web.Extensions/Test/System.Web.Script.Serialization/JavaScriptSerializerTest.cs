@@ -1365,5 +1365,28 @@ namespace MonoTests.System.Web.Script.Serialization
 			var ret2vad = (IDictionary<string,object>) ret2va [0];
 			Assert.AreEqual ("subval", ret2vad ["subkey"], "#2.4");
 		}
+		
+		class ClassWithNullableEnum
+		{
+			public MyEnum? Value { get; set; }
+		}
+		
+		[Test]
+		public void DeserializeNullableEnum ()
+		{		
+			var jsonValues = new Dictionary<string, MyEnum?> {
+				{ "{\"Value\":0}", MyEnum.AAA},
+				{ "{\"Value\":\"0\"}", MyEnum.AAA},
+				{ "{\"Value\":null}", null}
+			};
+			
+			var ser = new JavaScriptSerializer ();
+			
+			foreach (var kv in jsonValues)
+			{
+				var obj = ser.Deserialize<ClassWithNullableEnum> (kv.Key);
+				Assert.AreEqual (kv.Value, obj.Value);
+			}
+		}
 	}
 }
