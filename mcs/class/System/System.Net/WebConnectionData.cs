@@ -39,6 +39,7 @@ namespace System.Net
 		public string StatusDescription;
 		public WebHeaderCollection Headers;
 		public Version Version;
+		public Version ProxyVersion;
 		public Stream stream;
 		public string[] Challenge;
 		ReadState _readState;
