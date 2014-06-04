@@ -3484,6 +3484,13 @@ namespace Mono.CSharp
 				} else {
 					LocalVariable temp = LocalVariable.CreateCompilerGenerated (rc.BuiltinTypes.Bool, rc.CurrentBlock, loc);
 
+					if (!Convert.ImplicitConversionExists (rc, left, temp.Type) && (oper == Operator.LogicalAnd ? GetOperatorFalse (rc, left, loc) : GetOperatorTrue (rc, left, loc)) == null) {
+						rc.Report.Error (7083, left.Location,
+							"Expression must be implicitly convertible to Boolean or its type `{0}' must define operator `{1}'",
+							lt.GetSignatureForError (), oper == Operator.LogicalAnd ? "false" : "true");
+						return null;
+					}
+
 					args.Add (new Argument (temp.CreateReferenceExpression (rc, loc).Resolve (rc)));
 					args.Add (new Argument (right));
 					right = new DynamicExpressionStatement (this, args, loc);

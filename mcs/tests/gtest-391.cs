@@ -19,12 +19,8 @@ class C
 		if (b != "a")
 			return 1;
 		
-		int? i = null ?? null;
-		if (i != null)
-			return 2;
-
 		object z = a ?? null;
-		if (i != null)
+		if (z != null)
 			return 3;
 
 		string p = default (string) ?? "a";
