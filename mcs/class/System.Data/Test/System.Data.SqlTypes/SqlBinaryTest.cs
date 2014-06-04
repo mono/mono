@@ -32,7 +32,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Xml;
 using System.Data.SqlTypes;
@@ -296,12 +314,14 @@ namespace MonoTests.System.Data.SqlTypes
                         Assert.AreEqual ((byte)15, TestBinary [0], "#O1");
 		}
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlBinary.GetXsdType (null);
 			Assert.AreEqual ("base64Binary", qualifiedName.Name, "#A01");
 		}
+#endif
 #endif
 	}
 }

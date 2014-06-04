@@ -27,12 +27,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
 #if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
 #endif
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
@@ -79,38 +99,39 @@ namespace MonoTests.System.Data
 			DataRelation dr = new DataRelation ("CustOrder", parentCol, childCol);
 			
 			drcol.Add (dr);
-			Assert.That (drcol [0].RelationName, Is.EqualTo ("CustOrder"), "test#1");
+			Assert.AreEqual ("CustOrder", drcol [0].RelationName, "test#1");
 			drcol.Clear ();
 			
 			drcol.Add (parentCol, childCol);
-			Assert.That (drcol.Count, Is.EqualTo (1), "test#2");
+			Assert.AreEqual (1, drcol.Count, "test#2");
 			drcol.Clear ();
 			
 			drcol.Add ("NewRelation", parentCol, childCol);
-			Assert.That (drcol [0].RelationName, Is.EqualTo ("NewRelation"), "test#3");
+			Assert.AreEqual ("NewRelation", drcol [0].RelationName, "test#3");
 			drcol.Clear ();
 			
 			drcol.Add ("NewRelation", parentCol, childCol, false);
-			Assert.That (drcol.Count, Is.EqualTo (1), "test#4");
+			Assert.AreEqual (1, drcol.Count, "test#4");
 			drcol.Clear ();
 			
 			drcol.Add ("NewRelation", parentCol, childCol, true);
-			Assert.That (drcol.Count, Is.EqualTo (1), "test#5");
+			Assert.AreEqual (1, drcol.Count, "test#5");
 			drcol.Clear ();
 		}
 
+		//It does not pass under MS.NET
 		[Test]		
-		[ExpectedException(typeof(ArgumentNullException))]
-		[Ignore ("It does not pass under MS.NET")]
+		[Ignore]
 		public void AddException1 ()
 		{
 			DataRelationCollection drcol = _dataset.Relations;
 			DataRelation drnull = null;
+			AssertHelpers.AssertThrowsException<ArgumentNullException> (() => {
 			drcol.Add (drnull);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddException2 ()
 		{
 			DataRelationCollection drcol = _dataset.Relations;
@@ -118,11 +139,12 @@ namespace MonoTests.System.Data
 							, _dataset.Tables ["Customer"].Columns ["custid"]
 							, _dataset.Tables ["Order"].Columns ["custid"]);
 			drcol.Add (dr1);			
+			AssertHelpers.AssertThrowsException<ArgumentException> (() => {
 			drcol.Add (dr1);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(DuplicateNameException))]
 		public void AddException3 ()
 		{
 			DataRelationCollection drcol = _dataset.Relations;
@@ -134,7 +156,9 @@ namespace MonoTests.System.Data
 							, _dataset.Tables ["Order"].Columns ["custid"]);
 			
 			drcol.Add (dr1);			
+			AssertHelpers.AssertThrowsException<DuplicateNameException> (() => {
 			drcol.Add (dr2);
+			});			
 		}
 
 		[Test]
@@ -149,8 +173,8 @@ namespace MonoTests.System.Data
 							, _dataset.Tables ["Order"].Columns ["custid"]);
 			drcol.AddRange (new DataRelation[] {dr1,dr2});
 			
-			Assert.That (drcol [0].RelationName, Is.EqualTo ("CustOrder"), "test#1");
-			Assert.That (drcol [1].RelationName, Is.EqualTo ("ItemOrder"), "test#2");
+			Assert.AreEqual ("CustOrder", drcol [0].RelationName, "test#1");
+			Assert.AreEqual ("ItemOrder", drcol [1].RelationName, "test#2");
 		}
 
 		[Test]
@@ -162,12 +186,12 @@ namespace MonoTests.System.Data
 			DataRelation dr = new DataRelation ("CustOrder", parentCol, childCol);
 			
 			drcol.Add (dr);
-			Assert.That (drcol.CanRemove (dr), Is.True, "test#1");
-			Assert.That (drcol.CanRemove (null), Is.False, "test#2");
+			Assert.IsTrue (drcol.CanRemove (dr), "test#1");
+			Assert.IsFalse (drcol.CanRemove (null), "test#2");
 			DataRelation dr2 = new DataRelation ("ItemOrder"
 						, _dataset.Tables ["Item"].Columns ["itemid"]
 						, _dataset.Tables ["Order"].Columns ["custid"]);
-			Assert.That (drcol.CanRemove (dr2), Is.False, "test#3");
+			Assert.IsFalse (drcol.CanRemove (dr2), "test#3");
 		}
 
 		[Test]
@@ -180,7 +204,7 @@ namespace MonoTests.System.Data
 			drcol.Add ("ItemOrder", _dataset.Tables ["Item"].Columns ["itemid"]
 								 , _dataset.Tables ["Order"].Columns ["itemid"]);
 			drcol.Clear ();
-			Assert.That (drcol.Count, Is.EqualTo (0), "test#1");
+			Assert.AreEqual (0, drcol.Count, "test#1");
 		}
 
 		[Test]
@@ -192,11 +216,11 @@ namespace MonoTests.System.Data
 			DataRelation dr = new DataRelation ("CustOrder", parentCol, childCol);
 			
 			drcol.Add (dr);
-			Assert.That (drcol.Contains (dr.RelationName), Is.True, "test#1");
+			Assert.IsTrue (drcol.Contains (dr.RelationName), "test#1");
 			string drnull = "";
-			Assert.That (drcol.Contains (drnull), Is.False, "test#2");
+			Assert.IsFalse (drcol.Contains (drnull), "test#2");
 			dr = new DataRelation ("newRelation", childCol, parentCol);
-			Assert.That (drcol.Contains ("NoSuchRelation"), Is.False, "test#3");
+			Assert.IsFalse (drcol.Contains ("NoSuchRelation"), "test#3");
 		}
 
 		[Test]
@@ -212,16 +236,16 @@ namespace MonoTests.System.Data
 			
 			DataRelation [] array = new DataRelation[2];
 			drcol.CopyTo (array, 0);
-			Assert.That (array.Length, Is.EqualTo (2), "test#1");
-			Assert.That (array [0].RelationName, Is.EqualTo ("CustOrder"), "test#2");
-			Assert.That (array [1].RelationName, Is.EqualTo ("ItemOrder"), "test#3");
+			Assert.AreEqual (2, array.Length, "test#1");
+			Assert.AreEqual ("CustOrder", array [0].RelationName, "test#2");
+			Assert.AreEqual ("ItemOrder", array [1].RelationName, "test#3");
 			
 			DataRelation [] array1 = new DataRelation[4];
 			drcol.CopyTo (array1, 2);
-			Assert.That (array1 [0], Is.Null, "test#4");
-			Assert.That (array1 [1], Is.Null, "test#5");
-			Assert.That (array1 [2].RelationName, Is.EqualTo ("CustOrder"), "test#6");
-			Assert.That (array1 [3].RelationName, Is.EqualTo ("ItemOrder"), "test#7");
+			Assert.IsNull (array1 [0], "test#4");
+			Assert.IsNull (array1 [1], "test#5");
+			Assert.AreEqual ("CustOrder", array1 [2].RelationName, "test#6");
+			Assert.AreEqual ("ItemOrder", array1 [3].RelationName, "test#7");
 		}
 
 		[Test]
@@ -238,14 +262,14 @@ namespace MonoTests.System.Data
 			DataRelationCollection drcol1 = newds.Relations;
 			DataRelationCollection drcol2 = _dataset.Relations;
 
-			Assert.That (drcol.Equals (drcol), Is.True, "test#1");
-			Assert.That (drcol.Equals (drcol2), Is.True, "test#2");
+			Assert.IsTrue (drcol.Equals (drcol), "test#1");
+			Assert.IsTrue (drcol.Equals (drcol2), "test#2");
 			
-			Assert.That (drcol1.Equals (drcol), Is.False, "test#3");
-			Assert.That (drcol.Equals (drcol1), Is.False, "test#4");
+			Assert.IsFalse (drcol1.Equals (drcol), "test#3");
+			Assert.IsFalse (drcol.Equals (drcol1), "test#4");
 			
-			Assert.That (Object.Equals (drcol, drcol2), Is.True, "test#5");
-			Assert.That (Object.Equals (drcol, drcol1), Is.False, "test#6");
+			Assert.IsTrue (Object.Equals (drcol, drcol2), "test#5");
+			Assert.IsFalse (Object.Equals (drcol, drcol1), "test#6");
 			
 		}
 
@@ -262,21 +286,21 @@ namespace MonoTests.System.Data
 			drcol.Add (dr1);
 			drcol.Add (dr2);
 			
-			Assert.That (drcol.IndexOf (dr1), Is.EqualTo (0), "test#1");
-			Assert.That (drcol.IndexOf (dr2), Is.EqualTo (1), "test#2");
+			Assert.AreEqual (0, drcol.IndexOf (dr1), "test#1");
+			Assert.AreEqual (1, drcol.IndexOf (dr2), "test#2");
 			
-			Assert.That (drcol.IndexOf ("CustOrder"), Is.EqualTo (0), "test#3");
-			Assert.That (drcol.IndexOf ("ItemOrder"), Is.EqualTo (1), "test#4");
+			Assert.AreEqual (0, drcol.IndexOf ("CustOrder"), "test#3");
+			Assert.AreEqual (1, drcol.IndexOf ("ItemOrder"), "test#4");
 			
-			Assert.That (drcol.IndexOf (drcol [0]), Is.EqualTo (0), "test#5");
-			Assert.That (drcol.IndexOf (drcol [1]), Is.EqualTo (1), "test#6");
+			Assert.AreEqual (0, drcol.IndexOf (drcol [0]), "test#5");
+			Assert.AreEqual (1, drcol.IndexOf (drcol [1]), "test#6");
 			
-			Assert.That (drcol.IndexOf ("_noRelation_"), Is.EqualTo (-1), "test#7");
+			Assert.AreEqual (-1, drcol.IndexOf ("_noRelation_"), "test#7");
 			DataRelation newdr = new DataRelation ("newdr"
 					, _dataset.Tables ["Customer"].Columns ["custid"]
 					, _dataset.Tables ["Order"].Columns ["custid"]);
 			
-			Assert.That (drcol.IndexOf (newdr), Is.EqualTo (-1), "test#8");
+			Assert.AreEqual (-1, drcol.IndexOf (newdr), "test#8");
 		}
 
 		[Test]
@@ -293,11 +317,11 @@ namespace MonoTests.System.Data
 			drcol.Add (dr2);
 			
 			drcol.Remove (dr1);
-			Assert.That (drcol.Contains (dr1.RelationName), Is.False, "test#1");
+			Assert.IsFalse (drcol.Contains (dr1.RelationName), "test#1");
 			drcol.Add (dr1);
 			
 			drcol.Remove ("CustOrder");
-			Assert.That (drcol.Contains ("CustOrder"), Is.False, "test#2");
+			Assert.IsFalse (drcol.Contains ("CustOrder"), "test#2");
 			drcol.Add (dr1);
 			
 			DataRelation drnull = null;
@@ -310,7 +334,7 @@ namespace MonoTests.System.Data
 				drcol.Remove (newdr);
 				Assert.Fail ("Err: removed relation which not part of collection");
 			} catch (Exception e) {
-				Assert.That (e, Is.TypeOf (typeof(ArgumentException)), "test#4");
+				AssertHelpers.AssertIsInstanceOfType<ArgumentException>(e, "test#4");
 			}
 			try {
 				drcol.Remove ("newdr");
@@ -344,9 +368,9 @@ namespace MonoTests.System.Data
 			}
 			
 			drcol.RemoveAt (1);
-			Assert.That (drcol.Contains (dr2.RelationName), Is.False, "test#5");
+			Assert.IsFalse (drcol.Contains (dr2.RelationName), "test#5");
 			drcol.RemoveAt (0);
-			Assert.That (drcol.Contains (dr1.RelationName), Is.False, "test#6");
+			Assert.IsFalse (drcol.Contains (dr1.RelationName), "test#6");
 		}
 		
 		//[Test]
@@ -357,7 +381,7 @@ namespace MonoTests.System.Data
 							, _dataset.Tables ["Customer"].Columns ["custid"]
 							, _dataset.Tables ["Order"].Columns ["custid"]);
 			drcol.Add (dr1);	
-			Assert.That (drcol.ToString (), Is.EqualTo ("System.Data.DataRelationCollection"), "test#1");
+			Assert.AreEqual ("System.Data.DataRelationCollection", drcol.ToString (), "test#1");
 			Console.WriteLine (drcol.ToString ());
 		}
 	}

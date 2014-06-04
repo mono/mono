@@ -26,7 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
 using MonoTests.System.Data.Utils;
@@ -298,34 +316,37 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void DataTableCollection_Add_D2()
 		{
 			DataSet ds = new DataSet();
 
+			AssertHelpers.AssertThrowsException<ArgumentNullException>(() => {
 			ds.Tables.Add((DataTable)null);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void DataTableCollection_Add_D3()
 		{
 			DataSet ds = new DataSet();
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add();
 
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables.Add(ds1.Tables[0]);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(DuplicateNameException))]
 		public void DataTableCollection_Add_D4()
 		{
 			DataSet ds = new DataSet();
 			ds.Tables.Add();
 
 			DataTable dt = new DataTable("Table1");
+			AssertHelpers.AssertThrowsException<DuplicateNameException>(() => {
 			ds.Tables.Add(dt);
+			});
 		}
 
 		[Test]
@@ -339,13 +360,14 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(DuplicateNameException))]
 		public void DataTableCollection_Add_S2()
 		{
 			DataSet ds = new DataSet();
 			ds.Tables.Add("NewTable1");
 
+			AssertHelpers.AssertThrowsException<DuplicateNameException>(() => {
 			ds.Tables.Add("NewTable1");
+			});
 		}
 
 		[Test]
@@ -360,7 +382,6 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void DataTableCollection_Clear2()
 		{
 			DataSet ds = new DataSet();
@@ -368,7 +389,9 @@ namespace MonoTests_System.Data
 			ds.Tables.Add();
 			ds.Tables.Clear();
 
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
 			ds.Tables[0].TableName = "Error";
+			});
 		}
 
 		[Test]
@@ -387,22 +410,24 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void DataTableCollection_Remove_D2()
 		{
 			DataSet ds = new DataSet();
 			DataTable dt = new DataTable("NewTable1");
 
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables.Remove(dt);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void DataTableCollection_Remove_D3()
 		{
 			DataSet ds = new DataSet();
 
+			AssertHelpers.AssertThrowsException<ArgumentNullException>(() => {
 			ds.Tables.Remove((DataTable)null);
+			});
 		}
 
 		[Test]
@@ -421,21 +446,23 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void DataTableCollection_Remove_S2()
 		{
 			DataSet ds = new DataSet();
 
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables.Remove("NewTable2");
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void DataTableCollection_Remove_S3()
 		{
 			DataSet ds = new DataSet();
 
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables.Remove((string)null);
+			});
 		}
 
 		[Test]
@@ -453,21 +480,23 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void DataTableCollection_RemoveAt_I2()
 		{
 			DataSet ds = new DataSet();
 
+			AssertHelpers.AssertThrowsException<IndexOutOfRangeException>(() => {
 			ds.Tables.RemoveAt(-1);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void DataTableCollection_RemoveAt_I3()
 		{
 			DataSet ds = DataProvider.CreateForigenConstraint();
 
+			AssertHelpers.AssertThrowsException<ArgumentException>(() => {
 			ds.Tables.RemoveAt(0); //Parent table
+			});
 		}
 
 #if NET_2_0

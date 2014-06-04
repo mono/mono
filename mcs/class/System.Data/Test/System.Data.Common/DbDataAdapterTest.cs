@@ -29,7 +29,6 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 
 /*--For Bug 853 Test Begin--*/
 #if !MOBILE
@@ -37,7 +36,25 @@ using Mono.Data.Sqlite;
 #endif
 /*--For Bug 853 Test End--*/
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Data.Common
 {
@@ -95,7 +112,7 @@ namespace MonoTests.System.Data.Common
 		{
 			MyAdapter da = new MyAdapter ();
 			try {
-				da.AddToBatch (new SqlCommand ());
+				da.AddToBatch (new MyCommand ());
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
@@ -226,6 +243,86 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 #endif
 
 #endif
+
+		class MyCommand : DbCommand
+		{
+			public override string CommandText
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override int CommandTimeout
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override CommandType CommandType
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			protected override DbConnection DbConnection
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			protected override DbParameterCollection DbParameterCollection
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			protected override DbTransaction DbTransaction
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override bool DesignTimeVisible
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override UpdateRowSource UpdatedRowSource
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override void Cancel()
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override DbParameter CreateDbParameter()
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override int ExecuteNonQuery()
+			{
+				throw new NotImplementedException();
+			}
+
+			public override object ExecuteScalar()
+			{
+				throw new NotImplementedException();
+			}
+
+			public override void Prepare()
+			{
+				throw new NotImplementedException();
+			}
+		}
 
 		class MyAdapter : DbDataAdapter
 		{

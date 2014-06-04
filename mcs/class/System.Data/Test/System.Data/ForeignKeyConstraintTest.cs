@@ -31,14 +31,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class ForeignKeyConstraintTest : Assertion
+	public class ForeignKeyConstraintTest
 	{
 		private DataSet _ds;
 
@@ -73,23 +94,23 @@ namespace MonoTests.System.Data
 		{
 			DataTable Table =  _ds.Tables [0];
 			
-			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#01");
 			Table =  _ds.Tables [1];
-			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#02");
 			
 			// ctor (string, DataColumn, DataColumn
 			ForeignKeyConstraint Constraint = new ForeignKeyConstraint ("test", _ds.Tables [0].Columns [2], _ds.Tables [1].Columns [0]);
 			Table = _ds.Tables [1];
 			Table.Constraints.Add (Constraint);
 			
-			AssertEquals ("test#03", 1, Table.Constraints.Count);
-			AssertEquals ("test#04", "test", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#03");
+			Assert.AreEqual ("test", Table.Constraints [0].ConstraintName, "test#04");
+			Assert.AreEqual (typeof (ForeignKeyConstraint), Table.Constraints [0].GetType (), "test#05");
 
 			Table = _ds.Tables [0];
-			AssertEquals ("test#06", 1, Table.Constraints.Count);
-			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#06");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#07");
+			Assert.AreEqual (typeof (UniqueConstraint), Table.Constraints [0].GetType (), "test#08");
 		}
 		
 		// Tests ctor (DataColumn, DataColumn)
@@ -98,23 +119,23 @@ namespace MonoTests.System.Data
 		{
 			DataTable Table =  _ds.Tables [0];
 			
-			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#01");
 			Table =  _ds.Tables [1];
-			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#02");
 			
 			// ctor (string, DataColumn, DataColumn
 			ForeignKeyConstraint Constraint = new ForeignKeyConstraint (_ds.Tables [0].Columns [2], _ds.Tables [1].Columns [0]);
 			Table = _ds.Tables [1];
 			Table.Constraints.Add (Constraint);
 			
-			AssertEquals ("test#03", 1, Table.Constraints.Count);
-			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#03");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#04");
+			Assert.AreEqual (typeof (ForeignKeyConstraint), Table.Constraints [0].GetType (), "test#05");
 
 			Table = _ds.Tables [0];
-			AssertEquals ("test#06", 1, Table.Constraints.Count);
-			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#06");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#07");
+			Assert.AreEqual (typeof (UniqueConstraint), Table.Constraints [0].GetType (), "test#08");
 		}
 		
 		// Test ctor (DataColumn [], DataColumn [])
@@ -123,9 +144,9 @@ namespace MonoTests.System.Data
 		{
 			DataTable Table =  _ds.Tables [0];
 			
-			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#01");
 			Table =  _ds.Tables [1];
-			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#02");
 						
 			DataColumn [] Cols1 = new DataColumn [2];
 			Cols1 [0] = _ds.Tables [0].Columns [1];
@@ -139,14 +160,14 @@ namespace MonoTests.System.Data
 			Table = _ds.Tables [1];
 			Table.Constraints.Add (Constraint);
 			
-			AssertEquals ("test#03", 1, Table.Constraints.Count);
-			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#03");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#04");
+			Assert.AreEqual (typeof (ForeignKeyConstraint), Table.Constraints [0].GetType (), "test#05");
 
 			Table = _ds.Tables [0];
-			AssertEquals ("test#06", 1, Table.Constraints.Count);
-			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#06");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#07");
+			Assert.AreEqual (typeof (UniqueConstraint), Table.Constraints [0].GetType (), "test#08");
 
 		}
 	
@@ -156,9 +177,9 @@ namespace MonoTests.System.Data
 		{
 			DataTable Table =  _ds.Tables [0];
 			
-			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#01");
 			Table =  _ds.Tables [1];
-			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#02");
 						
 			DataColumn [] Cols1 = new DataColumn [2];
 			Cols1 [0] = _ds.Tables [0].Columns [1];
@@ -172,14 +193,14 @@ namespace MonoTests.System.Data
 			Table = _ds.Tables [1];
 			Table.Constraints.Add (Constraint);
 			
-			AssertEquals ("test#03", 1, Table.Constraints.Count);
-			AssertEquals ("test#04", "Test", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [0].GetType ());
+			Assert.AreEqual (1, Table.Constraints.Count, "test#03");
+			Assert.AreEqual ("Test", Table.Constraints [0].ConstraintName, "test#04");
+			Assert.AreEqual (typeof (ForeignKeyConstraint), Table.Constraints [0].GetType (), "test#05");
 
 			Table = _ds.Tables [0];
-			AssertEquals ("test#06", 1, Table.Constraints.Count);
-			AssertEquals ("test#07", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#08", typeof (UniqueConstraint), Table.Constraints [0].GetType ());			
+			Assert.AreEqual (1, Table.Constraints.Count, "test#06");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#07");
+			Assert.AreEqual (typeof (UniqueConstraint), Table.Constraints [0].GetType (), "test#08");			
 		}
 		
 		[Test]
@@ -211,7 +232,7 @@ namespace MonoTests.System.Data
 			 ForeignKeyConstraint fkc = new ForeignKeyConstraint ("hello world", parentTableName, parentColumnNames, childColumnNames, AcceptRejectRule.Cascade, Rule.Cascade, Rule.Cascade);                                                                                                                            // Assert that the Constraint object does not belong to any table yet
 			try {
 				DataTable tmp = fkc.Table;
-				Fail ("When table is null, get_Table causes an InvalidOperationException.");
+				Assert.Fail ("When table is null, get_Table causes an InvalidOperationException.");
 			} catch (InvalidOperationException) {
 			}
                                                                                                     
@@ -266,20 +287,20 @@ namespace MonoTests.System.Data
 		{
 			DataTable Table =  _ds.Tables [0];
 			
-			AssertEquals ("test#01", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#01");
 			Table =  _ds.Tables [1];
-			AssertEquals ("test#02", 0, Table.Constraints.Count);
+			Assert.AreEqual (0, Table.Constraints.Count, "test#02");
 						
 			
 			ForeignKeyConstraint Constraint = new ForeignKeyConstraint ("Test", _ds.Tables [0].Columns [0], _ds.Tables [0].Columns [2]);
 			Table = _ds.Tables [0];
 			Table.Constraints.Add (Constraint);
 			
-			AssertEquals ("test#03", 2, Table.Constraints.Count);
-			AssertEquals ("test#04", "Constraint1", Table.Constraints [0].ConstraintName);
-			AssertEquals ("test#05", typeof (UniqueConstraint), Table.Constraints [0].GetType ());
-			AssertEquals ("test#04", "Test", Table.Constraints [1].ConstraintName);
-			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Table.Constraints [1].GetType ());
+			Assert.AreEqual (2, Table.Constraints.Count, "test#03");
+			Assert.AreEqual ("Constraint1", Table.Constraints [0].ConstraintName, "test#04");
+			Assert.AreEqual (typeof (UniqueConstraint), Table.Constraints [0].GetType (), "test#05");
+			Assert.AreEqual ("Test", Table.Constraints [1].ConstraintName, "test#04");
+			Assert.AreEqual (typeof (ForeignKeyConstraint), Table.Constraints [1].GetType (), "test#05");
 
 		}
 
@@ -296,45 +317,45 @@ namespace MonoTests.System.Data
 			try
 			{
 				fkc = new ForeignKeyConstraint((DataColumn)null,(DataColumn)null);
-				Fail("Failed to throw ArgumentNullException.");
+				Assert.Fail("Failed to throw ArgumentNullException.");
 			}
 			catch (NullReferenceException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("A1: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("A1: Wrong Exception type. " + exc.ToString());
 			}
 
 			//zero length collection
 			try
 			{
 				fkc = new ForeignKeyConstraint(new DataColumn[]{},new DataColumn[]{});
-				Fail("B1: Failed to throw ArgumentException.");
+				Assert.Fail("B1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("A2: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("A2: Wrong Exception type. " + exc.ToString());
 			}
 
 			//different datasets
 			try
 			{
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[0]);
-				Fail("Failed to throw InvalidOperationException.");
+				Assert.Fail("Failed to throw InvalidOperationException.");
 			}
 			catch (InvalidOperationException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("A3: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("A3: Wrong Exception type. " + exc.ToString());
 			}
 
 			try
 			{
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[1]);
-				Fail("Failed to throw InvalidConstraintException.");
+				Assert.Fail("Failed to throw InvalidConstraintException.");
 			}
 			// tables in different datasets
 			catch (InvalidOperationException) {}
@@ -344,7 +365,7 @@ namespace MonoTests.System.Data
                         try                                           
                         {                                             
                                 fkc = new ForeignKeyConstraint(new DataColumn [] {_ds.Tables[0].Columns[0], _ds.Tables[0].Columns[1]}, new DataColumn [] {localTable.Columns[1], _ds.Tables[1].Columns [0]});    
-                                Fail("Failed to throw InvalidOperationException.");                                         
+                                Assert.Fail("Failed to throw InvalidOperationException.");                                         
                         }                                             
                         catch (InvalidConstraintException) {}         
                         catch (AssertionException exc) {throw exc;} 
@@ -361,7 +382,7 @@ namespace MonoTests.System.Data
 			try 
 			{
 				fkc = new ForeignKeyConstraint(col, _ds.Tables[0].Columns[0]);
-				Fail("FTT1: Failed to throw ArgumentException.");
+				Assert.Fail("FTT1: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
@@ -381,13 +402,13 @@ namespace MonoTests.System.Data
 								 _ds.Tables[0].Columns[1],
 								_ds.Tables[0].Columns[0]});
 					
-				Fail("FTT2: Failed to throw InvalidConstraintException.");
+				Assert.Fail("FTT2: Failed to throw InvalidConstraintException.");
 			}
 			catch (InvalidConstraintException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("WET2: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("WET2: Wrong Exception type. " + exc.ToString());
 			}
 
 
@@ -402,13 +423,13 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint(twoCol, 
 					new DataColumn[] { _ds.Tables[0].Columns[0]});
 					
-				Fail("FTT3: Failed to throw ArgumentException.");
+				Assert.Fail("FTT3: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("WET3: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("WET3: Wrong Exception type. " + exc.ToString());
 			}
 
 			//InvalidOperation: Parent and child are the same column.
@@ -417,13 +438,13 @@ namespace MonoTests.System.Data
 				fkc = new ForeignKeyConstraint( _ds.Tables[0].Columns[0],
 					_ds.Tables[0].Columns[0] );
 					
-				Fail("FTT4: Failed to throw InvalidOperationException.");
+				Assert.Fail("FTT4: Failed to throw InvalidOperationException.");
 			}
 			catch (InvalidOperationException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Fail("WET4: Wrong Exception type. " + exc.ToString());
+				Assert.Fail("WET4: Wrong Exception type. " + exc.ToString());
 			}
 
 		}
@@ -445,19 +466,18 @@ namespace MonoTests.System.Data
 			ForeignKeyConstraint fkcDiff = 
 				new ForeignKeyConstraint( tbl.Columns[1], tbl.Columns[2]);
 		
-			Assert( "Equals failed. 1" , fkc.Equals(fkc2));
-			Assert( "Equals failed. 2" , fkc2.Equals(fkc));
-			Assert( "Equals failed. 3" , fkc.Equals(fkc));
+			Assert.IsTrue( fkc.Equals(fkc2) , "Equals failed. 1" );
+			Assert.IsTrue( fkc2.Equals(fkc) , "Equals failed. 2" );
+			Assert.IsTrue( fkc.Equals(fkc) , "Equals failed. 3" );
 
-			Assert( "Equals failed diff. 1" , fkc.Equals(fkcDiff) == false);
+			Assert.IsTrue( fkc.Equals(fkcDiff) == false , "Equals failed diff. 1" );
 
-			Assert( "Hash Code Failed. 1", fkc.GetHashCode() == fkc2.GetHashCode() );
-			Assert( "Hash Code Failed. 2", fkc.GetHashCode() != fkcDiff.GetHashCode() );
+			Assert.IsTrue( fkc.GetHashCode() == fkc2.GetHashCode() , "Hash Code Failed. 1" );
+			Assert.IsTrue( fkc.GetHashCode() != fkcDiff.GetHashCode() , "Hash Code Failed. 2" );
 	
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ViolationTest ()
 		{
 			DataTable parent = _ds.Tables [0];
@@ -467,9 +487,11 @@ namespace MonoTests.System.Data
 			child.Rows.Add (new object [] {2, 2, 2});
 
 			try {
+				AssertHelpers.AssertThrowsException<ArgumentException> (() => { 
 				child.Constraints.Add (new ForeignKeyConstraint ( parent.Columns [0],
 										  child.Columns [0])
 						       );
+				});
 			} finally {
 				// clear the rows for further testing
 				_ds.Clear ();
@@ -511,7 +533,7 @@ namespace MonoTests.System.Data
 			t2.Rows.Add (new object [] {10});
 
 			t1.Rows [0][0]=20;
-			Assert("#1", (int)t2.Rows [0][0] == 20);
+			Assert.IsTrue((int)t2.Rows [0][0] == 20, "#1");
 		}
 
 		[Test]

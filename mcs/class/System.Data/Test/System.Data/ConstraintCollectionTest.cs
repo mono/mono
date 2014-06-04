@@ -31,12 +31,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.Data;
 #if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
 #endif
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
@@ -78,7 +100,7 @@ namespace MonoTests.System.Data
 			col.Add (_constraint1);
 			col.Add (_constraint2);
 
-			Assert.That (col.Count, Is.EqualTo (2), "Count doesn't equal added.");
+			Assert.AreEqual (2, col.Count, "Count doesn't equal added.");
 		}
 
 		[Test]
@@ -177,8 +199,8 @@ namespace MonoTests.System.Data
 
 			_table.Constraints.Add (c1);
 
-			Assert.That (_table.Constraints.Contains (c1.ConstraintName), Is.True);
-			Assert.That (_table.Constraints.Contains (c2.ConstraintName), Is.False);
+			Assert.IsTrue (_table.Constraints.Contains (c1.ConstraintName));
+			Assert.IsFalse (_table.Constraints.Contains (c2.ConstraintName));
 		}
 
 		[Test]
@@ -187,7 +209,7 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add (new UniqueConstraint (_table.Columns [0]));
 
 			//This doesn't throw
-			Assert.That (_table.Constraints ["notInCollection"], Is.Null);
+			Assert.IsNull (_table.Constraints ["notInCollection"]);
 			
 			//Index too high
 			try {
@@ -357,19 +379,19 @@ namespace MonoTests.System.Data
                                                                                                     
 			//Check the table property of UniqueConstraint Object
 			try {
-				Assert.That (constraints [2].Table, Is.Null, "#A01");
+				Assert.IsNull (constraints [2].Table, "#A01");
 			} catch (Exception e) {
-				Assert.That (e, Is.TypeOf (typeof(NullReferenceException)), "#A02");
+				AssertHelpers.AssertIsInstanceOfType<NullReferenceException> (e, "#A02");
 			}
 
 			table.EndInit ();
 
 			// After EndInit is called the constraints associated with most recent call to AddRange() must be
 			// added to the ConstraintCollection
-			Assert.That (constraints [2].Table.ToString (), Is.EqualTo ("Table"), "#A03");
-			Assert.That (table.Constraints.Contains ("Unique1"), Is.True, "#A04");
-			Assert.That (table.Constraints.Contains ("Unique3"), Is.True, "#A06");
-			Assert.That (table.Constraints.Contains ("Unique2"), Is.True, "#A05");
+			Assert.AreEqual ("Table", constraints [2].Table.ToString (), "#A03");
+			Assert.IsTrue (table.Constraints.Contains ("Unique1"), "#A04");
+			Assert.IsTrue (table.Constraints.Contains ("Unique3"), "#A06");
+			Assert.IsTrue (table.Constraints.Contains ("Unique2"), "#A05");
 		}
 
 		[Test]
@@ -377,19 +399,20 @@ namespace MonoTests.System.Data
 		{
 			try {
 				_table.Constraints.Clear (); //Clear all constraints
-				Assert.That (_table.Constraints.Count, Is.EqualTo (0), "A1"); //No constraints should remain
+				Assert.AreEqual (0, _table.Constraints.Count, "A1"); //No constraints should remain
 				_table2.Constraints.Clear ();
-				Assert.That (_table2.Constraints.Count, Is.EqualTo (0), "A2"); //No constraints should remain
+				Assert.AreEqual (0, _table2.Constraints.Count, "A2"); //No constraints should remain
 			} catch (Exception e) {
 				Console.WriteLine (e);
 			}
 		}
 
+		//This never works on MS.NET (and it should not)
 		[Test]
-		[Ignore ("This never works on MS.NET (and it should not)")]
+		[Ignore]
 		public void CanRemove ()
 		{
-			Assert.That (_table.Constraints.CanRemove (_table.Constraints [0]), Is.False, "A1");
+			Assert.IsFalse (_table.Constraints.CanRemove (_table.Constraints [0]), "A1");
 		}
 
 		[Test]
@@ -413,12 +436,13 @@ namespace MonoTests.System.Data
 		}
 #endif
 
-		//[Test]
-		[Ignore ("MS.NET fails this test (and it should fail)")]
+		//MS.NET fails this test (and it should fail)
+		[Test]
+		[Ignore]
 		public void Remove ()
 		{
 			_table2.Constraints.Remove (_table2.Constraints [1]); //Remove constraint and again add it
-			Assert.That (_table2.Constraints.Count, Is.EqualTo (1), "A1");
+			Assert.AreEqual (1, _table2.Constraints.Count, "A1");
 			UniqueConstraint _constraint4 = new UniqueConstraint ("UK2", _table2.Columns [1]);                                                                               
 			// Add the constraints.
 			Constraint [] constraints = {_constraint4};
@@ -433,7 +457,7 @@ namespace MonoTests.System.Data
 				_table.Constraints.Remove (_table.Constraints [0]);
 				Assert.Fail ("A1");
 			} catch (Exception e) {
-				Assert.That (e, Is.TypeOf (typeof(IndexOutOfRangeException)), "A2");
+				AssertHelpers.AssertIsInstanceOfType<IndexOutOfRangeException>(e, "A2");
 			}
 		}
 	}

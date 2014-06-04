@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using NUnit.Framework;
 using System;
 using System.Data;
@@ -652,3 +653,4 @@ namespace MonoTests.System.Data.Common {
 		}
 	}
 }
+#endif

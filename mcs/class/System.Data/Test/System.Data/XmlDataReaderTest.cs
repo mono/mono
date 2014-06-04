@@ -31,7 +31,30 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
+
+#if WINDOWS_PHONE || NETFX_CORE
+using System.Xml.Linq;
+#endif
 
 namespace Monotests_System.Data
 {
@@ -101,7 +124,7 @@ namespace Monotests_System.Data
 						"</CustomTypesData>" + Environment.NewLine;
 			
 			StringReader sr = new StringReader (xml);
-			XmlTextReader xr = new XmlTextReader (sr);
+			XmlReader xr = XmlReader.Create (sr);
 			DataTable tbl = new DataTable("CustomTypesTable");
 			tbl.Columns.Add("Dummy", typeof(System.UInt32));
 			tbl.Columns.Add("FuncXml", typeof(CustomTypeXml));
@@ -112,14 +135,22 @@ namespace Monotests_System.Data
 			ds.ReadXml(xr);
 
 			Assert.AreEqual (1, ds.Tables["CustomTypesTable"].Rows.Count, "XDR2");
+			Assert.AreEqual (99, Convert.ToInt32(ds.Tables["CustomTypesTable"].Rows[0][0]), "XDR3");
+			Assert.IsTrue (ds.Tables["CustomTypesTable"].Rows[0][1].ToString().StartsWith("<FuncXml>"), "XDR4");
 			
 			xr.Close ();
 		}
 		
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		public class CustomTypeXml : IXmlSerializable
 		{
+#if !WINDOWS_PHONE && !NETFX_CORE
 		    private XmlNode mFuncXmlNode;
+#else
+		    private XNode mFuncXmlNode;
+#endif
 
 		    #region Constructors
 		    public CustomTypeXml()
@@ -128,19 +159,32 @@ namespace Monotests_System.Data
 
 		    public CustomTypeXml(string str)
 		    {
+#if !WINDOWS_PHONE && !NETFX_CORE
 		        XmlDocument doc = new XmlDocument();
 		        doc.LoadXml(str);
 		        mFuncXmlNode = (XmlNode)(doc.DocumentElement);
+#else
+		        XDocument doc = XDocument.Parse(str);
+		        mFuncXmlNode = doc.Root;
+#endif
 		    }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		    public CustomTypeXml(XmlNode xNode)
+#else
+		    public CustomTypeXml(XNode xNode)
+#endif
 		    {
 		        mFuncXmlNode = xNode;
 		    }
 		    #endregion
 
 		    #region Node (set/get)
+#if !WINDOWS_PHONE && !NETFX_CORE
 		    public XmlNode Node
+#else
+		    public XNode Node
+#endif
 		    {
 		        get
 		        {
@@ -155,7 +199,11 @@ namespace Monotests_System.Data
 		    #region ToString
 		    public override string ToString()
 		    {
+#if !WINDOWS_PHONE && !NETFX_CORE
 		        return this.Node.OuterXml;
+#else
+				return this.Node.ToString();
+#endif
 		    }
 		    #endregion
 
@@ -163,6 +211,7 @@ namespace Monotests_System.Data
 		    #region WriteXml
 		    void IXmlSerializable.WriteXml(XmlWriter writer)
 		    {
+#if !WINDOWS_PHONE && !NETFX_CORE
 		        XmlDocument doc = new XmlDocument();
 		        doc.LoadXml(mFuncXmlNode.OuterXml);
 
@@ -186,6 +235,30 @@ namespace Monotests_System.Data
 		        {
 		            UpgradeSchema(n);
 		        }
+#else
+				XDocument doc = XDocument.Parse(mFuncXmlNode.ToString());
+
+		        // On function level
+		        if (doc.Root.Name.LocalName == "Func")
+		        {
+		            try { doc.Root.Attribute("ReturnType").Remove(); }
+		            catch { }
+		            try { doc.Root.Attribute("ReturnTId").Remove(); }
+		            catch { }
+					try { doc.Root.Attribute("CSharpType").Remove(); }
+		            catch { }
+		        }
+		        else
+		        {
+		            UpgradeSchema(doc.Root);
+		        }
+
+		        // Make sure lrt is saved according to latest schema
+		        foreach (XElement e in doc.Root.Elements())
+		        {
+		            UpgradeSchema(e);
+		        }
+#endif
 
 		        doc.WriteTo(writer);
 		    }
@@ -193,6 +266,7 @@ namespace Monotests_System.Data
 		    #region ReadXml
 		    void IXmlSerializable.ReadXml(XmlReader reader)
 		    {
+#if !WINDOWS_PHONE && !NETFX_CORE
 		        XmlDocument doc = new XmlDocument();
 		        string str = reader.ReadString();
 		        try
@@ -204,6 +278,9 @@ namespace Monotests_System.Data
 		            doc.LoadXml(reader.ReadOuterXml());
 		        }
 		        mFuncXmlNode = (XmlNode)(doc.DocumentElement);
+#else
+				mFuncXmlNode = XNode.ReadFrom(reader);
+#endif
 		    }
 		    #endregion
 		    #region GetSchema
@@ -215,6 +292,7 @@ namespace Monotests_System.Data
 
 		    /* Private utils */
 		    #region private UpgradeSchema
+#if !WINDOWS_PHONE && !NETFX_CORE
 		    private void UpgradeSchema(XmlNode xNode)
 		    {
 		        // Attribute removals (cleanup)
@@ -248,6 +326,41 @@ namespace Monotests_System.Data
 		            UpgradeSchema(n);
 		        }
 		    }
+#else
+		    private void UpgradeSchema(XElement xNode)
+		    {
+		        // Attribute removals (cleanup)
+		        try { xNode.Attribute("TId").Remove(); }
+		        catch { }
+		        try { xNode.Attribute("OnError").Remove(); }
+		        catch { }
+		        try { xNode.Attribute("Check").Remove(); }
+		        catch { }
+		        try { xNode.Attribute("ParamType").Remove(); }
+		        catch { }
+				try { xNode.Attribute("RealLen").Remove(); }
+		        catch { }
+
+		        // Attribute removals (order)
+		        try
+		        {
+		            XAttribute attr = xNode.Attribute("IsExpGetRef");
+		            attr.Remove();
+		            xNode.Add(attr);
+		        }
+		        catch { }
+
+		        // Attribute value formats (prefix, etc.)
+		        string tmp = xNode.Attribute("HandleInput").Value;
+		        tmp = tmp.Replace("E_LRT_INPUT_HANDLE_", "");
+		        xNode.Attribute("HandleInput").Value = tmp;
+
+		        foreach (XElement n in xNode.Elements())
+		        {
+		            UpgradeSchema(n);
+		        }
+		    }
+#endif
 		    #endregion
 		}	
 	}

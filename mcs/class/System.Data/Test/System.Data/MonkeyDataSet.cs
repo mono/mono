@@ -32,10 +32,12 @@ public class MonkeyDataSet : System.Data.DataSet, System.Xml.Serialization.IXmlS
         this.Relations.CollectionChanged += handler;
     }
     
+#if !WINDOWS_PHONE && !NETFX_CORE
     protected MonkeyDataSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext ctx) {
         // TODO: implement
         throw new System.NotImplementedException();
     }
+#endif
     
     public virtual MonkeyTableDataTable MonkeyTable {
         get {
@@ -49,6 +51,7 @@ public class MonkeyDataSet : System.Data.DataSet, System.Xml.Serialization.IXmlS
         return set;
     }
     
+#if !WINDOWS_PHONE && !NETFX_CORE
     protected override System.Xml.Schema.XmlSchema GetSchemaSerializable() {
         System.IO.StringWriter sw = new System.IO.StringWriter();
         this.WriteXmlSchema(sw);
@@ -58,6 +61,7 @@ public class MonkeyDataSet : System.Data.DataSet, System.Xml.Serialization.IXmlS
     System.Xml.Schema.XmlSchema System.Xml.Serialization.IXmlSerializable.GetSchema() {
         return this.GetSchemaSerializable();
     }
+#endif
     
     internal void InitializeClass() {
         this.DataSetName = "MonkeyDataSet";

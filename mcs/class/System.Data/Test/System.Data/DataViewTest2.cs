@@ -26,7 +26,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+using ArrayList = System.Collections.Generic.List<System.Object>;
+using System.Linq;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
+using ArrayList = System.Collections.Generic.List<System.Object>;
+using System.Linq;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System;
 using System.IO;
 using System.ComponentModel;
@@ -227,7 +251,7 @@ namespace MonoTests_System.Data
 			drvResult = new DataRowView[dv.Count];
 			// CopyTo from index 0
 			dv.CopyTo(drvResult,0);
-			Assert.AreEqual(drvResult, drvExpected , "DV27");
+			AssertHelpers.AreEqualArray(drvResult, drvExpected , "DV27");
 
 			// ------- Copy from Index=3
 			drvExpected = new DataRowView[dv.Count+3];
@@ -239,7 +263,7 @@ namespace MonoTests_System.Data
 			drvResult = new DataRowView[dv.Count+3];
 			// CopyTo from index 3
 			dv.CopyTo(drvResult,3);
-			Assert.AreEqual(drvResult , drvExpected , "DV28");
+			AssertHelpers.AreEqualArray(drvResult , drvExpected , "DV28");
 
 			// ------- Copy from Index=3,larger array
 			drvExpected = new DataRowView[dv.Count+9];
@@ -251,7 +275,7 @@ namespace MonoTests_System.Data
 			drvResult = new DataRowView[dv.Count+9];
 			// CopyTo from index 3,larger array
 			dv.CopyTo(drvResult,3);
-			Assert.AreEqual(drvResult, drvExpected , "DV29");
+			AssertHelpers.AreEqualArray(drvResult, drvExpected , "DV29");
 
 			// ------- CopyTo smaller array, check exception
 			drvResult = new DataRowView[dv.Count-1];
@@ -599,7 +623,11 @@ namespace MonoTests_System.Data
                 {
                         evProp = null;
                         DataTable dt = new DataTable ();
+#if !WINDOWS_PHONE && !NETFX_CORE
                         IBindingList list = dt.DefaultView;
+#else
+                        DataView list = dt.DefaultView;
+#endif
                         list.ListChanged += new ListChangedEventHandler (dv_ListChanged);
                         dt.Columns.Add ("test", typeof (int));
                         dt.Rows.Add (new object[] { 10 });
@@ -617,7 +645,11 @@ namespace MonoTests_System.Data
                 {
                         evProp = null;
                         DataTable dt = new DataTable ();
+#if !WINDOWS_PHONE && !NETFX_CORE
                         IBindingList list = dt.DefaultView;
+#else
+                        DataView list = dt.DefaultView;
+#endif
                         list.ListChanged += new ListChangedEventHandler (dv_ListChanged);
                         dt.Columns.Add ("test", typeof (int));
                         dt.Rows.Add (new object[] { 10 });
@@ -646,7 +678,7 @@ namespace MonoTests_System.Data
 			// this test also check DataView.Count property
 
 			DataRowView[] drvResult = null;
-			System.Collections.ArrayList al = new System.Collections.ArrayList();
+			ArrayList al = new ArrayList();
 
 			//create the source datatable
 			DataTable dt = DataProvider.CreateChildDataTable();
@@ -763,7 +795,7 @@ namespace MonoTests_System.Data
 			 */
 
 			//DataRowView[] drvResult = null;
-			System.Collections.ArrayList al = new System.Collections.ArrayList();
+			ArrayList al = new ArrayList();
 
 			DataTable dt = DataProvider.CreateParentDataTable();
 
@@ -821,7 +853,7 @@ namespace MonoTests_System.Data
 		private DataRow[] GetResultRows(DataTable dt,DataRowState State)
 		{
 			//get expected rows
-			System.Collections.ArrayList al = new System.Collections.ArrayList();
+			ArrayList al = new ArrayList();
 			DataRowVersion drVer = DataRowVersion.Current;
 
 			//From MSDN -	The row the default version for the current DataRowState.
@@ -846,7 +878,11 @@ namespace MonoTests_System.Data
 					)
 					al.Add(dr);
 			}
+#if !WINDOWS_PHONE && !NETFX_CORE
 			DataRow[] result = (DataRow[])al.ToArray((typeof(DataRow)));
+#else
+			DataRow[] result = al.Cast<DataRow>().ToArray();
+#endif
 			return result; 
 		}
 
