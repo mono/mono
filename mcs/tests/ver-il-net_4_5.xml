@@ -19137,6 +19137,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-614.cs">
+    <type name="S">
+      <method name="System.Nullable`1[System.Int32] op_Explicit(System.Nullable`1[S])" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Int32 op_Implicit(System.Nullable`1[S])" attrs="2198">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>100</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

@@ -1237,7 +1237,7 @@ namespace Mono.CSharp.Nullable
 				// When both expressions are nullable the unwrap
 				// is needed only for null check not for value uwrap
 				//
-				if (type.IsNullableType)
+				if (type.IsNullableType && TypeSpecComparer.IsEqual (NullableInfo.GetUnderlyingType (type), unwrap.Type))
 					unwrap.Load (ec);
 				else
 					left.Emit (ec);
