@@ -356,8 +356,6 @@ namespace System.Net
 
 			byte [] buffer = new byte [1024];
 			MemoryStream ms = new MemoryStream ();
-			bool gotStatus = false;
-			WebHeaderCollection headers = null;
 
 			while (true) {
 				int n = stream.Read (buffer, 0, 1024);
@@ -369,7 +367,8 @@ namespace System.Net
 				ms.Write (buffer, 0, n);
 				int start = 0;
 				string str = null;
-				headers = new WebHeaderCollection ();
+				bool gotStatus = false;
+				WebHeaderCollection headers = new WebHeaderCollection ();
 				while (ReadLine (ms.GetBuffer (), ref start, (int) ms.Length, ref str)) {
 					if (str == null) {
 						int contentLen = 0;
