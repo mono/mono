@@ -30,6 +30,7 @@ using System.Data;
 using System.IO;
 using System.Xml;
 
+#if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
