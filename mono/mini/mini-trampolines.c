@@ -1590,54 +1590,52 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 #else
 	return NULL;
 #endif
-}	
+}
 
-
-/*
- * mono_create_delegate_trampoline_with_method:
- *
- *   Create a delegate trampoline for the KLASS+METHOD pair.
- */
 gpointer
-mono_create_delegate_trampoline_with_method (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
+mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 {
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-	gpointer ptr;
 	guint32 code_size = 0;
-	gpointer tramp_info;
+	MonoDelegateTrampInfo *info;
 	MonoClassMethodPair pair, *dpair;
+	MonoMethod *invoke;
 
 	pair.klass = klass;
-	pair.method = method;
+	pair.method = NULL;
 	mono_domain_lock (domain);
-	ptr = g_hash_table_lookup (domain_jit_info (domain)->delegate_trampoline_hash, &pair);
+	info = g_hash_table_lookup (domain_jit_info (domain)->delegate_trampoline_hash, &pair);
 	mono_domain_unlock (domain);
-	if (ptr)
-		return ptr;
+	if (info)
+		return info->invoke_impl;
 
-	tramp_info = create_delegate_trampoline_data (domain, klass, method);
+	invoke = mono_get_delegate_invoke (klass);
+	g_assert (invoke);
 
-	ptr = mono_create_specific_trampoline (tramp_info, MONO_TRAMPOLINE_DELEGATE, domain, &code_size);
+	info = mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));
+	info->klass = klass;
+
+	info->invoke = invoke;
+	info->invoke_sig = mono_method_signature (invoke);
+	info->invoke_impl = mono_create_specific_trampoline (info, MONO_TRAMPOLINE_DELEGATE, domain, &code_size);
 	g_assert (code_size);
+
+	info->impl_this = mono_arch_get_delegate_invoke_impl (info->invoke_sig, TRUE);
+	info->impl_nothis = mono_arch_get_delegate_invoke_impl (info->invoke_sig, FALSE);
 
 	dpair = mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));
 	memcpy (dpair, &pair, sizeof (MonoClassMethodPair));
 
 	/* store trampoline address */
 	mono_domain_lock (domain);
-	g_hash_table_insert (domain_jit_info (domain)->delegate_trampoline_hash, dpair, ptr);
+	g_hash_table_insert (domain_jit_info (domain)->delegate_trampoline_hash, dpair, info);
 	mono_domain_unlock (domain);
 
-	return ptr;
+	return info->invoke_impl;
 #else
 	return NULL;
 #endif
 }
-
-gpointer
-mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
-{
-	return mono_create_delegate_trampoline_with_method (domain, klass, NULL);
 
 MonoDelegateTrampInfo*
 mono_create_delegate_virtual_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
