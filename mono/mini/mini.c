@@ -3624,6 +3624,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		}
+		case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
+			MonoClassMethodPair *info = g_malloc0 (sizeof (MonoClassMethodPair));
+			info->klass = entry->data->data.del_tramp->klass;
+			info->method = entry->data->data.del_tramp->method;
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
+			break;
+		}
 		default:
 			g_assert_not_reached ();
 			break;

@@ -3425,6 +3425,23 @@ emit_get_rgctx_method (MonoCompile *cfg, int context_used,
 	}
 }
 
+/*
+ * emit_get_rgctx_delegate_info:
+ *
+ *   Emit IR to load the property MONO_RGCTX_INFO_METHOD_DELEGATE_INFO of KLASS and METHOD.
+ */
+static MonoInst*
+emit_get_rgctx_delegate_info (MonoCompile *cfg, int context_used, MonoClassMethodPair *info)
+{
+	MonoJumpInfoRgctxEntry *entry;
+	MonoInst *rgctx_ins;
+
+	entry = mono_patch_info_rgctx_entry_new (cfg->mempool, cfg->current_method, context_used & MONO_GENERIC_CONTEXT_USED_METHOD, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, info, MONO_RGCTX_INFO_METHOD_DELEGATE_INFO);
+	rgctx_ins = emit_get_rgctx (cfg, cfg->current_method, context_used);
+	rgctx_ins = emit_rgctx_fetch (cfg, rgctx_ins, entry);
+	return rgctx_ins;
+}
+
 static MonoInst*
 emit_get_rgctx_field (MonoCompile *cfg, int context_used,
 					  MonoClassField *field, MonoRgctxInfoType rgctx_type)

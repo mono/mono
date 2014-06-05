@@ -1111,6 +1111,7 @@ typedef enum {
 	/* The address of Nullable<T>.Box () */
 	MONO_RGCTX_INFO_NULLABLE_CLASS_BOX,
 	MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX,
+	MONO_RGCTX_INFO_METHOD_DELEGATE_INFO,
 } MonoRgctxInfoType;
 
 typedef struct _MonoRuntimeGenericContextInfoTemplate {
