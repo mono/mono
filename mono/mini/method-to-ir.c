@@ -4514,7 +4514,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
  * Returns NULL and set the cfg exception on error.
  */
 static G_GNUC_UNUSED MonoInst*
-handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, MonoMethod *method, int context_used)
+handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, MonoMethod *method, int context_used, gboolean virtual)
 {
 	MonoInst *ptr;
 	int dreg;
@@ -4540,7 +4540,10 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 	}
 
 	if (!context_used && !cfg->compile_aot) {
-		trampoline = mono_create_delegate_trampoline_info (cfg->domain, klass, method);
+		if (!virtual)
+			trampoline = mono_create_delegate_trampoline_info (cfg->domain, klass, method);
+		else
+			trampoline = mono_create_delegate_virtual_trampoline_info (cfg->domain, klass, method);
 		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
 	} else {
 		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
@@ -4557,70 +4560,6 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method));
 	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), dreg);
 
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method_ptr));
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method_ptr), dreg);
-
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, invoke_impl));
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, invoke_impl), dreg);
-
-	/* All the checks which are in mono_delegate_ctor () are done by the delegate trampoline */
-
-	return obj;
-}
-
-/*
- * Returns NULL and set the cfg exception on error.
- */
-static G_GNUC_UNUSED MonoInst*
-handle_delegate_virtual_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, MonoMethod *method, int context_used)
-{
-	MonoInst *ptr;
-	int dreg;
-	MonoClassMethodPair *info;
-	MonoDelegateTrampInfo *trampoline;
-	MonoInst *obj, *method_ins, *tramp_ins;
-
-	obj = handle_alloc (cfg, klass, FALSE, 0);
-	if (!obj)
-		return NULL;
-
-	/* Inline the contents of mono_delegate_ctor */
-
-	/* Set target field */
-	/* Optimize away setting of NULL target */
-	if (!(target->opcode == OP_PCONST && target->inst_p0 == 0)) {
-		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, target), target->dreg);
-		if (cfg->gen_write_barriers) {
-			dreg = alloc_preg (cfg);
-			EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, target));
-			emit_write_barrier (cfg, ptr, target);
-		}
-	}
-
-	/* Set method field */
-	method_ins = emit_get_rgctx_method (cfg, context_used, method, MONO_RGCTX_INFO_METHOD);
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), method_ins->dreg);
-	if (cfg->gen_write_barriers) {
-		dreg = alloc_preg (cfg);
-		EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method));
-		emit_write_barrier (cfg, ptr, method_ins);
-	}
-
-	if (!context_used && !cfg->compile_aot) {
-		trampoline = mono_create_delegate_trampoline_info (cfg->domain, klass, method);
-		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
-	} else {
-		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
-		info->klass = klass;
-		info->method = method;
-
-		if (context_used)
-			tramp_ins = emit_get_rgctx_delegate_info (cfg, context_used, info);
-		else
-			EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, info);
-	}
-
-	dreg = alloc_preg (cfg);
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method_ptr));
 	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method_ptr), dreg);
 
@@ -11814,7 +11753,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ip += 6;
 							if (cfg->verbose_level > 3)
 								g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-							h = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used);
+							h = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, FALSE);
 							if (h) {
 								sp --;
 								*sp = h;
@@ -11893,7 +11832,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ip += 6;
 							if (cfg->verbose_level > 3)
 								g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-							h = handle_delegate_virtual_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used);
+							h = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, TRUE);
 							if (h) {
 								sp -= 2;
 								*sp = h;
