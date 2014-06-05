@@ -104,6 +104,7 @@ namespace Microsoft.Build.Tasks {
 					result = false;
 				}
 
+				all_result = true;
 				if (!result)
 					all_result = false;
 
