@@ -295,8 +295,10 @@ typedef struct
 	GHashTable *class_init_trampoline_hash;
 	GHashTable *jump_trampoline_hash;
 	GHashTable *jit_trampoline_hash;
-	/* Maps ClassMethodPair -> DelegateTrampInfo */
+	/* Maps ClassMethodPair -> MonoDelegateTrampInfo */
+	GHashTable *delegate_trampoline_info_hash;
 	GHashTable *delegate_trampoline_hash;
+	GHashTable *delegate_virtual_trampoline_info_hash;
 	GHashTable *static_rgctx_trampoline_hash;
 	GHashTable *llvm_vcall_trampoline_hash;
 	/* maps MonoMethod -> MonoJitDynamicMethodInfo */
@@ -1154,6 +1156,21 @@ typedef struct {
 	 */
 	gpointer entries [MONO_ZERO_LEN_ARRAY];
 } MonoGSharedVtMethodRuntimeInfo;
+
+typedef struct
+{
+	MonoMethod *invoke;
+	MonoClass *klass;
+	MonoMethod *method;
+	MonoMethodSignature *invoke_sig;
+	MonoMethodSignature *sig;
+	gpointer method_ptr;
+	gpointer invoke_impl;
+	gpointer impl_this;
+	gpointer impl_nothis;
+	int slot;
+	gboolean need_rgctx_tramp;
+} MonoDelegateTrampInfo;
 
 typedef enum {
 #define PATCH_INFO(a,b) MONO_PATCH_INFO_ ## a,
