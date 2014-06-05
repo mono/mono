@@ -446,6 +446,8 @@ namespace System.Net.NetworkInformation {
 		const int AF_INET  = 2;
 		const int AF_INET6 = 30;
 		const int AF_LINK  = 18;
+
+		private uint _ifa_flags;
 		
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
@@ -465,6 +467,7 @@ namespace System.Net.NetworkInformation {
 					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
 
 					if (addr.ifa_addr != IntPtr.Zero) {
+						// optain IPAddress
 						MacOsStructs.sockaddr sockaddr = (MacOsStructs.sockaddr) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr));
 
 						if (sockaddr.sa_family == AF_INET6) {
@@ -478,7 +481,10 @@ namespace System.Net.NetworkInformation {
 							sockaddrdl.Read (addr.ifa_addr);
 
 							macAddress = new byte [(int) sockaddrdl.sdl_alen];
+							// copy mac address from sdl_data field starting at last index pos of interface name into array macaddress, starting
+							// at index 0
 							Array.Copy (sockaddrdl.sdl_data, sockaddrdl.sdl_nlen, macAddress, 0, Math.Min (macAddress.Length, sockaddrdl.sdl_data.Length - sockaddrdl.sdl_nlen));
+
 							index = sockaddrdl.sdl_index;
 
 							int hwtype = (int) sockaddrdl.sdl_type;
@@ -515,14 +521,17 @@ namespace System.Net.NetworkInformation {
 
 					MacOsNetworkInterface iface = null;
 
+					// create interface if not already present
 					if (!interfaces.TryGetValue (name, out iface)) {
-						iface = new MacOsNetworkInterface (name);
+						iface = new MacOsNetworkInterface (name, addr.ifa_flags);
 						interfaces.Add (name, iface);
 					}
 
+					// if a new address has been found, add it
 					if (!address.Equals (IPAddress.None))
 						iface.AddAddress (address);
 
+					// set link layer info, if iface has macaddress or is loopback device
 					if (macAddress != null || type == NetworkInterfaceType.Loopback)
 						iface.SetLinkLayerInfo (index, macAddress, type);
 
@@ -541,9 +550,10 @@ namespace System.Net.NetworkInformation {
 			return result;
 		}
 		
-		MacOsNetworkInterface (string name)
+		MacOsNetworkInterface (string name, uint ifa_flags)
 			: base (name)
 		{
+			_ifa_flags = ifa_flags;
 		}
 
 		public override IPInterfaceProperties GetIPProperties ()
@@ -562,13 +572,16 @@ namespace System.Net.NetworkInformation {
 
 		public override OperationalStatus OperationalStatus {
 			get {
+				if(((MacOsInterfaceFlags)_ifa_flags & MacOsInterfaceFlags.IFF_UP) == MacOsInterfaceFlags.IFF_UP){
+					return OperationalStatus.Up;
+				}
 				return OperationalStatus.Unknown;
 			}
 		}
 
 		public override bool SupportsMulticast {
 			get {
-				return false;
+				return ((MacOsInterfaceFlags)_ifa_flags & MacOsInterfaceFlags.IFF_MULTICAST) == MacOsInterfaceFlags.IFF_MULTICAST;
 			}
 		}
 	}
