@@ -27,7 +27,11 @@ using Mono.Xml;
 using Mono.Xml.Schema;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	///  All Methods in this class should use XmlConvert. Some Methods are not present in the

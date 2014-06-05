@@ -30,14 +30,24 @@
 
 #if NET_2_0
 
+using System;
 using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	[MonoTODO] // This class is unused and thus won't be finished.
-	public sealed class XmlAtomicValue : XPathItem, ICloneable
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	sealed class XmlAtomicValue : XPathItem, ICloneable
 	{
 		bool booleanValue;
 		DateTime dateTimeValue;

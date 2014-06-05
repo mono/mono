@@ -37,7 +37,12 @@ using System.Threading.Tasks;
 
 namespace System.Xml
 {
-	public class XmlUrlResolver : XmlResolver
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlUrlResolver : XmlResolver
 	{
 		// Field
 		ICredentials credential;

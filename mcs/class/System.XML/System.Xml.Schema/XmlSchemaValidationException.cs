@@ -35,10 +35,19 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	[Serializable]
-	public class XmlSchemaValidationException : XmlSchemaException
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif 
+	class XmlSchemaValidationException : XmlSchemaException
 	{
 		object source_object;
 

@@ -24,12 +24,21 @@
 using System;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaKey.
 	/// </summary>
-	public class XmlSchemaKey : XmlSchemaIdentityConstraint
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaKey : XmlSchemaIdentityConstraint
 	{
 		const string xmlname = "key";
 

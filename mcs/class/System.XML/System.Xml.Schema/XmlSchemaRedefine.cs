@@ -25,12 +25,21 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaRedefine.
 	/// </summary>
-	public class XmlSchemaRedefine : XmlSchemaExternal
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaRedefine : XmlSchemaExternal
 	{
 		private XmlSchemaObjectTable attributeGroups;
 		private XmlSchemaObjectTable groups;

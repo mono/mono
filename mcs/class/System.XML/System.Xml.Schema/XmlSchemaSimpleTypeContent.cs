@@ -22,13 +22,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaSimpleTypeContent.
 	/// </summary>
-	public abstract class XmlSchemaSimpleTypeContent : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	abstract class XmlSchemaSimpleTypeContent : XmlSchemaAnnotated
 	{
 		protected XmlSchemaSimpleTypeContent()
 		{

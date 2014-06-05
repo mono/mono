@@ -24,12 +24,21 @@
 using System;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaContentProcessing.
 	/// </summary>
-	public enum XmlSchemaContentProcessing 
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif	
+	enum XmlSchemaContentProcessing 
 	{
 		[XmlIgnore]
 		None	= 0,

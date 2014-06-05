@@ -34,13 +34,22 @@ using System.IO;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchema.
 	/// </summary>
 	[XmlRoot ("schema",Namespace=XmlSchema.Namespace)]
-	public class XmlSchema : XmlSchemaObject
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchema : XmlSchemaObject
 	{
 		//public constants
 		public const string Namespace = "http://www.w3.org/2001/XMLSchema";

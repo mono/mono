@@ -23,15 +23,24 @@
 //
 using System;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for ValidationEventArgs.
 	/// </summary>
-#if NET_2_0
-	public class ValidationEventArgs : EventArgs
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
 #else
-	public sealed class ValidationEventArgs : EventArgs
+	internal
+#endif
+#if NET_2_0
+	class ValidationEventArgs : EventArgs
+#else
+	sealed class ValidationEventArgs : EventArgs
 #endif
 	{
 		private XmlSchemaException exception;

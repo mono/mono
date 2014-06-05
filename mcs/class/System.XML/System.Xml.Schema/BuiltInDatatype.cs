@@ -31,9 +31,14 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Xml;
+#if !INCLUDE_MONO_XML_SCHEMA
 using System.Xml.Schema;
 using System.Globalization;
 using System.Security.Cryptography;
+#else
+using System.Globalization;
+using Mono.Xml.Schema;
+#endif
 
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;

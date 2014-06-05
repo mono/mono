@@ -26,12 +26,21 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaSimpleTypeUnion.
 	/// </summary>
-	public class XmlSchemaSimpleTypeUnion : XmlSchemaSimpleTypeContent
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaSimpleTypeUnion : XmlSchemaSimpleTypeContent
 	{
 		private XmlSchemaObjectCollection baseTypes;
 		private XmlQualifiedName[] memberTypes;

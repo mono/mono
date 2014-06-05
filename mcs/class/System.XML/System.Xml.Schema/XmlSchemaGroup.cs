@@ -31,12 +31,21 @@ using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// refers to the named group
 	/// </summary>
-	public class XmlSchemaGroup : XmlSchemaAnnotated
+#if !INCLUDE_MONO_XML_SCHEMA
+	public
+#else
+	internal
+#endif
+	class XmlSchemaGroup : XmlSchemaAnnotated
 	{
 		private string name;
 		private XmlSchemaGroupBase particle;

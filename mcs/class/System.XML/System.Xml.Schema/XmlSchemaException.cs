@@ -27,17 +27,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Xml;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaException.
 	/// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
+#if !INCLUDE_MONO_XML_SCHEMA
 	public class XmlSchemaException : System.SystemException
+#else
+	internal class XmlSchemaException : Exception
+#endif
 	{
 		//fields
 		private bool hasLineInfo;

@@ -34,12 +34,21 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using Mono.Xml.Schema;
 
+#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
+#else
+namespace Mono.Xml.Schema
+#endif
 {
 	/// <summary>
 	/// Summary description for XmlSchemaAny.
 	/// </summary>
-	public class XmlSchemaAny : XmlSchemaParticle
+#if !INCLUDE_MONO_XML_SCHEMA
+    public
+#else
+	internal
+#endif	
+	class XmlSchemaAny : XmlSchemaParticle
 	{
 		static XmlSchemaAny anyTypeContent;
 		internal static XmlSchemaAny AnyTypeContent {
