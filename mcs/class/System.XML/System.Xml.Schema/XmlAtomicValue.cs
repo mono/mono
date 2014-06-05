@@ -364,7 +364,11 @@ namespace Mono.Xml.Schema
 			case XmlTypeCode.Item:
 				return TypedValue;
 			case XmlTypeCode.QName:
+#if !WINDOWS_PHONE && !NETFX_CORE
 				return XmlQualifiedName.Parse (Value, nsResolver, true);
+#else
+				return XmlSchemaUtil.Parse (Value, nsResolver, true);
+#endif
 			case XmlTypeCode.Base64Binary:
 			case XmlTypeCode.HexBinary:
 				if (bytesValue != null)

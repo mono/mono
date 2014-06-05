@@ -209,7 +209,7 @@ namespace Mono.Xml.Schema
 					string prefix = xpath.Substring (nameStart, pos - nameStart);
 					pos++;
 					if (xpath.Length > pos && xpath [pos] == '*') {
-						string ns = nsmgr.LookupNamespace (prefix, false);
+						string ns = nsmgr.LookupNamespace (prefix);
 						if (ns == null) {
 							error (h, "Specified prefix '" + prefix + "' is not declared.");
 							this.currentPath = null;
@@ -226,7 +226,7 @@ namespace Mono.Xml.Schema
 								pos++;
 						}
 						step.Name = xpath.Substring (localNameStart, pos - localNameStart);
-						string ns = nsmgr.LookupNamespace (prefix, false);
+						string ns = nsmgr.LookupNamespace (prefix);
 						if (ns == null) {
 							error (h, "Specified prefix '" + prefix + "' is not declared.");
 							this.currentPath = null;
@@ -310,7 +310,11 @@ namespace Mono.Xml.Schema
 			path.LinePosition = reader.LinePosition;
 			path.SourceUri = reader.BaseURI;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			XmlNamespaceManager currentMgr = XmlSchemaUtil.GetParserContext (reader.Reader).NamespaceManager;
+#else
+			XmlNamespaceManager currentMgr = new XmlNamespaceManager (reader.Reader.NameTable);
+#endif
 			if (currentMgr != null) {
 				path.nsmgr = new XmlNamespaceManager (reader.NameTable);
 				IEnumerator e = currentMgr.GetEnumerator ();
@@ -321,7 +325,7 @@ namespace Mono.Xml.Schema
 					case "xmlns":
 						continue;
 					default:
-						path.nsmgr.AddNamespace (prefix, currentMgr.LookupNamespace (prefix, false));
+						path.nsmgr.AddNamespace (prefix, currentMgr.LookupNamespace (prefix));
 						break;
 					}
 				}

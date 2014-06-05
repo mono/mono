@@ -26,6 +26,10 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using XmlAttribute = System.Xml.Linq.XAttribute;
+#endif
+
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
 #else

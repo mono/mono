@@ -25,6 +25,12 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using XmlNode = System.Xml.Linq.XNode;
+using System.Xml.Linq;
+using System.Linq;
+#endif
+
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
 #else
@@ -104,6 +110,7 @@ namespace Mono.Xml.Schema
 
 			//Content {any}*
 			//FIXME: This is a pure Quick Hack; There must be a another method;
+#if !WINDOWS_PHONE && !NETFX_CORE
 			XmlDocument xmldoc = new XmlDocument();
 			xmldoc.AppendChild(xmldoc.ReadNode(reader));
 			XmlNode root = xmldoc.FirstChild;
@@ -115,6 +122,15 @@ namespace Mono.Xml.Schema
 					appinfo.Markup[i] = root.ChildNodes[i];
 				}
 			}
+#else
+			XDocument xmldoc = new XDocument();
+			xmldoc.Add(XNode.ReadFrom(reader));
+			XElement root = xmldoc.FirstNode as XElement;
+			if(root != null && root.Nodes().Any() != null)
+			{
+				appinfo.Markup = root.Nodes().ToArray();
+			}
+#endif
 			if(reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
 				skip = true;
 			return appinfo;

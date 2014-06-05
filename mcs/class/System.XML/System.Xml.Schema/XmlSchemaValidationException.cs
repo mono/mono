@@ -33,7 +33,9 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Security.Permissions;
+#endif
 
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
@@ -41,7 +43,9 @@ namespace System.Xml.Schema
 namespace Mono.Xml.Schema
 #endif
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 #if !INCLUDE_MONO_XML_SCHEMA
 	public
 #else
@@ -61,10 +65,12 @@ namespace Mono.Xml.Schema
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected XmlSchemaValidationException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 
 		public XmlSchemaValidationException (string message, Exception innerException, int lineNumber, int linePosition)
 			: base (message, lineNumber, linePosition, null, null, innerException)
@@ -94,6 +100,7 @@ namespace Mono.Xml.Schema
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[SecurityPermission (SecurityAction.LinkDemand,
 			Flags=SecurityPermissionFlag.SerializationFormatter)]
 		public override void GetObjectData (
@@ -101,6 +108,7 @@ namespace Mono.Xml.Schema
 		{
 			base.GetObjectData (info, context);
 		}
+#endif
 
 		// Never use it. It actually does nothing even on MS.NET 2.0.
 		protected internal void SetSourceObject (object sourceObject)

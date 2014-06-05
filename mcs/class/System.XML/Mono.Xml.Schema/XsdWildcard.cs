@@ -36,6 +36,10 @@ using System.Collections.Specialized;
 using System.Xml;
 using System.Xml.Schema;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using StringCollection = System.Collections.Generic.List<System.String>;
+#endif
+
 namespace Mono.Xml.Schema
 {
 	internal class XsdWildcard

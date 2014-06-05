@@ -30,6 +30,9 @@ using System;
 using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
+#if WINDOWS_PHONE || NETFX_CORE
+using Stack = System.Collections.Generic.Stack<System.Object>;
+#endif
 
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema

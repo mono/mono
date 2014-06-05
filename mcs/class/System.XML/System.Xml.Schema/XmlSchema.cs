@@ -34,6 +34,10 @@ using System.IO;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
+#if WINDOWS_PHONE || NETFX_CORE
+using XmlAttribute = System.Xml.Linq.XAttribute;
+#endif
+
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
 #else
@@ -546,9 +550,9 @@ namespace Mono.Xml.Schema
 					missedSubComponents = true;
 					return;
 				} else {
-					XmlTextReader xtr = null;
+					XmlReader xtr = null;
 					try {
-						xtr = new XmlTextReader (url, stream, nameTable);
+						xtr = XmlReader.Create (stream, new XmlReaderSettings () { NameTable = nameTable}, url);
 						includedSchema = XmlSchema.Read (xtr, handler);
 					} finally {
 						if (xtr != null)
@@ -696,11 +700,11 @@ namespace Mono.Xml.Schema
 		// We cannot use xml deserialization, since it does not provide line info, qname context, and so on.
 		public static XmlSchema Read (TextReader reader, ValidationEventHandler validationEventHandler)
 		{
-			return Read (new XmlTextReader (reader),validationEventHandler);
+			return Read (XmlReader.Create (reader),validationEventHandler);
 		}
 		public static XmlSchema Read (Stream stream, ValidationEventHandler validationEventHandler)
 		{
-			return Read (new XmlTextReader (stream),validationEventHandler);
+			return Read (XmlReader.Create (stream),validationEventHandler);
 		}
 
 		public static XmlSchema Read (XmlReader reader, ValidationEventHandler validationEventHandler)
@@ -920,6 +924,7 @@ namespace Mono.Xml.Schema
 
 		#region write
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public void Write(System.IO.Stream stream)
 		{
 			Write(stream,null);
@@ -992,9 +997,11 @@ namespace Mono.Xml.Schema
 			}
 			writer.Flush();
 		}
+#endif
 		#endregion
 	}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	class XmlSchemaSerializer : XmlSerializer
 	{
 		protected override void Serialize (object o, XmlSerializationWriter writer)
@@ -1008,6 +1015,7 @@ namespace Mono.Xml.Schema
 			return new XmlSchemaSerializationWriter ();
 		}
 	}
+#endif
 	
 	class CompiledSchemaMemo
 	{

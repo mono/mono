@@ -121,7 +121,7 @@ namespace Mono.Xml.Schema
 
 		public XmlSchema Add (string ns, string uri)
 		{
-			XmlReader reader = new XmlTextReader (uri);
+			XmlReader reader = XmlReader.Create (uri);
 			try {
 				return Add (ns, reader);
 			} finally {

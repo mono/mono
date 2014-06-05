@@ -202,10 +202,12 @@ namespace Mono.Xml.Schema
 		{
 			get { return  reader.Prefix; }
 		}
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override char QuoteChar 
 		{
 			get { return  reader.QuoteChar; }
 		}
+#endif
 		public override ReadState ReadState 
 		{
 			get { return  reader.ReadState; }
@@ -318,6 +320,7 @@ namespace Mono.Xml.Schema
 			return reader.ReadAttributeValue(); 
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override string ReadElementString()
 		{
 			return reader.ReadElementString(); 
@@ -332,6 +335,7 @@ namespace Mono.Xml.Schema
 		{
 			return reader.ReadElementString(name); 
 		}
+#endif
 
 		public override void ReadEndElement()
 		{
@@ -363,10 +367,12 @@ namespace Mono.Xml.Schema
 			reader.ReadStartElement(name); 
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public override string ReadString()
 		{
 			return reader.ReadString(); 
 		}
+#endif
 
 		public override void ResolveEntity()
 		{

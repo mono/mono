@@ -23,6 +23,9 @@
 //
 using System;
 using System.Collections;
+#if WINDOWS_PHONE || NETFX_CORE
+using CollectionBase = System.Collections.Generic.List<Mono.Xml.Schema.XmlSchemaObject>;
+#endif
 
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
@@ -52,6 +55,7 @@ namespace Mono.Xml.Schema
 //			this.parent = parent;
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		// Properties
 		public virtual XmlSchemaObject this[ int index ] 
 		{  
@@ -116,5 +120,6 @@ namespace Mono.Xml.Schema
 		{
 			this.List.Remove(item);
 		}
+#endif
 	}
 }
