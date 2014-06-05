@@ -460,9 +460,9 @@ namespace Mono.CSharp
 		protected override BlockContext CreateBlockContext (BlockContext bc)
 		{
 			var ctx = base.CreateBlockContext (bc);
-			var lambda = bc.CurrentAnonymousMethod as LambdaMethod;
-			if (lambda != null)
-				return_inference = lambda.ReturnTypeInference;
+			var am = bc.CurrentAnonymousMethod as AnonymousMethodBody;
+			if (am != null)
+				return_inference = am.ReturnTypeInference;
 
 			ctx.Set (ResolveContext.Options.TryScope);
 

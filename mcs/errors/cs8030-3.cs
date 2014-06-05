@@ -1,4 +1,4 @@
-// CS0127: `C.GetValue()': A return keyword must not be followed by any expression when method returns void
+// CS8030: Anonymous function or lambda expression converted to a void returning delegate cannot return a value
 // Line: 11
 
 using System;

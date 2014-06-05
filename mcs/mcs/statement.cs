@@ -1206,10 +1206,8 @@ namespace Mono.CSharp {
 						}
 
 						if (async_type.Kind == MemberKind.Void) {
-							ec.Report.Error (127, loc,
-								"`{0}': A return keyword must not be followed by any expression when method returns void",
-								ec.GetSignatureForError ());
-
+							ec.Report.Error (8030, loc,
+								"Anonymous function or lambda expression converted to a void returning delegate cannot return a value");
 							return false;
 						}
 
