@@ -32,12 +32,7 @@ namespace System.Collections.Specialized
 #if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
 #endif
-#if INSIDE_CORLIB
-	public
-#else
-	internal
-#endif
-	class ListDictionary : IDictionary, ICollection, IEnumerable {
+	public class ListDictionary : IDictionary, ICollection, IEnumerable {
 		private int count;
 		private int version;
 		private DictionaryNode head;
