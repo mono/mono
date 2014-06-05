@@ -31,11 +31,12 @@
 
 using System.Globalization;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.ComponentModel
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
+#endif
 	public class InvalidEnumArgumentException : ArgumentException
 	{
 
@@ -60,9 +61,11 @@ namespace System.ComponentModel
 		{
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		protected InvalidEnumArgumentException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#endif
 	}
 }

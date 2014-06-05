@@ -29,8 +29,15 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Specialized
 {
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public class ListDictionary : IDictionary, ICollection, IEnumerable {
+#endif
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class ListDictionary : IDictionary, ICollection, IEnumerable {
 		private int count;
 		private int version;
 		private DictionaryNode head;
@@ -223,7 +230,9 @@ namespace System.Collections.Specialized
 		}
 
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Serializable]
+#endif
 		private class DictionaryNode {
 			public object key;
 			public object value;
