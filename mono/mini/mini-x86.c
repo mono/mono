@@ -6262,6 +6262,12 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 	return start;
 }
 
+gpointer
+mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method)
+{
+	return NULL;
+}
+
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
