@@ -1138,17 +1138,17 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	if (method && !callvirt) {
 		/* Avoid the overhead of looking up an already compiled method if possible */
 		if (enable_caching && delegate->method_code && *delegate->method_code) {
-			delegate->method_ptr = *delegate->method_code;
+			delegate->method_ptr = tramp_info->method_ptr = *delegate->method_code;
 		} else {
 			compiled_method = addr = mono_compile_method (method);
 			addr = mini_add_method_trampoline (NULL, method, compiled_method, need_rgctx_tramp, need_unbox_tramp);
-			delegate->method_ptr = addr;
+			delegate->method_ptr = tramp_info->method_ptr = addr;
 			if (enable_caching && delegate->method_code)
 				*delegate->method_code = delegate->method_ptr;
 		}
 	} else {
 		if (need_rgctx_tramp)
-			delegate->method_ptr = mono_create_static_rgctx_trampoline (method, delegate->method_ptr);
+			delegate->method_ptr = tramp_info->method_ptr = mono_create_static_rgctx_trampoline (method, delegate->method_ptr);
 	}
 
 	multicast = ((MonoMulticastDelegate*)delegate)->prev != NULL;
@@ -1161,6 +1161,8 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 
 		if (code) {
 			delegate->invoke_impl = mono_get_addr_from_ftnptr (code);
+			if (tramp_info->method)
+				tramp_info->invoke_impl = delegate->invoke_impl;
 			return code;
 		}
 	}
@@ -1170,6 +1172,8 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	code = mono_compile_method (m);
 	code = mini_add_method_trampoline (NULL, m, code, mono_method_needs_static_rgctx_invoke (m, FALSE), FALSE);
 	delegate->invoke_impl = mono_get_addr_from_ftnptr (code);
+	if (tramp_info->method)
+		tramp_info->invoke_impl = delegate->invoke_impl;
 
 	return code;
 }
