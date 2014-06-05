@@ -585,6 +585,18 @@ class Tester : Base
 		var s = new S (await Task.Factory.StartNew (() => 77), await Task.Factory.StartNew (() => "b"));
 		return s.Value == 77;
 	}
+
+	async Task<int> NewDelegate_1 ()
+	{
+		var f = new Func<int> (await NewDelegate_1_0 ());
+		return f ();
+	}
+
+	static async Task<Func<int>> NewDelegate_1_0 ()
+	{
+		await Task.Factory.StartNew (() => { });
+		return () => 0;		
+	}
 	
 	async Task<int> NewInitTest_1 ()
 	{
