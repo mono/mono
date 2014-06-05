@@ -4518,10 +4518,9 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 {
 	MonoInst *ptr;
 	int dreg;
-	gpointer *trampoline;
-	MonoInst *obj, *method_ins, *tramp_ins;
-	MonoDomain *domain;
-	guint8 **code_slot;
+	MonoClassMethodPair *info;
+	MonoDelegateTrampInfo *trampoline;
+	MonoInst *obj, *tramp_ins;
 
 	obj = handle_alloc (cfg, klass, FALSE, 0);
 	if (!obj)
@@ -4540,57 +4539,29 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 		}
 	}
 
-	/* Set method field */
-	method_ins = emit_get_rgctx_method (cfg, context_used, method, MONO_RGCTX_INFO_METHOD);
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), method_ins->dreg);
-	if (cfg->gen_write_barriers) {
-		dreg = alloc_preg (cfg);
-		EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method));
-		emit_write_barrier (cfg, ptr, method_ins);
-	}
-	/* 
-	 * To avoid looking up the compiled code belonging to the target method
-	 * in mono_delegate_trampoline (), we allocate a per-domain memory slot to
-	 * store it, and we fill it after the method has been compiled.
-	 */
-	if (!method->dynamic && !(cfg->opt & MONO_OPT_SHARED)) {
-		MonoInst *code_slot_ins;
-
-		if (context_used) {
-			code_slot_ins = emit_get_rgctx_method (cfg, context_used, method, MONO_RGCTX_INFO_METHOD_DELEGATE_CODE);
-		} else {
-			domain = mono_domain_get ();
-			mono_domain_lock (domain);
-			if (!domain_jit_info (domain)->method_code_hash)
-				domain_jit_info (domain)->method_code_hash = g_hash_table_new (NULL, NULL);
-			code_slot = g_hash_table_lookup (domain_jit_info (domain)->method_code_hash, method);
-			if (!code_slot) {
-				code_slot = mono_domain_alloc0 (domain, sizeof (gpointer));
-				g_hash_table_insert (domain_jit_info (domain)->method_code_hash, method, code_slot);
-			}
-			mono_domain_unlock (domain);
-
-			if (cfg->compile_aot)
-				EMIT_NEW_AOTCONST (cfg, code_slot_ins, MONO_PATCH_INFO_METHOD_CODE_SLOT, method);
-			else
-				EMIT_NEW_PCONST (cfg, code_slot_ins, code_slot);
-		}
-		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method_code), code_slot_ins->dreg);		
-	}
-
-	/* Set invoke_impl field */
-	if (cfg->compile_aot) {
-		MonoClassMethodPair *del_tramp;
-
-		del_tramp = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
-		del_tramp->klass = klass;
-		del_tramp->method = context_used ? NULL : method;
-		EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, del_tramp);
-	} else {
-		trampoline = mono_create_delegate_trampoline_with_method (cfg->domain, klass, context_used ? NULL : method);
+	if (!context_used && !cfg->compile_aot) {
+		trampoline = mono_create_delegate_trampoline_info (cfg->domain, klass, method);
 		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
+	} else {
+		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
+		info->klass = klass;
+		info->method = method;
+
+		if (context_used)
+			tramp_ins = emit_get_rgctx_delegate_info (cfg, context_used, info);
+		else
+			EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, info);
 	}
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, invoke_impl), tramp_ins->dreg);
+
+	dreg = alloc_preg (cfg);
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method));
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), dreg);
+
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method_ptr));
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method_ptr), dreg);
+
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, invoke_impl));
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, invoke_impl), dreg);
 
 	/* All the checks which are in mono_delegate_ctor () are done by the delegate trampoline */
 
