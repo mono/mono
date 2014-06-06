@@ -68,7 +68,7 @@ namespace MonoTests.System.Data
 #endif
             StringWriter sw = new StringWriter();
             doc.Save(sw);
-            xml = sw.ToString();
+            xml = sw.ToString().Replace("\r\n", "\n");
         }
         
         void GenerateTestData(out DataSet ds,
@@ -147,34 +147,34 @@ namespace MonoTests.System.Data
                              out dtMain);
             
             StringWriter sw = new StringWriter();
-            sw.NewLine = "\r\n";
+            sw.NewLine = "\n";
             
             // Get XML for DataSet writes.
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            string xmlDSNone = sw.ToString();
+            string xmlDSNone = sw.ToString().Replace("\r\n", "\n");
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            string xmlDSDiffGram = sw.ToString();
+            string xmlDSDiffGram = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);
-            string xmlDSWriteSchema = sw.ToString();
+            string xmlDSWriteSchema = sw.ToString().Replace("\r\n", "\n");
 
             // Get XML for recursive DataTable writes of the same data as in
             // the DataSet.
             sw.GetStringBuilder().Length = 0;
             dtMainInDS.WriteXml(sw, true);
-            string xmlDTNone = sw.ToString();
+            string xmlDTNone = sw.ToString().Replace("\r\n", "\n");
             
             sw.GetStringBuilder().Length = 0;
             dtMainInDS.WriteXml(sw, XmlWriteMode.DiffGram, true);
-            string xmlDTDiffGram = sw.ToString();
+            string xmlDTDiffGram = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             dtMainInDS.WriteXml(sw, XmlWriteMode.WriteSchema, true);
-            string xmlDTWriteSchema = sw.ToString();
+            string xmlDTWriteSchema = sw.ToString().Replace("\r\n", "\n");
             
             // The schema XML written by the DataTable call has an extra element
             // in the element for the dataset schema definition.  We remove that
@@ -197,7 +197,7 @@ namespace MonoTests.System.Data
             
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
-			xmlDTWriteSchema = sw.ToString().Replace ("\r\n", "\n");
+			xmlDTWriteSchema = sw.ToString().Replace("\r\n", "\n");
             
             StandardizeXmlFormat(ref xmlDSWriteSchema);
             
@@ -221,40 +221,40 @@ namespace MonoTests.System.Data
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            xmlDSNone = sw.ToString();
+            xmlDSNone = sw.ToString().Replace("\r\n", "\n");
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            xmlDSDiffGram = sw.ToString();
+            xmlDSDiffGram = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);
-            xmlDSWriteSchema = sw.ToString();
+            xmlDSWriteSchema = sw.ToString().Replace("\r\n", "\n");
             
             // Get all the DataTable.WriteXml results.
             sw.GetStringBuilder().Length = 0;
             dtMainInDS.WriteXml(sw);
-            string xmlDTNoneInDS = sw.ToString();
+            string xmlDTNoneInDS = sw.ToString().Replace("\r\n", "\n");
             
             sw.GetStringBuilder().Length = 0;
             dtMainInDS.WriteXml(sw, XmlWriteMode.DiffGram);
-            string xmlDTDiffGramInDS = sw.ToString();
+            string xmlDTDiffGramInDS = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             dtMainInDS.WriteXml(sw, XmlWriteMode.WriteSchema);
-            string xmlDTWriteSchemaInDS = sw.ToString();
+            string xmlDTWriteSchemaInDS = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             dtMain.WriteXml(sw);
-            string xmlDTNoneNoDS = sw.ToString();
+            string xmlDTNoneNoDS = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             dtMain.WriteXml(sw, XmlWriteMode.DiffGram);
-            string xmlDTDiffGramNoDS = sw.ToString();
+            string xmlDTDiffGramNoDS = sw.ToString().Replace("\r\n", "\n");
 
             sw.GetStringBuilder().Length = 0;
             dtMain.WriteXml(sw, XmlWriteMode.WriteSchema);
-            string xmlDTWriteSchemaNoDS = sw.ToString();
+            string xmlDTWriteSchemaNoDS = sw.ToString().Replace("\r\n", "\n");
             
             Assert.AreEqual(xmlDSNone, xmlDTNoneInDS, "Test#06");
 
@@ -272,7 +272,7 @@ namespace MonoTests.System.Data
 #endif
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
-			xmlDTNoneNoDS = sw.ToString().Replace ("\r\n", "\n");
+			xmlDTNoneNoDS = sw.ToString().Replace("\r\n", "\n");
             xmlDTNoneNoDS = xmlDTNoneNoDS.Replace("<DocumentElement>", "<MyDataSet>");
             xmlDTNoneNoDS = xmlDTNoneNoDS.Replace("</DocumentElement>", "</MyDataSet>");
             
@@ -314,7 +314,7 @@ namespace MonoTests.System.Data
             Assert.AreEqual("Main", a.Value, "Test#13");
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
-			xmlDTWriteSchemaInDS = sw.ToString().Replace ("\r\n", "\n");
+			xmlDTWriteSchemaInDS = sw.ToString().Replace("\r\n", "\n");
             
             StandardizeXmlFormat(ref xmlDSWriteSchema);
 
@@ -349,7 +349,7 @@ namespace MonoTests.System.Data
             Assert.AreEqual("NewDataSet", doc.Root.Elements().First().Elements().First().Attribute("name").Value, "Test#19");
 #endif
             
-			xmlDTWriteSchemaNoDS = sw.ToString().Replace ("\r\n", "\n");
+			xmlDTWriteSchemaNoDS = sw.ToString().Replace("\r\n", "\n");
             
             xmlDTWriteSchemaNoDS = xmlDTWriteSchemaNoDS.Replace("<NewDataSet>","<MyDataSet>");
             xmlDTWriteSchemaNoDS = xmlDTWriteSchemaNoDS.Replace("</NewDataSet>","</MyDataSet>");

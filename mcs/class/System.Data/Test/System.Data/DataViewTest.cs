@@ -285,10 +285,10 @@ namespace MonoTests.System.Data
 			another_new_row[0] = "9";
 			another_new_row[1] = "10";
 
-			AssertEquals ("#1", dv[2][0], "9");
+			Assert.AreEqual ("9", dv[2][0], "#1");
 
 			//This should not throw a System.Data.VersionNotFoundException: "There is no Proposed data to accces"
-			AssertEquals ("#1", dv[1][0], "7");	
+			Assert.AreEqual ("7", dv[1][0], "#2");	
 
 		}
 

@@ -64,10 +64,6 @@ using System.Globalization;
 using System.Threading;
 using System.Text;
 using MonoTests.System.Data.Utils;
-#if WINDOWS_PHONE || NETFX_CORE
-using Mono.Xml.Schema;
-using XmlSchema = Mono.Xml.Schema.XmlSchema;
-#endif
 
 namespace MonoTests.System.Data
 {
@@ -2120,6 +2116,7 @@ namespace MonoTests.System.Data
 				"deserialization after modification oes not give current values");
                 }
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void Bug420862 ()
 		{
@@ -2146,6 +2143,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.Fail ();
 		}
+#endif
 
                 /// <summary>
                 /// Test for testing DataSet.Clear method with foriegn key relations
