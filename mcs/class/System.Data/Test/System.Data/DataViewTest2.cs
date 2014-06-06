@@ -54,6 +54,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.ComponentModel;
+using System.Collections;
 using System.Data;
 using MonoTests.System.Data.Utils;
 

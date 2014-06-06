@@ -15,9 +15,9 @@ namespace MonoTests.System.Data {
     
     
 #if !WINDOWS_PHONE && !NETFX_CORE
-    using System.Xml.Schema;
+	using global::System.Xml.Schema;
 #else
-    using Mono.Xml.Schema;
+	using global::Mono.Xml.Schema;
 #endif
 
     /// <summary>

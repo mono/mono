@@ -61,6 +61,7 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 #endif // WINDOWS_PHONE || NETFX_CORE
 #else // !USE_MSUNITTEST
 using NUnit.Framework;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 #endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Data 
@@ -368,6 +369,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void ChangeTypeAfterSettingDefaultValue ()
 		{
 			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));

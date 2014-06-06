@@ -454,7 +454,7 @@ namespace MonoTests.System.Data
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
 		
-			string TextString = writer.ToString ();
+			string TextString = writer.ToString ().Replace ("\r\n", "\n");
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
                         Assert.AreEqual ("<Root>", substring, "test#01");
@@ -527,7 +527,7 @@ namespace MonoTests.System.Data
 			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
 			ds.WriteXml (writer, XmlWriteMode.DiffGram);
 			
-			TextString = writer.ToString ();
+			TextString = writer.ToString ().Replace ("\r\n", "\n");
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\">", substring, "test#03");

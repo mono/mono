@@ -197,7 +197,7 @@ namespace MonoTests.System.Data
             
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
-            xmlDTWriteSchema = sw.ToString();
+			xmlDTWriteSchema = sw.ToString().Replace ("\r\n", "\n");
             
             StandardizeXmlFormat(ref xmlDSWriteSchema);
             
@@ -272,7 +272,7 @@ namespace MonoTests.System.Data
 #endif
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
-            xmlDTNoneNoDS = sw.ToString();
+			xmlDTNoneNoDS = sw.ToString().Replace ("\r\n", "\n");
             xmlDTNoneNoDS = xmlDTNoneNoDS.Replace("<DocumentElement>", "<MyDataSet>");
             xmlDTNoneNoDS = xmlDTNoneNoDS.Replace("</DocumentElement>", "</MyDataSet>");
             
@@ -314,7 +314,7 @@ namespace MonoTests.System.Data
             Assert.AreEqual("Main", a.Value, "Test#13");
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
-            xmlDTWriteSchemaInDS = sw.ToString();
+			xmlDTWriteSchemaInDS = sw.ToString().Replace ("\r\n", "\n");
             
             StandardizeXmlFormat(ref xmlDSWriteSchema);
 
@@ -349,7 +349,7 @@ namespace MonoTests.System.Data
             Assert.AreEqual("NewDataSet", doc.Root.Elements().First().Elements().First().Attribute("name").Value, "Test#19");
 #endif
             
-            xmlDTWriteSchemaNoDS = sw.ToString();
+			xmlDTWriteSchemaNoDS = sw.ToString().Replace ("\r\n", "\n");
             
             xmlDTWriteSchemaNoDS = xmlDTWriteSchemaNoDS.Replace("<NewDataSet>","<MyDataSet>");
             xmlDTWriteSchemaNoDS = xmlDTWriteSchemaNoDS.Replace("</NewDataSet>","</MyDataSet>");

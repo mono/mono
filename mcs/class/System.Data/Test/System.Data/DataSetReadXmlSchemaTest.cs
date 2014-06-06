@@ -56,6 +56,7 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 #else // !USE_MSUNITTEST
 using NUnit.Framework;
 #endif // USE_MSUNITTEST
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {

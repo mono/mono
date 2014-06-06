@@ -33,6 +33,7 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 #endif // WINDOWS_PHONE || NETFX_CORE
 #else // !USE_MSUNITTEST
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 #endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Transactions {
@@ -1383,7 +1384,7 @@ namespace MonoTests.System.Transactions {
 #if USE_MSUNITTEST
 			Assert.IsInstanceOfType(exception, exceptionType, message);
 #else
-			Assert.IsInstanceOf(exceptionType, exception, message);
+			Assert.That (exception, new InstanceOfTypeConstraint(exceptionType), message);
 #endif
 		}
 	}
