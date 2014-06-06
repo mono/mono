@@ -473,22 +473,22 @@ namespace System.Web.Script.Serialization
 				case JsonType.INTEGER:
 					/* MS AJAX.NET JSON parser promotes big integers to double */
 					
-					if (Int32.TryParse (s, out intValue))
+					if (Int32.TryParse (s, NumberStyles.Integer, CultureInfo.InvariantCulture, out intValue))
 						result = intValue;
-					else if (Int64.TryParse (s, out longValue))
+					else if (Int64.TryParse (s, NumberStyles.Integer, CultureInfo.InvariantCulture, out longValue))
 						result = longValue;
-					else if (Decimal.TryParse (s, out decimalValue))
+					else if (Decimal.TryParse (s, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimalValue))
 						result = decimalValue;
-					else if (Double.TryParse (s, out doubleValue))
+					else if (Double.TryParse (s, NumberStyles.Integer, CultureInfo.InvariantCulture, out doubleValue))
 						result = doubleValue;
 					else
 						converted = false;
 					break;
 
 				case JsonType.FLOAT:
-					if (Decimal.TryParse (s, out decimalValue))
+					if (Decimal.TryParse (s, NumberStyles.Float, CultureInfo.InvariantCulture, out decimalValue))
 						result = decimalValue;
-					else if (Double.TryParse (s, out doubleValue))
+					else if (Double.TryParse (s, NumberStyles.Float, CultureInfo.InvariantCulture, out doubleValue))
 						result = doubleValue;
 					else
 						converted = false;
