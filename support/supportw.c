@@ -159,6 +159,9 @@ FindWindowExW (gpointer hwndParent, gpointer hwndChildAfter, const char *classw,
 }
 
 int
+SetWindowPos (gpointer hwnd, gpointer hwndInsertAfter, int x, int y, int cx, int cy, unsigned int flags);
+
+int
 SetWindowPos (gpointer hwnd, gpointer hwndInsertAfter, int x, int y, int cx, int cy, unsigned int flags)
 {
 	fprintf (stderr, "SetWindowPos %p %p to [%d,%dx%d,%d] %d\n", hwnd, hwndInsertAfter, x, y, cx, cy, flags);
@@ -166,11 +169,17 @@ SetWindowPos (gpointer hwnd, gpointer hwndInsertAfter, int x, int y, int cx, int
 }
 
 int
+SendMessageA (gpointer hwnd, unsigned int msg, gpointer wparam, gpointer lparam);
+
+int
 SendMessageA (gpointer hwnd, unsigned int msg, gpointer wparam, gpointer lparam)
 {
 	fprintf (stderr, "SendMessage (%d, 0x%x, %p, %p)\n", (int) GPOINTER_TO_INT (hwnd), msg, wparam, lparam);
 	return 0;
 }
+
+int
+GetWindowLongA (gpointer hwnd, int a);
 
 int
 GetWindowLongA (gpointer hwnd, int a)
