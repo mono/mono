@@ -61,15 +61,21 @@
 	#include <sys/mman.h>
 	#include "jni.h"
 
+	void* JNICALL ikvm_LoadLibrary(char* psz);
+
 	JNIEXPORT void* JNICALL ikvm_LoadLibrary(char* psz)
 	{
 		return g_module_open(psz, 0);
 	}
 
+	void JNICALL ikvm_FreeLibrary(GModule* handle);
+
 	JNIEXPORT void JNICALL ikvm_FreeLibrary(GModule* handle)
 	{
 		g_module_close(handle);
 	}
+
+	void* JNICALL ikvm_GetProcAddress(GModule* handle, char* name, jint argc);
 
 	JNIEXPORT void* JNICALL ikvm_GetProcAddress(GModule* handle, char* name, jint argc)
 	{
@@ -83,15 +89,21 @@
 			return NULL;
 	}
 
+	void* JNICALL ikvm_mmap(int fd, jboolean writeable, jboolean copy_on_write, jlong position, jint size);
+
 	JNIEXPORT void* JNICALL ikvm_mmap(int fd, jboolean writeable, jboolean copy_on_write, jlong position, jint size)
 	{
 		return mmap(0, size, writeable ? PROT_WRITE | PROT_READ : PROT_READ, copy_on_write ? MAP_PRIVATE : MAP_SHARED, fd, position);
 	}
 
+	int JNICALL ikvm_munmap(void* address, jint size);
+
 	JNIEXPORT int JNICALL ikvm_munmap(void* address, jint size)
 	{
 		return munmap(address, size);
 	}
+
+	int JNICALL ikvm_msync(void* address, jint size);
 
 	JNIEXPORT int JNICALL ikvm_msync(void* address, jint size)
 	{
