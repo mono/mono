@@ -382,7 +382,7 @@ ptr_t GC_approx_sp()
 #   endif
     return((ptr_t)(&dummy));
 #   if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 408)
-      pragma GCC diagnostic pop
+#      pragma GCC diagnostic pop
 #   endif
 #   ifdef _MSC_VER
 #     pragma warning(default:4172)
