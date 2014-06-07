@@ -303,9 +303,17 @@ create_file_names()
     prolog_file_name[len + 5] = 'p';
     local_file_name[len + 5] = 'l';
 
-    mkstemp(action_file_name);
-    mkstemp(prolog_file_name);
-    mkstemp(local_file_name);
+#ifdef __GNUC__
+#define GNUC_UNUSED __attribute__((__unused__))
+#else
+#define GNUC_UNUSED
+#endif
+
+    int mkstemp_res GNUC_UNUSED;
+
+    mkstemp_res = mkstemp(action_file_name);
+    mkstemp_res = mkstemp(prolog_file_name);
+    mkstemp_res = mkstemp(local_file_name);
 
     len = strlen(file_prefix);
 
