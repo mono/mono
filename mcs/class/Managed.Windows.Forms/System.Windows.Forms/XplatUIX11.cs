@@ -552,7 +552,7 @@ namespace System.Windows.Forms {
 				ErrorHandler = new XErrorHandler(HandleError);
 				XSetErrorHandler(ErrorHandler);
 			} else {
-				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
+				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check your DISPLAY environment variable)");
 			}
 		}
 		#endregion	// Internal Methods
