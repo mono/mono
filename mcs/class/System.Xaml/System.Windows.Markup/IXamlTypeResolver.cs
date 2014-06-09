@@ -28,9 +28,7 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public interface IXamlTypeResolver
 	{
 		Type Resolve (string qualifiedTypeName);

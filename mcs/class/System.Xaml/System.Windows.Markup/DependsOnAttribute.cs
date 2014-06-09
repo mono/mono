@@ -25,9 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true)]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public sealed class DependsOnAttribute : Attribute
 	{
 		public DependsOnAttribute (string name)
@@ -36,12 +34,5 @@ namespace System.Windows.Markup
 		}
 		
 		public string Name { get; private set; }
-
-#if !NET_2_1
-		// really? I doubt it should be overriden.
-		public override Object TypeId {
-			get { return this; }
-		}
-#endif
 	}
 }
