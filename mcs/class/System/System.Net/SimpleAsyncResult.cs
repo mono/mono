@@ -159,16 +159,8 @@ namespace System.Net
 		{
 			if (!callbackDone && cb != null) {
 				callbackDone = true;
-//				if (true || synch)
-					cb (this);
-//				else
-//					ThreadPool.QueueUserWorkItem (CB, null);
+				cb (this);
 			}
-		}
-
-		void CB (object unused)
-		{
-			cb (this);
 		}
 
 		internal void WaitUntilComplete ()
