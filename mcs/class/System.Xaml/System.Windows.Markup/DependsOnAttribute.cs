@@ -34,5 +34,12 @@ namespace System.Windows.Markup
 		}
 		
 		public string Name { get; private set; }
+
+#if !__MOBILE__
+		// really? I doubt it should be overriden.
+		public override Object TypeId {
+			get { return this; }
+		}
+#endif
 	}
 }

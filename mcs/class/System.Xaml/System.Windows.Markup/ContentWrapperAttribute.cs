@@ -35,6 +35,12 @@ namespace System.Windows.Markup
 		
 		public Type ContentWrapper { get; private set; }
 
+#if !__MOBILE__
+		public override Object TypeId {
+			get { return this; }
+		}
+#endif
+
 		public override bool Equals (object other)
 		{
 			var cwa = other as ContentWrapperAttribute;
