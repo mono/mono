@@ -534,6 +534,38 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Complete_NoContent ()
+		{
+			foreach (var method in new HttpMethod[] { HttpMethod.Post, HttpMethod.Put, HttpMethod.Delete }) {
+				bool? failed = null;
+				var listener = CreateListener (l => {
+					try {
+						var request = l.Request;
+
+						Assert.AreEqual (2, request.Headers.Count, "#1");
+						Assert.AreEqual ("0", request.Headers ["Content-Length"], "#1b");
+						Assert.AreEqual (method.Method, request.HttpMethod, "#2");
+						failed = false;
+					} catch {
+						failed = true;
+					}
+				});
+
+				try {
+					var client = new HttpClient ();
+					var request = new HttpRequestMessage (method, LocalServer);
+					var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+					Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
+					Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+					Assert.AreEqual (false, failed, "#102");
+				} finally {
+					listener.Close ();
+				}
+			}
+		}
+
+		[Test]
 		public void Send_Complete_Error ()
 		{
 			var listener = CreateListener (l => {
