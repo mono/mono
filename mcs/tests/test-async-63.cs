@@ -67,7 +67,7 @@ class C
 
 		TestSingleAwait (false).Wait ();
 		if (counter != 2)
-			return 1;
+			return 2;
 
 		counter = 0;
 
