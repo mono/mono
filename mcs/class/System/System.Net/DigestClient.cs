@@ -181,7 +181,7 @@ namespace System.Net
 			}
 
 			value = header.Substring (beginQ, pos - beginQ);
-			pos += 2;
+			pos += useQuote ? 2 : 1;
 			return true;
 		}
 	}
