@@ -531,6 +531,12 @@ fi
 AC_ARG_ENABLE(quiet-build, [  --enable-quiet-build  Enable quiet libgc build (on by default)], enable_quiet_build=$enableval, enable_quiet_build=yes)
 AM_CONDITIONAL(USE_LIBDIR, test -z "$with_cross_host")
 
+AC_ARG_ENABLE(werror, [  --enable-werror Pass -Werror to the C compiler], werror_flag=$enableval, werror_flag=no)
+if test x$werror_flag = xyes; then
+	WERROR_CFLAGS="-Werror"
+fi
+AC_SUBST([WERROR_CFLAGS])
+
 if test "${multilib}" = "yes"; then
   multilib_arg="--enable-multilib"
 else
