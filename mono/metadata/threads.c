@@ -1488,6 +1488,30 @@ gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this,
 	return(FALSE);
 }
 
+guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handles, gint32 handle_count, gboolean wait_all)
+{
+	guint32 ret = WAIT_IO_COMPLETION;
+	guint32 start_ms;
+	MonoException* exc = NULL;
+
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+
+	start_ms = mono_msec_ticks ();
+
+	while (!exc && ret == WAIT_IO_COMPLETION)
+	{
+		ret = WaitForMultipleObjectsEx (handle_count, handles, wait_all ? TRUE : FALSE, ms, TRUE);
+		exc = mono_thread_get_and_clear_pending_exception ();
+	}
+
+	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
+
+	if (exc)
+		mono_raise_exception (exc);
+
+	return ret;
+}
+
 /* FIXME: exitContext isnt documented */
 gboolean ves_icall_System_Threading_WaitHandle_WaitAll_internal(MonoArray *mono_handles, gint32 ms, gboolean exitContext)
 {
@@ -1580,30 +1604,6 @@ gint32 ves_icall_System_Threading_WaitHandle_WaitAny_internal(MonoArray *mono_ha
 	else {
 		return ret;
 	}
-}
-
-guint32 wait_and_ignore_interrupt (MonoThread* thread, gint32 ms, HANDLE* handles, gint32 handle_count, gboolean wait_all)
-{
-	guint32 ret = WAIT_IO_COMPLETION;
-	guint32 start_ms;
-	MonoException* exc = NULL;
-
-	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
-
-	start_ms = mono_msec_ticks ();
-
-	while (!exc && ret == WAIT_IO_COMPLETION)
-	{
-		ret = WaitForMultipleObjectsEx (handle_count, handles, wait_all ? TRUE : FALSE, ms, TRUE);
-		exc = mono_thread_get_and_clear_pending_exception ();
-	}
-
-	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
-
-	if (exc)
-		mono_raise_exception (exc);
-
-	return ret;
 }
 
 /* FIXME: exitContext isnt documented */
