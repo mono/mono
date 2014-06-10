@@ -20,7 +20,7 @@
 		: lstr_at(p, n)                                             \
 )
 
-char* MPH_INTERNAL
+char*
 _mph_copy_structure_strings (
 	void *to,         const mph_string_offset_t *to_offsets, 
 	const void *from, const mph_string_offset_t *from_offsets, 
