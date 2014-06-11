@@ -8813,7 +8813,7 @@ namespace Mono.CSharp
 				// with disable flow analysis as we don't know whether left side expression
 				// is used as variable or type
 				//
-				if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+				if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess || expr is EventExpr) {
 					expr = expr.Resolve (rc);
 				} else if (expr is TypeParameterExpr) {
 					expr.Error_UnexpectedKind (rc, flags, sn.Location);
