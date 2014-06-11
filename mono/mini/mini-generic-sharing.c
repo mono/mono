@@ -653,6 +653,34 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		g_assert (mono_error_ok (&error));
 		return isig;
 	}
+	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
+		MonoClassMethodPair *info = data, *res;
+		MonoMethod *inflated_method;
+		MonoType *inflated_type = mono_class_inflate_generic_type (&info->method->klass->byval_arg, context);
+		MonoClass *inflated_class = mono_class_from_mono_type (inflated_type);
+
+		mono_metadata_free_type (inflated_type);
+		mono_class_init (inflated_class);
+
+		g_assert (!info->method->wrapper_type);
+
+		if (inflated_class->byval_arg.type == MONO_TYPE_ARRAY ||
+				inflated_class->byval_arg.type == MONO_TYPE_SZARRAY) {
+			inflated_method = mono_method_search_in_array_class (inflated_class,
+				info->method->name, info->method->signature);
+		} else {
+			inflated_method = mono_class_inflate_generic_method (info->method, context);
+		}
+
+		mono_class_init (inflated_method->klass);
+		g_assert (inflated_method->klass == inflated_class);
+
+		res = mono_domain_alloc (mono_domain_get (), sizeof (MonoClassMethodPair));
+		res->klass = info->klass;
+		res->method = inflated_method;
+
+		return res;
+	}
 
 	default:
 		g_assert_not_reached ();
@@ -1478,6 +1506,10 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 
 		return res;
 	}
+	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
+		MonoClassMethodPair *info = data;
+		return mono_create_delegate_trampoline_info (domain, info->klass, info->method);
+	}
 	default:
 		g_assert_not_reached ();
 	}
@@ -1533,6 +1565,7 @@ mono_rgctx_info_type_to_str (MonoRgctxInfoType type)
 	case MONO_RGCTX_INFO_METHOD_RGCTX: return "METHOD_RGCTX";
 	case MONO_RGCTX_INFO_METHOD_CONTEXT: return "METHOD_CONTEXT";
 	case MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK: return "REMOTING_INVOKE_WITH_CHECK";
+	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: return "METHOD_DELEGATE_INFO";
 	case MONO_RGCTX_INFO_METHOD_DELEGATE_CODE: return "METHOD_DELEGATE_CODE";
 	case MONO_RGCTX_INFO_CAST_CACHE: return "CAST_CACHE";
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE: return "ARRAY_ELEMENT_SIZE";
@@ -1640,6 +1673,10 @@ info_equal (gpointer data1, gpointer data2, MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT:
 	case MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI:
 		return data1 == data2;
+	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
+		MonoClassMethodPair *info1 = data1, *info2 = data2;
+		return info1->method == info2->method && info1->klass == info2->klass;
+	}
 	default:
 		g_assert_not_reached ();
 	}
@@ -1673,6 +1710,8 @@ mini_rgctx_info_type_to_patch_info_type (MonoRgctxInfoType info_type)
 		return MONO_PATCH_INFO_CLASS;
 	case MONO_RGCTX_INFO_FIELD_OFFSET:
 		return MONO_PATCH_INFO_FIELD;
+	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO:
+		return MONO_PATCH_INFO_DELEGATE_TRAMPOLINE;
 	default:
 		g_assert_not_reached ();
 		return -1;

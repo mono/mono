@@ -3467,7 +3467,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
 		MonoClassMethodPair *del_tramp = patch_info->data.del_tramp;
 
-		target = mono_create_delegate_trampoline_with_method (domain, del_tramp->klass, del_tramp->method);
+		target = mono_create_delegate_trampoline_info (domain, del_tramp->klass, del_tramp->method);
 		break;
 	}
 	case MONO_PATCH_INFO_SFLDA: {
@@ -3621,6 +3621,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 				memcpy (template, otemplate, sizeof (MonoRuntimeGenericContextInfoTemplate));
 			}
+			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
+			break;
+		}
+		case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
+			MonoClassMethodPair *info = g_malloc0 (sizeof (MonoClassMethodPair));
+			info->klass = entry->data->data.del_tramp->klass;
+			info->method = entry->data->data.del_tramp->method;
 			slot = mono_method_lookup_or_register_info (entry->method, entry->in_mrgctx, info, entry->info_type, mono_method_get_context (entry->method));
 			break;
 		}
@@ -7103,7 +7110,9 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	info->class_init_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->jump_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->jit_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->delegate_trampoline_info_hash = g_hash_table_new (class_method_pair_hash, class_method_pair_equal);
 	info->delegate_trampoline_hash = g_hash_table_new (class_method_pair_hash, class_method_pair_equal);
+	info->delegate_virtual_trampoline_info_hash = g_hash_table_new (class_method_pair_hash, class_method_pair_equal);
 	info->llvm_vcall_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->runtime_invoke_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, runtime_invoke_info_free);
 	info->seq_points = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, seq_point_info_free);
@@ -7180,7 +7189,9 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	g_hash_table_destroy (info->class_init_trampoline_hash);
 	g_hash_table_destroy (info->jump_trampoline_hash);
 	g_hash_table_destroy (info->jit_trampoline_hash);
+	g_hash_table_destroy (info->delegate_trampoline_info_hash);
 	g_hash_table_destroy (info->delegate_trampoline_hash);
+	g_hash_table_destroy (info->delegate_virtual_trampoline_info_hash);
 	if (info->static_rgctx_trampoline_hash)
 		g_hash_table_destroy (info->static_rgctx_trampoline_hash);
 	g_hash_table_destroy (info->llvm_vcall_trampoline_hash);

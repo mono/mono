@@ -122,7 +122,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 100
+#define MONO_AOT_FILE_VERSION 101
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -295,8 +295,10 @@ typedef struct
 	GHashTable *class_init_trampoline_hash;
 	GHashTable *jump_trampoline_hash;
 	GHashTable *jit_trampoline_hash;
-	/* Maps ClassMethodPair -> DelegateTrampInfo */
+	/* Maps ClassMethodPair -> MonoDelegateTrampInfo */
+	GHashTable *delegate_trampoline_info_hash;
 	GHashTable *delegate_trampoline_hash;
+	GHashTable *delegate_virtual_trampoline_info_hash;
 	GHashTable *static_rgctx_trampoline_hash;
 	GHashTable *llvm_vcall_trampoline_hash;
 	/* maps MonoMethod -> MonoJitDynamicMethodInfo */
@@ -1114,6 +1116,7 @@ typedef enum {
 	/* The address of Nullable<T>.Box () */
 	MONO_RGCTX_INFO_NULLABLE_CLASS_BOX,
 	MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX,
+	MONO_RGCTX_INFO_METHOD_DELEGATE_INFO,
 } MonoRgctxInfoType;
 
 typedef struct _MonoRuntimeGenericContextInfoTemplate {
@@ -1159,6 +1162,21 @@ typedef struct {
 	 */
 	gpointer entries [MONO_ZERO_LEN_ARRAY];
 } MonoGSharedVtMethodRuntimeInfo;
+
+typedef struct
+{
+	MonoMethod *invoke;
+	MonoClass *klass;
+	MonoMethod *method;
+	MonoMethodSignature *invoke_sig;
+	MonoMethodSignature *sig;
+	gpointer method_ptr;
+	gpointer invoke_impl;
+	gpointer impl_this;
+	gpointer impl_nothis;
+	int slot;
+	gboolean need_rgctx_tramp;
+} MonoDelegateTrampInfo;
 
 typedef enum {
 #define PATCH_INFO(a,b) MONO_PATCH_INFO_ ## a,
@@ -2202,7 +2220,8 @@ gpointer          mono_create_jit_trampoline (MonoMethod *method) MONO_INTERNAL;
 gpointer          mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token) MONO_INTERNAL;
 gpointer          mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method) MONO_LLVM_INTERNAL;
 gpointer          mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass) MONO_INTERNAL;
-gpointer          mono_create_delegate_trampoline_with_method (MonoDomain *domain, MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
+MonoDelegateTrampInfo* mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
+MonoDelegateTrampInfo* mono_create_delegate_virtual_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
 gpointer          mono_create_rgctx_lazy_fetch_trampoline (guint32 offset) MONO_INTERNAL;
 gpointer          mono_create_monitor_enter_trampoline (void) MONO_INTERNAL;
 gpointer          mono_create_monitor_exit_trampoline (void) MONO_INTERNAL;
@@ -2426,6 +2445,7 @@ void     mono_arch_nullify_class_init_trampoline(guint8 *code, mgreg_t *regs) MO
 int      mono_arch_get_this_arg_reg             (guint8 *code) MONO_INTERNAL;
 gpointer mono_arch_get_this_arg_from_call       (mgreg_t *regs, guint8 *code) MONO_INTERNAL;
 gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gboolean has_target) MONO_INTERNAL;
+gpointer mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method) MONO_INTERNAL;
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
 void        mono_arch_emit_imt_argument         (MonoCompile *cfg, MonoCallInst *call, MonoInst *imt_arg) MONO_INTERNAL;
 MonoMethod* mono_arch_find_imt_method           (mgreg_t *regs, guint8 *code) MONO_INTERNAL;
