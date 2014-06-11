@@ -1457,13 +1457,18 @@ namespace Mono.CSharp {
 			if (tp != null)
 				return Inflate (tp);
 
-			var ac = type as ArrayContainer;
-			if (ac != null) {
-				var et = Inflate (ac.Element);
-				if (et != ac.Element)
-					return ArrayContainer.MakeType (context.Module, et, ac.Rank);
+			var ec = type as ElementTypeSpec;
+			if (ec != null) {
+				var et = Inflate (ec.Element);
+				if (et != ec.Element) {
+					var ac = ec as ArrayContainer;
+					if (ac != null)
+						return ArrayContainer.MakeType (context.Module, et, ac.Rank);
 
-				return ac;
+					throw new NotImplementedException ();
+				}
+
+				return ec;
 			}
 
 			if (type.Kind == MemberKind.MissingType)
