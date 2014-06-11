@@ -73,7 +73,11 @@ namespace System
 				
 				lock (tz_lock) {
 					if (tz == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
-						tz = new CurrentSystemTimeZone (now);
+#if MONODROID
+						tz = AndroidPlatform.GetCurrentSystemTimeZone ();
+						if (tz == null)
+#endif
+							tz = new CurrentSystemTimeZone (now);
 						timezone_check = now;
 
 						currentTimeZone = tz;

@@ -35,6 +35,7 @@ namespace System {
 
 		static readonly Func<SynchronizationContext> getDefaultSyncContext;
 		static readonly Func<string> getDefaultTimeZone;
+		static readonly Func<TimeZone> getCurrentSystemTimeZone;
 
 		static AndroidPlatform ()
 		{
@@ -49,6 +50,12 @@ namespace System {
 						Type.GetType ("Android.Runtime.AndroidEnvironment, Mono.Android", true)
 						.GetMethod ("GetDefaultTimeZone", 
 							System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic));
+
+			getCurrentSystemTimeZone = (Func<TimeZone>)
+				Delegate.CreateDelegate (typeof(Func<TimeZone>), 
+						Type.GetType ("Android.Runtime.AndroidEnvironment, Mono.Android", true)
+						.GetMethod ("GetCurrentSystemTimeZone", 
+							System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic));
 		}
 
 		internal static SynchronizationContext GetDefaultSyncContext ()
@@ -59,6 +66,13 @@ namespace System {
 		internal static string GetDefaultTimeZone ()
 		{
 			return getDefaultTimeZone ();
+		}
+
+		internal static TimeZone GetCurrentSystemTimeZone ()
+		{
+			if (getCurrentSystemTimeZone == null)
+				return null;
+			return getCurrentSystemTimeZone ();
 		}
 	}
 }
