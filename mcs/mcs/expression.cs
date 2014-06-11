@@ -2611,14 +2611,10 @@ namespace Mono.CSharp
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			if ((oper & Operator.LogicalMask) == 0) {
-				var fc_ontrue = fc.DefiniteAssignmentOnTrue;
-				var fc_onfalse = fc.DefiniteAssignmentOnFalse;
 				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
 				left.FlowAnalysis (fc);
 				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
 				right.FlowAnalysis (fc);
-				fc.DefiniteAssignmentOnTrue = fc_ontrue;
-				fc.DefiniteAssignmentOnFalse = fc_onfalse;
 				return;
 			}
 
