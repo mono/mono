@@ -34,7 +34,7 @@ namespace Mono.Debugger.Soft
 				throw new NotSupportedException ();
 
 			var instructions = body.Instructions;
-			if (instructions.Count > 16)
+			if (instructions.Count < 1 || instructions.Count > 16)
 				throw new NotSupportedException ();
 
 			var stack = new Value [16];
