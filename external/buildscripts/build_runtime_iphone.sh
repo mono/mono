@@ -114,7 +114,8 @@ build_iphone_crosscompiler ()
 	export CPP="$CC -E"
 	export LD=$CC
 	export MACSDKOPTIONS="-mmacosx-version-min=$MAC_SDK_VERSION -isysroot $XCOMP_ASPEN_ROOT"
-	export LIBTOOLIZE=`which glibtoolize`
+	export LIBTOOLIZE="/usr/local/bin/libtoolize"
+	export LIBTOOL="/usr/local/bin/libtool"
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
