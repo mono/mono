@@ -5470,7 +5470,7 @@ namespace Mono.CSharp {
 			EmitTryBodyPrepare (ec);
 			EmitTryBody (ec);
 
-			ec.BeginFinallyBlock ();
+			bool begin = EmitBeginFinallyBlock (ec);
 
 			Label start_finally = ec.DefineLabel ();
 			if (resume_points != null) {
@@ -5498,7 +5498,8 @@ namespace Mono.CSharp {
 				EmitFinallyBody (ec);
 			}
 
-			ec.EndExceptionBlock ();
+			if (begin)
+				ec.EndExceptionBlock ();
 		}
 
 		public override void EmitForDispose (EmitContext ec, LocalBuilder pc, Label end, bool have_dispatcher)
@@ -5570,6 +5571,12 @@ namespace Mono.CSharp {
 			var res = stmt.FlowAnalysis (fc);
 			parent = null;
 			return res;
+		}
+
+		protected virtual bool EmitBeginFinallyBlock (EmitContext ec)
+		{
+			ec.BeginFinallyBlock ();
+			return true;
 		}
 
 		public override Reachability MarkReachable (Reachability rc)
@@ -6576,9 +6583,62 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
+		protected override bool EmitBeginFinallyBlock (EmitContext ec)
+		{
+			if (fini.HasAwait)
+				return false;
+
+			return base.EmitBeginFinallyBlock (ec);
+		}
+
 		public override void EmitFinallyBody (EmitContext ec)
 		{
+			StackFieldExpr exception_field;
+
+			if (fini.HasAwait) {
+				//
+				// Emits catch block like
+				//
+				// catch (object temp) {
+				//	this.exception_field = temp;
+				// }
+				//
+				var type = ec.BuiltinTypes.Object;
+				ec.BeginCatchBlock (type);
+
+				var temp = ec.GetTemporaryLocal (type);
+				ec.Emit (OpCodes.Stloc, temp);
+
+				exception_field = ec.GetTemporaryField (type);
+				ec.EmitThis ();
+				ec.Emit (OpCodes.Ldloc, temp);
+				exception_field.EmitAssignFromStack (ec);
+
+				ec.EndExceptionBlock ();
+
+				ec.FreeTemporaryLocal (temp, type);
+			} else {
+				exception_field = null;
+			}
+
 			fini.Emit (ec);
+
+			if (exception_field != null) {
+				//
+				// Emits exception rethrow
+				//
+				// if (this.exception_field != null)
+				//	throw this.exception_field;
+				//
+				exception_field.Emit (ec);
+				var skip_throw = ec.DefineLabel ();
+				ec.Emit (OpCodes.Brfalse_S, skip_throw);
+				exception_field.Emit (ec);
+				ec.Emit (OpCodes.Throw);
+				ec.MarkLabel (skip_throw);
+
+				exception_field.IsAvailableForReuse = true;
+			}
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)

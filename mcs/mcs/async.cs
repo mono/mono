@@ -74,10 +74,6 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			if (rc.HasSet (ResolveContext.Options.FinallyScope)) {
-				rc.Report.Error (1984, loc,  "The `await' operator cannot be used in the body of a finally clause");
-			}
-
 			if (rc.HasSet (ResolveContext.Options.LockScope)) {
 				rc.Report.Error (1996, loc,
 					"The `await' operator cannot be used in the body of a lock statement");
