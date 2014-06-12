@@ -1872,7 +1872,55 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
 		}
 			
+		[Test]
+		public void Bug15028()
+		{
+			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Bug15028));
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				ser.WriteObject(memoryStream, new Bug15028());
+				string output = Encoding.Default.GetString(memoryStream.ToArray());
+				Assert.AreEqual(@"{""Int0"":1,""Int1"":1,""IntZero1"":0,""Str0"":"""",""Str1"":"""",""StrNull1"":null}", output);
+			}
+		}
+
 		#endregion
+	}
+
+	[DataContract]
+	public class Bug15028
+	{
+		[DataMember(EmitDefaultValue = false)]
+		public string StrNull0 { get; private set; }
+
+		[DataMember(EmitDefaultValue = false)]
+		public string Str0 { get; private set; }
+
+		[DataMember(EmitDefaultValue = true)]
+		public string StrNull1 { get; private set; }
+
+		[DataMember(EmitDefaultValue = true)]
+		public string Str1 { get; private set; }
+
+		[DataMember(EmitDefaultValue = false)]
+		public int IntZero0 { get; private set; }
+
+		[DataMember(EmitDefaultValue = false)]
+		public int Int0 { get; private set; }
+
+		[DataMember(EmitDefaultValue = true)]
+		public int IntZero1 { get; private set; }
+
+		[DataMember(EmitDefaultValue = true)]
+		public int Int1 { get; private set; }
+
+		public Bug15028()
+		{
+			Str0 = string.Empty;
+			Str1 = string.Empty;
+			Int0 = 1;
+			Int1 = 1;
+		}
 	}
 	
 	public class CharTest
