@@ -63,14 +63,21 @@ namespace Monodoc.Generators.Html
 
 		public string Htmlize (XmlReader ecma_xml, XsltArgumentList args)
 		{
-			EnsureTransform ();
-		
-			var output = new StringBuilder ();
-			ecma_transform.Transform (ecma_xml, 
-			                          args, 
-			                          XmlWriter.Create (output, ecma_transform.OutputSettings),
-			                          CreateDocumentResolver ());
-			return output.ToString ();
+			try{
+				EnsureTransform ();
+			
+				var output = new StringBuilder ();
+				ecma_transform.Transform (ecma_xml, 
+				                          args, 
+				                          XmlWriter.Create (output, ecma_transform.OutputSettings),
+				                          CreateDocumentResolver ());
+				return output.ToString ();
+			}
+			catch(Exception x)
+			{
+				var msg = x.ToString ();
+				return msg;
+			}
 		}
 		
 		protected virtual XmlResolver CreateDocumentResolver ()
@@ -81,21 +88,14 @@ namespace Monodoc.Generators.Html
 
 		public string Export (Stream stream, Dictionary<string, string> extraArgs)
 		{
-			return Htmlize (XmlReader.Create (WrapStream (new StreamReader (stream), extraArgs)), extraArgs);
+			return Htmlize (XmlReader.Create (new StreamReader(stream)), extraArgs);
 		}
 
 		public string Export (string input, Dictionary<string, string> extraArgs)
 		{
-			return Htmlize (XmlReader.Create (WrapStream (new StringReader (input), extraArgs)), extraArgs);
+			return Htmlize (XmlReader.Create (new StringReader(input)), extraArgs);
 		}
 
-		TextReader WrapStream (TextReader initialReader, Dictionary<string, string> renderArgs)
-		{
-			string show;
-			if (renderArgs.TryGetValue ("show", out show) && show == "namespace")
-				return new AvoidCDataTextReader (initialReader);
-			return initialReader;
-		}
 		
 		static void EnsureTransform ()
 		{
@@ -329,81 +329,5 @@ namespace Monodoc.Generators.Html
 			}
 		}
 	}
-
-	public class AvoidCDataTextReader : TextReader
-	{
-		static readonly char[] CDataPattern = new[] {
-			'<', '!', '[', 'C', 'D', 'A', 'T', 'A', '['
-		};
-		static readonly char[] CDataClosingPattern = new[] {
-			']', ']', '>'
-		};
-		TextReader wrappedReader;
-		char[] backingArray = new char[9]; // "<![CDATA[".Length
-		int currentIndex = -1;
-		int eofIndex = -1;
-		bool inCData;
-
-		public AvoidCDataTextReader (TextReader wrappedReader)
-		{
-			this.wrappedReader = wrappedReader;
-		}
-
-		public override int Peek ()
-		{
-			if (!EnsureBuffer ())
-				return -1;
-			return (int)backingArray[currentIndex];
-		}
-
-		public override int Read ()
-		{
-			if (!EnsureBuffer ())
-				return -1;
-			var result = (int)backingArray[currentIndex];
-			var next = wrappedReader.Read ();
-			if (next == -1 && eofIndex == -1)
-				eofIndex = currentIndex;
-			else
-				backingArray[currentIndex] = (char)next;
-			currentIndex = (currentIndex + 1) % backingArray.Length;
-			return result;
-		}
-
-		void ReadLength (int length)
-		{
-			for (int i = 0; i < length; i++)
-				Read ();
-		}
-
-		bool EnsureBuffer ()
-		{
-			if (currentIndex == -1) {
-				currentIndex = 0;
-				var read = wrappedReader.ReadBlock (backingArray, 0, backingArray.Length);
-				if (read < backingArray.Length)
-					eofIndex = read;
-				return read > 0;
-			} else if (currentIndex == eofIndex) {
-				return false;
-			}
-			if (!inCData && PatternDetect (CDataPattern)) {
-				inCData = true;
-				ReadLength (CDataPattern.Length);
-				return EnsureBuffer ();
-			}
-			if (inCData && PatternDetect (CDataClosingPattern)) {
-				inCData = false;
-				ReadLength (CDataClosingPattern.Length);
-				return EnsureBuffer ();
-			}
-
-			return true;
-		}
-
-		bool PatternDetect (char[] pattern)
-		{
-			return backingArray[currentIndex] == pattern[0] && Enumerable.Range (1, pattern.Length - 1).All (i => backingArray[(currentIndex + i) % backingArray.Length] == pattern[i]);
-		}
-	}
+		
 }
