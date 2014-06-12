@@ -114,8 +114,13 @@ build_iphone_crosscompiler ()
 	export CPP="$CC -E"
 	export LD=$CC
 	export MACSDKOPTIONS="-mmacosx-version-min=$MAC_SDK_VERSION -isysroot $XCOMP_ASPEN_ROOT"
-	export LIBTOOLIZE="/usr/local/bin/libtoolize"
-	export LIBTOOL="/usr/local/bin/libtool"
+
+	# iOS build agents have different libtools in different places :-|
+	export LIBTOOLIZE=`which glibtoolize`
+	if test "x$LIBTOOLIZE" = x; then
+		export LIBTOOLIZE=`which libtoolize`
+	fi
+	export LIBTOOL=`echo $LIBTOOLIZE | sed 's/ize$//'`
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
