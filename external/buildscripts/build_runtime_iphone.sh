@@ -4,6 +4,7 @@ MAC_SDK_VERSION=10.6
 ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
 SIMULATOR_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer
 XCOMP_ASPEN_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX${MAC_SDK_VERSION}.sdk
+BUILDSCRIPTSDIR=external/buildscripts
 
 if [ ! -d $ASPEN_ROOT/SDKs/iPhoneOS${SDK_VERSION}.sdk ]; then
 	SDK_VERSION=5.1
@@ -94,6 +95,7 @@ build_arm_mono ()
 build_iphone_runtime () 
 {
 	echo "Building iPhone runtime"
+	export LIBTOOLIZE=`which glibtoolize`
 	build_arm_mono "armv7" $1 || exit 1
 
 	cp builds/embedruntimes/iphone/libmono-armv7.a builds/embedruntimes/iphone/libmono.a
@@ -112,6 +114,13 @@ build_iphone_crosscompiler ()
 	export CPP="$CC -E"
 	export LD=$CC
 	export MACSDKOPTIONS="-mmacosx-version-min=$MAC_SDK_VERSION -isysroot $XCOMP_ASPEN_ROOT"
+
+	# iOS build agents have different libtools in different places :-|
+	export LIBTOOLIZE=`which glibtoolize`
+	if test "x$LIBTOOLIZE" = x; then
+		export LIBTOOLIZE=`which libtoolize`
+	fi
+	export LIBTOOL=`echo $LIBTOOLIZE | sed 's/ize$//'`
 
 	export PLATFORM_IPHONE_XCOMP=1	
 
@@ -143,7 +152,7 @@ build_iphone_simulator ()
 	export CC="$SIMULATOR_ASPEN_ROOT/usr/bin/gcc -arch i386"
 	export CXX="$SIMULATOR_ASPEN_ROOT/usr/bin/g++ -arch i386"
 	export LIBTOOLIZE=`which glibtoolize`
-	perl build_runtime_osx.pl -iphone_simulator=1 || exit 1
+	perl ${BUILDSCRIPTSDIR}/build_runtime_osx.pl -iphone_simulator=1 || exit 1
 	echo "Copying iPhone simulator static lib to final destination";
 	mkdir -p builds/embedruntimes/iphone
 	cp mono/mini/.libs/libmono.a builds/embedruntimes/iphone/libmono-i386.a

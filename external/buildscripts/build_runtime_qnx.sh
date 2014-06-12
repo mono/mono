@@ -6,8 +6,9 @@
 PREFIX=`pwd`/../builds/qnx
 
 OUTDIR=../builds/embedruntimes/qnx
+BUILDSCRIPTSDIR=external/buildscripts
 
-perl PrepareBB10NDK.pl -ndk=r09 -env=envsetup.sh && source envsetup.sh
+perl ${BUILDSCRIPTSDIR}/PrepareBB10NDK.pl -ndk=r09 -env=envsetup.sh && source envsetup.sh
 
 source $BB10_NDK_ROOT/bbndk-env.sh
 
