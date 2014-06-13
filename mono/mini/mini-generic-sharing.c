@@ -654,7 +654,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		return isig;
 	}
 	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
-		MonoClassMethodPair *info = data, *res;
+		MonoDelegateClassMethodPair *info = data, *res;
 		MonoMethod *inflated_method;
 		MonoType *inflated_type = mono_class_inflate_generic_type (&info->method->klass->byval_arg, context);
 		MonoClass *inflated_class = mono_class_from_mono_type (inflated_type);
@@ -675,9 +675,10 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		mono_class_init (inflated_method->klass);
 		g_assert (inflated_method->klass == inflated_class);
 
-		res = mono_domain_alloc (mono_domain_get (), sizeof (MonoClassMethodPair));
+		res = mono_domain_alloc (mono_domain_get (), sizeof (MonoDelegateClassMethodPair));
 		res->klass = info->klass;
 		res->method = inflated_method;
+		res->virtual = info->virtual;
 
 		return res;
 	}
@@ -1507,8 +1508,11 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		return res;
 	}
 	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
-		MonoClassMethodPair *info = data;
-		return mono_create_delegate_trampoline_info (domain, info->klass, info->method);
+		MonoDelegateClassMethodPair *info = data;
+		if (info->virtual)
+			return mono_create_delegate_virtual_trampoline_info (domain, info->klass, info->method);
+		else
+			return mono_create_delegate_trampoline_info (domain, info->klass, info->method);
 	}
 	default:
 		g_assert_not_reached ();
@@ -1674,8 +1678,8 @@ info_equal (gpointer data1, gpointer data2, MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI:
 		return data1 == data2;
 	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
-		MonoClassMethodPair *info1 = data1, *info2 = data2;
-		return info1->method == info2->method && info1->klass == info2->klass;
+		MonoDelegateClassMethodPair *info1 = data1, *info2 = data2;
+		return info1->method == info2->method && info1->klass == info2->klass && info1->virtual == info2->virtual;
 	}
 	default:
 		g_assert_not_reached ();

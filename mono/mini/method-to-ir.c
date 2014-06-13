@@ -3431,7 +3431,7 @@ emit_get_rgctx_method (MonoCompile *cfg, int context_used,
  *   Emit IR to load the property MONO_RGCTX_INFO_METHOD_DELEGATE_INFO of KLASS and METHOD.
  */
 static MonoInst*
-emit_get_rgctx_delegate_info (MonoCompile *cfg, int context_used, MonoClassMethodPair *info)
+emit_get_rgctx_delegate_info (MonoCompile *cfg, int context_used, MonoDelegateClassMethodPair *info)
 {
 	MonoJumpInfoRgctxEntry *entry;
 	MonoInst *rgctx_ins;
@@ -4518,7 +4518,7 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 {
 	MonoInst *ptr;
 	int dreg;
-	MonoClassMethodPair *info;
+	MonoDelegateClassMethodPair *info;
 	MonoDelegateTrampInfo *trampoline;
 	MonoInst *obj, *tramp_ins;
 
@@ -4546,9 +4546,10 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 			trampoline = mono_create_delegate_virtual_trampoline_info (cfg->domain, klass, method);
 		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
 	} else {
-		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
+		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoDelegateClassMethodPair));
 		info->klass = klass;
 		info->method = method;
+		info->virtual = virtual;
 
 		if (context_used)
 			tramp_ins = emit_get_rgctx_delegate_info (cfg, context_used, info);
