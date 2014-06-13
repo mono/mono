@@ -1217,6 +1217,15 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void TryParse_Bug11630 ()
+		{
+			DateTime parsed;
+
+			Assert.IsTrue (DateTime.TryParse ("10Feb2013", out parsed));
+			Assert.AreEqual (new DateTime (2013, 2, 10), parsed);
+		}
+
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void Parse_CommaAfterHours ()
 		{
