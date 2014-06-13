@@ -51,6 +51,13 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			Assert.IsTrue (thrown);
 		}
 
+		static int named_index;
+		static String MkNamedMapping ()
+		{
+			return "test-" + named_index++;
+		}
+
+
 		static string tempDir = Path.Combine (Path.GetTempPath (), typeof (MemoryMappedFileTest).FullName);
 
 		string fname;
@@ -204,6 +211,98 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 				Assert.AreEqual (5, n);
 				var s = new string (Array.ConvertAll (a, b => (char)b));
 				Assert.AreEqual ("Hello", s);
+			}
+		}
+
+
+		[Test]
+		public void NamedMappingToInvalidFile ()
+		{
+			var fileName = Path.Combine (tempDir, "temp_file_123");
+	        if (File.Exists (fileName))
+	            File.Delete (fileName);
+	        var memoryMappedFile90 = MemoryMappedFile.CreateNew (fileName, 4194304, MemoryMappedFileAccess.ReadWrite);
+	        memoryMappedFile90.CreateViewStream (4186112, 3222, MemoryMappedFileAccess.Write);
+		}
+
+		[Test]
+		public void CreateTheSameAreaTwiceShouldFail ()
+		{
+			var name = MkNamedMapping ();
+			using (var m0 = MemoryMappedFile.CreateNew(name, 4096, MemoryMappedFileAccess.ReadWrite)) {
+				try {
+					using (var m1 = MemoryMappedFile.CreateNew (name, 4096, MemoryMappedFileAccess.ReadWrite)) {
+						Assert.Fail ("Must fail");
+					}
+				} catch (IOException) {}
+			}
+		}
+
+		[Test]
+		public void MapAFileToAMemoryAreaShouldFail ()
+		{
+			var name = MkNamedMapping ();
+			using (var m0 = MemoryMappedFile.CreateNew(name, 4096, MemoryMappedFileAccess.ReadWrite)) {
+				try {
+					using (var m1 = MemoryMappedFile.CreateFromFile (fname, FileMode.OpenOrCreate, name)) {
+						Assert.Fail ("Must fail");
+					}
+				} catch (IOException) {}
+			}
+		}
+
+		[Test]
+		public void NamedMappingsShareMemoryArea ()
+		{
+			var name = MkNamedMapping ();
+			using (var m0 = MemoryMappedFile.CreateNew(name, 4096, MemoryMappedFileAccess.ReadWrite)) {
+				using (var m1 = MemoryMappedFile.CreateOrOpen (name, 4096, MemoryMappedFileAccess.ReadWrite)) {
+					using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor (), v1 = m1.CreateViewAccessor ()) {
+						v0.Write (10, 0x12345);
+						Assert.AreEqual (0x12345, v1.ReadInt32 (10));
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void NamedFileCanBeOpen ()
+		{
+			var name = MkNamedMapping ();
+			using (var sw = new FileStream (fname, FileMode.Open)) {
+				byte[] b = new byte[20];
+				for (int i = 0; i < 20; ++i)
+					b[i] = 0xFF;
+				sw.Write (b, 0, 20);
+			}
+
+			using (var m0 = MemoryMappedFile.CreateFromFile (fname, FileMode.Open, name)) {
+				using (var m1 = MemoryMappedFile.CreateOrOpen (name, 4096)) {
+					using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor (), v1 = m1.CreateViewAccessor ()) {
+						v0.Write (10, 0x11223344);
+						Assert.AreEqual (0x11223344, v1.ReadInt32 (10));
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void MapAtEdgeOfPage ()
+		{
+			using (var f = new FileStream (fname, FileMode.Open)) {
+				var b = new byte [4096];
+				for (int i = 0; i < 4096; ++i)
+					b[i] = 0xAA;
+				for (int i = 0; i < 2; ++i)
+					f.Write (b, 0, 4096);
+			}
+			var m0 = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
+			var v0 = m0.CreateViewAccessor (500, 4096);
+			var v1 = m0.CreateViewAccessor (0, 4096 * 2);
+			for (int i = 0; i < 4096; ++i) {
+				Assert.AreEqual (0xAA, v1.ReadByte (i + 500));
+				v0.Write (i, (byte)0xFF);
+				Assert.AreEqual (0xFF, v1.ReadByte (i + 500));
 			}
 		}
 	}
