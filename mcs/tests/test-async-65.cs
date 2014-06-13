@@ -5,10 +5,10 @@ class C
 {
 	static int counter;
 
-	public static async Task TestRethrow ()
+	public static async Task TestRethrow (Exception e)
 	{
 		try {
-			throw new ApplicationException ();
+			throw e;
 		} catch (ApplicationException) {
 			Console.WriteLine ("x1a");
 			counter = 1;
@@ -19,21 +19,34 @@ class C
 		} catch {
 			counter = 9;
 			await Task.Delay (1);
+			Console.WriteLine ("ga");
 			throw;
 		}
 	}
 
 	public static int Main ()
 	{
+		var ex = new ApplicationException ();
 		try {
-			TestRethrow ().Wait ();
+			TestRethrow (ex).Wait ();
 		} catch (AggregateException e) {
-			if (!(e.InnerException is ApplicationException))
+			if (e.InnerException != ex)
 				return 1;
 		}
 
 		if (counter != 3)
 			return 2;
+
+		var ex2 = new NotSupportedException ();
+		try {
+			TestRethrow (ex2).Wait ();
+		} catch (AggregateException e) {
+			if (e.InnerException != ex2)
+				return 3;
+		}
+
+		if (counter != 9)
+			return 4;
 
 		Console.WriteLine ("ok");
 		return 0;

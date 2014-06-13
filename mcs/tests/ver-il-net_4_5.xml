@@ -62823,7 +62823,7 @@
     </type>
     <type name="C+&lt;TestDoubleAwait&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>411</size>
+        <size>419</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -62856,11 +62856,8 @@
   </test>
   <test name="test-async-65.cs">
     <type name="C">
-      <method name="System.Threading.Tasks.Task TestRethrow()" attrs="150">
-        <size>33</size>
-      </method>
       <method name="Int32 Main()" attrs="150">
-        <size>86</size>
+        <size>161</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -62868,10 +62865,15 @@
     </type>
     <type name="C+&lt;TestRethrow&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
-        <size>339</size>
+        <size>363</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="System.Threading.Tasks.Task TestRethrow(System.Exception)" attrs="150">
+        <size>41</size>
       </method>
     </type>
   </test>

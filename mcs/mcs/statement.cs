@@ -6419,17 +6419,17 @@ namespace Mono.CSharp {
 				}
 
 				return;
-			} else {
-				if (IsGeneral)
-					ec.BeginCatchBlock (ec.BuiltinTypes.Object);
-				else
-					ec.BeginCatchBlock (CatchType);
+			}
 
-				if (li != null) {
-					EmitCatchVariableStore (ec);
-				} else {
-					ec.Emit (OpCodes.Pop);
-				}
+			if (IsGeneral)
+				ec.BeginCatchBlock (ec.BuiltinTypes.Object);
+			else
+				ec.BeginCatchBlock (CatchType);
+
+			if (li != null) {
+				EmitCatchVariableStore (ec);
+			} else {
+				ec.Emit (OpCodes.Pop);
 			}
 
 			if (!Block.HasAwait)
@@ -6458,7 +6458,7 @@ namespace Mono.CSharp {
 		{
 			using (bc.Set (ResolveContext.Options.CatchScope)) {
 				if (type_expr == null) {
-					if (CreateExceptionVariable (bc.Module.Compiler.BuiltinTypes.Object) && Filter != null) {
+					if (CreateExceptionVariable (bc.Module.Compiler.BuiltinTypes.Object)) {
 						Expression source = new EmptyExpression (li.Type);
 						assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
 						Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
