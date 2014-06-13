@@ -6762,7 +6762,7 @@ namespace Mono.CSharp
 			if (!Emit (ec, v))
 				v.Emit (ec);
 		}
-		
+
 		public override void EmitStatement (EmitContext ec)
 		{
 			LocalTemporary v = null;
@@ -11064,6 +11064,20 @@ namespace Mono.CSharp
 			return e;
 		}
 
+		public override void Emit (EmitContext ec)
+		{
+			if (method == null && TypeSpec.IsValueType (type) && initializers.Initializers.Count > 1 && initializers.ContainsEmitWithAwait ()) {
+				var fe = ec.GetTemporaryField (type);
+
+				if (!Emit (ec, fe))
+					fe.Emit (ec);
+
+				return;
+			}
+
+			base.Emit (ec);
+		}
+
 		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
 			bool left_on_stack;
@@ -11080,6 +11094,8 @@ namespace Mono.CSharp
 			LocalTemporary temp = null;
 
 			instance = target as LocalTemporary;
+			if (instance == null)
+				instance = target as StackFieldExpr;
 
 			if (instance == null) {
 				if (!left_on_stack) {
