@@ -7565,7 +7565,9 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitToFieldSource (ec);
+			var await_field = EmitToFieldSource (ec);
+			if (await_field != null)
+				await_field.Emit (ec);
 		}
 
 		protected sealed override FieldExpr EmitToFieldSource (EmitContext ec)

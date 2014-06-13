@@ -62872,6 +62872,30 @@
       </method>
     </type>
   </test>
+  <test name="test-async-67.cs">
+    <type name="Test">
+      <method name="System.Threading.Tasks.Task`1[System.Int32[]] Run()" attrs="150">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>53</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Run&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>239</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()" attrs="145">
+        <size>9</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
