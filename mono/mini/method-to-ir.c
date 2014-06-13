@@ -6805,7 +6805,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoBasicBlock *bblock, *tblock = NULL, *init_localsbb = NULL;
 	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;
 	MonoMethod *cmethod, *method_definition;
-	MonoInst **arg_array, *h;
+	MonoInst **arg_array;
 	MonoMethodHeader *header;
 	MonoImage *image;
 	guint32 token, ins_flag;
@@ -11691,7 +11691,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				break;
 			}
 			case CEE_LDFTN: {
-				MonoInst *argconst;
+				MonoInst *argconst, *handle_delegate;
 				MonoMethod *cil_method;
 
 				CHECK_STACK_OVF (1);
@@ -11753,10 +11753,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ip += 6;
 							if (cfg->verbose_level > 3)
 								g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-							h = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, FALSE);
-							if (h) {
+							handle_delegate = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, FALSE);
+							if (handle_delegate) {
 								sp --;
-								*sp = h;
+								*sp = handle_delegate;
 								CHECK_CFG_EXCEPTION;
 								ip += 5;
 								sp ++;
@@ -11777,7 +11777,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				break;
 			}
 			case CEE_LDVIRTFTN: {
-				MonoInst *args [2];
+				MonoInst *args [2], *handle_delegate;
 
 				CHECK_STACK (1);
 				CHECK_OPSIZE (6);
@@ -11832,10 +11832,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							ip += 6;
 							if (cfg->verbose_level > 3)
 								g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
-							h = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, TRUE);
-							if (h) {
+							handle_delegate = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, TRUE);
+							if (handle_delegate) {
 								sp -= 2;
-								*sp = h;
+								*sp = handle_delegate;
 								CHECK_CFG_EXCEPTION;
 								ip += 5;
 								sp ++;
