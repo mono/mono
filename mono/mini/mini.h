@@ -297,7 +297,6 @@ typedef struct
 	GHashTable *jit_trampoline_hash;
 	/* Maps ClassMethodPair -> MonoDelegateTrampInfo */
 	GHashTable *delegate_trampoline_info_hash;
-	GHashTable *delegate_trampoline_hash;
 	GHashTable *delegate_virtual_trampoline_info_hash;
 	GHashTable *static_rgctx_trampoline_hash;
 	GHashTable *llvm_vcall_trampoline_hash;
