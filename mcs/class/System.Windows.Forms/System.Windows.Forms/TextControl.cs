@@ -71,6 +71,14 @@ namespace System.Windows.Forms {
 		BackColor = 2,
 		Font = 4,
 		Color = 8,
+		TextPosition = 16,
+		CharOffset = 32
+	}
+
+	internal enum TextPositioning {
+		Normal,
+		Superscript,
+		Subscript
 	}
 
 	internal enum CaretDirection {
@@ -1248,6 +1256,10 @@ namespace System.Windows.Forms {
 
 		internal void PositionCaret(Line line, int pos) {
 			caret.tag = line.FindTag (pos);
+			if (pos == caret.tag.Start - 1 && caret.tag.Length != 0 && caret.tag.Previous != null)
+				caret.tag = caret.tag.Previous;
+			// When we're at a tag boundary we want the cursor in the previous (left) tag
+			// whereas FindTag(pos) gets the next (right) tag. LineTag.Start is 1-based.
 
 			MoveCaretToTextTag ();
 
@@ -1256,20 +1268,18 @@ namespace System.Windows.Forms {
 
 			if (owner.IsHandleCreated) {
 				if (owner.Focused) {
-					if (caret.height != caret.tag.Height)
+					if (caret.height != caret.tag.DrawnHeight) {
+						caret.height = caret.tag.DrawnHeight;
 						XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
+					}
 					XplatUI.SetCaretPos(owner.Handle, 
 						offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-						offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+					    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
+					    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
 				}
 
 				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 			}
-
-			// We set this at the end because we use the heights to determine whether or
-			// not we need to recreate the caret
-			caret.height = caret.tag.Height;
-
 		}
 
 		internal void PositionCaret(int x, int y) {
@@ -1282,13 +1292,14 @@ namespace System.Windows.Forms {
 			MoveCaretToTextTag ();
 			
 			caret.line = caret.tag.Line;
-			caret.height = caret.tag.Height;
+			caret.height = caret.tag.DrawnHeight;
 
 			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, 
 					(int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x + offset_x, 
-					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
+				    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
 			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1299,7 +1310,8 @@ namespace System.Windows.Forms {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, 
 					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY - 
+				    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
 
 				DisplayCaret ();
 			}
@@ -1337,17 +1349,18 @@ namespace System.Windows.Forms {
 			// font is larger than the line (line recalculations
 			// ignore empty tags) in which case we make it equal
 			// the line height and then when text is entered
-			if (caret.tag.Height > caret.tag.Line.Height) {
-				caret.height = caret.line.height;
+			if (caret.tag.DrawnHeight > caret.tag.Line.Height - caret.tag.Line.TotalSpacing) {
+				caret.height = caret.line.height - caret.tag.Line.TotalSpacing;
 			} else {
-				caret.height = caret.tag.Height;
+				caret.height = caret.tag.DrawnHeight;
 			}
 
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos (owner.Handle, 
 					offset_x + (int) caret.tag.Line.widths [caret.pos] + caret.line.X - viewport_x, 
-					offset_y + caret.line.Y + viewport_y + caret_shift);
+				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
+				    caret.tag.CharOffset + caret.tag.Shift + viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 
@@ -1361,8 +1374,8 @@ namespace System.Windows.Forms {
 
 			MoveCaretToTextTag ();
 
-			if (caret.tag.Height != caret.height) {
-				caret.height = caret.tag.Height;
+			if (caret.tag.DrawnHeight != caret.height) {
+				caret.height = caret.tag.DrawnHeight;
 				if (owner.Focused) {
 					XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				}
@@ -1371,7 +1384,8 @@ namespace System.Windows.Forms {
 			if (owner.Focused) {
 				XplatUI.SetCaretPos(owner.Handle, 
 					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				    offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
+				    caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 			
@@ -1730,7 +1744,7 @@ namespace System.Windows.Forms {
 
 			/// Make sure that we aren't drawing one more line then we need to
 			line = GetLine (end - 1);
-			if (line != null && clip.Bottom == offset_y + line.Y + line.height - viewport_y)
+			if (line != null && clip.Bottom == offset_y + line.Y + line.SpacingBefore + line.height - viewport_y)
 				end--;
 
 			line_no = start;
@@ -1748,15 +1762,15 @@ namespace System.Windows.Forms {
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 						offset_x + selection_start.line.widths [selection_start.pos] +
 						selection_start.line.X - viewport_x, 
-						offset_y + selection_start.line.Y,
+				                offset_y + selection_start.line.Y + selection_start.line.SpacingBefore,
 						(selection_end.line.X + selection_end.line.widths [selection_end.pos]) -
 						(selection_start.line.X + selection_start.line.widths [selection_start.pos]), 
-						selection_start.line.height);
+				                selection_start.line.height - selection_start.line.TotalSpacing);
 			}
 
 			while (line_no <= end) {
 				line = GetLine (line_no);
-				float line_y = line.Y - viewport_y + offset_y;
+				float line_y = line.Y - viewport_y + offset_y + line.SpacingBefore;
 				
 				tag = line.tags;
 				if (!calc_pass) {
@@ -1793,7 +1807,7 @@ namespace System.Windows.Forms {
 						// lets draw some selection baby!!  (non multiline selection is drawn outside the loop)
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 								offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, 
-								line_y, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
+						                line_y - line.SpacingBefore, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
 								line.height);
 					}
 				}
@@ -1816,7 +1830,7 @@ namespace System.Windows.Forms {
 					if (tag.BackColor != Color.Empty) {
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), 
 								offset_x + tag.X + line.X - viewport_x,
-								line_y + tag.Shift, tag.Width, line.height);
+								line_y + tag.Shift - tag.CharOffset, tag.Width, line.height);
 					}
 
 					tag_color = tag.ColorToDisplay;
@@ -1851,7 +1865,7 @@ namespace System.Windows.Forms {
 
 						tag.Draw (g, current_color,
 								offset_x + line.X - viewport_x,
-								line_y + tag.Shift,
+								line_y + tag.Shift - tag.CharOffset,
 								old_tag_pos - 1, Math.Min (tag.Start + tag.Length, tag_pos) - 1,
 								text.ToString (), out text_size, tag.IsLink);
 
@@ -2349,7 +2363,8 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, line.ending);
+				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, line.ending,
+					line.spacing_before, line.spacing_after);
 
 				new_line = GetLine (line.line_no + 1);
 				
@@ -2382,7 +2397,8 @@ namespace System.Windows.Forms {
 			}
 
 			// We need to move the rest of the text into the new line
-			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color, line.ending);
+			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color,
+				line.ending, line.spacing_before, line.spacing_after);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2515,6 +2531,12 @@ namespace System.Windows.Forms {
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
+			Add (LineNo, Text, align, font, color, ending, 0, 0);
+		}
+
+		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending,
+		                   int spacing_before, int spacing_after)
+		{
 			Line	add;
 			Line	line;
 			int	line_no;
@@ -2530,6 +2552,8 @@ namespace System.Windows.Forms {
 			}
 
 			add = new Line (this, LineNo, Text, align, font, color, ending);
+			add.spacing_before = spacing_before;
+			add.spacing_after = spacing_after;
 
 			line = document;
 			while (line != sentinel) {
@@ -2598,7 +2622,7 @@ namespace System.Windows.Forms {
 			Delete (line);
 		}
 
-		private void Delete(Line line1) {
+		internal void Delete(Line line1) {
 			Line	line2;// = new Line();
 			Line	line3;
 
@@ -3539,30 +3563,38 @@ namespace System.Windows.Forms {
 			return tag;
 		}
 
+		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
+		                          Color color, Color back_color, FormatSpecified specified)
+		{
+			FormatText (start_line, start_pos, end_line, end_pos, font, color, back_color,
+				TextPositioning.Normal, 0, specified);
+		}
 		/// <summary>Format area of document in specified font and color</summary>
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
-				Color color, Color back_color, FormatSpecified specified)
+				Color color, Color back_color, TextPositioning text_position, int char_offset, FormatSpecified specified)
 		{
 			Line    l;
 
 			// First, format the first line
 			if (start_line != end_line) {
 				// First line
-				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color, back_color, specified);
+				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color,
+				                   back_color, text_position, char_offset, specified);
 
 				// Format last line
-				LineTag.FormatText(end_line, 1, end_pos, font, color, back_color, specified);
+				LineTag.FormatText(end_line, 1, end_pos, font, color, back_color, text_position, char_offset, specified);
 
 				// Now all the lines inbetween
 				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
 					l = GetLine(i);
-					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, specified);
+					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, text_position, char_offset, specified);
 				}
 			} else {
 				// Special case, single line
-				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color, specified);
+				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color,
+					text_position, char_offset, specified);
 				
 				if ((end_pos - start_pos) == 0 && CaretTag.Length != 0)
 					CaretTag = CaretTag.Next;
@@ -3623,6 +3655,8 @@ namespace System.Windows.Forms {
 			int	new_width;
 			bool	changed;
 			int	shift;
+			bool width_changed;
+			bool height_changed;
 
 			if (recalc_suspended > 0) {
 				recalc_pending = true;
@@ -3641,6 +3675,8 @@ namespace System.Windows.Forms {
 			line_no = start;
 			new_width = 0;
 			shift = this.lines;
+			width_changed = false;
+			height_changed = false;
 			if (!optimize) {
 				changed = true;		// We always return true if we run non-optimized
 			} else {
@@ -3701,21 +3737,25 @@ namespace System.Windows.Forms {
 
 			if (document_x != new_width) {
 				document_x = new_width;
-				if (WidthChanged != null) {
-					WidthChanged(this, null);
-				}
+				width_changed = true;
 			}
-
-			RecalculateAlignments();
 
 			line = GetLine(lines);
 
 			if (document_y != line.Y + line.height) {
 				document_y = line.Y + line.height;
-				if (HeightChanged != null) {
-					HeightChanged(this, null);
-				}
+				height_changed = true;
 			}
+
+			if (width_changed && WidthChanged != null) {
+				WidthChanged(this, null);
+			}
+
+			if (height_changed && HeightChanged != null) {
+				HeightChanged(this, null);
+			}
+
+			RecalculateAlignments();
 
 			// scan for links and tell us if its all
 			// changed, so we can update everything

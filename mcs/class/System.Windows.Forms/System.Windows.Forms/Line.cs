@@ -44,7 +44,7 @@ namespace System.Windows.Forms
 		internal int			line_no;		// Line number
 		internal LineTag		tags;			// Tags describing the text
 		internal int			offset;			// Baseline can be on the X or Y axis depending if we are in multiline mode or not
-		internal int			height;			// Height of the line (height of tallest tag)
+		internal int			height;			// Total height of the line, including spacing_before and spacing_after
 		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
@@ -52,6 +52,8 @@ namespace System.Windows.Forms
 		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
 		internal int			right_indent;		// Right indent for all lines
 		internal LineEnding		ending;
+		internal int			spacing_before;
+		internal int			spacing_after;
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
@@ -149,6 +151,36 @@ namespace System.Windows.Forms
 		internal int Height {
 			get { return height; }
 			set { height = value; }
+		}
+
+		internal int TotalSpacing {
+			get {
+				return SpacingBefore + SpacingAfter;
+			}
+		}
+
+		internal int SpacingBefore {
+			get {
+				bool has_spacing = true;
+				if (line_no > 1) {
+					Line previous_line = document.GetLine(line_no - 1);
+					if (previous_line != null && (previous_line.ending == LineEnding.Wrap || previous_line.ending == LineEnding.None))
+						has_spacing = false;
+				}
+				if (has_spacing)
+					return spacing_before;
+				else 
+					return 0;
+			}
+		}
+
+		internal int SpacingAfter {
+			get {
+				if (ending == LineEnding.Wrap)
+					return 0;
+				else
+					return spacing_after;
+			}
 		}
 
 		internal int Indent {
@@ -254,7 +286,7 @@ namespace System.Windows.Forms
 				return;
 
 			// Find the first tag that we are deleting from
-			tag = FindTag (pos + 1);
+			tag = FindTag (pos);
 
 			// Remove the characters from the line
 			text.Remove (pos, count);
@@ -295,15 +327,7 @@ namespace System.Windows.Forms
 					streamline = true;
 			}
 
-			// Delete empty orphaned tags at the end
 			LineTag walk = tag;
-			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
-				LineTag t = walk;
-				walk.Next = walk.Next.Next;
-				if (walk.Next != null)
-					walk.Next.Previous = t;
-				walk = walk.Next;
-			}
 
 			// Adjust the start point of any tags following
 			if (tag != null) {
@@ -312,6 +336,15 @@ namespace System.Windows.Forms
 					tag.Start -= count;
 					tag = tag.Next;
 				}
+			}
+
+			// Delete empty orphaned tags at the end. Do this after adjusting their starts, otherwise we might delete tags that acutally do have content.
+			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
+				LineTag t = walk;
+				walk.Next = walk.Next.Next;
+				if (walk.Next != null)
+					walk.Next.Previous = t;
+				walk = walk.Next;
 			}
 
 			recalc = true;
@@ -361,7 +394,7 @@ namespace System.Windows.Forms
 				pos = text.Length - 1;
 
 			while (tag != null) {
-				if (((tag.Start - 1) <= pos) && (pos <= (tag.Start + tag.Length - 1)))
+				if (((tag.Start - 1) <= pos) && (pos < (tag.Start + tag.Length - 1)))
 					return LineTag.GetFinalTag (tag);
 
 				tag = tag.Next;
@@ -473,6 +506,10 @@ namespace System.Windows.Forms
 			int prev_height;
 			int prev_ascent;
 			float add_width;
+			int prev_spacing_before;
+			int max_above_baseline;
+			int max_below_baseline;
+			int added_shift;
 
 			pos = 0;
 			len = this.text.Length;
@@ -480,6 +517,10 @@ namespace System.Windows.Forms
 			prev_offset = this.offset;	// For drawing optimization calculations
 			prev_height = this.height;
 			prev_ascent = this.ascent;
+			prev_spacing_before = this.SpacingBefore;
+			max_above_baseline = 0;
+			max_below_baseline = 0;
+			added_shift = 0;
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.Shift = 0;			// Reset shift (which should be stored as pixels, not as points)
@@ -500,7 +541,7 @@ namespace System.Windows.Forms
 
 				while (tag.Length == 0) {	// We should always have tags after a tag.length==0 unless len==0
 					//tag.Ascent = 0;
-					tag.Shift = (tag.Line.ascent - tag.Ascent) / 72;
+					tag.Shift = (tag.Line.ascent - tag.Ascent); // / 72;
 					tag = tag.Next;
 				}
 
@@ -531,7 +572,7 @@ namespace System.Windows.Forms
 					if (text[pos] == '\t') add_width += w;
 				}
 
-				if (Char.IsWhiteSpace (text[pos]))
+				if (Char.IsWhiteSpace (text[pos])) //TODO: no, we can't wrap on all whitespace -- e.g. what if it is a no-break space?
 					wrap_pos = pos + 1;
 
 				if (doc.wrap) {
@@ -569,12 +610,18 @@ namespace System.Windows.Forms
 
 					if (pos == len) {
 						line = doc.GetLine (this.line_no + 1);
-						if ((line != null) && (ending == LineEnding.Wrap || ending == LineEnding.None)) {
-							// Pull the two lines together
-							doc.Combine (this.line_no, this.line_no + 1);
-							len = this.text.Length;
-							retval = true;
-						}
+						do {
+							if ((line != null) && (ending == LineEnding.Wrap || ending == LineEnding.None) &&
+							    (widths[pos] < doc.viewport_width || line.text.Length == 0)) { // Only do this if the line isn't already full, or the next line is empty.
+								// Pull the two lines together
+								doc.Combine (this, line);
+								tag = FindTag (pos - 1); // Document.Combine() called Line.Streamline(), so this is necessary in case tag points to one of the tags that got removed.
+								len = this.text.Length;
+								line = doc.GetLine (this.line_no + 1);
+								retval = true;
+							}
+						} while ((ending == LineEnding.Wrap || ending == LineEnding.None) && line != null && line.text.Length == 0);
+						// If the next line is empty, do it again (if possible). The amount of room on this line doesn't matter when there's no text being added...
 					}
 				}
 
@@ -582,24 +629,56 @@ namespace System.Windows.Forms
 					// We just found the end of our current tag
 					tag.Height = tag.MaxHeight ();
 
-					// Check if we're the tallest on the line (so far)
-					if (tag.Height > this.height)
-						this.height = tag.Height;	// Yep; make sure the line knows
+					if (tag.CharOffset > 0) {
+						if (tag.Ascent + tag.CharOffset > max_above_baseline) {
+							int moveBy = tag.Ascent + tag.CharOffset - max_above_baseline;
+							added_shift += moveBy;
+							max_above_baseline = tag.Ascent + tag.CharOffset;
+
+							LineTag t = tags;
+							while (t != null && t != tag) {
+								t.Shift += moveBy;
+								t = t.Next;
+							}
+						}
+
+						if (tag.Descent > max_below_baseline)
+							max_below_baseline = tag.Descent;
+					} else if (tag.CharOffset < 0) {
+						if (tag.Descent - tag.CharOffset > max_below_baseline)
+							max_below_baseline = tag.Descent - tag.CharOffset;
+
+						if (tag.Ascent > max_above_baseline)
+							max_above_baseline = tag.Ascent;
+					} else {
+						if (tag.Ascent > max_above_baseline)
+							max_above_baseline = tag.Ascent;
+
+						if (tag.Descent > max_below_baseline)
+							max_below_baseline = tag.Descent;
+
+						if (tag.Height > this.height)
+							this.height = tag.Height;
+					}
+
+					if (this.height < max_above_baseline + max_below_baseline + tag.Height - tag.Ascent - tag.Descent)
+						this.height = max_above_baseline + max_below_baseline + tag.Height - tag.Ascent - tag.Descent;
 
 					if (tag.Ascent > this.ascent) {
 						LineTag t;
 
 						// We have a tag that has a taller ascent than the line;
 						t = tags;
+						int moveBy = tag.Ascent - this.ascent;
 						while (t != null && t != tag) {
-							t.Shift = (tag.Ascent - t.Ascent) / 72;
+							t.Shift += moveBy + added_shift;
 							t = t.Next;
 						}
 
 						// Save on our line
 						this.ascent = tag.Ascent;
 					} else {
-						tag.Shift = (this.ascent - tag.Ascent) / 72;
+						tag.Shift = (this.ascent - tag.Ascent) + added_shift;
 					}
 
 					tag = tag.Next;
@@ -629,7 +708,7 @@ namespace System.Windows.Forms
 			}
 
 			while (tag != null) {	
-				tag.Shift = (tag.Line.ascent - tag.Ascent) / 72;
+				tag.Shift = (tag.Line.ascent - tag.Ascent); // / 72;
 				tag = tag.Next;
 			}
 
@@ -639,7 +718,10 @@ namespace System.Windows.Forms
 				tags.Shift = 0;
 			}
 
-			if (prev_offset != offset || prev_height != this.height || prev_ascent != this.ascent)
+			this.height += this.TotalSpacing;
+
+			if (prev_offset != offset || prev_height != this.height || prev_ascent != this.ascent ||
+				prev_spacing_before != this.SpacingBefore)
 				retval = true;
 
 			return retval;
@@ -667,13 +749,14 @@ namespace System.Windows.Forms
 
 			w = TextBoxTextRenderer.MeasureText (g, doc.password_char, tags.Font).Width;
 
-			if (this.height != (int)tag.Font.Height)
+			if (this.height - this.TotalSpacing != (int)tag.Font.Height)
 				ret = true;
 			else
 				ret = false;
 
 			this.height = (int)tag.Font.Height;
 			tag.Height = this.height;
+			this.height += this.TotalSpacing;
 
 			this.ascent = tag.Ascent;
 
@@ -711,7 +794,7 @@ namespace System.Windows.Forms
 				return;
 
 			while (next != null) {
-				// Take out 0 length tags unless it's the last tag in the document
+				// Take out 0 length tags unless it's the last tag in the document.
 				if (current.IsTextTag && next.Length == 0 && next.IsTextTag) {
 					if ((next.Next != null) || (line_no != lines)) {
 						current.Next = next.Next;

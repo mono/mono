@@ -617,7 +617,10 @@ namespace System.Windows.Forms
 				Line line = null;
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine (i);
-					sb.Append(line.text.ToString ());
+					if (i == document.Lines)
+						sb.Append(line.TextWithoutEnding());
+					else
+						sb.Append(line.text.ToString ());
 				}
 
 				return sb.ToString();
@@ -2047,17 +2050,18 @@ namespace System.Windows.Forms
 			// FIXME - need separate calculations for center and right alignment
 			SizeControls ();
 
-			if (document.Width >= document.ViewPortWidth) {
+			if (document.Width > document.ViewPortWidth) {
 				hscroll.SetValues (0, Math.Max (1, document.Width), -1,
 						document.ViewPortWidth < 0 ? 0 : document.ViewPortWidth);
 				if (document.multiline)
 					hscroll.Enabled = true;
 			} else {
 				hscroll.Enabled = false;
+				hscroll.Value = hscroll.Minimum;
 				hscroll.Maximum = document.ViewPortWidth;
 			}
 
-			if (document.Height >= document.ViewPortHeight) {
+			if (document.Height > document.ViewPortHeight) {
 				vscroll.SetValues (0, Math.Max (1, document.Height), -1,
 						document.ViewPortHeight < 0 ? 0 : document.ViewPortHeight);
 				if (document.multiline)
@@ -2316,8 +2320,8 @@ namespace System.Windows.Forms
 				// Check if we moved out of view to the left
 				if (pos.X < (document.ViewPortX)) {
 					do {
-						if ((hscroll.Value - document.ViewPortWidth / 3) >= hscroll.Minimum) {
-							hscroll.SafeValueSet (hscroll.Value - document.ViewPortWidth / 3);
+						if ((hscroll.Value - document.ViewPortWidth / 3 - 1) >= hscroll.Minimum) {
+							hscroll.SafeValueSet (hscroll.Value - document.ViewPortWidth / 3 - 1); // - 1 so that we're guaranteed to move, even if document.ViewPortWidth is < 3.
 						} else {
 							hscroll.Value = hscroll.Minimum;
 						}

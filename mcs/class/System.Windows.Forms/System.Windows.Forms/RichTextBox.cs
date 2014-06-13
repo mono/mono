@@ -55,6 +55,9 @@ namespace System.Windows.Forms {
 							// properties so we can revert
 		private Stack		rtf_section_stack;
 
+		private bool		fire_contents_resized;
+		private Size		existing_contents_size;
+
 		private RTF.TextMap rtf_text_map;
 		private int rtf_skip_count;
 		private int		rtf_cursor_x;
@@ -85,8 +88,12 @@ namespace System.Windows.Forms {
 			rtf_style = new RtfSectionStyle ();
 			rtf_section_stack = null;
 
+			fire_contents_resized = true;
+
 			scrollbars = RichTextBoxScrollBars.Both;
 			alignment = HorizontalAlignment.Left;
+			document.WidthChanged += new EventHandler(ContentWidthChanged);
+			document.HeightChanged += new EventHandler(ContentHeightChanged);
 			LostFocus += new EventHandler(RichTextBox_LostFocus);
 			GotFocus += new EventHandler(RichTextBox_GotFocus);
 			BackColor = ThemeEngine.Current.ColorWindow;
@@ -132,6 +139,32 @@ namespace System.Windows.Forms {
 
 		private void RichTextBox_GotFocus(object sender, EventArgs e) {
 			Invalidate();
+		}
+
+		private void ContentWidthChanged (object sender, EventArgs e) {
+			if (!Multiline)
+				ContentSizeChanged();
+		}
+		private void ContentHeightChanged (object sender, EventArgs e) {
+			if (Multiline)
+				ContentSizeChanged();
+		}
+
+		private void ContentSizeChanged () {
+			if (fire_contents_resized && (existing_contents_size.IsEmpty ||
+					existing_contents_size.Height != document.Height || existing_contents_size.Width != document.Width)) {
+				int width;
+				int height = document.Height + document.top_margin * 2 + Height - ClientRectangle.Height;
+
+				if (Multiline) {
+					width = Width; // yes, this is the insanity that is the traditional .Net implementation...
+				} else {
+					width = document.Width + document.left_margin + document.left_margin + Width - ClientRectangle.Width;
+				}
+
+				ContentsResizedEventArgs args = new ContentsResizedEventArgs (new Rectangle (Left, Top, width, height));
+				OnContentsResized (args);
+			}
 		}
 		#endregion	// Private & Internal Methods
 
@@ -324,14 +357,25 @@ namespace System.Windows.Forms {
 			set {
 				MemoryStream	data;
 
-				document.Empty();
-				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
+				fire_contents_resized = false;
+				existing_contents_size = new Size(document.Width, document.Height);
 
+				document.Empty();
+
+				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
 				InsertRTFFromStream(data, 0, 1);
+
+				Line line = document.GetLine(1);
+				document.SetSelection(line, 0);
+				document.PositionCaret(line, 0);
 
 				data.Close();
 
 				Invalidate();
+
+				fire_contents_resized = true;
+				ContentSizeChanged();
+				existing_contents_size = Size.Empty;
 			}
 		}
 
@@ -371,6 +415,9 @@ namespace System.Windows.Forms {
 				Line		line;
 				LineTag		tag;
 
+				fire_contents_resized = false;
+				existing_contents_size = new Size(document.Width, document.Height);
+				document.SuspendRecalc();
 				if (document.selection_visible) {
 					document.ReplaceSelection("", false);
 				}
@@ -393,14 +440,19 @@ namespace System.Windows.Forms {
 				int nl_length = document.LineEndingLength (XplatUI.RunningOnUnix ? LineEnding.Rich : LineEnding.Hard);
 				document.CharIndexToLineTag(sel_start + chars + (y - document.selection_start.line.line_no) * nl_length, 
 						out line, out tag, out sel_start);
-				if (sel_start >= line.text.Length)
-					sel_start = line.text.Length -1;
+				if (sel_start > line.text.Length)
+					sel_start = line.text.Length; //zero-based, but we want to go after the last character rather than before.
 
 				document.SetSelection(line, sel_start);
 				document.PositionCaret(line, sel_start);
+				document.ResumeRecalc(true);
 				document.DisplayCaret();
 				ScrollToCaret();
 				OnTextChanged(EventArgs.Empty);
+
+				fire_contents_resized = true;
+				ContentSizeChanged();
+				existing_contents_size = Size.Empty;
 			}
 		}
 
@@ -497,13 +549,55 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO ("Stub, does nothing")]
 		public int SelectionCharOffset {
 			get {
-				return 0;
+				int		char_offset;
+				LineTag	start;
+				LineTag	end;
+				LineTag	tag;
+				
+				if (selection_length > 0) {
+					start = document.selection_start.line.FindTag (document.selection_start.pos + 1);
+					end = document.selection_start.line.FindTag (document.selection_end.pos);
+				} else {
+					start = document.selection_start.line.FindTag (document.selection_start.pos);
+					end = start;
+				}
+				
+				char_offset = start.CharOffset;
+				
+				tag = start;
+				while (tag != null) {
+					
+					if (char_offset != tag.CharOffset)
+						return 0;
+					
+					if (tag == end)
+						break;
+					
+					tag = document.NextTag (tag);
+				}
+				
+				return char_offset;
 			}
 
 			set {
+				int		sel_start;
+				int		sel_end;
+				
+				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
+				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
+				
+				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
+				                     document.selection_end.line, document.selection_end.pos + 1, null,
+				                     Color.Empty, Color.Empty, TextPositioning.Normal, value, FormatSpecified.CharOffset);
+				
+				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
+				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
+				
+				document.UpdateView(document.selection_start.line, 0);
+				//Re-Align the caret in case its changed size or position
+				Document.AlignCaret (false);
 			}
 		}
 
@@ -1315,6 +1409,10 @@ namespace System.Windows.Forms {
 			internal int rtf_par_line_left_indent;
 			internal bool rtf_visible;
 			internal int rtf_skip_width;
+			internal int rtf_par_spacing_after;
+			internal int rtf_par_spacing_before;
+			internal TextPositioning rtf_text_position;
+			internal int rtf_char_offset;
 
 			public object Clone ()
 			{
@@ -1328,6 +1426,10 @@ namespace System.Windows.Forms {
 				new_style.rtf_rtfstyle = rtf_rtfstyle;
 				new_style.rtf_visible = rtf_visible;
 				new_style.rtf_skip_width = rtf_skip_width;
+				new_style.rtf_par_spacing_after = rtf_par_spacing_after;
+				new_style.rtf_par_spacing_before = rtf_par_spacing_before;
+				new_style.rtf_text_position = rtf_text_position;
+				new_style.rtf_char_offset = rtf_char_offset;
 
 				return new_style;
 			}
@@ -1487,6 +1589,38 @@ namespace System.Windows.Forms {
 							rtf_style.rtf_rtfstyle &= ~FontStyle.Underline;
 							break;
 						}
+
+						case RTF.Minor.SuperScrShrink: {
+							FlushText (rtf, false);
+							rtf_style.rtf_text_position = TextPositioning.Superscript;
+							break;
+						}
+
+						case RTF.Minor.SubScrShrink: {
+							FlushText (rtf, false);
+							rtf_style.rtf_text_position = TextPositioning.Subscript;
+							break;
+						}
+
+						case RTF.Minor.NoSuperSub: {
+							FlushText (rtf, false);
+							rtf_style.rtf_text_position = TextPositioning.Normal;
+							break;
+						}
+
+						case RTF.Minor.SuperScript: {
+							FlushText (rtf, false);
+							using (Graphics g = CreateGraphics ())
+								rtf_style.rtf_char_offset = (int) (((float) rtf.Param / 144.0F) * g.DpiX + 0.5F);
+							break;
+						}
+						
+						case RTF.Minor.SubScript: {
+							FlushText (rtf, false);
+							using (Graphics g = CreateGraphics ())
+								rtf_style.rtf_char_offset = -(int) (((float) rtf.Param / 144.0F) * g.DpiX + 0.5F);
+							break;
+						}
 					}
 					break;
 				}
@@ -1497,6 +1631,8 @@ namespace System.Windows.Forms {
 				case RTF.Minor.ParDef:
 					FlushText (rtf, false);
 					rtf_style.rtf_par_line_left_indent = 0;
+					rtf_style.rtf_par_spacing_after = 0;
+					rtf_style.rtf_par_spacing_before = 0;
 					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
 					break;
 
@@ -1524,11 +1660,21 @@ namespace System.Windows.Forms {
 					FlushText (rtf, false);
 					rtf_style.rtf_rtfalign = HorizontalAlignment.Right;
 					break;
+
+				case RTF.Minor.SpaceAfter:
+					using (Graphics g = CreateGraphics ())
+						rtf_style.rtf_par_spacing_after = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					break;
+
+				case RTF.Minor.SpaceBefore:
+					using (Graphics g = CreateGraphics ())
+						rtf_style.rtf_par_spacing_before = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					break;
+
 				}
 				break;
 			}
-
-			case RTF.Major.SpecialChar: {
+case RTF.Major.SpecialChar: {
 					//Console.Write("[Got SpecialChar control {0}]", rtf.Minor);
 					SpecialChar (rtf);
 					break;
@@ -1683,29 +1829,47 @@ namespace System.Windows.Forms {
 					rtf_line.Append (Environment.NewLine);
 
 				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
-								newline ? LineEnding.Rich : LineEnding.Wrap);
+								newline ? LineEnding.Rich : LineEnding.None);
+				Line line = null;
 				if (rtf_style.rtf_par_line_left_indent != 0) {
-					Line line = document.GetLine (rtf_cursor_y);
+					line = document.GetLine (rtf_cursor_y);
 					line.indent = rtf_style.rtf_par_line_left_indent;
 				}
-			} else {
-				Line line;
 
-				line = document.GetLine (rtf_cursor_y);
-				line.indent = rtf_style.rtf_par_line_left_indent;
+				if (rtf_style.rtf_par_spacing_after != 0) {
+					if (line == null)
+						line = document.GetLine (rtf_cursor_y);
+					line.spacing_after = rtf_style.rtf_par_spacing_after;
+				}
+
+				if (rtf_style.rtf_par_spacing_before != 0) {
+					if (line == null)
+						line = document.GetLine (rtf_cursor_y);
+					line.spacing_before = rtf_style.rtf_par_spacing_before;
+				}
+			} else {
+				Line line = document.GetLine (rtf_cursor_y);
+
+				if (newline) {
+					if (rtf_cursor_x < line.text.Length)
+						document.Split(line, rtf_cursor_x);
+					line.ending = LineEnding.Rich;
+				}
+
+				line.indent = Math.Max (rtf_style.rtf_par_line_left_indent, line.indent);
+				line.spacing_after = Math.Max (rtf_style.rtf_par_spacing_after, line.spacing_after);
+				line.spacing_before = Math.Max (rtf_style.rtf_par_spacing_before, line.spacing_before);
+				line.alignment = rtf_style.rtf_rtfalign;
+
 				if (rtf_line.Length > 0) {
 					document.InsertString (line, rtf_cursor_x, rtf_line.ToString ());
 					document.FormatText (line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length,
-			    font, rtf_style.rtf_color, Color.Empty,
-							FormatSpecified.Font | FormatSpecified.Color);
+					    font, rtf_style.rtf_color, Color.Empty, rtf_style.rtf_text_position, rtf_style.rtf_char_offset,
+						FormatSpecified.Font | FormatSpecified.Color | FormatSpecified.TextPosition | FormatSpecified.CharOffset);
 				}
-				if (newline) {
-					line = document.GetLine (rtf_cursor_y);
-					line.ending = LineEnding.Rich;
 
-					if (line.Text.EndsWith (Environment.NewLine) == false)
-						line.Text += Environment.NewLine;
-				}
+				if (newline && line.Text.EndsWith (Environment.NewLine) == false)
+					line.Text += Environment.NewLine;
 
 				reuse_line = false; // sanity assignment - in this case we have already re-used one line.
 			}
@@ -1743,6 +1907,11 @@ namespace System.Windows.Forms {
 			rtf_style.rtf_rtffont_size = (int)this.Font.Size;
 			rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
 			rtf_style.rtf_rtfstyle = FontStyle.Regular;
+			rtf_style.rtf_text_position = TextPositioning.Normal;
+			rtf_style.rtf_par_spacing_after = 0;
+			rtf_style.rtf_par_spacing_before = 0;
+			rtf_style.rtf_par_line_left_indent = 0;
+			rtf_style.rtf_char_offset = 0;
 			rtf_style.rtf_rtffont = null;
 			rtf_style.rtf_visible = true;
 			rtf_style.rtf_skip_width = 1;
@@ -1760,6 +1929,12 @@ namespace System.Windows.Forms {
 				rtf.Read();	// That's it
 				FlushText(rtf, false);
 
+				if (document.Lines > 1) {
+					Line last_line = document.GetLine (document.Lines);
+					if (last_line.text.Length == 0) {
+						document.Delete(last_line);
+					}
+				}
 			}
 
 
@@ -1779,6 +1954,7 @@ namespace System.Windows.Forms {
 			if (rtf_section_stack != null)
 				rtf_section_stack.Clear();
 
+			CalculateScrollBars();
 			if (IsHandleCreated) {
 				using (var graphics = CreateGraphics())
 					document.RecalculateDocument(graphics, cursor_y, document.Lines, false);
@@ -1873,19 +2049,20 @@ namespace System.Windows.Forms {
 			int start = rtf.Length;
 			int count = text.Length;
 
-			// First emit simple unicode chars as escaped
-			EmitEscapedUnicode (rtf, text);
-
 			// This method emits user text *only*, so it's safe to escape any reserved rtf chars
 			// Escape '\' first, since it is used later to escape the other chars
 			if (text.IndexOfAny (ReservedRTFChars) > -1) {
-				rtf.Replace ("\\", "\\\\", start, count);
-				rtf.Replace ("{", "\\{", start, count);
-				rtf.Replace ("}", "\\}", start, count);
+				StringBuilder sb = new StringBuilder(text); // Would it be better to just use text = text.Replace for this?
+				sb.Replace ("\\", "\\\\");
+				sb.Replace ("{", "\\{");
+				sb.Replace ("}", "\\}");
+				text = sb.ToString();
 			}
+
+			// Then actually emit the text, and also escape any Unicode
+			EmitEscapedUnicode (rtf, text);
 		}
 
-		// The chars to be escaped use "\'" + its hexadecimal value.
 		private void EmitEscapedUnicode (StringBuilder sb, string text)
 		{
 			int pos;
@@ -1894,9 +2071,10 @@ namespace System.Windows.Forms {
 			while ((pos = IndexOfNonAscii (text, start)) > -1) {
 				sb.Append (text, start, pos - start);
 
-				int n = (int)text [pos];
-				sb.Append ("\\'");
-				sb.Append (n.ToString ("X"));
+				short n = (short)text [pos];
+				sb.Append ("\\u");
+				sb.Append (n.ToString ());
+				sb.Append ("?");
 
 				start = pos + 1;
 			}
@@ -1927,6 +2105,11 @@ namespace System.Windows.Forms {
 			Font		font;
 			Line		line;
 			LineTag		tag;
+			TextPositioning text_position;
+			HorizontalAlignment line_alignment;
+			int		spacing_after;
+			int		spacing_before;
+			int		char_offset;
 			int		pos;
 			int		line_no;
 			int		line_len;
@@ -2020,71 +2203,161 @@ namespace System.Windows.Forms {
 			}
 
 			sb.Append("{\\*\\generator Mono RichTextBox;}");
-			// Emit initial paragraph settings
-			tag = LineTag.FindTag(start_line, start_pos);
-			sb.Append("\\pard");	// Reset to default paragraph properties
-			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
-			sb.Append(" ");		// Space separator
 
+			tag = LineTag.FindTag(start_line, start_pos);
 			font = tag.Font;
 			color = (Color)colors[0];
+			text_position = TextPositioning.Normal;
+			char_offset = 0;
 			line = start_line;
 			line_no = start_line.line_no;
 			pos = start_pos;
+			spacing_after = line.spacing_after;
+			spacing_before = line.spacing_before;
+			line_alignment = line.alignment;
 
-			while (line_no <= end_line.line_no) {
-				line = document.GetLine(line_no);
-				tag = LineTag.FindTag(line, pos);
-
-				if (line_no != end_line.line_no) {
-					line_len = line.text.Length;
-				} else {
-					line_len = end_pos;
+			using (Graphics g = CreateGraphics ()) {
+				// Emit initial paragraph settings
+				sb.Append("\\pard");	// Reset to default paragraph properties
+				switch (line.alignment) {
+				case HorizontalAlignment.Left:
+					sb.Append("\\ql");
+					break;
+				case HorizontalAlignment.Center:
+					sb.Append("\\qc");
+					break;
+				case HorizontalAlignment.Right:
+					sb.Append("\\qr");
+					break;
 				}
+				if (line.spacing_after != 0) {
+					sb.Append("\\sa");
+					sb.Append((line.spacing_after / g.DpiX) * 1440);
+				}
+				if (line.spacing_before != 0) {
+					sb.Append("\\sb");
+					sb.Append((line.spacing_before / g.DpiX) * 1440);
+				}
+				EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
+				sb.Append(" ");		// Space separator
 
-				while (pos < line_len) {
-					length = sb.Length;
+				while (line_no <= end_line.line_no) {
+					line = document.GetLine(line_no);
+					line.Streamline(document.Lines);
+					tag = LineTag.FindTag(line, pos);
 
-					if (tag.Font != font) {
-						EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.Font.Name), font, tag.Font);
-						font = tag.Font;
-					}
-
-					if (tag.Color != color) {
-						color = tag.Color;
-						sb.Append(String.Format("\\cf{0}", colors.IndexOf(color)));
-					}
-					if (length != sb.Length) {
-						sb.Append(" ");	// Emit space to separate keywords from text
-					}
-
-					// Emit the string itself
 					if (line_no != end_line.line_no) {
-						EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
+						line_len = line.text.Length;
 					} else {
-						if (end_pos < (tag.Start + tag.Length - 1)) {
-							// Emit partial tag only, end_pos is inside this tag
-							EmitRTFText(sb, tag.Line.text.ToString(pos, end_pos - pos));
-						} else {
-							EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
+						line_len = end_pos;
+					}
+
+					length = sb.Length;
+					if (line.Alignment != line_alignment) {
+						line_alignment = line.Alignment;
+						switch (line_alignment) {
+						case HorizontalAlignment.Left:
+							sb.Append("\\ql");
+							break;
+						case HorizontalAlignment.Center:
+							sb.Append("\\qc");
+							break;
+						case HorizontalAlignment.Right:
+							sb.Append("\\qr");
+							break;
 						}
 					}
-
-					pos = tag.Start + tag.Length - 1;
-					tag = tag.Next;
-				}
-				if (pos >= line.text.Length) {
-					if (line.ending != LineEnding.Wrap) {
-						sb.Append("\\par");
-						sb.Append(Environment.NewLine);
+					
+					if (line.spacing_after != spacing_after) {
+						spacing_after = line.spacing_after;
+						sb.Append("\\sa");
+						sb.Append((int) ((spacing_after / g.DpiX) * 1440));
 					}
-				}
-				pos = 0;
-				line_no++;
-			}
+					
+					if (line.spacing_before != spacing_before) {
+						spacing_before = line.spacing_before;
+						sb.Append("\\sb");
+						sb.Append((int) ((spacing_before / g.DpiX) * 1440));
+					}
 
-			sb.Append("}");
-			sb.Append(Environment.NewLine);
+					if (length != sb.Length) {
+						sb.Append(" ");
+					}
+
+					while (pos < line_len) {
+						length = sb.Length;
+
+						if (tag.Font != font) {
+							EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.Font.Name), font, tag.Font);
+							font = tag.Font;
+						}
+
+						if (tag.Color != color) {
+							color = tag.Color;
+							sb.Append(String.Format("\\cf{0}", colors.IndexOf(color)));
+						}
+
+						if (tag.TextPosition != text_position) {
+							text_position = tag.TextPosition;
+							switch (tag.TextPosition) {
+							case TextPositioning.Normal: 
+								sb.Append("\\nosupersub");
+								break;
+							case TextPositioning.Subscript:
+								sb.Append("\\sub");
+								break;
+							case TextPositioning.Superscript:
+								sb.Append("\\super");
+								break;
+							}
+						}
+
+						if (tag.CharOffset != char_offset) {
+							char_offset = tag.CharOffset;
+							if (char_offset >= 0) {
+								sb.Append("\\up");
+								sb.Append((int) ((char_offset / g.DpiX) * 144));
+							} else {
+								sb.Append("\\dn");
+								sb.Append(-(int) ((char_offset / g.DpiX) * 144));
+							}
+						}
+
+						if (length != sb.Length) {
+							sb.Append(" ");	// Emit space to separate keywords from text
+						}
+
+						// Emit the string itself
+						if (line_no != end_line.line_no) {
+							EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
+						} else {
+							if (end_pos < (tag.Start + tag.Length - 1)) {
+								// Emit partial tag only, end_pos is inside this tag
+								EmitRTFText(sb, tag.Line.text.ToString(pos, end_pos - pos));
+							} else {
+								EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
+							}
+						}
+
+						pos = tag.Start + tag.Length - 1;
+						tag = tag.Next;
+					}
+					if (pos >= line.text.Length) {
+						if (line.ending != LineEnding.Wrap) {
+							// pos is incremented by the tag length, so it can be after where we want to finish.
+							// If we're on the last line we don't want to output \par when we're stopping before the end of the line.
+							if (!(line_no == end_line.line_no && pos > end_pos))
+								sb.Append("\\par");
+							sb.Append(Environment.NewLine);
+						}
+					}
+					pos = 0;
+					line_no++;
+				}
+
+				sb.Append("}");
+				sb.Append(Environment.NewLine);
+			}
 
 			return sb;
 		}

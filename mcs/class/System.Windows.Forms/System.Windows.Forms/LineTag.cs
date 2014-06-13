@@ -44,6 +44,9 @@ namespace System.Windows.Forms
 		private string		link_text;	// The full link text e.g. this might be 
 							// word-wrapped to "w" but this would be
 							// "www.example.com"
+		private TextPositioning	text_position;	// Normal / superscript / subscript
+		private Font		small_font;			// Cached font for superscript / subscript
+		private int			char_offset;		// Shift the text baseline up or down
 
 		// Payload; text
 		private int		start;		// start, in chars; index into Line.text
@@ -113,6 +116,16 @@ namespace System.Windows.Forms
 					return link_font;
 				}
 
+				if (TextPosition != TextPositioning.Normal) {
+					if (small_font == null)
+						small_font = new Font (font.FontFamily, font.Size * 0.583F, font.Style);
+				
+					if (IsLink)
+						return new Font (small_font, font.Style | FontStyle.Underline);
+					else
+						return small_font;
+				}
+
 				return font;
 			}
 		}
@@ -122,18 +135,41 @@ namespace System.Windows.Forms
 			set { 
 				if (font != value) {
 					link_font = null;
+					small_font = null;
 					font = value;
 	
 					height = Font.Height;
 					XplatUI.GetFontMetrics (Hwnd.GraphicsContext, Font, out ascent, out descent);
+					float scale_factor = font.GetHeight() / font.FontFamily.GetLineSpacing(font.Style);
+					ascent = (int) (ascent * scale_factor);
+					descent = (int) (descent * scale_factor);
 					line.recalc = true;
 				}
 			}
 		}
 
+		public TextPositioning TextPosition {
+			get { return text_position; }
+			set { text_position = value; }
+		}
+
+		public int CharOffset {
+			get { return char_offset; }
+			set { char_offset = value; }
+		}
+
 		public int Height {
 			get { return height; }
 			set { height = value; }
+		}
+
+		public int DrawnHeight {
+			get {
+				if (text_position != TextPositioning.Normal)
+					return (int) (height * 0.583F);
+
+				return height;
+			}
 		}
 
 		public virtual bool IsTextTag {
@@ -186,7 +222,7 @@ namespace System.Windows.Forms
 						throw new Exception("New tag makes an insane tag");
 				}
 #endif
-				start = value; 
+				start = value;
 			}
 		}
 
@@ -222,6 +258,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public int OffsetY {
+			get {
+				if (text_position == TextPositioning.Subscript)
+					return (int) (height * 0.45F);
+
+				return 0;
+			}
+		}
+
 		public bool IsLink {
 			get { return is_link; }
 			set { is_link = value; }
@@ -253,8 +298,8 @@ namespace System.Windows.Forms
 			new_tag = new LineTag(line, pos);
 			new_tag.CopyFormattingFrom (this);
 
-			new_tag.next = this.next;
-			this.next = new_tag;
+			new_tag.Next = this.next;
+			this.Next = new_tag;
 			new_tag.previous = this;
 
 			if (new_tag.next != null)
@@ -269,7 +314,7 @@ namespace System.Windows.Forms
 			if (!this.Equals (other))
 				return false;
 
-			this.next = other.next;
+			this.Next = other.next;
 			
 			if (this.next != null)
 				this.next.previous = this;
@@ -282,6 +327,7 @@ namespace System.Windows.Forms
 			Font = other.font;
 			color = other.color;
 			back_color = other.back_color;
+			TextPosition = other.text_position;
 		}
 
 		public void Delete ()
@@ -312,6 +358,8 @@ namespace System.Windows.Forms
 		
 		public virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
+			if (text_position == TextPositioning.Subscript)
+				y += OffsetY;
 			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), FontToDisplay, color, x, y, false);
 		}
 		
@@ -328,6 +376,9 @@ namespace System.Windows.Forms
 		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int drawStart, int drawEnd,
 					  string text, out Rectangle measuredText, bool measureText)
 		{
+			if (text_position == TextPositioning.Subscript)
+				y += OffsetY;
+
 			if (measureText) {
 				int xstart = (int)line.widths [drawStart] + (int)xoff;
 				int xend = (int)line.widths [drawEnd] - (int)line.widths [drawStart];
@@ -380,6 +431,12 @@ namespace System.Windows.Forms
 			if (this.LinkText != other.LinkText)
 				return false;
 
+			if (this.TextPosition != other.TextPosition)
+				return false;
+
+			if (this.CharOffset != other.CharOffset)
+				return false;
+
 			if (this.font.Equals (other.font) && this.color.Equals (other.color))
 				return true;
 
@@ -409,11 +466,17 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
+		{
+			return FormatText (line, formatStart, length, font, color, backColor, TextPositioning.Normal, 0, specified);
+		}
+
 		/// <summary>Applies 'font' and 'brush' to characters starting at 'start' for 'length' chars; 
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="formatStart">1-based character position on line</param>
-		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
+		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor,
+		                               TextPositioning text_position, int char_offset, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -422,7 +485,7 @@ namespace System.Windows.Forms
 			bool retval = false;		// Assume line-height doesn't change
 
 			// Too simple?
-			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.height)
+			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.height - line.TotalSpacing)
 				retval = true;
 
 			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument
@@ -436,7 +499,7 @@ namespace System.Windows.Forms
 
 			// Common special case
 			if ((formatStart == 1) && (length == tag.Length)) {
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, specified);
 				return retval;
 			}
 
@@ -444,7 +507,7 @@ namespace System.Windows.Forms
 			// we only need one new tag
 			if  (formatStart == 1 && length == 0) {
 				line.tags.Break (1);
-				SetFormat (line.tags, font, color, backColor, specified);
+				SetFormat (line.tags, font, color, backColor, text_position, char_offset, specified);
 				return retval;
 			}
 
@@ -455,7 +518,7 @@ namespace System.Windows.Forms
 			// Find Tag will return tag 0 at position 3, but we should just
 			// use the empty tag after..
 			if (start_tag.End == formatStart && length == 0 && start_tag.Next != null && start_tag.Next.Length == 0) {
-				SetFormat (start_tag.Next, font, color, backColor, specified);
+				SetFormat (start_tag.Next, font, color, backColor, text_position, char_offset, specified);
 				return retval;
 			}
 
@@ -463,13 +526,18 @@ namespace System.Windows.Forms
 			while (start_tag.End == formatStart && start_tag.Next != null)
 				start_tag = start_tag.Next;
 
+			if (start_tag.Start == formatStart && start_tag.Length == length) {
+				SetFormat (start_tag, font, color, backColor, text_position, char_offset, specified);
+				return retval;
+			}
+
 			tag = start_tag.Break (formatStart);
 
 			// empty selection style at end of line - its the only situation
 			// where the rest of the tag would be empty, since we moved to the
 			// begining of next non empty tag
 			if (tag.Length == 0) {
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, specified);
 				return retval;
 			}
 
@@ -477,12 +545,12 @@ namespace System.Windows.Forms
 			// after our new (now) empty one..
 			if (length == 0) {
 				tag.Break (formatStart);
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, specified);
 				return retval;
 			}
 
 			while (tag != null && tag.End <= end) {
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, specified);
 				tag = tag.next;
 			}
 
@@ -495,7 +563,7 @@ namespace System.Windows.Forms
 
 			if (end_tag != null) {
 				end_tag.Break (end);
-				SetFormat (end_tag, font, color, backColor, specified);
+				SetFormat (end_tag, font, color, backColor, text_position, char_offset, specified);
 			}
 
 			return retval;
@@ -569,6 +637,12 @@ namespace System.Windows.Forms
 
 		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
+			SetFormat (tag, font, color, back_color, TextPositioning.Normal, 0, specified);
+		}
+
+		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color,
+		                               TextPositioning text_position, int char_offset, FormatSpecified specified)
+		{
 			if ((FormatSpecified.Font & specified) == FormatSpecified.Font) {
 				tag.Font = font;
 			}
@@ -577,6 +651,10 @@ namespace System.Windows.Forms
 			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {
 				tag.back_color = back_color;
 			}
+			if ((FormatSpecified.TextPosition & specified) == FormatSpecified.TextPosition)
+				tag.TextPosition = text_position;
+			if ((FormatSpecified.CharOffset & specified) == FormatSpecified.CharOffset)
+				tag.CharOffset = char_offset;
 			// Console.WriteLine ("setting format:   {0}  {1}   new color {2}", color.Color, specified, tag.color.Color);
 		}
 
@@ -590,15 +668,15 @@ namespace System.Windows.Forms
 			case '\t':
 				if (!line.document.multiline)
 					goto case 10;
-				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", font); 
+				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", FontToDisplay); 
 				res.Width *= 8.0F;
 				return res;
 			case 10:
 			case 13:
-				return TextBoxTextRenderer.MeasureText (dc, "\u000D", font);
+				return TextBoxTextRenderer.MeasureText (dc, "\u000D", FontToDisplay);
 			}
 			
-			return TextBoxTextRenderer.MeasureText (dc, text, font);
+			return TextBoxTextRenderer.MeasureText (dc, text, FontToDisplay);
 		}
 
 		public virtual string Text ()
