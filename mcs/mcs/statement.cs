@@ -6458,7 +6458,11 @@ namespace Mono.CSharp {
 		{
 			using (bc.Set (ResolveContext.Options.CatchScope)) {
 				if (type_expr == null) {
-					CreateExceptionVariable (bc.Module.Compiler.BuiltinTypes.Object);
+					if (CreateExceptionVariable (bc.Module.Compiler.BuiltinTypes.Object) && Filter != null) {
+						Expression source = new EmptyExpression (li.Type);
+						assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
+						Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
+					}
 				} else {
 					type = type_expr.ResolveAsType (bc);
 					if (type == null)
@@ -6495,16 +6499,17 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void CreateExceptionVariable (TypeSpec type)
+		bool CreateExceptionVariable (TypeSpec type)
 		{
 			if (!Block.HasAwait)
-				return;
+				return false;
 
 			// TODO: Scan the block for rethrow expression
 			//if (!Block.HasRethrow)
 			//	return;
 
 			li = LocalVariable.CreateCompilerGenerated (type, block, Location.Null);
+			return true;
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
