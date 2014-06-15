@@ -35,27 +35,31 @@ using System.IO;
 using System.Text;
 using Mono.Data.Sqlite;
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.Mono.Data.Sqlite
 {
         [TestFixture]
-        public class SqliteDataReaderTest
+        public class SqliteDataReaderTest : SqliteUnitTestsBaseWithT1
         {
-                readonly static string _uri = "./test.db";
-                readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-                SqliteConnection _conn = new SqliteConnection ();
-
-                [TestFixtureSetUp]
-                public void FixtureSetUp ()
-                {
-                        if (! File.Exists (_uri) || new FileInfo (_uri).Length == 0) {
-                                // ignore all tests
-                                Assert.Ignore ("#000 ignoring all fixtures. No database present");
-                        }
-                }
-                
-                
                 [Test]
                 [Category ("NotWorking")]
                 public void GetSchemaTableTest ()
@@ -65,7 +69,7 @@ namespace MonoTests.Mono.Data.Sqlite
                         using (_conn) {
                                 _conn.Open ();
                                 SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
-                                cmd.CommandText = "select * from test";
+                                cmd.CommandText = "select * from t1";
                                 reader = cmd.ExecuteReader ();
                                 try {
                                         DataTable dt = reader.GetSchemaTable ();
@@ -74,6 +78,7 @@ namespace MonoTests.Mono.Data.Sqlite
                                 } finally {
                                         if (reader != null && !reader.IsClosed)
                                                 reader.Close ();
+                                        cmd.Dispose ();
                                         _conn.Close ();
                                 }
                         }
@@ -87,12 +92,13 @@ namespace MonoTests.Mono.Data.Sqlite
 			using (_conn) {
 				_conn.Open ();
 				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
-				cmd.CommandText = "select null from test";
+				cmd.CommandText = "select null from t1";
 				reader = cmd.ExecuteReader ();
 				try {
 					Assert.IsTrue (reader.Read());
 					Assert.IsNotNull (reader.GetFieldType (0));
 				} finally {
+					cmd.Dispose ();
 					if (reader != null && !reader.IsClosed)
 						reader.Close ();
 					_conn.Close ();
@@ -109,6 +115,7 @@ namespace MonoTests.Mono.Data.Sqlite
 				var cmd = (SqliteCommand) _conn.CreateCommand ();
 				cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
 				cmd.ExecuteNonQuery ();
+				cmd.Dispose ();
 			
 				var query = "SELECT * FROM TestNullableDateTime;";
 				cmd = (SqliteCommand) _conn.CreateCommand ();
@@ -123,6 +130,7 @@ namespace MonoTests.Mono.Data.Sqlite
 						// expected this one
 					}
 				}
+				cmd.Dispose ();
 			}
 			
 			_conn.ConnectionString = _connectionString + ",DateTimeFormat=UnixEpoch";
@@ -131,6 +139,7 @@ namespace MonoTests.Mono.Data.Sqlite
 				var cmd = (SqliteCommand) _conn.CreateCommand ();
 				cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
 				cmd.ExecuteNonQuery ();
+				cmd.Dispose ();
 			
 				var query = "SELECT * FROM TestNullableDateTime;";
 				cmd = (SqliteCommand) _conn.CreateCommand ();
@@ -141,6 +150,7 @@ namespace MonoTests.Mono.Data.Sqlite
 					// this should succeed now
 					var dt = reader ["nullable"];
 				}
+				cmd.Dispose ();
 			}
 		}
 		
@@ -256,7 +266,6 @@ namespace MonoTests.Mono.Data.Sqlite
 					var sql = new StringBuilder ();
 					var args = new StringBuilder ();
 					var vals = new StringBuilder ();
-					sql.AppendLine ("DROP TABLE TEST;");
 					sql.Append ("CREATE TABLE TEST (");
 					
 					bool comma = false;

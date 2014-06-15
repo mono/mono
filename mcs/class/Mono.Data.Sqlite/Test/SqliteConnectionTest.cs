@@ -33,37 +33,106 @@ using System.Data;
 using System.IO;
 using Mono.Data.Sqlite;
 
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.Mono.Data.Sqlite
 {
         [TestFixture]
-        public class SqliteConnectionTest
+        public class SqliteConnectionTest : SqliteUnitTestsBase
         {
-                readonly static string _uri = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "test.db");
-                readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-                SqliteConnection _conn = new SqliteConnection ();
-
+			[Test]
+			[Category ("NotWorking")]
+			public void ReleaseDatabaseFileHandles ()
+			{
+				string filename = "test_" + Guid.NewGuid ().ToString ("N") + ".db";
+				// open connection
+				SqliteConnection conn = new SqliteConnection ("Data Source=" + filename);
+				conn.Open ();
+				// start command
+				SqliteCommand cmd = (SqliteCommand) conn.CreateCommand ();
+				cmd.CommandText = "PRAGMA legacy_file_format;";
+				cmd.ExecuteScalar ();
+				// close connection before
+				conn.Dispose ();
+				// close command after
+				cmd.Dispose ();
+				// ensure file is not locked
+				File.Delete (filename);
+			}
+		
 #if NET_2_0
                 [Test]
-                [ExpectedException (typeof (ArgumentNullException))]
                 public void ConnectionStringTest_Null ()
                 {
+                    try {
                         _conn.ConnectionString = null;
+                        Assert.Fail ("Expected exception of type ArgumentNullException");
+                    } catch (ArgumentNullException) {
+                    } catch (Exception ex) {
+                        Assert.Fail ("Expected exception of type ArgumentNullException, but was {0}", ex);
+                    }
                 }
 
                 [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
                 public void ConnectionStringTest_MustBeClosed ()
                 {
                         _conn.ConnectionString = _connectionString;
                         try {
                     		_conn.Open ();
+                            try {
                     		_conn.ConnectionString = _connectionString;
+                                Assert.Fail ("Expected exception of type InvalidOperationException");
+                            } catch (InvalidOperationException) {
+                            } catch (Exception ex) {
+                                Assert.Fail ("Expected exception of type InvalidOperationException, but was {0}", ex);
+                            }
                     	} finally {
                     		_conn.Close ();
                     	}
                 }
+
+                [Test]
+                public void ConnectionStringTest_UsingDataDirectory ()
+                {
+                        _conn.ConnectionString = "Data Source=|DataDirectory|/test.db, Version=3";
+                        try {
+                    		_conn.Open ();
+                    	} finally {
+                    		_conn.Close ();
+                    	}
+                }
+
+				[Test]
+				public void ConnectionStringTest_UsingLocalDirectory()
+				{
+					_conn.ConnectionString = "Data Source=./test.db, Version=3";
+					try
+					{
+						_conn.Open();
+					}
+					finally
+					{
+						_conn.Close();
+					}
+				}
 
 #else
                 [Test]
@@ -89,8 +158,9 @@ namespace MonoTests.Mono.Data.Sqlite
                 }
 #endif
 				// behavior has changed, I guess
-                //[Test]
-                [Ignore ("opening a connection should not create db! though, leave for now")]
+                //opening a connection should not create db! though, leave for now
+                [Test]
+                [Ignore]
                 public void OpenTest ()
                 {
                         try {

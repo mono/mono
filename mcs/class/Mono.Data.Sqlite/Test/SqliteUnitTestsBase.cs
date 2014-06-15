@@ -1,12 +1,7 @@
-// SqliteFunctionTests.cs - NUnit Test Cases for SqliteFunction
+// SqliteDataAdapterUnitTests.cs - NUnit Test Cases for Mono.Data.Sqlite.SqliteDataAdapter
 //
-// Authors:
-//   Rolf Bjarne Kvinge <rolf@xamarin.com>
-// 
+// Author(s):	Thomas Zoechling <thomas.zoechling@gmx.at>
 
-//
-// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
-//
 
 using System;
 using System.Data;
@@ -35,56 +30,58 @@ using NUnit.Framework;
 
 namespace MonoTests.Mono.Data.Sqlite
 {
-	[TestFixture]
-	public class SqliteFunctionTest : SqliteUnitTestsBase
+	public class SqliteUnitTestsBase
 	{
-		[Test]
-		public void CollationTest()
-		{
-			var builder = new SqliteConnectionStringBuilder();
-			builder.DataSource = _uri;
+		protected readonly static string _uri = "test.sqlite";
+		protected readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
+		protected static SqliteConnection _conn = null;
+		protected readonly static string stringvalue = "my keyboard is better than yours : äöüß";
 
-			var connectionString = builder.ToString();
-			using (var connection = new SqliteConnection (connectionString)) {
-				connection.Open ();
-				connection.Close ();
+		[TearDown]
+		public void Drop()
+		{
+			if (_conn != null)
+			{
+				_conn.Dispose();
+				_conn = null;
+			}
+			if (File.Exists(_uri))
+			{
+				// We want to start with a fresh db for each full run
+				// The database is created on the first open()
+				File.Delete(_uri);
 			}
 		}
 
-		[SqliteFunction(Name = "TestCollation", FuncType = FunctionType.Collation)]
-		public class TestCollation : SqliteFunction
+		[SetUp]
+		public virtual void Create()
 		{
-			public override int Compare (string param1, string param2)
-			{
-				return string.Compare (param1, param2);
-			}
+			Drop();
+
+			_conn = new SqliteConnection(_connectionString);
 		}
+	}
 
-		[Test]
-		public void ScalarFunctionTest()
+	public class SqliteUnitTestsBaseWithT1 : SqliteUnitTestsBase
+	{
+		[SetUp]
+		public override void Create()
 		{
-			var builder = new SqliteConnectionStringBuilder();
-			builder.DataSource = _uri;
+			base.Create();
 
-			var connectionString = builder.ToString();
-			using (var connection = new SqliteConnection(connectionString))
+			try
 			{
-				connection.Open();
-				using (var cmd = connection.CreateCommand())
+				using (SqliteCommand createCommand = new SqliteCommand("CREATE TABLE t1(t  TEXT,  f FLOAT, i INTEGER, b TEXT);", _conn))
+				using (SqliteCommand insertCommand = new SqliteCommand("INSERT INTO t1  (t, f, i, b ) VALUES('" + stringvalue + "',123,123,'123')", _conn))
 				{
-					cmd.CommandText = "SELECT TestFunction(12, 21);";
-					Assert.AreEqual(33L, cmd.ExecuteScalar());
+					_conn.Open();
+					createCommand.ExecuteNonQuery();
+					insertCommand.ExecuteNonQuery();
 				}
-				connection.Close();
 			}
-		}
-
-		[SqliteFunction(Name = "TestFunction", FuncType = FunctionType.Scalar, Arguments = 2)]
-		public class TestFunction : SqliteFunction
-		{
-			public override object Invoke(object[] args)
+			finally
 			{
-				return Convert.ToInt32(args[0]) + Convert.ToInt32(args[1]);
+				_conn.Close();
 			}
 		}
 	}

@@ -8,21 +8,31 @@ using System.Data;
 using System.IO;
 using System.Text;
 using Mono.Data.Sqlite;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.Mono.Data.Sqlite
 {
 	[TestFixture]
-	public class SqliteParameterUnitTests
+	public class SqliteParameterUnitTests : SqliteUnitTestsBaseWithT1
 	{
-		readonly static string _uri = "SqliteTest.db";
-		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-		static SqliteConnection _conn = new SqliteConnection (_connectionString);
-
-		public SqliteParameterUnitTests()
-		{
-		}
-		
 		[Test]
 		[Category ("NotWorking")]
 		// fails randomly :)
@@ -59,8 +69,8 @@ namespace MonoTests.Mono.Data.Sqlite
 			insertCmd.Parameters.Add(integerP);
 			
 			textP.Value=builder.ToString();
-			floatP.Value=Convert.ToInt64(random.Next(999));
-			integerP.Value=random.Next(999);
+			floatP.Value=(double)random.Next(999);
+			integerP.Value=(long)random.Next(999);
 			blobP.Value=System.Text.Encoding.UTF8.GetBytes("\u05D0\u05D1\u05D2" + builder.ToString());
 			
 			SqliteCommand selectCmd = new SqliteCommand("SELECT * from t1", _conn);
@@ -69,7 +79,7 @@ namespace MonoTests.Mono.Data.Sqlite
 			{
 				_conn.Open();
 				int res = insertCmd.ExecuteNonQuery();
-				Assert.AreEqual(res,1);
+				Assert.AreEqual(2, res); // delete + insert = 2 changes
 				
 				using (IDataReader reader = selectCmd.ExecuteReader()) {
 					Assert.AreEqual(reader.Read(), true);
@@ -80,13 +90,15 @@ namespace MonoTests.Mono.Data.Sqlite
 					object compareValue;
 #if NET_2_0
 					if (blobP.Value is byte[])
-						compareValue = System.Text.Encoding.UTF8.GetString ((byte[])blobP.Value);
+						compareValue = System.Text.Encoding.UTF8.GetString ((byte[])blobP.Value, 0, ((byte[])blobP.Value).Length);
 					else
 #endif
 						compareValue = blobP.Value;
 					Assert.AreEqual(reader["b"], compareValue);
 					Assert.AreEqual(reader.Read(), false);
 				}
+				insertCmd.Dispose();
+				selectCmd.Dispose();
 			}
 		}
 	}

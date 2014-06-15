@@ -8,17 +8,31 @@ using System.Data;
 using System.IO;
 using System.Text;
 using Mono.Data.Sqlite;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.Mono.Data.Sqlite
 {
 	[TestFixture]
-	public class SqliteDataAdapterUnitTests
+	public class SqliteDataAdapterUnitTests : SqliteUnitTestsBaseWithT1
 	{
-		readonly static string _uri = "SqliteTest.db";
-		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-		static SqliteConnection _conn = new SqliteConnection (_connectionString);
-        
 		static SqliteDataAdapter PrepareDataAdapter()
 		{
 			SqliteCommand select  = new SqliteCommand("SELECT t, f, i, b FROM t1",_conn);
@@ -87,6 +101,7 @@ namespace MonoTests.Mono.Data.Sqlite
 				{
 					if (reader != null && !reader.IsClosed)
 						reader.Close ();
+					cmd.Dispose ();
 					_conn.Close ();
 				}
 			}
@@ -151,6 +166,10 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 				int res = da.Update(ds);
 				Assert.AreEqual(i,res);
+				da.DeleteCommand.Dispose();
+				da.InsertCommand.Dispose();
+				da.SelectCommand.Dispose();
+				da.UpdateCommand.Dispose();
 			}
 		}
 	}

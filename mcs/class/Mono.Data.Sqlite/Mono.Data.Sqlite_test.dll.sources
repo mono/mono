@@ -5,4 +5,4 @@ SqliteDataReaderTest.cs
 SqliteExceptionUnitTests.cs
 SqliteParameterUnitTests.cs
 SqliteFunctionTests.cs
-
+SqliteUnitTestsBase.cs
