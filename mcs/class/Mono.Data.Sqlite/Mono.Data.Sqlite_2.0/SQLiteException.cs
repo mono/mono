@@ -20,7 +20,9 @@ namespace Mono.Data.Sqlite
   /// SQLite exception class.
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
+#if !WINDOWS_PHONE && !NETFX_CORE
   [Serializable]
+#endif
   public sealed class SqliteException : DbException
 #else
   public sealed class SqliteException : Exception
@@ -28,7 +30,7 @@ namespace Mono.Data.Sqlite
   {
     private SQLiteErrorCode _errorCode;
 
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
     private SqliteException(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {

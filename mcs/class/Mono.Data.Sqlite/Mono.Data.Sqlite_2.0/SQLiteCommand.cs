@@ -16,7 +16,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbCommand.
   /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
   [Designer("SQLite.Designer.SqliteCommandDesigner, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"), ToolboxItem(true)]
 #endif
   public sealed class SqliteCommand : DbCommand, ICloneable
@@ -293,7 +293,10 @@ namespace Mono.Data.Sqlite
     /// The SQL command text associated with the command
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DefaultValue(""), RefreshProperties(RefreshProperties.All), Editor("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [DefaultValue("")]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [RefreshProperties(RefreshProperties.All), Editor("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 #endif
     public override string CommandText
     {
@@ -339,7 +342,10 @@ namespace Mono.Data.Sqlite
     /// The type of the command.  SQLite only supports CommandType.Text
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [RefreshProperties(RefreshProperties.All), DefaultValue(CommandType.Text)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [RefreshProperties(RefreshProperties.All)]
+#endif
+    [DefaultValue(CommandType.Text)]
 #endif
     public override CommandType CommandType
     {
@@ -378,7 +384,10 @@ namespace Mono.Data.Sqlite
     /// The connection associated with this command
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [DefaultValue((string)null)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Editor("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 #endif
     public new SqliteConnection Connection
     {
@@ -421,7 +430,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the SqliteParameterCollection for the given command
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 #endif
     public new SqliteParameterCollection Parameters
@@ -445,7 +454,10 @@ namespace Mono.Data.Sqlite
     /// command's underlying connection.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    [Browsable(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#endif
 #endif
     public new SqliteTransaction Transaction
     {
@@ -614,7 +626,10 @@ namespace Mono.Data.Sqlite
     /// Determines if the command is visible at design time.  Defaults to True.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DesignOnly(true), Browsable(false), DefaultValue(true), EditorBrowsable(EditorBrowsableState.Never)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [DesignOnly(true)]
+#endif
+    [Browsable(false), DefaultValue(true), EditorBrowsable(EditorBrowsableState.Never)]
 #endif
     public override bool DesignTimeVisible
     {
@@ -625,7 +640,7 @@ namespace Mono.Data.Sqlite
       set
       {
         _designTimeVisible = value;
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
         TypeDescriptor.Refresh(this);
 #endif
       }

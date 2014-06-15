@@ -488,7 +488,11 @@ namespace Mono.Data.Sqlite
 
       for (int n = 0; n < x; n++)
       {
+#if NET_2_0
+        if (String.Compare(columnName, ColumnName(stmt, n), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
         if (String.Compare(columnName, ColumnName(stmt, n), true, CultureInfo.InvariantCulture) == 0)
+#endif
           return n;
       }
       return -1;
@@ -613,11 +617,17 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
       unsafe {
 	      if (nCopied > 0)
 		      Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
 	      else nCopied = 0;
       }
+#else
+      if (nCopied > 0)
+        Marshal.Copy(ptr + nDataOffset, bDest, nStart, nCopied);
+      else nCopied = 0;
+#endif
 
       return nCopied;
     }
@@ -765,11 +775,17 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
+#if !WINDOWS_PHONE && !NETFX_CORE
       unsafe {
 	      if (nCopied > 0)
 		      Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
 	      else nCopied = 0;
       }
+#else
+      if (nCopied > 0)
+        Marshal.Copy(ptr + nDataOffset, bDest, nStart, nCopied);
+      else nCopied = 0;
+#endif
 
       return nCopied;
     }

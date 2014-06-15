@@ -18,7 +18,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbParameterCollection.
   /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
   [Editor("Microsoft.VSDesigner.Data.Design.DBParametersEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"), ListBindable(false)]
 #endif
   public sealed class SqliteParameterCollection : DbParameterCollection
@@ -317,7 +317,11 @@ namespace Mono.Data.Sqlite
       int x = _parameterList.Count;
       for (int n = 0; n < x; n++)
       {
+#if NET_2_0
+        if (String.Compare(parameterName, _parameterList[n].ParameterName, StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
         if (String.Compare(parameterName, _parameterList[n].ParameterName, true, CultureInfo.InvariantCulture) == 0)
+#endif
           return n;
       }
       return -1;

@@ -259,8 +259,13 @@ namespace Mono.Data.Sqlite
           foreach (DataRow row in tbl.Rows)
           {
             str = row[0].ToString();
+#if NET_2_0
+            if (String.Compare(str, "main", StringComparison.InvariantCultureIgnoreCase) != 0
+              && String.Compare(str, "temp", StringComparison.InvariantCultureIgnoreCase) != 0)
+#else
             if (String.Compare(str, "main", true, CultureInfo.InvariantCulture) != 0
               && String.Compare(str, "temp", true, CultureInfo.InvariantCulture) != 0)
+#endif
             {
               using (SqliteCommand cmd = CreateCommand())
               {
@@ -629,8 +634,11 @@ namespace Mono.Data.Sqlite
     /// </list>
     /// </remarks>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [RefreshProperties(RefreshProperties.All), DefaultValue("")]
+    [DefaultValue("")]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [RefreshProperties(RefreshProperties.All)]
     [Editor("SQLite.Designer.SqliteConnectionStringEditor, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 #endif
     public override string ConnectionString
     {
@@ -671,7 +679,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the filename without extension or path
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
     public override string DataSource
@@ -685,7 +693,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns an empty string
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
     public override string Database
@@ -700,7 +708,7 @@ namespace Mono.Data.Sqlite
     /// Maps mono-specific connection string keywords to the standard ones
     /// </summary>
     /// <returns>The mapped keyword name</returns>
-    internal static void MapMonoKeyword (string[] arPiece, SortedList<string, string> ls)
+    internal static void MapMonoKeyword (string[] arPiece, Dictionary<string, string> ls)
     {
             string keyword, value;
             
@@ -749,11 +757,11 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="connectionString">The connection string to parse</param>
     /// <returns>An array of key-value pairs representing each parameter of the connection string</returns>
-    internal static SortedList<string, string> ParseConnectionString(string connectionString)
+    internal static Dictionary<string, string> ParseConnectionString(string connectionString)
     {
       string s = connectionString.Replace (',', ';'); // Mono compatibility
       int n;
-      SortedList<string, string> ls = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase);
+      Dictionary<string, string> ls = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
       // First split into semi-colon delimited values.  The Split() function of SQLiteBase accounts for and properly
       // skips semi-colons in quoted strings
@@ -798,7 +806,7 @@ namespace Mono.Data.Sqlite
     /// <param name="key">The key to find</param>
     /// <param name="defValue">The default value to return if the key is not found</param>
     /// <returns>The value corresponding to the specified key, or the default value if not found.</returns>
-    static internal string FindKey(SortedList<string, string> items, string key, string defValue)
+    static internal string FindKey(Dictionary<string, string> items, string key, string defValue)
     {
       string ret;
 
@@ -817,7 +825,7 @@ namespace Mono.Data.Sqlite
 
       Close();
 
-      SortedList<string, string> opts = ParseConnectionString(_connectionString);
+      Dictionary<string, string> opts = ParseConnectionString(_connectionString);
       string fileName;
 
       if (Convert.ToInt32(FindKey(opts, "Version", "3"), CultureInfo.InvariantCulture) != 3)
@@ -834,7 +842,11 @@ namespace Mono.Data.Sqlite
           fileName = MapUriPath(fileName);
       }
 
+#if NET_2_0
+      if (String.Compare(fileName, ":MEMORY:", StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
       if (String.Compare(fileName, ":MEMORY:", true, CultureInfo.InvariantCulture) == 0)
+#endif
         fileName = ":memory:";
       else
       {
@@ -985,7 +997,10 @@ namespace Mono.Data.Sqlite
     /// Returns the version of the underlying SQLite database engine
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    [Browsable(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#endif
 #endif
     public override string ServerVersion
     {
@@ -1010,7 +1025,10 @@ namespace Mono.Data.Sqlite
     /// Returns the state of the connection.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    [Browsable(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#endif
 #endif
     public override ConnectionState State
     {
@@ -1090,6 +1108,8 @@ namespace Mono.Data.Sqlite
 
 #if PLATFORM_COMPACTFRAMEWORK
         dataDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().GetName().CodeBase);
+#elif WINDOWS_PHONE || NETFX_CORE
+        dataDirectory = ".";
 #else
         dataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
         if (String.IsNullOrEmpty(dataDirectory))
@@ -1105,7 +1125,7 @@ namespace Mono.Data.Sqlite
         sourceFile = Path.Combine(dataDirectory, sourceFile.Substring(_dataDirectory.Length));
       }
 
-#if !PLATFORM_COMPACTFRAMEWORK
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
       sourceFile = Path.GetFullPath(sourceFile);
 #endif
 
@@ -1371,14 +1391,22 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
 
       using (SqliteCommand cmdTables = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table' OR [type] LIKE 'view'", strCatalog, master), this))
       using (SqliteDataReader rdTables = cmdTables.ExecuteReader())
       {
         while (rdTables.Read())
         {
+#if NET_2_0
+          if (String.IsNullOrEmpty(strTable) || String.Compare(strTable, rdTables.GetString(2), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
           if (String.IsNullOrEmpty(strTable) || String.Compare(strTable, rdTables.GetString(2), true, CultureInfo.InvariantCulture) == 0)
+#endif
           {
             try
             {
@@ -1388,7 +1416,11 @@ namespace Mono.Data.Sqlite
               {
                 foreach (DataRow schemaRow in tblSchema.Rows)
                 {
+#if NET_2_0
+                  if (String.Compare(schemaRow[SchemaTableColumn.ColumnName].ToString(), strColumn, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
                   if (String.Compare(schemaRow[SchemaTableColumn.ColumnName].ToString(), strColumn, true, CultureInfo.InvariantCulture) == 0
+#endif
                     || strColumn == null)
                   {
                     row = tbl.NewRow();
@@ -1474,7 +1506,11 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
       
       using (SqliteCommand cmdTables = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
       using (SqliteDataReader rdTables = cmdTables.ExecuteReader())
@@ -1483,7 +1519,11 @@ namespace Mono.Data.Sqlite
         {
           maybeRowId = false;
           primaryKeys.Clear();
+#if NET_2_0
+          if (String.IsNullOrEmpty(strTable) || String.Compare(rdTables.GetString(2), strTable, StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
           if (String.IsNullOrEmpty(strTable) || String.Compare(rdTables.GetString(2), strTable, true, CultureInfo.InvariantCulture) == 0)
+#endif
           {
             // First, look for any rowid indexes -- which sqlite defines are INTEGER PRIMARY KEY columns.
             // Such indexes are not listed in the indexes list but count as indexes just the same.
@@ -1499,7 +1539,11 @@ namespace Mono.Data.Sqlite
                     primaryKeys.Add(rdTable.GetInt32(0));
 
                     // If the primary key is of type INTEGER, then its a rowid and we need to make a fake index entry for it.
+#if NET_2_0
+                    if (String.Compare(rdTable.GetString(2), "INTEGER", StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
                     if (String.Compare(rdTable.GetString(2), "INTEGER", true, CultureInfo.InvariantCulture) == 0)
+#endif
                       maybeRowId = true;
                   }
                 }
@@ -1519,7 +1563,11 @@ namespace Mono.Data.Sqlite
               row["INDEX_NAME"] = String.Format(CultureInfo.InvariantCulture, "{1}_PK_{0}", rdTables.GetString(2), master);
               row["UNIQUE"] = true;
 
+#if NET_2_0
+              if (String.Compare((string)row["INDEX_NAME"], strIndex, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
               if (String.Compare((string)row["INDEX_NAME"], strIndex, true, CultureInfo.InvariantCulture) == 0
+#endif
               || strIndex == null)
               {
                 tbl.Rows.Add(row);
@@ -1536,7 +1584,11 @@ namespace Mono.Data.Sqlite
               {
                 while (rd.Read())
                 {
+#if NET_2_0
+                  if (String.Compare(rd.GetString(1), strIndex, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
                   if (String.Compare(rd.GetString(1), strIndex, true, CultureInfo.InvariantCulture) == 0
+#endif
                   || strIndex == null)
                   {
                     row = tbl.NewRow();
@@ -1620,17 +1672,29 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(table)) table = null;
       if (String.IsNullOrEmpty(catalog)) catalog = "main";
+#if NET_2_0
+      string master = (String.Compare(catalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(catalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
 
       using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT [type], [name], [tbl_name], [rootpage], [sql], [rowid] FROM [{0}].[{1}] WHERE [type] LIKE 'trigger'", catalog, master), this))
       using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
       {
         while (rd.Read())
         {
+#if NET_2_0
+          if (String.Compare(rd.GetString(1), triggerName, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
           if (String.Compare(rd.GetString(1), triggerName, true, CultureInfo.InvariantCulture) == 0
+#endif
             || triggerName == null)
           {
+#if NET_2_0
+            if (table == null || String.Compare(table, rd.GetString(2), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
             if (table == null || String.Compare(table, rd.GetString(2), true, CultureInfo.InvariantCulture) == 0)
+#endif
             {
               row = tbl.NewRow();
 
@@ -1675,7 +1739,11 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
 
       using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT [type], [name], [tbl_name], [rootpage], [sql], [rowid] FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
       using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
@@ -1683,13 +1751,25 @@ namespace Mono.Data.Sqlite
         while (rd.Read())
         {
           strItem = rd.GetString(0);
+#if NET_2_0
+          if (String.Compare(rd.GetString(2), 0, "SQLITE_", 0, 7, StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
           if (String.Compare(rd.GetString(2), 0, "SQLITE_", 0, 7, true, CultureInfo.InvariantCulture) == 0)
+#endif
             strItem = "SYSTEM_TABLE";
 
+#if NET_2_0
+          if (String.Compare(strType, strItem, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
           if (String.Compare(strType, strItem, true, CultureInfo.InvariantCulture) == 0
+#endif
             || strType == null)
           {
+#if NET_2_0
+            if (String.Compare(rd.GetString(2), strTable, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
             if (String.Compare(rd.GetString(2), strTable, true, CultureInfo.InvariantCulture) == 0
+#endif
               || strTable == null)
             {
               row = tbl.NewRow();
@@ -1741,14 +1821,22 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
 
       using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'view'", strCatalog, master), this))
       using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
       {
         while (rd.Read())
         {
+#if NET_2_0
+          if (String.Compare(rd.GetString(1), strView, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
           if (String.Compare(rd.GetString(1), strView, true, CultureInfo.InvariantCulture) == 0
+#endif
             || String.IsNullOrEmpty(strView))
           {
             strItem = rd.GetString(4).Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ');
@@ -1797,7 +1885,11 @@ namespace Mono.Data.Sqlite
       {
         while (rd.Read())
         {
+#if NET_2_0
+          if (String.Compare(rd.GetString(1), strCatalog, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
           if (String.Compare(rd.GetString(1), strCatalog, true, CultureInfo.InvariantCulture) == 0
+#endif
             || strCatalog == null)
           {
             row = tbl.NewRow();
@@ -1888,7 +1980,11 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
 
       tbl.BeginLoadData();
 
@@ -1899,7 +1995,11 @@ namespace Mono.Data.Sqlite
         {
           maybeRowId = false;
           primaryKeys.Clear();
+#if NET_2_0
+          if (String.IsNullOrEmpty(strTable) || String.Compare(rdTables.GetString(2), strTable, StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
           if (String.IsNullOrEmpty(strTable) || String.Compare(rdTables.GetString(2), strTable, true, CultureInfo.InvariantCulture) == 0)
+#endif
           {
             try
             {
@@ -1912,7 +2012,11 @@ namespace Mono.Data.Sqlite
                   {
                     primaryKeys.Add(new KeyValuePair<int, string>(rdTable.GetInt32(0), rdTable.GetString(1)));
                     // Is an integer -- could be a rowid if no other primary keys exist in the table
+#if NET_2_0
+                    if (String.Compare(rdTable.GetString(2), "INTEGER", StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
                     if (String.Compare(rdTable.GetString(2), "INTEGER", true, CultureInfo.InvariantCulture) == 0)
+#endif
                       maybeRowId = true;
                   }
                 }
@@ -1936,7 +2040,11 @@ namespace Mono.Data.Sqlite
               row["SORT_MODE"] = "ASC";
               row["CONFLICT_OPTION"] = 2;
 
+#if NET_2_0
+              if (String.IsNullOrEmpty(strIndex) || String.Compare(strIndex, (string)row["INDEX_NAME"], StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
               if (String.IsNullOrEmpty(strIndex) || String.Compare(strIndex, (string)row["INDEX_NAME"], true, CultureInfo.InvariantCulture) == 0)
+#endif
                 tbl.Rows.Add(row);
             }
 
@@ -1946,7 +2054,11 @@ namespace Mono.Data.Sqlite
               while (rdIndexes.Read())
               {
                 int ordinal = 0;
+#if NET_2_0
+                if (String.IsNullOrEmpty(strIndex) || String.Compare(strIndex, rdIndexes.GetString(1), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
                 if (String.IsNullOrEmpty(strIndex) || String.Compare(strIndex, rdIndexes.GetString(1), true, CultureInfo.InvariantCulture) == 0)
+#endif
                 {
                   try
                   {
@@ -1977,7 +2089,11 @@ namespace Mono.Data.Sqlite
 
                         ordinal++;
 
+#if NET_2_0
+                        if (String.IsNullOrEmpty(strColumn) || String.Compare(strColumn, row["COLUMN_NAME"].ToString(), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
                         if (String.IsNullOrEmpty(strColumn) || String.Compare(strColumn, row["COLUMN_NAME"].ToString(), true, CultureInfo.InvariantCulture) == 0)
+#endif
                           tbl.Rows.Add(row);
                       }
                     }
@@ -2046,7 +2162,11 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
       
       tbl.BeginLoadData();
 
@@ -2055,7 +2175,11 @@ namespace Mono.Data.Sqlite
       {
         while (rdViews.Read())
         {
+#if NET_2_0
+          if (String.IsNullOrEmpty(strView) || String.Compare(strView, rdViews.GetString(2), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
           if (String.IsNullOrEmpty(strView) || String.Compare(strView, rdViews.GetString(2), true, CultureInfo.InvariantCulture) == 0)
+#endif
           {
             using (SqliteCommand cmdViewSelect = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdViews.GetString(2)), this))
             {
@@ -2077,7 +2201,11 @@ namespace Mono.Data.Sqlite
                   viewRow = tblSchemaView.Rows[n];
                   schemaRow = tblSchema.Rows[n];
 
+#if NET_2_0
+                  if (String.Compare(viewRow[SchemaTableColumn.ColumnName].ToString(), strColumn, StringComparison.InvariantCultureIgnoreCase) == 0
+#else
                   if (String.Compare(viewRow[SchemaTableColumn.ColumnName].ToString(), strColumn, true, CultureInfo.InvariantCulture) == 0
+#endif
                     || strColumn == null)
                   {
                     row = tbl.NewRow();
@@ -2147,7 +2275,11 @@ namespace Mono.Data.Sqlite
 
       if (String.IsNullOrEmpty(strCatalog)) strCatalog = "main";
 
+#if NET_2_0
+      string master = (String.Compare(strCatalog, "temp", StringComparison.InvariantCultureIgnoreCase) == 0) ? _tempmasterdb : _masterdb;
+#else
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
+#endif
 
       tbl.BeginLoadData();
 
@@ -2156,7 +2288,11 @@ namespace Mono.Data.Sqlite
       {
         while (rdTables.Read())
         {
+#if NET_2_0
+          if (String.IsNullOrEmpty(strTable) || String.Compare(strTable, rdTables.GetString(2), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
           if (String.IsNullOrEmpty(strTable) || String.Compare(strTable, rdTables.GetString(2), true, CultureInfo.InvariantCulture) == 0)
+#endif
           {
             try
             {
@@ -2182,7 +2318,11 @@ namespace Mono.Data.Sqlite
                   row["FKEY_TO_COLUMN"] = builder.UnquoteIdentifier(rdKey[4].ToString());
                   row["FKEY_FROM_ORDINAL_POSITION"] = rdKey[1];
 
+#if NET_2_0
+                  if (String.IsNullOrEmpty(strKeyName) || String.Compare(strKeyName, row["CONSTRAINT_NAME"].ToString(), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
                   if (String.IsNullOrEmpty(strKeyName) || String.Compare(strKeyName, row["CONSTRAINT_NAME"].ToString(), true, CultureInfo.InvariantCulture) == 0)
+#endif
                     tbl.Rows.Add(row);
                 }
               }

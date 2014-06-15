@@ -32,7 +32,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The connection pool object
     /// </summary>
-    private static SortedList<string, Pool> _connections = new SortedList<string, Pool>(StringComparer.OrdinalIgnoreCase);
+    private static Dictionary<string, Pool> _connections = new Dictionary<string, Pool>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// The default version number new pools will get
@@ -167,7 +167,7 @@ namespace Mono.Data.Sqlite
         }
         else
         {
-          hdl.Close();
+          hdl.Dispose();
         }
       }
     }

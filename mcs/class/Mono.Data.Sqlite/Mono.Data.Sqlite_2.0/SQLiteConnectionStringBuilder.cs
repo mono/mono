@@ -16,12 +16,16 @@ namespace Mono.Data.Sqlite
   using System.Reflection;
 
 #if !PLATFORM_COMPACTFRAMEWORK
+#if !WINDOWS_PHONE && !NETFX_CORE
   using System.ComponentModel.Design;
+#endif
 
   /// <summary>
   /// SQLite implementation of DbConnectionStringBuilder.
   /// </summary>
+#if !WINDOWS_PHONE && !NETFX_CORE
   [DefaultProperty("DataSource")]
+#endif
   [DefaultMember("Item")]
   public sealed class SqliteConnectionStringBuilder : DbConnectionStringBuilder
   {
@@ -57,6 +61,7 @@ namespace Mono.Data.Sqlite
     private void Initialize(string cnnString)
     {
       _properties = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
+#if !WINDOWS_PHONE && !NETFX_CORE
       try
       {
         base.GetProperties(_properties);
@@ -65,6 +70,9 @@ namespace Mono.Data.Sqlite
       {
         FallbackGetProperties(_properties);
       }
+#else
+      FallbackGetProperties(_properties);
+#endif
 
       if (String.IsNullOrEmpty(cnnString) == false)
         ConnectionString = cnnString;
@@ -105,7 +113,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("synchronous", out value);
         if (value is string)
-          return (SynchronizationModes)TypeDescriptor.GetConverter(typeof(SynchronizationModes)).ConvertFrom(value);
+          return (SynchronizationModes)Enum.Parse(typeof(SynchronizationModes), value as string, true);
         else return (SynchronizationModes)value;
       }
       set
@@ -316,7 +324,9 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the database encryption password
     /// </summary>
     [Browsable(true)]
+#if !WINDOWS_PHONE && !NETFX_CORE
     [PasswordPropertyText(true)]
+#endif
     [DefaultValue("")]
     public string Password
     {
@@ -404,7 +414,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("datetimeformat", out value);
         if (value is string)
-          return (SQLiteDateFormats)TypeDescriptor.GetConverter(typeof(SQLiteDateFormats)).ConvertFrom(value);
+          return (SQLiteDateFormats)Enum.Parse(typeof(SQLiteDateFormats), value as string, true);
         else return (SQLiteDateFormats)value;
       }
       set
@@ -426,7 +436,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("journal mode", out value);
         if (value is string)
-          return (SQLiteJournalModeEnum)TypeDescriptor.GetConverter(typeof(SQLiteJournalModeEnum)).ConvertFrom(value);
+          return (SQLiteJournalModeEnum)Enum.Parse(typeof(SQLiteJournalModeEnum), value as string, true);
         else
           return (SQLiteJournalModeEnum)value;
       }
@@ -449,7 +459,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("default isolationlevel", out value);
         if (value is string)
-          return (IsolationLevel)TypeDescriptor.GetConverter(typeof(IsolationLevel)).ConvertFrom(value);
+          return (IsolationLevel)Enum.Parse(typeof(IsolationLevel), value as string, true);
         else
           return (IsolationLevel)value;
       }
@@ -471,7 +481,7 @@ namespace Mono.Data.Sqlite
 
       if (!_properties.ContainsKey(keyword)) return b;
 
-      PropertyDescriptor pd = _properties[keyword] as PropertyDescriptor;
+      PropertyInfo pd = _properties[keyword] as PropertyInfo;
 
       if (pd == null) return b;
 
@@ -481,11 +491,12 @@ namespace Mono.Data.Sqlite
         if (pd.PropertyType == typeof(Boolean))
           value = SqliteConvert.ToBoolean(value);
         else
-          value = TypeDescriptor.GetConverter(pd.PropertyType).ConvertFrom(value);
+          value = Convert.ChangeType(value, pd.PropertyType);
       }
       else
       {
-        DefaultValueAttribute att = pd.Attributes[typeof(DefaultValueAttribute)] as DefaultValueAttribute;
+        DefaultValueAttribute[] defaultValueAttributes = (DefaultValueAttribute[])pd.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+        DefaultValueAttribute att = defaultValueAttributes.Length > 0 ? defaultValueAttributes[0] : null;
         if (att != null)
         {
           value = att.Value;
@@ -501,14 +512,26 @@ namespace Mono.Data.Sqlite
     /// <param name="propertyList">The hashtable to fill with property descriptors</param>
     private void FallbackGetProperties(Hashtable propertyList)
     {
-      foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(this, true))
+      foreach (PropertyInfo property in this.GetType().GetProperties())
       {
-        if (descriptor.Name != "ConnectionString" && propertyList.ContainsKey(descriptor.DisplayName) == false)
+        DisplayNameAttribute[] displayAttributes = (DisplayNameAttribute[])property.GetCustomAttributes(typeof(DisplayNameAttribute), false);
+        string displayName = displayAttributes.Length > 0 ? displayAttributes[0].DisplayName : property.Name;
+        if (property.Name != "ConnectionString" && propertyList.ContainsKey(displayName) == false)
         {
-          propertyList.Add(descriptor.DisplayName, descriptor);
+          propertyList.Add(displayName, property);
         }
       }
     }
   }
+#if WINDOWS_PHONE || NETFX_CORE
+  internal class DisplayNameAttribute : Attribute
+  {
+    public DisplayNameAttribute(string displayName)
+    {
+      DisplayName = displayName;
+    }
+    public string DisplayName { get; set; }
+  }
+#endif
 #endif
 }

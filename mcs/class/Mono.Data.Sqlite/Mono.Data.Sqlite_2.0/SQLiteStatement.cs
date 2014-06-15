@@ -110,7 +110,11 @@ namespace Mono.Data.Sqlite
       int x = _paramNames.Length;
       for (int n = 0; n < x; n++)
       {
+#if NET_2_0
+        if (String.Compare(_paramNames[n], startAt, s, 0, Math.Max(_paramNames[n].Length - startAt, s.Length), StringComparison.InvariantCultureIgnoreCase) == 0)
+#else
         if (String.Compare(_paramNames[n], startAt, s, 0, Math.Max(_paramNames[n].Length - startAt, s.Length), true, CultureInfo.InvariantCulture) == 0)
+#endif
         {
           _paramValues[n] = p;
           return true;
