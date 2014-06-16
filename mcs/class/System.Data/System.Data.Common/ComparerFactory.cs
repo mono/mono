@@ -89,7 +89,7 @@ namespace System.Data.Common
 				if (y == DBNull.Value) 
 					return 1;
 				
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				return String.Compare ((string)x, (string)y, false);
 #else
 				return String.Compare ((string)x, (string)y, StringComparison.CurrentCulture);
@@ -115,7 +115,7 @@ namespace System.Data.Common
 				if (y == DBNull.Value) 
 					return 1;
 				
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				return String.Compare ((string)x, (string)y, true);
 #else
 				return String.Compare ((string)x, (string)y, StringComparison.CurrentCultureIgnoreCase);

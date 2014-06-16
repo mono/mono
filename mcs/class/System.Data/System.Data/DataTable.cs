@@ -1808,7 +1808,7 @@ namespace System.Data {
 					columns.Add (dc);
 
 					g = match.Groups["Order"];
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 					if (!g.Success || String.Compare (g.Value, "ASC", true, CultureInfo.InvariantCulture) == 0)
 #else
 					if (!g.Success || String.Compare (g.Value, "ASC", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0)

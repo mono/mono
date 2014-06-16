@@ -53,7 +53,7 @@ using MonoTests.System.Data.Utils;
 namespace MonoTests_System.Data
 {
 	[TestFixture]
-	class MissingPrimaryKeyExceptionTest
+	public class MissingPrimaryKeyExceptionTest
 	{
 		[Test]
 		public void Generate1()

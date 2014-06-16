@@ -234,7 +234,7 @@ namespace System.Data
 				}
 
 				CultureInfo info = (Table != null) ? Table.Locale : CultureInfo.CurrentCulture;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				if (String.Compare (rowFilter, value, false, info) == 0)
 #else
 				if (String.Compare (rowFilter, value, info, CompareOptions.None) == 0)

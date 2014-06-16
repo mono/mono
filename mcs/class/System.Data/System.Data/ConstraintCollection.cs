@@ -110,7 +110,7 @@ namespace System.Data {
 			foreach (Constraint cst in List) {
 				if (cst == excludeFromComparison)
 					continue;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0)
 #else
 				if (String.Compare (constraintName, cst.ConstraintName, Table.Locale, CompareOptions.None) == 0)
@@ -322,7 +322,7 @@ namespace System.Data {
 
 			int index = 0;
 			foreach (Constraint con in List) {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				if (String.Compare (constraintName, con.ConstraintName, !Table.CaseSensitive, Table.Locale) == 0)
 #else
 				if (String.Compare (constraintName, con.ConstraintName, Table.Locale, Table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) == 0)

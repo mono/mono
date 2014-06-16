@@ -504,7 +504,7 @@ namespace System.Data.Common {
 			int length = restrictionValues == null ? 0 : restrictionValues.Length;
 
 			foreach (DataRow row in schemaTable.Rows) {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				if (String.Compare ((string) row ["CollectionName"], collectionName, true) == 0) {
 #else
 				if (String.Compare ((string) row ["CollectionName"], collectionName, StringComparison.CurrentCultureIgnoreCase) == 0) {
