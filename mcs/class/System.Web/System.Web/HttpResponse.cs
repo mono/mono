@@ -446,7 +446,7 @@ namespace System.Web
 		}
 
 		[MonoTODO ("Not implemented")]
-		public void AddCacheDependency (CacheDependency[] dependencies)
+		public void AddCacheDependency (params CacheDependency[] dependencies)
 		{
 			throw new NotImplementedException ();
 		}
