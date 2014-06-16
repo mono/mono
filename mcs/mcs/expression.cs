@@ -11066,7 +11066,7 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			if (method == null && TypeSpec.IsValueType (type) && initializers.Initializers.Count > 1 && initializers.ContainsEmitWithAwait ()) {
+			if (method == null && TypeSpec.IsValueType (type) && initializers.Initializers.Count > 1 && ec.HasSet (BuilderContext.Options.AsyncBody) && initializers.ContainsEmitWithAwait ()) {
 				var fe = ec.GetTemporaryField (type);
 
 				if (!Emit (ec, fe))
