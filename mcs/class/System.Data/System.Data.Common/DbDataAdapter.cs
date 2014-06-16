@@ -213,7 +213,6 @@ namespace System.Data.Common
 
 		protected virtual void OnRowUpdated (RowUpdatedEventArgs value)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
 			if (Events ["RowUpdated"] != null) {
 				Delegate [] rowUpdatedList = Events ["RowUpdated"].GetInvocationList ();
 				foreach (Delegate rowUpdated in rowUpdatedList) {
@@ -221,12 +220,10 @@ namespace System.Data.Common
 					rowUpdatedMethod.Invoke (value, null);
 				}
 			}
-#endif
 		}
 
 		protected virtual void OnRowUpdating (RowUpdatingEventArgs value)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
 			if (Events ["RowUpdating"] != null) {
 				Delegate [] rowUpdatingList = Events ["RowUpdating"].GetInvocationList ();
 				foreach (Delegate rowUpdating in rowUpdatingList) {
@@ -234,7 +231,6 @@ namespace System.Data.Common
 					rowUpdatingMethod.Invoke (value, null);
 				}
 			}
-#endif
 		}
 #else
 		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,

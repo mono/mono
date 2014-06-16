@@ -370,7 +370,7 @@ namespace System.Data {
 					value = String.Empty;
 
 				CultureInfo info = Table != null ? Table.Locale : CultureInfo.CurrentCulture;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				if (String.Compare (value, _columnName, true, info) != 0) {
 #else
 				if (String.Compare (value, _columnName, info, CompareOptions.IgnoreCase) != 0) {
@@ -391,7 +391,7 @@ namespace System.Data {
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				} else if (String.Compare (value, _columnName, false, info) != 0) {
 #else
 				} else if (String.Compare (value, _columnName, info, CompareOptions.None) != 0) {

@@ -53,7 +53,7 @@ using MonoTests.System.Data.Utils;
 namespace MonoTests_System.Data
 {
 	[TestFixture]
-	class VersionNotFoundExceptionTest
+	public class VersionNotFoundExceptionTest
 	{
 		[Test]
 		public void Generate1()

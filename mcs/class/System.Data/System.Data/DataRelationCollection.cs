@@ -558,7 +558,7 @@ namespace System.Data {
 			int count = 0, match = -1;
 			for (int i = 0; i < List.Count; i++) {
 				String name2 = ((DataRelation) List[i]).RelationName;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_0
 				if (String.Compare (name, name2, true) == 0) {
 					if (String.Compare (name, name2, false) == 0)
 #else
