@@ -2186,13 +2186,13 @@ namespace Mono.CSharp {
 		{
 			li.CreateBuilder (ec);
 
-			if (Initializer != null)
+			if (Initializer != null && !IsUnreachable)
 				((ExpressionStatement) Initializer).EmitStatement (ec);
 
 			if (declarators != null) {
 				foreach (var d in declarators) {
 					d.Variable.CreateBuilder (ec);
-					if (d.Initializer != null) {
+					if (d.Initializer != null && !IsUnreachable) {
 						ec.Mark (d.Variable.Location);
 						((ExpressionStatement) d.Initializer).EmitStatement (ec);
 					}
@@ -2925,7 +2925,7 @@ namespace Mono.CSharp {
 
 				end_unreachable = s.FlowAnalysis (fc);
 				if (s.IsUnreachable) {
-					statements[startIndex] = new EmptyStatement (s.loc);
+					statements [startIndex] = RewriteUnreachableStatement (s);
 					continue;
 				}
 
@@ -2952,7 +2952,7 @@ namespace Mono.CSharp {
 
 						if (s.IsUnreachable) {
 							s.FlowAnalysis (fc);
-							statements[startIndex] = new EmptyStatement (s.loc);
+							statements [startIndex] = RewriteUnreachableStatement (s);
 						}
 					}
 				}
@@ -2965,6 +2965,24 @@ namespace Mono.CSharp {
 			//	Debug.Fail ();
 
 			return !Explicit.HasReachableClosingBrace;
+		}
+
+		static Statement RewriteUnreachableStatement (Statement s)
+		{
+			// LAMESPEC: It's not clear whether declararion statement should be part of reachability
+			// analysis. Even csc report unreachable warning for it but it's actually used hence
+			// we try to emulate this behaviour
+			//
+			// Consider:
+			// 	goto L;
+			//	int v;
+			// L:
+			//	v = 1;
+
+			if (s is BlockVariable)
+				return s;
+
+			return new EmptyStatement (s.loc);
 		}
 
 		public void ScanGotoJump (Statement label)
@@ -6938,6 +6956,7 @@ namespace Mono.CSharp {
 			public VariableDeclaration (LocalVariable li, Location loc)
 				: base (li)
 			{
+				reachable = true;
 				this.loc = loc;
 			}
 
@@ -7380,6 +7399,7 @@ namespace Mono.CSharp {
 				public RuntimeDispose (LocalVariable lv, Location loc)
 					: base (lv, loc)
 				{
+					reachable = true;
 				}
 
 				protected override void CheckIDiposableConversion (BlockContext bc, LocalVariable li, Expression initializer)
