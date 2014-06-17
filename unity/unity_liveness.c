@@ -7,12 +7,6 @@
 
 typedef struct _LivenessState LivenessState;
 
-typedef enum {
-	LIVENESS_DONT_PROCESS,
-	LIVENESS_SHOULD_PROCESS,
-	LIVENESS_CONTAINS_INTPTR
-} LivenessShouldProcessType;
-
 typedef struct _GPtrArray custom_growable_array;
 #define array_at_index(array,index) (array)->pdata[(index)]
 
@@ -135,14 +129,14 @@ void array_safe_grow(LivenessState* state, custom_growable_array* array)
 	}
 }
 
-static LivenessShouldProcessType should_process_value (MonoObject* val, LivenessState* state)
+static gboolean should_process_value (MonoObject* val, MonoClass* filter)
 {
 	MonoClass* val_class = GET_VTABLE(val)->klass;
-	if (val_class->has_unity_native_intptr)
-		return LIVENESS_CONTAINS_INTPTR;
-	if (!state->filter || mono_class_has_parent (val_class, state->filter))
-		return LIVENESS_SHOULD_PROCESS;
-	return LIVENESS_DONT_PROCESS;
+	if (filter && 
+		!mono_class_has_parent (val_class, filter))
+		return FALSE;
+
+	return TRUE;
 }
 
 static void mono_traverse_array (MonoArray* array, LivenessState* state);
@@ -168,7 +162,7 @@ static void mono_add_process_object (MonoObject* object, LivenessState* state)
 	if (object && !IS_MARKED(object))
 	{
 		gboolean has_references = GET_VTABLE(object)->klass->has_references;
-		if(has_references || should_process_value(object,state) != LIVENESS_DONT_PROCESS)
+		if(has_references || should_process_value(object,state->filter))
 		{
 			if (array_is_full(state->all_objects))
 				array_safe_grow(state, state->all_objects);
@@ -346,14 +340,8 @@ void mono_filter_objects(LivenessState* state)
 	for ( ; i < state->all_objects->len; i++)
 	{
 		MonoObject* object = state->all_objects->pdata[i];
-		LivenessShouldProcessType process_type = should_process_value (object, state);
-		if (process_type != LIVENESS_DONT_PROCESS)
-		{
-			// add low bit to objects that are filtered based on the intptr property as these needs special treatment in unity
-			if (process_type == LIVENESS_CONTAINS_INTPTR)
-				object = (MonoObject*)((gsize)(object) | (gsize)1);
+		if (should_process_value (object, state->filter))
 			filtered_objects[num_objects++] = object;
-		}
 		if (num_objects == 64)
 		{
 			state->filter_callback(filtered_objects, 64, state->callback_userdata);
@@ -590,17 +578,6 @@ void mono_unity_liveness_stop_gc_world ()
 void mono_unity_liveness_start_gc_world ()
 {
 	GC_start_world_external ();
-}
-
-void mono_unity_liveness_mark_classes_for_intptr_scanning (MonoClass* filter)
-{
-	filter->has_unity_native_intptr = 1;
-}
-
-gboolean mono_unity_liveness_has_parent_class (MonoObject* object, MonoClass* base_klass)
-{
-	MonoClass* object_klass = GET_VTABLE(object)->klass;
-	return mono_class_has_parent(object_klass, base_klass);
 }
 
 LivenessState* mono_unity_liveness_calculation_begin (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata)
