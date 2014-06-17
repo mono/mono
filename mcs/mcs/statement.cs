@@ -1284,23 +1284,39 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (expr != null) {
-				expr.Emit (ec);
 
 				var async_body = ec.CurrentAnonymousMethod as AsyncInitializer;
 				if (async_body != null) {
-					var async_return = ((AsyncTaskStorey) async_body.Storey).HoistedReturn;
+					var storey = (AsyncTaskStorey)async_body.Storey;
 
+					//
 					// It's null for await without async
-					if (async_return != null) {
-						async_return.EmitAssign (ec);
+					//
+					if (storey.HoistedReturnValue != null) {
+						//
+						// Special case hoisted return value (happens in try/finally scenario)
+						//
+						if (ec.HasSet (BuilderContext.Options.HoistedReturnResult)) {
 
+							if (storey.HoistedReturnValue is VariableReference) {
+								storey.HoistedReturnValue = ec.GetTemporaryField (storey.HoistedReturnValue.Type);
+							}
+
+							async_body.EmitRedirectedJump (ec, async_body.BodyEnd);
+						}
+
+						var async_return = (IAssignMethod)storey.HoistedReturnValue;
+						async_return.EmitAssign (ec, expr, false, false);
 						ec.EmitEpilogue ();
+					} else {
+						expr.Emit (ec);
 					}
 
 					ec.Emit (OpCodes.Leave, async_body.BodyEnd);
 					return;
 				}
 
+				expr.Emit (ec);
 				ec.EmitEpilogue ();
 
 				if (unwind_protect || ec.EmitAccurateDebugInfo)
@@ -1421,8 +1437,6 @@ namespace Mono.CSharp {
 				} else {
 					label.AddGotoReference (rc, true);
 				}
-
-				try_finally = null;
 			} else {
 				label.AddGotoReference (rc, false);
 			}
@@ -1441,7 +1455,27 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("goto emitted before target resolved");
 
 			Label l = label.LabelTarget (ec);
+
+			if (try_finally != null && ec.HasSet (BuilderContext.Options.HoistedReturnResult) && IsLeavingFinally (label.Block)) {
+				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
+				async_body.EmitRedirectedJump (ec, l);
+				l = async_body.BodyEnd;
+			}
+
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
+		}
+
+		bool IsLeavingFinally (Block labelBlock)
+		{
+			var b = try_finally.Statement as Block;
+			while (b != null) {
+				if (b == labelBlock)
+					return true;
+
+				b = b.Parent;
+			}
+
+			return false;
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -2522,6 +2556,10 @@ namespace Mono.CSharp {
 
 		public void EmitAddressOf (EmitContext ec)
 		{
+			// TODO: Need something better for temporary variables
+			if ((flags & Flags.CompilerGenerated) != 0)
+				CreateBuilder (ec);
+
 			ec.Emit (OpCodes.Ldloca, builder);
 		}
 
@@ -6569,6 +6607,10 @@ namespace Mono.CSharp {
 		ExplicitBlock fini;
 		List<DefiniteAssignmentBitSet> try_exit_dat;
 
+		// TODO: Should be on stack only
+		Label prev_body_end;
+		Expression prev_HoistedReturn;
+
 		public TryFinally (Statement stmt, ExplicitBlock fini, Location loc)
 			 : base (stmt, loc)
 		{
@@ -6603,6 +6645,19 @@ namespace Mono.CSharp {
 
 		protected override void EmitTryBody (EmitContext ec)
 		{
+			if (fini.HasAwait) {
+				prev_HoistedReturn = ec.AsyncTaskStorey.HoistedReturnValue;
+				var ai = (AsyncInitializer)ec.CurrentAnonymousMethod;
+				prev_body_end = ai.BodyEnd;
+				ai.BodyEnd = ec.DefineLabel ();
+
+				using (ec.With (BuilderContext.Options.HoistedReturnResult, true)) {
+					stmt.Emit (ec);
+				}
+
+				return;
+			}
+
 			stmt.Emit (ec);
 		}
 
@@ -6616,52 +6671,60 @@ namespace Mono.CSharp {
 
 		public override void EmitFinallyBody (EmitContext ec)
 		{
-			StackFieldExpr exception_field;
-
-			if (fini.HasAwait) {
-				//
-				// Emits catch block like
-				//
-				// catch (object temp) {
-				//	this.exception_field = temp;
-				// }
-				//
-				var type = ec.BuiltinTypes.Object;
-				ec.BeginCatchBlock (type);
-
-				var temp = ec.GetTemporaryLocal (type);
-				ec.Emit (OpCodes.Stloc, temp);
-
-				exception_field = ec.GetTemporaryField (type);
-				ec.EmitThis ();
-				ec.Emit (OpCodes.Ldloc, temp);
-				exception_field.EmitAssignFromStack (ec);
-
-				ec.EndExceptionBlock ();
-
-				ec.FreeTemporaryLocal (temp, type);
-			} else {
-				exception_field = null;
+			if (!fini.HasAwait) {
+				fini.Emit (ec);
+				return;
 			}
+
+			//
+			// Emits catch block like
+			//
+			// catch (object temp) {
+			//	this.exception_field = temp;
+			// }
+			//
+			var type = ec.BuiltinTypes.Object;
+			ec.BeginCatchBlock (type);
+
+			var temp = ec.GetTemporaryLocal (type);
+			ec.Emit (OpCodes.Stloc, temp);
+
+			var exception_field = ec.GetTemporaryField (type);
+			ec.EmitThis ();
+			ec.Emit (OpCodes.Ldloc, temp);
+			exception_field.EmitAssignFromStack (ec);
+
+			ec.EndExceptionBlock ();
+
+			ec.FreeTemporaryLocal (temp, type);
+
+			var ai = (AsyncInitializer)ec.CurrentAnonymousMethod;
+			ec.MarkLabel (ai.BodyEnd);
+			var local_return = ai.BodyEnd;
+			ai.BodyEnd = prev_body_end;
+			var fin_hoisted_return = ec.AsyncTaskStorey.HoistedReturnValue as StackFieldExpr;
+			ec.AsyncTaskStorey.HoistedReturnValue = prev_HoistedReturn;
 
 			fini.Emit (ec);
 
-			if (exception_field != null) {
-				//
-				// Emits exception rethrow
-				//
-				// if (this.exception_field != null)
-				//	throw this.exception_field;
-				//
-				exception_field.Emit (ec);
-				var skip_throw = ec.DefineLabel ();
-				ec.Emit (OpCodes.Brfalse_S, skip_throw);
-				exception_field.Emit (ec);
-				ec.Emit (OpCodes.Throw);
-				ec.MarkLabel (skip_throw);
+			//
+			// Emits exception rethrow
+			//
+			// if (this.exception_field != null)
+			//	throw this.exception_field;
+			//
+			exception_field.Emit (ec);
+			var skip_throw = ec.DefineLabel ();
+			ec.Emit (OpCodes.Brfalse_S, skip_throw);
+			exception_field.Emit (ec);
+			ec.Emit (OpCodes.Throw);
+			ec.MarkLabel (skip_throw);
 
-				exception_field.IsAvailableForReuse = true;
-			}
+			exception_field.IsAvailableForReuse = true;
+
+			ai.EmitRedirectedJumpsTable (ec, fin_hoisted_return, local_return);
+			if (fin_hoisted_return != null)
+				fin_hoisted_return.PrepareCleanup (ec);
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)

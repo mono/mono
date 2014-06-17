@@ -421,6 +421,8 @@ namespace Mono.CSharp
 	public class AsyncInitializer : StateMachineInitializer
 	{
 		TypeInferenceContext return_inference;
+		List<Label> redirected_jumps;
+		FieldExpr HoistedReturnState;
 
 		public AsyncInitializer (ParametersBlock block, TypeDefinition host, TypeSpec returnType)
 			: base (block, host, returnType)
@@ -483,6 +485,57 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Ret);
 		}
 
+		//
+		// Emits state table of jumps outside of try block and reload of return
+		// value when try block returns value
+		//
+		public void EmitRedirectedJumpsTable (EmitContext ec, StackFieldExpr returnResult, Label localReturn)
+		{
+			if (redirected_jumps == null)
+				return;
+
+			int ret_index = redirected_jumps.IndexOf (localReturn);
+			if (ret_index >= 0) {
+				redirected_jumps [ret_index] = ec.DefineLabel ();
+			}
+
+			HoistedReturnState.Emit (ec);
+			ec.Emit (OpCodes.Switch, redirected_jumps.ToArray ());
+
+			if (ret_index >= 0) {
+				ec.MarkLabel (redirected_jumps [ret_index]);
+				var s = (AsyncTaskStorey)storey;
+				((IAssignMethod)s.HoistedReturnValue).EmitAssign (ec, returnResult, false, false);
+
+				ec.Emit (OpCodes.Leave, BodyEnd);
+			}
+
+			// Mark fallthrough label
+			ec.MarkLabel (redirected_jumps [0]);
+		}
+
+		public void EmitRedirectedJump (EmitContext ec, Label label)
+		{
+			if (redirected_jumps == null) {
+				redirected_jumps = new List<Label> ();
+
+				// Add fallthrough label
+				redirected_jumps.Add (ec.DefineLabel ());
+				HoistedReturnState = ec.GetTemporaryField (ec.Module.Compiler.BuiltinTypes.Int);
+			}
+
+			int index = redirected_jumps.IndexOf (label);
+			if (index < 0) {
+				redirected_jumps.Add (label);
+				index = redirected_jumps.Count - 1;
+			}
+
+			//
+			// Indicates we have return value captured
+			//
+			HoistedReturnState.EmitAssign (ec, new IntConstant (HoistedReturnState.Type, index, Location.Null), false, false);
+		}
+
 		public override void MarkReachable (Reachability rc)
 		{
 			//
@@ -501,7 +554,6 @@ namespace Mono.CSharp
 		MethodSpec builder_factory;
 		MethodSpec builder_start;
 		PropertySpec task;
-		LocalVariable hoisted_return;
 		int locals_captured;
 		Dictionary<TypeSpec, List<Field>> stack_fields;
 		Dictionary<TypeSpec, List<Field>> awaiter_fields;
@@ -515,11 +567,7 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		public LocalVariable HoistedReturn {
-			get {
-				return hoisted_return;
-			}
-		}
+		public Expression HoistedReturnValue { get; set; }
 
 		public TypeSpec ReturnType {
 			get {
@@ -709,7 +757,7 @@ namespace Mono.CSharp
 			set_state_machine.Block.AddStatement (new StatementExpression (new Invocation (mg, args)));
 
 			if (has_task_return_type) {
-				hoisted_return = LocalVariable.CreateCompilerGenerated (bt.TypeArguments[0], StateMachineMethod.Block, Location);
+				HoistedReturnValue = TemporaryVariableReference.Create (bt.TypeArguments [0], StateMachineMethod.Block, Location);
 			}
 
 			return true;
@@ -896,11 +944,11 @@ namespace Mono.CSharp
 			};
 
 			Arguments args;
-			if (hoisted_return == null) {
+			if (HoistedReturnValue == null) {
 				args = new Arguments (0);
 			} else {
 				args = new Arguments (1);
-				args.Add (new Argument (new LocalVariableReference (hoisted_return, Location)));
+				args.Add (new Argument (HoistedReturnValue));
 			}
 
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
