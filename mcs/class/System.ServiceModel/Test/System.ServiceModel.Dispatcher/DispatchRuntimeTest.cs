@@ -53,7 +53,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			// free to change if MS implementation does not make 
 			// sense.
 			DispatchRuntime r = new EndpointDispatcher (
-				new EndpointAddress ("http://localhost:8080"), "IFoo", "urn:foo").DispatchRuntime;
+				new EndpointAddress ("http://localhost:30158"), "IFoo", "urn:foo").DispatchRuntime;
 			Assert.AreEqual (AuditLogLocation.Default,
 					 r.SecurityAuditLogLocation, "#1");
 
@@ -153,7 +153,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 		void TestInstanceBehavior (MessageInspectBehavior b, string expected, Result actual, int invocations)
 		{
-			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:8080"));
+			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:30158"));
 			try {
 				h.AddServiceEndpoint (typeof (IAllActions).FullName, new BasicHttpBinding (), "AllActions");
 				h.Description.Behaviors.Add (b);
@@ -167,7 +167,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 						Assert.AreEqual (typeof (AllActions), ed.DispatchRuntime.Type, "Type property: " + ed.ContractName);
 					}
 				}
-				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (5), ReceiveTimeout = TimeSpan.FromSeconds (5) }, new EndpointAddress ("http://localhost:8080/AllActions"));
+				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (5), ReceiveTimeout = TimeSpan.FromSeconds (5) }, new EndpointAddress ("http://localhost:30158/AllActions"));
 
 				for (int i = 0; i < invocations; ++i)
 					p.Get (10);
