@@ -93,7 +93,10 @@ TEST_DISTFILES = \
 	Test/resources/32x32.ico \
 	Test/System.Resources/compat_1_1.resx \
 	Test/System.Resources/compat_2_0.resx \
-	Test/System.Windows.Forms/bitmaps/a.png
+	Test/System.Windows.Forms/bitmaps/a.png \
+	Test/DummyAssembly/AnotherSerializable.cs \
+	Test/DummyAssembly/Convertable.cs \
+	Test/DummyAssembly/Properties/AssemblyInfo.cs \
 
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
@@ -105,6 +108,11 @@ TEST_MCS_FLAGS = /r:System.Data.dll /r:System.Drawing.dll /r:Accessibility.dll -
 	-resource:Test/resources/a.cur,a.cur \
 	-resource:Test/resources/32x32.ico,32x32.ico \
 	-nowarn:618,612
+
+DummyAssembly.dll:
+	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs
+
+test-local: DummyAssembly.dll
 
 include ../../build/library.make
 
