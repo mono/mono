@@ -150,7 +150,7 @@ namespace System.Windows.Forms {
 		}
 		*/
 
-		static byte [] header = new byte []{ 77, 83, 70, 116, 73, 76, 3, 0 };
+		static byte [] header = new byte []{ 77, 83, 70, 116, 73, 76, 1, 1 };
 		public void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			MemoryStream stream = new MemoryStream ();
@@ -169,7 +169,7 @@ namespace System.Windows.Forms {
 			writer.Write ((ushort) (images [0].Width));
 			writer.Write ((ushort) (images [0].Height));
 			writer.Write (0xFFFFFFFF); //BackColor.ToArgb ()); //FIXME: should set the right one here.
-			writer.Write ((ushort) 0x1009);
+			writer.Write ((ushort) 0x21);
 			for (int i = 0; i < 4; i++)
 				writer.Write ((short) -1);
 
