@@ -5,10 +5,9 @@ include ../../build/rules.make
 
 LIBRARY = System.Configuration.dll
 
-LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
-test_remove = $(LOCAL_MCS_FLAGS)
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll -nowarn:618 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) 
+LIB_MCS_FLAGS = -r:$(bare_libdir)/System.Xml.dll -r:$(secxml_libdir)/System.dll
+LOCAL_MCS_FLAGS = -r:$(corlib) -r:$(the_libdir_base)System.Security.dll -nowarn:618 
+TEST_MCS_FLAGS = -r:System.dll -r:System.Xml.dll
 
 include ../../build/library.make
 
