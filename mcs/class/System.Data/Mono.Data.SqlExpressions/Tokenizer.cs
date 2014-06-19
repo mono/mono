@@ -217,14 +217,7 @@ namespace Mono.Data.SqlExpressions {
 					break;
 			}
 			ret = sb.ToString ();
-			if (String.Compare (ret,
-					    "not",
-#if NET_2_0
-					    StringComparison.OrdinalIgnoreCase
-#else
-					    true, CultureInfo.InvariantCulture
-#endif
-			    ) == 0) {
+			if (String.Compare (ret, "not", StringComparison.OrdinalIgnoreCase) == 0) {
 				int savedPos = pos;
 				while (Char.IsWhiteSpace ((next = Next ()))) {
 					if (!MoveNext ()) {

@@ -63,19 +63,19 @@ namespace MonoTests.System.Data
 {
 	[TestFixture]
 	public class DataRowTest {
-	        private DataTable table;                                                
-                private DataRow row;    
+        DataTable table;                                                
+        DataRow row;    
 
 		[SetUp]
 		public void GetReady() {
 			table = MakeTable ();                                           
-                        row = table.NewRow ();                                          
-                        row ["FName"] = "Hello";                                        
-                        row ["LName"] = "World";                                        
-                        table.Rows.Add (row);  
+			row = table.NewRow ();                                          
+			row ["FName"] = "Hello";                                        
+			row ["LName"] = "World";                                        
+			table.Rows.Add (row);  
 		}
 		
-		private DataTable MakeTable ()
+                DataTable MakeTable ()
                 {
                         DataTable namesTable = new DataTable ("Names");
                         DataColumn idColumn = new  DataColumn ();
@@ -108,7 +108,7 @@ namespace MonoTests.System.Data
                         return namesTable;
                 }
 
-		[Test]
+                [Test]
                 public void SetColumnErrorTest ()
                 {
                         string errorString;
@@ -164,7 +164,7 @@ namespace MonoTests.System.Data
                         // Create a DataView with the table.
                         DataRowCollection rc = table.Rows;
                         rc [0].Delete ();
-		        rc [2].Delete ();
+                        rc [2].Delete ();
                                                                                                     
                                                                                                     
                         Assert.AreEqual ("Deleted", rc [0].RowState.ToString (), "#A04");
@@ -195,7 +195,7 @@ namespace MonoTests.System.Data
                                 table.AcceptChanges ();
                                 row = table.NewRow ();
                                 row["FName"] = "My FName";
-				table.Rows.Add (row);
+                                table.Rows.Add (row);
                                                                                                     
                                                                                                     
                                 // Stage 1
@@ -227,7 +227,7 @@ namespace MonoTests.System.Data
                                 Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A17");
                                 Assert.AreEqual ("LName", row [2, DataRowVersion.Current], "#A18");
                                 
-				try {
+                                try {
                                       object o = row [1, DataRowVersion.Proposed];
                                         Assert.Fail ("#A19");
                                 }
@@ -282,8 +282,8 @@ namespace MonoTests.System.Data
                                                                                                     
                                 //Stage 5
                                 //After Accept Changes
-				table.AcceptChanges ();
-				Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A36");
+                                table.AcceptChanges ();
+                                Assert.AreEqual ("My FName", row [1, DataRowVersion.Default], "#A36");
                                 Assert.AreEqual ("My LName", row [2, DataRowVersion.Default], "#A37");
                                                                                                     
                                                                                                     
@@ -353,14 +353,14 @@ namespace MonoTests.System.Data
                         rowC.SetParentRow (table.Rows [0], dr);
                                                                                                     
                         Assert.AreEqual (table.Rows [0], (tableC.Rows [0]).GetParentRow (dr), "#PRT-01");
-			Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-02");
+                        Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-02");
 
                         ds.Relations.Clear ();
                         dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"], false);
                         ds.Relations.Add (dr);
                         rowC.SetParentRow (table.Rows [0], dr);
                         Assert.AreEqual (table.Rows [0], (tableC.Rows [0]).GetParentRow (dr), "#PRT-03");
-			Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-04");
+                        Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-04");
 
                         ds.Relations.Clear ();
                         dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"], false);
@@ -368,7 +368,6 @@ namespace MonoTests.System.Data
                         rowC.SetParentRow (table.Rows [0]);
                         Assert.AreEqual (table.Rows [0], (tableC.Rows [0]).GetParentRow (dr), "#PRT-05");
                         Assert.AreEqual (tableC.Rows [0], (table.Rows [0]).GetChildRows (dr) [0], "#PRT-06");
-						
                 } 
 
                 [Test]
@@ -508,7 +507,7 @@ namespace MonoTests.System.Data
                         Assert.Fail("#A54, InvalidConstraintException expected but got none.");
                 }
 
-		 [Category ("NotWorking")] //Mismatch in Exception namespace/class reference
+                [Category ("NotWorking")] //Mismatch in Exception namespace/class reference
                 [Test]
                 public void ParentChildRowVersionTest ()
                 {

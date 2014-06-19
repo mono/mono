@@ -142,16 +142,9 @@ namespace System.Data
 			if (dt == null)
 				return true;
 
-			XmlDocument doc = new XmlDocument ();
-#if !WINDOWS_PHONE && !NETFX_CORE
-			XmlElement el = (XmlElement) doc.ReadNode (reader);
-			doc.AppendChild (el);
-			reader = new XmlNodeReader (el);
-#else
-			XmlElement el = (XmlElement) XmlNode.ReadFrom (reader);
-			doc.Add (el);
+			XmlDocument doc = XmlHelper.CreateXmlDocument (reader);
+			XmlElement el = doc.GetRootElement ();
 			reader = doc.CreateReader ();
-#endif
 			reader.MoveToContent ();
 
 			return !XmlDataInferenceLoader.IsDocumentElementTable (
@@ -270,11 +263,7 @@ namespace System.Data
 						break;
 					}
 				}
-#if !WINDOWS_PHONE && !NETFX_CORE
 				string s = reader.ReadString ();
-#else
-				string s = reader.ReadContentAsString ();
-#endif
 				reader.MoveToContent ();
 #if SILLY_MS_COMPATIBLE
 // As to MS, "test string" and "test <!-- comment -->string" are different :P
@@ -287,11 +276,7 @@ namespace System.Data
 #endif
 				break;
 			case XmlNodeType.Whitespace:
-#if !WINDOWS_PHONE && !NETFX_CORE
 				reader.ReadString ();
-#else
-				reader.ReadContentAsString ();
-#endif
 				break;
 			}
 		}
@@ -349,11 +334,7 @@ namespace System.Data
 					}
 #endif
 				} else {
-#if !WINDOWS_PHONE && !NETFX_CORE
 					row [col] = StringToObject (col.DataType, reader.ReadElementString ());
-#else
-					row [col] = StringToObject (col.DataType, reader.ReadElementContentAsString ());
-#endif
 				}
 					
 				if (!wasEmpty && reader.Depth > depth) {

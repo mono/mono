@@ -933,11 +933,7 @@ namespace System.Data.Common
 					return ((IComparable)obj1).CompareTo (obj2);
 				} catch {
 					if (obj2 is IComparable) {
-#if !WINDOWS_PHONE && !NETFX_CORE
-						obj2 = Convert.ChangeType (obj2, Type.GetTypeCode (obj1.GetType ()));
-#else
 						obj2 = Convert.ChangeType (obj2, Type.GetTypeCode (obj1.GetType ()), CultureInfo.CurrentCulture);
-#endif
 						return ((IComparable)obj1).CompareTo (obj2);
 					}
 				}
@@ -1009,11 +1005,7 @@ namespace System.Data.Common
 		protected override int DoCompareValues (int index1, int index2)
 		{
 			DataTable table = Column.Table;
-#if !NET_2_0
-			return String.Compare ((string) this [index1], (string) this [index2], !table.CaseSensitive, table.Locale);
-#else
 			return String.Compare ((string) this [index1], (string) this [index2], table.Locale, table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
-#endif
 		}
 	}
 }

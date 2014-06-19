@@ -3289,30 +3289,27 @@ namespace MonoTests_System.Data
 		private void CheckNode(string description, string xPath, int expectedNodesCout, XmlDocument schemaDoc, XmlNamespaceManager nm)
 		{
 #if !WINDOWS_PHONE && !NETFX_CORE
-			int actualNodeCount = schemaDoc.SelectNodes(xPath, nm).Count;
+			int actualNodeCount = schemaDoc.SelectNodes (xPath, nm).Count;
 #else
 			// this is a very simple hacked xpath parser specific to the test cases
 			int actualNodeCount = -1;
-			string[] levels = xPath.Split(new char[]{'/', '[', ']'}, StringSplitOptions.RemoveEmptyEntries);
-			IEnumerable<XElement> elements = new XElement[] { new XElement("root", schemaDoc.Root) };
-			foreach (string level in levels)
-			{
-				if (level[0] == '@')
-				{
-					string[] parts = level.Split('=');
-					XName name = XNamespace.Get(nm.DefaultNamespace) + parts[0].Substring(1);
-					string val = parts[1].Substring(1, parts[1].Length - 2);
-					actualNodeCount = elements.Count(e => e.Attribute(name).Value == val);
+			string[] levels = xPath.Split (new char [] {'/', '[', ']'}, StringSplitOptions.RemoveEmptyEntries);
+			IEnumerable<XElement> elements = new XElement [] { new XElement ("root", schemaDoc.Root) };
+			foreach (string level in levels) {
+				if (level [0] == '@') {
+					string[] parts = level.Split ('=');
+					XName name = XNamespace.Get (nm.DefaultNamespace) + parts [0].Substring (1);
+					string val = parts [1].Substring (1, parts [1].Length - 2);
+					actualNodeCount = elements.Count(e => e.Attribute (name).Value == val);
 				}
-				else
-				{
-					string[] parts = level.Split(':');
-					XName currentLevel = XNamespace.Get(nm.LookupNamespace(parts[0])) + parts[1];
-					elements = elements.SelectMany(e => e.Elements(currentLevel));
+				else {
+					string[] parts = level.Split (':');
+					XName currentLevel = XNamespace.Get (nm.LookupNamespace (parts [0])) + parts [1];
+					elements = elements.SelectMany (e => e.Elements (currentLevel));
 				}
 			}
 #endif
-			Assert.AreEqual(expectedNodesCout,actualNodeCount, "DS75" + description);
+			Assert.AreEqual (expectedNodesCout, actualNodeCount, "DS75" + description);
 		}
 
 		[Test]

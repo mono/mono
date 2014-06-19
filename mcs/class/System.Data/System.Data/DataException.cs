@@ -31,19 +31,12 @@
 #if !WINDOWS_PHONE
 using System;
 using System.Globalization;
-#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Runtime.Serialization;
-#endif
 
 namespace System.Data
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
-	public class DataException
-#if !WINDOWS_PHONE && !NETFX_CORE
-		: SystemException
-#endif
+	public class DataException : SystemException
 	{
 		public DataException ()
 			: base (Locale.GetText ("A Data exception has occurred"))
@@ -54,12 +47,10 @@ namespace System.Data
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
 		protected DataException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
-#endif
 
 		public DataException (string s, Exception innerException)
 			: base (s, innerException)

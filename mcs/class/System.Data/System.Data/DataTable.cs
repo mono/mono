@@ -904,11 +904,7 @@ namespace System.Data {
 			Copy.DisplayExpression = DisplayExpression;
 			if (ExtendedProperties.Count > 0) {
 				//  Cannot copy extended properties directly as the property does not have a set accessor
-#if !WINDOWS_PHONE && !NETFX_CORE
-				Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
-#else
 				object[] tgtArray = new object[ExtendedProperties.Count];
-#endif
 				ExtendedProperties.Keys.CopyTo (tgtArray, 0);
 				for (int i=0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
@@ -1081,11 +1077,7 @@ namespace System.Data {
 		/// </summary>
 		protected virtual DataTable CreateInstance ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			return Activator.CreateInstance (this.GetType (), true) as DataTable;
-#else
-			return Activator.CreateInstance(this.GetType()) as DataTable;
-#endif
+			return Utilities.CreateInstance (GetType ()) as DataTable;
 		}
 
 		/// <summary>
@@ -1808,11 +1800,7 @@ namespace System.Data {
 					columns.Add (dc);
 
 					g = match.Groups["Order"];
-#if !NET_2_0
-					if (!g.Success || String.Compare (g.Value, "ASC", true, CultureInfo.InvariantCulture) == 0)
-#else
 					if (!g.Success || String.Compare (g.Value, "ASC", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0)
-#endif
 						sorts.Add(ListSortDirection.Ascending);
 					else
 						sorts.Add (ListSortDirection.Descending);
@@ -2207,7 +2195,7 @@ namespace System.Data {
 				if (xw != null)
 					xw.Close ();
 				if (file != null) {
-					file.Close ();
+					file.Dispose ();
 				}
 			}
 		}
@@ -2354,7 +2342,7 @@ namespace System.Data {
 					writer.Close ();
 				}
 				if (file != null) {
-					file.Close ();
+					file.Dispose ();
 				}
 			}
 		}
@@ -2439,8 +2427,7 @@ namespace System.Data {
 			}
 			XmlWriter writer = null;
 			FileStream file = null;
-			try
-			{
+			try {
 				XmlWriterSettings s = GetWriterSettings ();
 				s.OmitXmlDeclaration = false;
 				file = File.Create (fileName);
@@ -2451,7 +2438,7 @@ namespace System.Data {
 					writer.Close ();
 				}
 				if (file != null) {
-					file.Close ();
+					file.Dispose ();
 				}
 			}
 		}

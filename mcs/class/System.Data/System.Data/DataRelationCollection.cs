@@ -558,13 +558,8 @@ namespace System.Data {
 			int count = 0, match = -1;
 			for (int i = 0; i < List.Count; i++) {
 				String name2 = ((DataRelation) List[i]).RelationName;
-#if !NET_2_0
-				if (String.Compare (name, name2, true) == 0) {
-					if (String.Compare (name, name2, false) == 0)
-#else
 				if (String.Compare (name, name2, StringComparison.CurrentCultureIgnoreCase) == 0) {
 					if (String.Compare (name, name2, StringComparison.CurrentCulture) == 0)
-#endif
 						return i;
 					match = i;
 					count++;

@@ -23,9 +23,7 @@
 //
 using System;
 using System.Collections;
-#if WINDOWS_PHONE || NETFX_CORE
 using System.Globalization;
-#endif
 
 namespace Mono.Data.SqlExpressions {
 	internal class Numeric {
@@ -47,32 +45,16 @@ namespace Mono.Data.SqlExpressions {
 			case TypeCode.Byte:
 			case TypeCode.Int16:
 			case TypeCode.UInt16:
-#if !WINDOWS_PHONE && !NETFX_CORE
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Int32);
-#else
 				return (IConvertible)Convert.ChangeType (o, TypeCode.Int32, CultureInfo.CurrentCulture);
-#endif
 			
 			case TypeCode.UInt32:
-#if !WINDOWS_PHONE && !NETFX_CORE
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Int64);
-#else
 				return (IConvertible)Convert.ChangeType (o, TypeCode.Int64, CultureInfo.CurrentCulture);
-#endif
 				
 			case TypeCode.UInt64:
-#if !WINDOWS_PHONE && !NETFX_CORE
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Decimal);
-#else
 				return (IConvertible)Convert.ChangeType (o, TypeCode.Decimal, CultureInfo.CurrentCulture);
-#endif
 				
 			case TypeCode.Single:
-#if !WINDOWS_PHONE && !NETFX_CORE
-				return (IConvertible)Convert.ChangeType (o, TypeCode.Double);
-#else
 				return (IConvertible)Convert.ChangeType (o, TypeCode.Double, CultureInfo.CurrentCulture);
-#endif
 			
 			default:
 				return o;
@@ -95,20 +77,12 @@ namespace Mono.Data.SqlExpressions {
 			// is it ok to make such assumptions about the order of an enum?
 			if (tc1 < tc2)
 			{
-#if !WINDOWS_PHONE && !NETFX_CORE
-				o1 = (IConvertible)Convert.ChangeType (o1, tc2);
-#else
 				o1 = (IConvertible)Convert.ChangeType (o1, tc2, CultureInfo.CurrentCulture);
-#endif
 				return tc2;
 			}
 			else
 			{
-#if !WINDOWS_PHONE && !NETFX_CORE
-				o2 = (IConvertible)Convert.ChangeType (o2, tc1);
-#else
 				o2 = (IConvertible)Convert.ChangeType (o2, tc1, CultureInfo.CurrentCulture);
-#endif
 				return tc1;
 			}
 		}

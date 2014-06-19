@@ -52,9 +52,7 @@ namespace System.Data {
 	/// Represents a row of data in a DataTable.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public class DataRow {
 		#region Fields

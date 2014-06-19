@@ -38,9 +38,7 @@ namespace System.Data
 	/// Specifies the action to take with regard to the current and remaining rows during an Update.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum UpdateStatus
 	{

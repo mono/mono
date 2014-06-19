@@ -36,9 +36,7 @@ namespace System.Data
 	/// Represents the method that will handle the RowChanging, RowChanged, RowDeleting, and RowDeleted events of a DataTable.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public delegate void DataRowChangeEventHandler(object sender, DataRowChangeEventArgs e);
 
