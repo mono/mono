@@ -55,6 +55,14 @@ namespace Microsoft.Build.BuildEngine {
 
 	internal class Expression {
 	
+		enum TokenKind
+		{
+			OpenParens,
+			CloseParens,
+			Dot,
+			End
+		}
+
 		ExpressionCollection expressionCollection;
 
 		static Regex item_regex;
@@ -232,6 +240,7 @@ namespace Microsoft.Build.BuildEngine {
 				pos += 2;
 				int start = pos;
 				int end = 0;
+				bool requires_closing_parens = true;
 					
 				var ch = text [pos];
 				if ((ch == 'r' || ch == 'R') && text.Substring (pos + 1).StartsWith ("egistry:", StringComparison.OrdinalIgnoreCase)) {
@@ -273,6 +282,7 @@ namespace Microsoft.Build.BuildEngine {
 									// Simple property reference $(Foo)
 									//
 									phase.Add (new PropertyReference (name));
+									requires_closing_parens = false;
 								} else {
 									end = 0;
 								}
@@ -286,6 +296,14 @@ namespace Microsoft.Build.BuildEngine {
 						}
 
 						pos = end;
+					}
+
+					if (requires_closing_parens) {
+						end = text.IndexOf (')', pos);
+						if (end < 0)
+							end = 0;
+						else
+							pos = end + 1;
 					}
 				}
 
@@ -493,70 +511,71 @@ namespace Microsoft.Build.BuildEngine {
 
 		static MemberInvocationReference ParseInvocation (string text, ref int p, Type type, IReference instance)
 		{
-			var open_parens = text.IndexOf ('(', p);
-			string name;
-			int end;
-			List<string> args;
+			TokenKind token;
+			MemberInvocationReference mir = null;
 
-			//
-			// Is it method or property
-			//
-			if (open_parens > 0) {
-				name = text.Substring (p, open_parens - p);
+			while (true) {
+				int prev = p;
+				token = ScanName (text, ref p);
+				var name = text.Substring (prev, p - prev).TrimEnd ();
 
-				//
-				// It can be instance method on static property
-				//
-				if (name.IndexOf ('.') > 0) {
-					var names = name.Split ('.');
-					int i;
-					for (i = 0; i < names.Length - 1; ++i) {
-						instance = new MemberInvocationReference (type, names [i]) {
-							Instance = instance
-						};
-					}
+				switch (token) {
+				case TokenKind.Dot:
+				case TokenKind.OpenParens:
+					break;
+				case TokenKind.CloseParens:
+					return new MemberInvocationReference (type, name) {
+						Instance = instance
+					};
 
-					type = null;
-					name = names [i];
-				}
-				++open_parens;
-				args = ParseArguments (text, ref open_parens);
-				end = text.IndexOf (')', open_parens);
-			} else {
-				end = text.IndexOf (')', p);
-				if (end < 0)
-					throw new InvalidProjectFileException (string.Format ("Invalid static method invocation syntax '{0}'", text.Substring (p)));
+				case TokenKind.End:
+					if (mir == null || name.Length != 0)
+						throw new InvalidProjectFileException (string.Format ("Invalid static method invocation syntax '{0}'", text.Substring (p)));
 
-				name = text.Substring (p, end - p);
-
-				//
-				// It can be instance member on static property
-				//
-				if (name.IndexOf ('.') > 0) {
-					var names = name.Split ('.');
-					int i;
-					for (i = 0; i < names.Length - 1; ++i) {
-						instance = new MemberInvocationReference (type, names [i]) {
-							Instance = instance
-						};
-					}
-
-					type = null;
-					name = names [i];
+					return mir;
+				default:
+					throw new NotImplementedException ();
 				}
 
-				args = null;
+				instance = mir = new MemberInvocationReference (type, name) {
+					Instance = instance
+				};
+
+				if (type != null) {
+					if (!IsMethodAllowed (type, name))
+						throw new InvalidProjectFileException (string.Format ("The function '{0}' on type '{1}' has not been enabled for execution", name, type.FullName));
+
+					type = null;
+				}
+
+				if (token == TokenKind.OpenParens) {
+					++p;
+					mir.Arguments = ParseArguments (text, ref p);
+				}
+
+				if (p < text.Length && text [p] == '.') {
+					++p;
+					continue;
+				}
+
+				return mir;
+			}
+		}
+
+		static TokenKind ScanName (string text, ref int p)
+		{
+			for (; p < text.Length; ++p) {
+				switch (text [p]) {
+				case '(':
+					return TokenKind.OpenParens;
+				case '.':
+					return TokenKind.Dot;
+				case ')':
+					return TokenKind.CloseParens;
+				}
 			}
 
-			name = name.TrimEnd ();
-			if (!IsMethodAllowed (type, name))
-				throw new InvalidProjectFileException (string.Format ("The function '{0}' on type '{1}' has not been enabled for execution", name, type.FullName));
-
-			p = end + 1;
-			return new MemberInvocationReference (type, name) {
-				Arguments = args,
-				Instance = instance
-			};
+			return TokenKind.End;
 		}
 
 		ArrayList SplitMetadata (string text)
