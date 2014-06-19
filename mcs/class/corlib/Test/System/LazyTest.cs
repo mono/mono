@@ -306,6 +306,8 @@ namespace MonoTests.System
 				e3 = ex;
 			}
 
+			Thread.Sleep (1000);
+
 			Assert.AreSame (e1, e2, "#2");
 			Assert.AreSame (e1, e3, "#3");
 		}
