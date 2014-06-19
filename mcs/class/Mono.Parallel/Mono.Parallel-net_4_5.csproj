@@ -54,10 +54,6 @@
     <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Collections.Concurrent\ConcurrentSkipList.cs" />
-    <Compile Include="Mono.Threading.Tasks\FixedTaskScheduler.cs" />
-    <Compile Include="Mono.Threading.Tasks\MonoTaskExtensions.cs" />
-    <Compile Include="Mono.Threading.Tasks\MonoTaskScheduler.cs" />
-    <Compile Include="Mono.Threading.Tasks\ThreadWorker.cs" />
     <Compile Include="Mono.Threading\CSnzi.cs" />
     <Compile Include="Mono.Threading\ReaderWriterLockSlimmer.cs" />
     <Compile Include="Mono.Threading\Snzi.cs" />
