@@ -257,6 +257,29 @@ namespace Microsoft.Build.BuildEngine {
 			} else
 				throw new ExpressionParseException (String.Format ("Invalid token: {0}", ch));
 		}
+
+		public void ScanForClosingParens (int parensCounter = 1)
+		{
+			tokenPosition = position;
+			int start = position;
+			int ch;
+			while ((ch = ReadChar ()) >= 0) {
+				switch (ch) {
+				case ')':
+					if (--parensCounter == 0) {
+						--position;
+						token = new Token (inputString.Substring (start, position - start), TokenType.String, tokenPosition);
+						return;
+					}
+					break;
+				case '(':
+					++parensCounter;
+					break;
+				}
+			}
+
+			token = new Token (null, TokenType.EOF, tokenPosition);
+		}
 		
 		public int TokenPosition {
 			get { return tokenPosition; }
