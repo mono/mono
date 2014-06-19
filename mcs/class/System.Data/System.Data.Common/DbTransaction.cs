@@ -32,11 +32,10 @@
 
 namespace System.Data.Common
 {
-	public abstract class DbTransaction : 
+	public abstract class DbTransaction : IDbTransaction, IDisposable
 #if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByRefObject, 
+		, MarshalByRefObject
 #endif
-		IDbTransaction, IDisposable
 	{
 		#region Constructors
 

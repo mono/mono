@@ -48,12 +48,7 @@ namespace System.Data
 	[Serializable]
 #endif
 #endif
-	public class PropertyCollection : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		Hashtable
-#else
-		System.Collections.Generic.Dictionary<object, object>
-#endif
+	public class PropertyCollection : Hashtable
 	{
 		public PropertyCollection() 
 		{

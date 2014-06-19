@@ -37,11 +37,10 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
-	public abstract class DbParameterCollection : 
+	public abstract class DbParameterCollection : IDataParameterCollection, IList, ICollection, IEnumerable
 #if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByRefObject,
+		, MarshalByRefObject
 #endif
-		IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Constructors
 

@@ -37,11 +37,11 @@ namespace System.Data
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 #endif
-	public partial class DataView : 
+	public partial class DataView : IEnumerable
 #if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, ISupportInitialize,
+		, MarshalByValueComponent, ISupportInitialize
 #endif
-		IEnumerable {
+	{
 		internal DataTable dataTable;
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
@@ -234,11 +234,7 @@ namespace System.Data
 				}
 
 				CultureInfo info = (Table != null) ? Table.Locale : CultureInfo.CurrentCulture;
-#if !NET_2_0
-				if (String.Compare (rowFilter, value, false, info) == 0)
-#else
 				if (String.Compare (rowFilter, value, info, CompareOptions.None) == 0)
-#endif
 					return;
 
 				if (value.Length == 0) {

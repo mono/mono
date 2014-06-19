@@ -37,9 +37,7 @@ namespace System.Data
 	/// </summary>
 	[Flags]
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum DataRowState
 	{

@@ -39,11 +39,10 @@ using System.Data;
 
 namespace System.Data.Common
 {
-	public sealed class DataColumnMappingCollection : 
+	public sealed class DataColumnMappingCollection : IColumnMappingCollection, IList, ICollection, IEnumerable
 #if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByRefObject,
+		, MarshalByRefObject
 #endif
-		IColumnMappingCollection , IList, ICollection, IEnumerable
 	{
 		#region Fields
 

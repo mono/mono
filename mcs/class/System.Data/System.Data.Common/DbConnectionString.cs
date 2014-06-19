@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 #if NET_2_0
 
 using System.Collections;
@@ -38,11 +39,7 @@ using System.Text;
 namespace System.Data.Common {
 
 	[Obsolete ()]
-	internal class DbConnectionString : DbConnectionOptions
-#if !WINDOWS_PHONE && !NETFX_CORE
-		, ISerializable 
-#endif
-	{
+	internal class DbConnectionString : DbConnectionOptions, ISerializable {
 
 		#region Fields
 
@@ -60,20 +57,14 @@ namespace System.Data.Common {
 		public DbConnectionString (string connectionString)
 			: base (connectionString)
 		{
-#if WINDOWS_PHONE || NETFX_CORE
-			options = new System.Collections.Generic.Dictionary<string, string> ();
-#else
 			options = new NameValueCollection ();
-#endif
 			ParseConnectionString (connectionString);
 		}
 		
-#if !WINDOWS_PHONE && !NETFX_CORE
 		[MonoTODO]
 		protected DbConnectionString (SerializationInfo si, StreamingContext sc)
 		{
 		}
-#endif
 
 		[MonoTODO]
 		public DbConnectionString (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
@@ -99,13 +90,11 @@ namespace System.Data.Common {
 
 		#region Methods
 
-#if !WINDOWS_PHONE && !NETFX_CORE
 		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		protected virtual string KeywordLookup (string keyname)
 		{
@@ -122,4 +111,5 @@ namespace System.Data.Common {
 	}
 }
 
+#endif
 #endif

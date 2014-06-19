@@ -46,11 +46,10 @@ namespace System.Data.Common
 #if ONLY_1_1
 	abstract
 #endif
-	class DataAdapter : 
+	class DataAdapter : IDataAdapter, IDisposable
 #if !WINDOWS_PHONE && !NETFX_CORE
-		Component, 
+		, Component
 #endif
-		IDataAdapter, IDisposable
 	{
 		#region Fields
 
@@ -240,9 +239,9 @@ namespace System.Data.Common
 		void Dispose (bool disposing)
 		{
 #if WINDOWS_PHONE || NETFX_CORE
-			EventHandler eh = (EventHandler)Events[disposedEvent];
+			EventHandler eh = (EventHandler) Events [disposedEvent];
 			if (eh != null)
-				eh(this, EventArgs.Empty);
+				eh (this, EventArgs.Empty);
 #endif
 		}
 
@@ -682,27 +681,23 @@ namespace System.Data.Common
 #endif
 
 #if WINDOWS_PHONE || NETFX_CORE
-		private EventHandlerList event_handlers = null;
-		static readonly object disposedEvent = new object();
-		protected EventHandlerList Events
-		{
-			get
-			{
+		EventHandlerList event_handlers = null;
+		static readonly object disposedEvent = new object ();
+		protected EventHandlerList Events {
+			get {
 				if (null == event_handlers)
-					event_handlers = new EventHandlerList();
+					event_handlers = new EventHandlerList ();
 				return event_handlers;
 			}
 		}
-		[Browsable(false), EditorBrowsable(EditorBrowsableState.Advanced)]
-		public event EventHandler Disposed
-		{
-			add { Events.AddHandler(disposedEvent, value); }
-			remove { Events.RemoveHandler(disposedEvent, value); }
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public event EventHandler Disposed {
+			add { Events.AddHandler (disposedEvent, value); }
+			remove { Events.RemoveHandler (disposedEvent, value); }
 		}
 
-		public void Dispose()
-		{
-			Dispose(true);
+		public void Dispose() {
+			Dispose (true);
 		}
 #endif
 

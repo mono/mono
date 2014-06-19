@@ -33,9 +33,15 @@ using System.Collections;
 #if WINDOWS_PHONE || NETFX_CORE
 using System.Xml.Linq;
 using System.Linq;
+using XmlAttribute = System.Xml.Linq.XAttribute;
+using XmlElement = System.Xml.Linq.XElement;
+using XmlNode = System.Xml.Linq.XNode;
+using XmlDocument = System.Xml.Linq.XDocument;
+using XmlNodeList = System.Collections.Generic.IEnumerable<System.Xml.Linq.XNode>;
+using XmlAttributeCollection = System.Collections.Generic.IEnumerable<System.Xml.Linq.XAttribute>;
 #endif
 
-internal class XmlHelper {
+static class XmlHelper {
 
 	static Hashtable localSchemaNameCache = new Hashtable ();
 	static Hashtable localXmlNameCache = new Hashtable ();
@@ -66,129 +72,180 @@ internal class XmlHelper {
 		localXmlNameCache.Clear ();
 	}
 	
+	internal static string GetLocalName (this XmlElement el)
+	{
 #if !WINDOWS_PHONE && !NETFX_CORE
-		internal static string GetLocalName (XmlElement el)
-		{
-			return el.LocalName;
-		}
-		internal static string GetNamespaceUri (XmlElement el)
-		{
-			return el.NamespaceURI;
-		}
-		internal static string GetPrefix (XmlElement el)
-		{
-			return el.Prefix;
-		}
-		internal static string GetLocalName (XmlAttribute attr)
-		{
-			return attr.LocalName;
-		}
-		internal static string GetNamespaceUri (XmlAttribute attr)
-		{
-			return attr.NamespaceURI;
-		}
-		internal static string GetPrefix (XmlElement el, XmlAttribute attr)
-		{
-			return attr.Prefix;
-		}
-		internal static XmlElement GetRootElement (XmlDocument doc)
-		{
-			return doc.DocumentElement;
-		}
-		internal static XmlAttributeCollection GetAttributes (XmlElement el)
-		{
-			return el.Attributes;
-		}
-		internal static string GetAttribute (XmlElement el, string name)
-		{
-			return el.GetAttribute (name);
-		}
-		internal static string GetAttribute (XmlElement el, string name, string ns)
-		{
-			return el.GetAttribute (name, ns);
-		}
-		internal static XmlNodeList GetChildNodes (XmlElement el)
-		{
-			return el.ChildNodes;
-		}
-		internal static XmlNode GetNextSibling (XmlNode n)
-		{
-			return n.NextSibling;
-		}
-		internal static XmlElement GetFirstElement (XmlElement n)
-		{
-			return n.FirstChild as XmlElement;
-		}
-		internal static XmlNodeList GetSiblings(XmlElement n)
-		{
-			if (n.ParentNode == null)
-			{
-				return null;
-			}
-			return n.ParentNode.ChildNodes;
-		}
+		return el.LocalName;
 #else
-		internal static string GetLocalName (XElement el)
-		{
-			return el.Name.LocalName;
-		}
-		internal static string GetNamespaceUri (XElement el)
-		{
-			return el.Name.NamespaceName;
-		}
-		internal static string GetPrefix (XElement el)
-		{
-			return el.GetPrefixOfNamespace(el.Name.Namespace);
-		}
-		internal static string GetLocalName (XAttribute attr)
-		{
-			return attr.Name.LocalName;
-		}
-		internal static string GetNamespaceUri (XAttribute attr)
-		{
-			return attr.Name.NamespaceName;
-		}
-		internal static string GetPrefix (XElement el, XAttribute attr)
-		{
-			return el.GetPrefixOfNamespace (attr.Name.Namespace);
-		}
-		internal static XElement GetRootElement (XDocument doc)
-		{
-			return doc.Root;
-		}
-		internal static IEnumerable<XAttribute> GetAttributes (XElement el)
-		{
-			return el.Attributes ();
-		}
-		internal static string GetAttribute (XElement el, string name)
-		{
-			// TODO: possible null checks
-			return el.Attribute (name).Value;
-		}
-		internal static string GetAttribute (XElement el, string name, string ns)
-		{
-			// TODO: possible null checks
-			return el.Attribute(XNamespace.Get(ns) + name).Value;
-		}
-		internal static IEnumerable<XNode> GetChildNodes (XElement el)
-		{
-			return el.Nodes ();
-		}
-		internal static XNode GetNextSibling (XNode n)
-		{
-			return n.NextNode;
-		}
-		internal static XElement GetFirstElement (XElement n)
-		{
-			return n.FirstNode as XElement;
-		}
-		internal static IEnumerable<XNode> GetSiblings(XElement n)
-		{
-			if (n.Parent == null)
-			{
-				return null;
-			}
-			return n.Parent.Nodes();
-		}
+		return el.Name.LocalName;
+#endif
+	}
+	internal static string GetNamespaceUri (this XmlElement el)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return el.NamespaceURI;
+#else
+		return el.Name.NamespaceName;
+#endif
+	}
+	internal static string GetPrefix (this XmlElement el)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return el.Prefix;
+#else
+		return el.GetPrefixOfNamespace (el.Name.Namespace);
+#endif
+	}
+	internal static bool IsNamespaceAttribute (this XmlAttribute attr)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return attr.Prefix.Equals ("xmlns");
+#else
+		return attr.IsNamespaceDeclaration;
+#endif
+	}
+	internal static string GetLocalName (this XmlAttribute attr)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return attr.LocalName;
+#else
+		return attr.Name.LocalName;
+#endif
+	}
+	internal static string GetNamespaceUri (this XmlAttribute attr)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return attr.NamespaceURI;
+#else
+		return attr.Name.NamespaceName;
+#endif
+	}
+	internal static string GetPrefix (this XmlElement el, XmlAttribute attr)
+	{
+		if (attr == null)
+			return String.Empty;
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return attr.Prefix;
+#else
+		return el.GetPrefixOfNamespace (attr.Name.Namespace);
+#endif
+	}
+	internal static XmlElement GetRootElement (this XmlDocument doc)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return doc.DocumentElement;
+#else
+		return doc.Root;
+#endif
+	}
+	internal static XmlAttributeCollection GetAttributes (this XmlElement el)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return el.Attributes;
+#else
+		return el.Attributes ();
+#endif
+	}
+	internal static XmlNodeList GetChildNodes (this XmlElement el)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return el.ChildNodes;
+#else
+		return el.Nodes ();
+#endif
+	}
+	internal static XmlNode GetNextSibling (this XmlNode n)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return n.NextSibling;
+#else
+		return n.NextNode;
+#endif
+	}
+	internal static XmlElement GetFirstElement (this XmlElement n)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return n.FirstChild as XmlElement;
+#else
+		return n.FirstNode as XElement;
+#endif
+	}
+	internal static string GetInnerText (this XmlElement el)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return el.InnerText;
+#else
+		return el.Value;
+#endif
+	}
+	internal static XmlNodeList GetSiblings (this XmlElement n)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return n.ParentNode.ChildNodes;
+#else
+		return n.Parent.Nodes ();
+#endif
+	}
+	internal static XmlDocument CreateXmlDocument (XmlReader reader)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		XmlDocument doc = new XmlDocument ();
+		doc.Load (reader);
+#else
+		XDocument doc = XDocument.Load (reader);
+#endif
+		return doc;
+	}
+	internal static XElement DeepClone (this XDocument doc, XElement element)
+	{
+#if !WINDOWS_PHONE && !NETFX_CORE
+		return doc.ImportNode (element, true);
+#else
+		return new XElement (element);
+#endif
+	}
+	
+	// extension methods to polyfil interface
+
+#if !WINDOWS_PHONE && !NETFX_CORE
+	internal static XmlReader CreateReader (this XmlDocument doc) 
+	{
+		return new XmlNodeReader (doc);
+	}
+#else
+	internal static string GetAttribute (this XmlElement el, string name)
+	{
+		XmlAttribute attr = el.Attribute (name);
+		if (attr == null)
+			return null;
+		return attr.Value;
+	}
+	internal static string GetAttribute(this XmlElement el, string name, string ns)
+	{
+		XmlAttribute attr = el.Attribute (XNamespace.Get (ns) + name);
+		if (attr == null)
+			return null;
+		return attr.Value;
+	}
+	internal static void AppendChild (this XContainer doc, XNode node)
+	{
+		doc.Add (node);
+	}
+	internal static XElement CreateElement (this XDocument doc, string localName)
+	{
+		return new XElement (localName);
+	}
+	internal static void Load (this XDocument doc, XmlReader reader)
+	{
+		doc.Add (XNode.ReadFrom (reader));
+	}
+	internal static string ReadElementString (this XmlReader reader)
+	{
+		return reader.ReadElementContentAsString ();
+	}
+	internal static string ReadString (this XmlReader reader)
+	{
+		return reader.ReadContentAsString ();
+	}
 #endif
 }

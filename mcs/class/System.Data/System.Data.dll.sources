@@ -117,6 +117,7 @@ System.Data/TypeDataSetGeneratorException.cs
 System.Data/UniqueConstraint.cs
 System.Data/UpdateRowSource.cs
 System.Data/UpdateStatus.cs
+System.Data/Utilities.cs
 System.Data/VersionNotFoundException.cs
 System.Data/XmlDataInferenceLoader.cs
 System.Data/XmlHelper.cs

@@ -38,9 +38,7 @@ namespace System.Data
 	/// Specifies the type of SQL query to be used by the OleDbRowUpdatedEventArgs, OleDbRowUpdatingEventArgs, SqlRowUpdatedEventArgs, or SqlRowUpdatingEventArgs class.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum StatementType
 	{

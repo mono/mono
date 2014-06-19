@@ -271,12 +271,7 @@ namespace System.Data {
 				string colName = XmlHelper.Decode (reader.LocalName);
 				if (Table.Columns.Contains (colName)) 
 				{
-#if !WINDOWS_PHONE && !NETFX_CORE
-					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadString ());
-					reader.Read ();
-#else
-					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadElementContentAsString ());
-#endif
+					object data = XmlDataLoader.StringToObject (Table.Columns[colName].DataType, reader.ReadElementString ());
 					
 					if (loadType == DataRowVersion.Current) Row [colName] = data;
 					else Row.SetOriginalValue (colName, data);
@@ -329,19 +324,11 @@ namespace System.Data {
 			
 			if (changes != null)
 			{
-#if !NET_2_0
-				if (string.Compare (changes, "modified", true, CultureInfo.InvariantCulture) == 0) {
-#else
 				if (string.Compare (changes, "modified", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0) {
-#endif
 					DiffGrRows.Add (id, Row); // for later use
 					state = DataRowState.Modified;
 				}
-#if !NET_2_0
-				else if (string.Compare (changes, "inserted", true, CultureInfo.InvariantCulture) == 0) {
-#else
 				else if (string.Compare (changes, "inserted", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0) {
-#endif
 					state = DataRowState.Added;
 				}
 				else
@@ -351,11 +338,7 @@ namespace System.Data {
 				state = DataRowState.Unchanged;
 			
 			// If row had errors add row to hashtable for later use
-#if !NET_2_0
-			if (error != null && string.Compare (error, "true", true, CultureInfo.InvariantCulture) == 0)
-#else
 			if (error != null && string.Compare (error, "true", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0)
-#endif
 				ErrorRows.Add (id, Row);
 		
 			LoadColumns (Table, Row, reader, DataRowVersion.Current);

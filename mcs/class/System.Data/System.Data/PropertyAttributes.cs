@@ -43,9 +43,7 @@ namespace System.Data
 	[Obsolete]
 	[ComponentModel.EditorBrowsable (ComponentModel.EditorBrowsableState.Never)]
 #else
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum PropertyAttributes
 	{

@@ -50,6 +50,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 #else
 using System.Linq;
 using System.Xml.Linq;
+using XmlDocument = System.Xml.Linq.XDocument;
 #endif
 using System.Xml;
 using System.Xml.Schema;
@@ -64,22 +65,21 @@ namespace System.Data
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[Serializable]
 #endif
-	public partial class DataSet : 
+	public partial class DataSet : IXmlSerializable, IDisposable
 #if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize, 
+		, MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize
 #endif
-		IXmlSerializable, IDisposable
 	{
-		private string dataSetName;
-		private string _namespace = string.Empty;
-		private string prefix;
-		private bool caseSensitive;
-		private bool enforceConstraints = true;
-		private DataTableCollection tableCollection;
-		private DataRelationCollection relationCollection;
-		private PropertyCollection properties;
-		private DataViewManager defaultView;
-		private CultureInfo locale;
+		string dataSetName;
+		string _namespace = string.Empty;
+		string prefix;
+		bool caseSensitive;
+		bool enforceConstraints = true;
+		DataTableCollection tableCollection;
+		DataRelationCollection relationCollection;
+		PropertyCollection properties;
+		DataViewManager defaultView;
+		CultureInfo locale;
 #if !WINDOWS_PHONE && !NETFX_CORE
 		internal XmlDataDocument _xmlDataDocument;
 #endif
@@ -324,7 +324,7 @@ namespace System.Data
 			MergeManager.Merge (this, table, preserveChanges, missingSchemaAction);
 		}
 
-		private static bool IsLegalSchemaAction (MissingSchemaAction missingSchemaAction)
+		static bool IsLegalSchemaAction (MissingSchemaAction missingSchemaAction)
 		{
 			if (missingSchemaAction == MissingSchemaAction.Add || missingSchemaAction == MissingSchemaAction.AddWithKey
 				|| missingSchemaAction == MissingSchemaAction.Error || missingSchemaAction == MissingSchemaAction.Ignore)
@@ -435,11 +435,7 @@ namespace System.Data
 		public virtual DataSet Clone ()
 		{
 			// need to return the same type as this...
-#if !WINDOWS_PHONE && !NETFX_CORE
-			DataSet Copy = (DataSet) Activator.CreateInstance (GetType (), true);
-#else
-			DataSet Copy = (DataSet) Activator.CreateInstance (GetType ());
-#endif
+			DataSet Copy = (DataSet) Utilities.CreateInstance (GetType ());
 
 			CopyProperties (Copy);
 
@@ -461,11 +457,7 @@ namespace System.Data
 		public DataSet Copy ()
 		{
 			// need to return the same type as this...
-#if !WINDOWS_PHONE && !NETFX_CORE
-			DataSet Copy = (DataSet) Activator.CreateInstance (GetType (), true);
-#else
-			DataSet Copy = (DataSet) Activator.CreateInstance (GetType ());
-#endif
+			DataSet Copy = (DataSet) Utilities.CreateInstance (GetType ());
 
 			CopyProperties (Copy);
 
@@ -486,7 +478,7 @@ namespace System.Data
 			return Copy;
 		}
 
-		private void CopyProperties (DataSet Copy)
+		void CopyProperties (DataSet Copy)
 		{
 			Copy.CaseSensitive = CaseSensitive;
 			//Copy.Container = Container
@@ -496,11 +488,7 @@ namespace System.Data
 			Copy.EnforceConstraints = EnforceConstraints;
 			if(ExtendedProperties.Count > 0) {
 				// Cannot copy extended properties directly as the property does not have a set accessor
-#if !WINDOWS_PHONE && !NETFX_CORE
-				Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
-#else
 				object[] tgtArray = new object[ExtendedProperties.Count];
-#endif
 				ExtendedProperties.Keys.CopyTo (tgtArray, 0);
 				for (int i = 0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
@@ -512,7 +500,7 @@ namespace System.Data
 		}
 
 
-		private void CopyRelations (DataSet Copy)
+		void CopyRelations (DataSet Copy)
 		{
 
 			//Creation of the relation contains some of the properties, and the constructor
@@ -599,7 +587,7 @@ namespace System.Data
 			return copySet;
 		}
 
-		private void AddChangedRow (Hashtable addedRows, DataTable copyTable, DataRow row)
+		void AddChangedRow (Hashtable addedRows, DataTable copyTable, DataRow row)
 		{
 			if (addedRows.ContainsKey (row))
 				return;
@@ -671,20 +659,11 @@ namespace System.Data
 		{
 			if (reader == null)
 				return;
-#if !WINDOWS_PHONE && !NETFX_CORE
-			XmlDocument doc = new XmlDocument ();
-			doc.Load (reader);
-#else
-			XDocument doc = XDocument.Load (reader);
-#endif
+			XmlDocument doc = XmlHelper.CreateXmlDocument (reader);
 			InferXmlSchema (doc, nsArray);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		private void InferXmlSchema (XmlDocument doc, string [] nsArray)
-#else
-		private void InferXmlSchema (XDocument doc, string [] nsArray)
-#endif
+		void InferXmlSchema (XmlDocument doc, string [] nsArray)
 		{
 			XmlDataInferenceLoader.Infer (this, doc, XmlReadMode.InferSchema, nsArray);
 		}
@@ -758,7 +737,7 @@ namespace System.Data
 			} finally {
 				writer.WriteEndDocument ();
 				writer.Close ();
-				file.Close ();
+				file.Dispose ();
 			}
 		}
 
@@ -784,7 +763,7 @@ namespace System.Data
 			} finally {
 				writer.WriteEndDocument ();
 				writer.Close ();
-				file.Close ();
+				file.Dispose ();
 			}
 		}
 
@@ -853,7 +832,7 @@ namespace System.Data
 			} finally {
 				writer.WriteEndDocument ();
 				writer.Close ();
-				file.Close ();
+				file.Dispose ();
 			}
 		}
 
@@ -1034,10 +1013,8 @@ namespace System.Data
 			if (reader.EOF)
 				return mode;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
-			int depth = (reader.NodeType == XmlNodeType.Element) ? reader.Depth : -1;
-
 			XmlDocument doc = new XmlDocument ();
+#if !WINDOWS_PHONE && !NETFX_CORE
 			XmlElement root = doc.CreateElement(reader.Prefix, reader.LocalName, reader.NamespaceURI);
 			if (reader.HasAttributes) {
 				for (int i = 0; i < reader.AttributeCount; i++) {
@@ -1056,6 +1033,7 @@ namespace System.Data
 			XmlReadMode retMode = mode;
 			bool schemaLoaded = false;
 
+			int depth = (reader.NodeType == XmlNodeType.Element) ? reader.Depth : -1;
 			for (;;) {
 				if( reader.Depth == depth ||
 					reader.NodeType == XmlNodeType.EndElement)
@@ -1105,33 +1083,28 @@ namespace System.Data
 				root.AppendChild(n);
 			}
 #else
-			XDocument doc = new XDocument();
-			XElement root = (XElement)XNode.ReadFrom(reader);
+			XElement root = XNode.ReadFrom (reader) as XElement;
 
 			XmlReadMode retMode = mode;
 			bool schemaLoaded = false;
 
-			var schema = root.Element(XNamespace.Get(XmlConstants.SchemaNamespace) + "schema");
-			if (schema != null)
-			{
-				schema.Remove();
-				if (mode != XmlReadMode.IgnoreSchema && mode != XmlReadMode.InferSchema)
-				{
-					ReadXmlSchema(schema.CreateReader());
+			XElement schema = root.Element (XNamespace.Get (XmlConstants.SchemaNamespace) + "schema");
+			if (schema != null) {
+				schema.Remove ();
+				if (mode != XmlReadMode.IgnoreSchema && mode != XmlReadMode.InferSchema) {
+					ReadXmlSchema (schema.CreateReader ());
 					retMode = XmlReadMode.ReadSchema;
 					schemaLoaded = true;
 				}
 			}
 
-			var diffgram = root.Element(XNamespace.Get(XmlConstants.DiffgrNamespace) + "diffgram");
-			if (diffgram != null)
-			{
-				diffgram.Remove();
-				if (mode == XmlReadMode.DiffGram || mode == XmlReadMode.IgnoreSchema || mode == XmlReadMode.Auto)
-				{
+			XElement diffgram = root.Element (XNamespace.Get (XmlConstants.DiffgrNamespace) + "diffgram");
+			if (diffgram != null) {
+				diffgram.Remove ();
+				if (mode == XmlReadMode.DiffGram || mode == XmlReadMode.IgnoreSchema || mode == XmlReadMode.Auto) {
 					if (DiffLoader == null) 
-						DiffLoader = new XmlDiffLoader(this);
-					DiffLoader.Load(diffgram.CreateReader());
+						DiffLoader = new XmlDiffLoader (this);
+					DiffLoader.Load (diffgram.CreateReader ());
 					retMode = XmlReadMode.DiffGram;
 				}
 			}
@@ -1139,37 +1112,25 @@ namespace System.Data
 
 			if (reader.NodeType == XmlNodeType.EndElement)
 				reader.Read ();
-			reader.MoveToContent();
+			reader.MoveToContent ();
 
 			if (mode == XmlReadMode.DiffGram) {
 				return retMode;
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
-			doc.AppendChild(root);
-#else
-			doc.Add(root);
-#endif
+			doc.AppendChild (root);
 
 			if (!schemaLoaded &&
 				retMode != XmlReadMode.ReadSchema &&
 				mode != XmlReadMode.IgnoreSchema &&
 				mode != XmlReadMode.Fragment &&
 				(Tables.Count == 0 || mode == XmlReadMode.InferSchema)) {
-#if !WINDOWS_PHONE && !NETFX_CORE
-				InferXmlSchema(doc, null);
-#else
-				InferXmlSchema(doc.CreateReader(), null);
-#endif
+				InferXmlSchema (doc.CreateReader (), null);
 				if (mode == XmlReadMode.Auto)
 					retMode = XmlReadMode.InferSchema;
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
-			reader = new XmlNodeReader (doc);
-#else
 			reader = doc.CreateReader ();
-#endif
 			XmlDataReader.ReadXml (this, reader, mode);
 
 			return retMode == XmlReadMode.Auto ?
@@ -1410,7 +1371,7 @@ namespace System.Data
 			return o.ToString ();
 		}
 
-		private void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
+		void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
 		{
 			//WriteTable takes care of skipping a table if it has a
 			//Nested Parent Relationship
@@ -1604,7 +1565,7 @@ namespace System.Data
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
 
-		private void DoWriteXmlSchema (XmlWriter writer)
+		void DoWriteXmlSchema (XmlWriter writer)
 		{
 			if (writer.WriteState == WriteState.Start)
 				writer.WriteStartDocument ();
@@ -1654,7 +1615,7 @@ namespace System.Data
 			WriteAttributeString (writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
 		}
 
-		private void SetRowsID ()
+		void SetRowsID ()
 		{
 			foreach (DataTable table in Tables)
 				table.SetRowsID ();
@@ -1686,7 +1647,7 @@ namespace System.Data
 		: ISupportInitializeNotification 
 #endif
 	{
-		private bool dataSetInitialized = true;
+		bool dataSetInitialized = true;
 		public event EventHandler Initialized;
 
 #if !WINDOWS_PHONE && !NETFX_CORE
@@ -1907,13 +1868,13 @@ namespace System.Data
 		}
 #endif
 
-		private void OnDataSetInitialized (EventArgs e)
+		void OnDataSetInitialized (EventArgs e)
 		{
 			if (null != Initialized)
 				Initialized (this, e);
 		}
 
-		private void DataSetInitialized ()
+		void DataSetInitialized ()
 		{
 			EventArgs e = new EventArgs ();
 			OnDataSetInitialized (e);

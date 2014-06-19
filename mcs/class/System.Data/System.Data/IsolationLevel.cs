@@ -38,9 +38,7 @@ namespace System.Data
 	/// </summary>
 #if !NET_2_0
 	[Flags]
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum IsolationLevel
 	{

@@ -43,11 +43,7 @@ namespace System.Data
 {
 	internal class XmlSchemaWriter
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
-		const string xmlnsxs = System.Xml.Schema.XmlSchema.Namespace;
-#else
 		const string xmlnsxs = XmlConstants.SchemaNamespace;
-#endif
 
 		public static void WriteXmlSchema (DataSet dataset,
 			XmlWriter writer)
@@ -571,11 +567,7 @@ namespace System.Data
 		private void AddExtendedPropertyAttributes (PropertyCollection props)
 		{
 			// add extended properties to xs:element
-#if !WINDOWS_PHONE && !NETFX_CORE
 			foreach (DictionaryEntry de in props) {
-#else
-			foreach (System.Collections.Generic.KeyValuePair<object, object> de in props) {
-#endif
 				w.WriteStartAttribute (
 					XmlConstants.MspropPrefix,
 					XmlConvert.EncodeName (de.Key.ToString ()),
