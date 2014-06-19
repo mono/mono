@@ -22,6 +22,7 @@ LIB_MCS_FLAGS = \
 	-r:$(corlib)				\
 	-r:$(system)			 	\
 	-r:System.Xml.dll 			\
+	-r:System.Core.dll 			\
 
 
 ifeq (net_1_1_java, $(PROFILE))
