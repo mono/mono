@@ -179,7 +179,7 @@ namespace MonoTests.System.Data
                                 Assert.Fail ("#A07");
                         }
                         catch (Exception e) {
-				// Never premise English.
+                                // Never premise English.
                                 //Assert.AreEqual ("There is no row at position 2.", e.Message, "#A08");
                         }
                 }
@@ -288,7 +288,7 @@ namespace MonoTests.System.Data
                                                                                                     
                                                                                                     
                                 Assert.AreEqual ("My FName", row [1, DataRowVersion.Original], "#A38");
-								Assert.AreEqual ("My LName", row [2, DataRowVersion.Original], "#A39");
+                                Assert.AreEqual ("My LName", row [2, DataRowVersion.Original], "#A39");
                                                                                                     
                                 Assert.AreEqual ("My FName", row [1, DataRowVersion.Current], "#A40");
                                 Assert.AreEqual ("My LName", row [2, DataRowVersion.Current], "#A41");

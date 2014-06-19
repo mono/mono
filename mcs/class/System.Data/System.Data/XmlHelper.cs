@@ -249,12 +249,3 @@ static class XmlHelper {
 	}
 #endif
 }
-
-// "hack" for extension methods for .NET 2.0 and lower
-#if !NET_3_0
-namespace System.Runtime.CompilerServices {
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-	class ExtensionAttribute : Attribute {
-	}
-}
-#endif
