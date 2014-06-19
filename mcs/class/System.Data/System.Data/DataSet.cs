@@ -1010,6 +1010,8 @@ namespace System.Data
 				}
 			}
 
+			while (reader.NodeType != XmlNodeType.Element && !reader.EOF)
+				reader.Skip ();
 			if (reader.EOF)
 				return mode;
 
