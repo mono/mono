@@ -42,10 +42,11 @@ namespace System.Data.Common
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableMappingCollectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 #endif
-	public sealed class DataTableMappingCollection : ITableMappingCollection, IList, ICollection, IEnumerable
+	public sealed class DataTableMappingCollection : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByRefObject
+		MarshalByRefObject,
 #endif
+		ITableMappingCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields
 

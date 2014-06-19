@@ -46,10 +46,11 @@ namespace System.Data.Common
 #if ONLY_1_1
 	abstract
 #endif
-	class DataAdapter : IDataAdapter, IDisposable
+	class DataAdapter : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, Component
+		Component, 
 #endif
+		IDataAdapter, IDisposable
 	{
 		#region Fields
 

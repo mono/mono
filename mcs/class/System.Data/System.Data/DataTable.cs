@@ -66,10 +66,11 @@ namespace System.Data {
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	[Serializable]
 #endif
-	public partial class DataTable : IDisposable
+	public partial class DataTable : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize, 
+		MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize, 
 #endif
+		IDisposable
 	{
 		#region Fields
 

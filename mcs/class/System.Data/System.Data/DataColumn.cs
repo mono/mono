@@ -62,10 +62,11 @@ namespace System.Data {
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
 #endif
-	public class DataColumn : IDisposable
+	public class DataColumn : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByValueComponent
+		MarshalByValueComponent,
 #endif
+		IDisposable
 	{
 #region Events
 		EventHandlerList _eventHandlers = new EventHandlerList ();

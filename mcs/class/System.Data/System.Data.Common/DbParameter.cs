@@ -35,10 +35,11 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data.Common {
-	public abstract class DbParameter : IDbDataParameter, IDataParameter
+	public abstract class DbParameter : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByRefObject
+		MarshalByRefObject, 
 #endif
+		IDbDataParameter, IDataParameter
 	{
 		#region Constructors
 		internal static Hashtable dbTypeMapping;

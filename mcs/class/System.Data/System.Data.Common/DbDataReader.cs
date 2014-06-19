@@ -41,10 +41,11 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbDataReader : IDataReader, IDataRecord, IDisposable, IEnumerable
+	public abstract class DbDataReader : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByRefObject
+		MarshalByRefObject, 
 #endif
+		IDataReader, IDataRecord, IDisposable, IEnumerable
 	{
 		#region Constructors
 

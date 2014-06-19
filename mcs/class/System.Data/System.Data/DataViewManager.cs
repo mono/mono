@@ -50,10 +50,11 @@ namespace System.Data
 #if !WINDOWS_PHONE && !NETFX_CORE
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewManagerDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 #endif
-	public class DataViewManager : IDisposable
+	public class DataViewManager : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByValueComponent, IBindingList, ITypedList, ICollection, IList, IEnumerable
+		MarshalByValueComponent, IBindingList, ITypedList, ICollection, IList, IEnumerable, 
 #endif
+		IDisposable
 	{
 		#region Fields
 

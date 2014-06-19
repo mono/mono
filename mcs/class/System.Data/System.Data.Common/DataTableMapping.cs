@@ -43,10 +43,11 @@ namespace System.Data.Common {
 	[TypeConverterAttribute (typeof (DataTableMappingConverter))]
 #endif
 #endif
-	public sealed class DataTableMapping : ITableMapping, ICloneable
+	public sealed class DataTableMapping : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByRefObject
+		MarshalByRefObject,
 #endif
+		ITableMapping, ICloneable
 	{
 		#region Fields
 

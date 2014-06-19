@@ -42,10 +42,11 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbConnection : IDbConnection, IDisposable
+	public abstract class DbConnection : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, Component
+		Component, 
 #endif
+		IDbConnection, IDisposable
 	{
 		#region Constructors
 

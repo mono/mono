@@ -65,10 +65,11 @@ namespace System.Data
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[Serializable]
 #endif
-	public partial class DataSet : IXmlSerializable, IDisposable
+	public partial class DataSet : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize
+		MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize,
 #endif
+		IXmlSerializable, IDisposable
 	{
 		string dataSetName;
 		string _namespace = string.Empty;
@@ -1015,6 +1016,8 @@ namespace System.Data
 			if (reader.EOF)
 				return mode;
 
+			int depth = (reader.NodeType == XmlNodeType.Element) ? reader.Depth : -1;
+
 			XmlDocument doc = new XmlDocument ();
 #if !WINDOWS_PHONE && !NETFX_CORE
 			XmlElement root = doc.CreateElement(reader.Prefix, reader.LocalName, reader.NamespaceURI);
@@ -1035,7 +1038,6 @@ namespace System.Data
 			XmlReadMode retMode = mode;
 			bool schemaLoaded = false;
 
-			int depth = (reader.NodeType == XmlNodeType.Element) ? reader.Depth : -1;
 			for (;;) {
 				if( reader.Depth == depth ||
 					reader.NodeType == XmlNodeType.EndElement)

@@ -196,10 +196,10 @@ static class XmlHelper {
 #endif
 		return doc;
 	}
-	internal static XElement DeepClone (this XDocument doc, XElement element)
+	internal static XmlElement DeepClone (this XmlDocument doc, XmlElement element)
 	{
 #if !WINDOWS_PHONE && !NETFX_CORE
-		return doc.ImportNode (element, true);
+		return doc.ImportNode (element, true) as XmlElement;
 #else
 		return new XElement (element);
 #endif
@@ -249,3 +249,12 @@ static class XmlHelper {
 	}
 #endif
 }
+
+// "hack" for extension methods for .NET 2.0 and lower
+#if !NET_3_0
+namespace System.Runtime.CompilerServices {
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+	class ExtensionAttribute : Attribute {
+	}
+}
+#endif

@@ -158,6 +158,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
@@ -167,7 +168,6 @@ using System.Xml;
 using System.Xml.Schema;
 #else
 using Mono.Xml.Schema;
-using System.Collections.Generic;
 using XmlAttribute = System.Xml.Linq.XAttribute;
 using XmlElement = System.Xml.Linq.XElement;
 using XmlNode = System.Xml.Linq.XNode;

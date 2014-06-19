@@ -39,10 +39,11 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbCommand : IDbCommand, IDisposable
+	public abstract class DbCommand : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, Component
+		Component, 
 #endif
+		IDbCommand, IDisposable
 	{
 		protected DbCommand ()
 		{

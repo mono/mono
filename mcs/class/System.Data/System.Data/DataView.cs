@@ -37,11 +37,11 @@ namespace System.Data
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 #endif
-	public partial class DataView : IEnumerable
+	public partial class DataView : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		, MarshalByValueComponent, ISupportInitialize
+		MarshalByValueComponent, ISupportInitialize,
 #endif
-	{
+		IEnumerable {
 		internal DataTable dataTable;
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
