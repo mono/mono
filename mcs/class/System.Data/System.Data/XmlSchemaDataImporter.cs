@@ -179,7 +179,7 @@ using XmlAttributeCollection = System.Collections.Generic.IEnumerable<System.Xml
 
 namespace System.Data
 {
-	internal class TableStructureCollection : Collection<TableStructure>
+	class TableStructureCollection : Collection<TableStructure>
 	{
 		public TableStructure this [string name] {
 			get {
@@ -191,7 +191,7 @@ namespace System.Data
 		}
 	}
 
-	internal class RelationStructureCollection : Collection<RelationStructure>
+	class RelationStructureCollection : Collection<RelationStructure>
 	{
 		public RelationStructure this [string parent, string child] {
 			get {
@@ -203,7 +203,7 @@ namespace System.Data
 		}
 	}
 	
-	internal class TableStructure
+	class TableStructure
 	{
 		public TableStructure (DataTable table)
 		{
@@ -229,7 +229,7 @@ namespace System.Data
 		}
 	}
 
-	internal class RelationStructure
+	class RelationStructure
 	{
 		public string ExplicitName;
 		public string ParentTableName;
@@ -240,7 +240,7 @@ namespace System.Data
 		public bool CreateConstraint;
 	}
 
-	internal class ConstraintStructure
+	class ConstraintStructure
 	{
 		public readonly string TableName;
 		public readonly string [] Columns;
@@ -264,7 +264,7 @@ namespace System.Data
 		}
 	}
 
-	internal class XmlSchemaDataImporter
+	class XmlSchemaDataImporter
 	{
 		static readonly XmlSchemaDatatype schemaIntegerType;
 		static readonly XmlSchemaDatatype schemaDecimalType;
@@ -425,7 +425,7 @@ namespace System.Data
 				dataset.Relations.Add (GenerateRelationship (rs));
 		}
 
-		private bool IsDataSetElement (XmlSchemaElement el)
+		bool IsDataSetElement (XmlSchemaElement el)
 		{
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
@@ -460,7 +460,7 @@ namespace System.Data
 			return true;
 		}
 
-		private bool ContainsColumn (XmlSchemaParticle p)
+		bool ContainsColumn (XmlSchemaParticle p)
 		{
 			XmlSchemaElement el = p as XmlSchemaElement;
 			if (el != null) {
@@ -487,7 +487,7 @@ namespace System.Data
 			return false;
 		}
 
-		private void ProcessGlobalElement (XmlSchemaElement el)
+		void ProcessGlobalElement (XmlSchemaElement el)
 		{
 			// If it is already registered (by resolving reference
 			// in previously-imported elements), just ignore.
@@ -515,7 +515,7 @@ namespace System.Data
 			ProcessDataTableElement (el);
 		}
 
-		private void ProcessDataSetElement (XmlSchemaElement el)
+		void ProcessDataSetElement (XmlSchemaElement el)
 		{
 			dataset.DataSetName = el.Name;
 			this.datasetElement = el;
@@ -561,7 +561,7 @@ namespace System.Data
 				HandleDataSetContentTypeParticle (p);
 		}
 
-		private void HandleDataSetContentTypeParticle (XmlSchemaParticle p)
+		void HandleDataSetContentTypeParticle (XmlSchemaParticle p)
 		{
 			XmlSchemaElement el = p as XmlSchemaElement;
 			if (el != null) {
@@ -578,7 +578,7 @@ namespace System.Data
 			}
 		}
 
-		private void ProcessDataTableElement (XmlSchemaElement el)
+		void ProcessDataTableElement (XmlSchemaElement el)
 		{
 			string tableName = XmlHelper.Decode (el.QualifiedName.Name);
 			// If it is already registered, just ignore.
@@ -656,7 +656,7 @@ namespace System.Data
 			currentTable = oldTable;
 		}
 
-		private DataRelation GenerateRelationship (RelationStructure rs)
+		DataRelation GenerateRelationship (RelationStructure rs)
 		{
 			DataTable ptab = dataset.Tables [rs.ParentTableName];
 			DataTable ctab = dataset.Tables [rs.ChildTableName];
@@ -694,7 +694,7 @@ namespace System.Data
 			return rel;
 		}
 
-		private DataColumn CreateChildColumn (DataColumn parentColumn, DataTable childTable)
+		DataColumn CreateChildColumn (DataColumn parentColumn, DataTable childTable)
 		{
 			DataColumn col = childTable.Columns.Add (parentColumn.ColumnName, 
 								parentColumn.DataType);
@@ -703,7 +703,7 @@ namespace System.Data
 			return col;
 		}
 
-		private void ImportColumnGroupBase (XmlSchemaElement parent, XmlSchemaGroupBase gb)
+		void ImportColumnGroupBase (XmlSchemaElement parent, XmlSchemaGroupBase gb)
 		{
 			foreach (XmlSchemaParticle p in gb.Items) {
 				XmlSchemaElement el = p as XmlSchemaElement;
@@ -715,7 +715,7 @@ namespace System.Data
 			}
 		}
 
-		private XmlSchemaDatatype GetSchemaPrimitiveType (object type)
+		XmlSchemaDatatype GetSchemaPrimitiveType (object type)
 		{
 			if (type is XmlSchemaComplexType)
 				return null; // It came here, so that maybe it is xs:anyType
@@ -726,7 +726,7 @@ namespace System.Data
 		}
 
 		// Note that this column might be Hidden
-		private void ImportColumnAttribute (XmlSchemaAttribute attr)
+		void ImportColumnAttribute (XmlSchemaAttribute attr)
 		{
 			DataColumn col = new DataColumn ();
 			col.ColumnName = attr.QualifiedName.Name;
@@ -767,7 +767,7 @@ namespace System.Data
 			AddColumn (col);
 		}
 
-		private void ImportColumnElement (XmlSchemaElement parent, XmlSchemaElement el)
+		void ImportColumnElement (XmlSchemaElement parent, XmlSchemaElement el)
 		{
 			// FIXME: element nest check
 
@@ -788,7 +788,7 @@ namespace System.Data
 		}
 
 		// common process for element and attribute
-		private void ImportColumnMetaInfo (XmlSchemaAnnotated obj, XmlQualifiedName name, DataColumn col)
+		void ImportColumnMetaInfo (XmlSchemaAnnotated obj, XmlQualifiedName name, DataColumn col)
 		{
 			if (obj.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in obj.UnhandledAttributes) {
@@ -827,7 +827,7 @@ namespace System.Data
 			}
 		}
 
-		private void FillDataColumnComplexElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
+		void FillDataColumnComplexElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
 			if (targetElements.Contains (el))
 				return; // do nothing
@@ -860,7 +860,7 @@ namespace System.Data
 
 		}
 
-		private bool DataSetDefinesKey (string name)
+		bool DataSetDefinesKey (string name)
 		{
 			foreach (ConstraintStructure c in reservedConstraints.Values)
 				if (c.TableName == name && (c.IsPrimaryKey || c.IsNested))
@@ -868,7 +868,7 @@ namespace System.Data
 			return false;
 		}
 
-		private void AddParentKeyColumn (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
+		void AddParentKeyColumn (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
 			// check existing primary key
 			if (currentTable.Table.PrimaryKey.Length > 0)
@@ -905,7 +905,7 @@ namespace System.Data
 			currentTable.PrimaryKey = col;
 		}
 
-		private void FillDataColumnRepeatedSimpleElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
+		void FillDataColumnRepeatedSimpleElement (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
 		{
 			if (targetElements.Contains (el))
 				return; // do nothing
@@ -952,7 +952,7 @@ namespace System.Data
 			relations.Add (rel);
 		}
 
-		private void FillDataColumnSimpleElement (XmlSchemaElement el, DataColumn col)
+		void FillDataColumnSimpleElement (XmlSchemaElement el, DataColumn col)
 		{
 			col.ColumnName = XmlHelper.Decode (el.QualifiedName.Name);
 			col.Namespace = el.QualifiedName.Namespace;
@@ -970,7 +970,7 @@ namespace System.Data
 			AddColumn (col);
 		}
 
-		private void AddColumn (DataColumn col)
+		void AddColumn (DataColumn col)
 		{
 			if (col.Ordinal < 0)
 				currentTable.NonOrdinalColumns.Add (col);
@@ -978,7 +978,7 @@ namespace System.Data
 				currentTable.OrdinalColumns.Add (col, col.Ordinal);
 		}
 
-		private void FillFacet (DataColumn col, XmlSchemaSimpleType st)
+		void FillFacet (DataColumn col, XmlSchemaSimpleType st)
 		{
 			if (st == null || st.Content == null)
 				return;
@@ -996,7 +996,7 @@ namespace System.Data
 			}
 		}
 
-		private Type ConvertDatatype (XmlSchemaDatatype dt)
+		Type ConvertDatatype (XmlSchemaDatatype dt)
 		{
 			if (dt == null)
 				return typeof (string);
@@ -1018,7 +1018,7 @@ namespace System.Data
 
 		// This method cuts out the local name of the last step from XPath.
 		// It is nothing more than hack. However, MS looks to do similar.
-		private string GetSelectorTarget (string xpath)
+		string GetSelectorTarget (string xpath)
 		{
 			string tableName = xpath;
 			int index = tableName.LastIndexOf ('/');
@@ -1035,7 +1035,7 @@ namespace System.Data
 			return XmlHelper.Decode (tableName);
 		}
 
-		private void ReserveSelfIdentity (XmlSchemaIdentityConstraint ic)
+		void ReserveSelfIdentity (XmlSchemaIdentityConstraint ic)
 		{
 			string tableName = GetSelectorTarget (ic.Selector.XPath);
 
@@ -1081,7 +1081,7 @@ namespace System.Data
 					isAttrSpec, constraintName, isPK, null, false, false));
 		}
 
-		private void ProcessSelfIdentity (ConstraintStructure c)
+		void ProcessSelfIdentity (ConstraintStructure c)
 		{
 			// Basic concept came from XmlSchemaMapper.cs
 
@@ -1117,7 +1117,7 @@ namespace System.Data
 				constraintName, cols, isPK));
 		}
 
-		private void ReserveRelationIdentity (XmlSchemaElement element, XmlSchemaKeyref keyref)
+		void ReserveRelationIdentity (XmlSchemaElement element, XmlSchemaKeyref keyref)
 		{
 			// Basic concept came from XmlSchemaMapper.cs
 
@@ -1168,7 +1168,7 @@ namespace System.Data
 				false, keyref.Refer.Name, isNested, isConstraintOnly));
 		}
 
-		private void ProcessRelationIdentity (XmlSchemaElement element, ConstraintStructure c)
+		void ProcessRelationIdentity (XmlSchemaElement element, ConstraintStructure c)
 		{
 			// Basic concept came from XmlSchemaMapper.cs
 
@@ -1210,7 +1210,7 @@ namespace System.Data
 
 		// get the unique constraint for the relation.
 		// name - the name of the XmlSchemaUnique element
-		private UniqueConstraint FindConstraint (string name, XmlSchemaElement element)
+		UniqueConstraint FindConstraint (string name, XmlSchemaElement element)
 		{
 			// Copied from XmlSchemaMapper.cs
 
@@ -1238,7 +1238,7 @@ namespace System.Data
 			throw new DataException ("Target identity constraint was not found: " + name);
 		}
 
-		private void HandleAnnotations (XmlSchemaAnnotation an, bool nested)
+		void HandleAnnotations (XmlSchemaAnnotation an, bool nested)
 		{
 			foreach (XmlSchemaObject content in an.Items) {
 				XmlSchemaAppInfo ai = content as XmlSchemaAppInfo;
@@ -1260,7 +1260,7 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		private void HandleDataSourceAnnotation (XmlElement el, bool nested)
+		void HandleDataSourceAnnotation (XmlElement el, bool nested)
 		{
 			// Handle: Connections and Tables
 			// For Tables: extract the provider information from connection and use
@@ -1302,7 +1302,7 @@ namespace System.Data
 			}
 		}
 		
-		private void ProcessTableAdapter (XmlElement el, DbProviderFactory provider, string connStr)
+		void ProcessTableAdapter (XmlElement el, DbProviderFactory provider, string connStr)
 		{
 			XmlElement e;
 			string datasetTableName = null;
@@ -1353,7 +1353,7 @@ namespace System.Data
 			}
 		}
 		
-		private void ProcessDbSource (XmlElement el)
+		void ProcessDbSource (XmlElement el)
 		{
 			string tmp = null;
 			XmlElement e;
@@ -1464,7 +1464,7 @@ namespace System.Data
 			}
 		}
 		
-		private DbCommand ProcessDbCommand (XmlElement el)
+		DbCommand ProcessDbCommand (XmlElement el)
 		{
 			XmlElement e;
 			//Console.WriteLine (el.LocalName);
@@ -1498,7 +1498,7 @@ namespace System.Data
 			return cmd;
 		}
 		
-		private ArrayList ProcessDbParameters (XmlElement el)
+		ArrayList ProcessDbParameters (XmlElement el)
 		{
 			//Console.WriteLine ("ProcessDbParameters: "+el.LocalName);
 			string tmp = null;
@@ -1546,7 +1546,7 @@ namespace System.Data
 			return parameters;
 		}
 
-		private void ProcessColumnMapping (XmlElement el, DataTableMapping tableMapping)
+		void ProcessColumnMapping (XmlElement el, DataTableMapping tableMapping)
 		{
 			if (el == null)
 				return;
@@ -1557,7 +1557,7 @@ namespace System.Data
 		
 #endif
 		
-		private void HandleRelationshipAnnotation (XmlElement el, bool nested)
+		void HandleRelationshipAnnotation (XmlElement el, bool nested)
 		{
 			string name = el.GetAttribute ("name");
 			string ptn = el.GetAttribute ("parent", XmlConstants.MsdataNamespace);
@@ -1578,7 +1578,7 @@ namespace System.Data
 			relations.Add (rel);
 		}
 
-		private object GetElementDefaultValue (XmlSchemaElement elem)
+		object GetElementDefaultValue (XmlSchemaElement elem)
 		{
 			// Unlike attribute, element cannot have a default value.
 			if (elem.RefName == XmlQualifiedName.Empty)
@@ -1589,7 +1589,7 @@ namespace System.Data
 			return referenced.DefaultValue;
 		}
 
-		private object GetAttributeDefaultValue (XmlSchemaAttribute attr)
+		object GetAttributeDefaultValue (XmlSchemaAttribute attr)
 		{
 #if BUGGY_MS_COMPATIBLE
 			if (attr == null)
