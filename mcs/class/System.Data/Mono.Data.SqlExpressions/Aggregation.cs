@@ -184,22 +184,14 @@ namespace Mono.Data.SqlExpressions {
 			if (count < 2)
 				return DBNull.Value;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
-			double average = (double)Convert.ChangeType(result, TypeCode.Double) / count;
-#else
-			double average = (double)Convert.ChangeType(result, TypeCode.Double, CultureInfo.CurrentCulture) / count;
-#endif
+			double average = (double) Convert.ChangeType (result, TypeCode.Double, CultureInfo.CurrentCulture) / count;
 			double res = 0.0;
 						
 			foreach (object val in values) {
 				if (val == null)
 					continue;
 					
-#if !WINDOWS_PHONE && !NETFX_CORE
-				double diff = average - (double)Convert.ChangeType(val, TypeCode.Double);
-#else
-				double diff = average - (double)Convert.ChangeType(val, TypeCode.Double, CultureInfo.CurrentCulture);
-#endif
+				double diff = average - (double) Convert.ChangeType (val, TypeCode.Double, CultureInfo.CurrentCulture);
 				res += System.Math.Pow (diff, 2);
 			}
 			res /= (count - 1);

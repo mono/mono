@@ -243,52 +243,42 @@ sqliteDataAdapter.Update (dataSet, "Primus");
 #endif
 
 #endif
-
-		class MyCommand : DbCommand
-		{
-			public override string CommandText
-			{
+		class MyCommand : DbCommand {
+			public override string CommandText {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
 
-			public override int CommandTimeout
-			{
+			public override int CommandTimeout {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
 
-			public override CommandType CommandType
-			{
+			public override CommandType CommandType {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
 
-			protected override DbConnection DbConnection
-			{
+			protected override DbConnection DbConnection {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
 
-			protected override DbParameterCollection DbParameterCollection
-			{
+			protected override DbParameterCollection DbParameterCollection {
 				get { throw new NotImplementedException(); }
 			}
 
-			protected override DbTransaction DbTransaction
-			{
+			protected override DbTransaction DbTransaction {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
 
-			public override bool DesignTimeVisible
-			{
+			public override bool DesignTimeVisible {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}
 
-			public override UpdateRowSource UpdatedRowSource
-			{
+			public override UpdateRowSource UpdatedRowSource {
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
 			}

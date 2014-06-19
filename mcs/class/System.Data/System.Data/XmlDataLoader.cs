@@ -123,13 +123,8 @@ namespace System.Data
 			}
 
 			// load an XmlDocument from the reader.
-			XmlDocument doc = new XmlDocument ();
-#if !WINDOWS_PHONE && !NETFX_CORE
-			doc.Load (reader);
-#else
-			doc.Add (XmlNode.ReadFrom (reader));
-#endif
-			XmlElement docRoot = XmlHelper.GetRootElement (doc);
+			XmlDocument doc = XmlHelper.CreateXmlDocument (reader);
+			XmlElement docRoot = doc.GetRootElement ();
 			if (docRoot == null)
 				return;
 
@@ -141,43 +136,33 @@ namespace System.Data
 			//
 			// FIXME: Consider attributes. 
 			// <root a='1' b='2' /> is regarded as a valid DataTable.
-			int rootNodeDepth = XmlNodeElementsDepth(docRoot);
+			int rootNodeDepth = XmlNodeElementsDepth (docRoot);
 			switch (rootNodeDepth) {
 			case 1:
 				if (inferSchema) {
-					DSet.DataSetName = XmlHelper.GetLocalName (docRoot);
-					DSet.Prefix = XmlHelper.GetPrefix (docRoot);
-					DSet.Namespace = XmlHelper.GetNamespaceUri (docRoot);
+					DSet.DataSetName = docRoot.GetLocalName ();
+					DSet.Prefix = docRoot.GetPrefix ();
+					DSet.Namespace = docRoot.GetNamespaceUri ();
 				}
 				return;
 			case 2:
 				// create new document
 				XmlDocument newDoc = new XmlDocument();
-#if !WINDOWS_PHONE && !NETFX_CORE
 				// create element for dataset
 				XmlElement datasetElement = newDoc.CreateElement("dummy");
 				// make the new created element to be the new doc root
 				newDoc.AppendChild(datasetElement);
 				// import all the elements from doc and insert them into new doc
-				XmlNode root = newDoc.ImportNode(doc.DocumentElement,true);
+				XmlNode root = newDoc.DeepClone (doc.GetRootElement ());
 				datasetElement.AppendChild(root);
-#else
-				// create element for dataset
-				XmlElement datasetElement = new XmlElement("dummy");
-				// make the new created element to be the new doc root
-				newDoc.Add(datasetElement);
-				// import all the elements from doc and insert them into new doc
-				XmlNode root = new XmlElement(docRoot);
-				datasetElement.Add(root);
-#endif
 				doc = newDoc;
-				docRoot = XmlHelper.GetRootElement (doc);
+				docRoot = doc.GetRootElement ();
 				break;
 			default:
 				if (inferSchema) {
-					DSet.DataSetName = XmlHelper.GetLocalName (docRoot);
-					DSet.Prefix = XmlHelper.GetPrefix (docRoot);
-					DSet.Namespace = XmlHelper.GetNamespaceUri (docRoot);
+					DSet.DataSetName = docRoot.GetLocalName ();
+					DSet.Prefix = docRoot.GetPrefix ();
+					DSet.Namespace = docRoot.GetNamespaceUri ();
 				}
 				break;
 			}
@@ -188,14 +173,14 @@ namespace System.Data
 			DSet.EnforceConstraints = false;
 
 			// The childs are tables.
-			XmlNodeList nList = XmlHelper.GetChildNodes (XmlHelper.GetRootElement (doc));
+			XmlNodeList nList = doc.GetRootElement ().GetChildNodes ();
 
 			// FIXME: When reading DataTable (not DataSet), 
 			// the nodes are column items, not rows.
 			foreach (XmlNode node in nList) {
 				// node represents a table onky if it is of type XmlNodeType.Element
 				if (node.NodeType == XmlNodeType.Element) {
-					AddRowToTable(node as XmlElement, null, inferSchema, fillRows);
+					AddRowToTable (node as XmlElement, null, inferSchema, fillRows);
 				}
 			}
 			// set the EnforceConstraints to original value;
@@ -257,18 +242,18 @@ namespace System.Data
 			return Convert.ChangeType (value, type);
 		}
 
-		private void AddRowToTable(XmlElement tableNode, DataColumn relationColumn, bool inferSchema, bool fillRows)
+		void AddRowToTable (XmlElement tableNode, DataColumn relationColumn, bool inferSchema, bool fillRows)
 		{
 			Hashtable rowValue = new Hashtable();
 			DataTable table;
 
 			// Check if the table exists in the DataSet. If not create one.
-			string tableLocalName = XmlHelper.GetLocalName(tableNode);
-			if (DSet.Tables.Contains(tableLocalName))
-				table = DSet.Tables[tableLocalName];
+			string tableLocalName = tableNode.GetLocalName ();
+			if (DSet.Tables.Contains (tableLocalName))
+				table = DSet.Tables [tableLocalName];
 			else if (inferSchema) {
-				table = new DataTable(tableLocalName);
-				DSet.Tables.Add(table);
+				table = new DataTable (tableLocalName);
+				DSet.Tables.Add (table);
 			}
 			else
 				return;
@@ -288,24 +273,20 @@ namespace System.Data
 				if (!table.Columns.Contains(columnName)) {
 					table.Columns.Add(columnName);
 				}
-#if !WINDOWS_PHONE && !NETFX_CORE
-				rowValue.Add(columnName, tableNode.InnerText);
-#else
-				rowValue.Add(columnName, tableNode.Value);
-#endif
+				rowValue.Add (columnName, tableNode.GetInnerText ());
 			}
 			
 			// Get the child nodes of the table. Any child can be one of the following tow:
 			// 1. DataTable - if there was a relation with another table..
 			// 2. DataColumn - column of the current table.
-			XmlNodeList childList = XmlHelper.GetChildNodes(tableNode);
+			XmlNodeList childList = tableNode.GetChildNodes ();
 			foreach (XmlNode childBaseNode in childList) {
 				XmlElement childNode = childBaseNode as XmlElement;
 
 				// we are looping through elements only
 				// Note : if an element is inferred as a table and has text, but also has child elements,
 				// the text is ignored.
-				if (childNode != null)
+				if (childNode == null)
 					continue;
 				
 				// Elements that have attributes are inferred as tables. 
@@ -336,40 +317,36 @@ namespace System.Data
 					// Elements that have no attributes or child elements, and do not repeat, 
 					// are inferred as columns.
 					object val = null;
-					if (XmlHelper.GetFirstElement(childNode) != null)
-						val = XmlHelper.GetFirstElement(childNode).Value;
+					if (childNode.GetFirstElement () != null)
+						val = childNode.GetFirstElement ().Value;
 					else
-						val = "";
-					string childLocalName = XmlHelper.GetLocalName(childNode);
-					if (table.Columns.Contains(childLocalName))
-						rowValue.Add(childLocalName, val);
+						val = String.Empty;
+					string childLocalName = childNode.GetLocalName ();
+					if (table.Columns.Contains (childLocalName))
+						rowValue.Add (childLocalName, val);
 					else if (inferSchema) {
-						table.Columns.Add(childLocalName);
-						rowValue.Add(childLocalName, val);
+						table.Columns.Add (childLocalName);
+						rowValue.Add (childLocalName, val);
 					}
 				}
 						
 			}
 
 			// Column can be attribute of the table element.
-			XmlAttributeCollection aCollection = XmlHelper.GetAttributes(tableNode);
+			XmlAttributeCollection aCollection = tableNode.GetAttributes ();
 			foreach (XmlAttribute attr in aCollection) {
 				//the atrribute can be the namespace.
-#if !WINDOWS_PHONE && !NETFX_CORE
-				if (attr.Prefix.Equals("xmlns"))
-#else
-				if (attr.IsNamespaceDeclaration)
-#endif
+				if (attr.IsNamespaceAttribute ())
 					table.Namespace = attr.Value;
 				else { // the attribute is a column.
-					string attrLocalName = XmlHelper.GetLocalName(attr);
-					if (!table.Columns.Contains(attrLocalName)) {
-						DataColumn col = table.Columns.Add(attrLocalName);
+					string attrLocalName = attr.GetLocalName ();
+					if (!table.Columns.Contains (attrLocalName)) {
+						DataColumn col = table.Columns.Add (attrLocalName);
 						col.ColumnMapping = MappingType.Attribute;
 					}
-					table.Columns[attrLocalName].Namespace = table.Namespace;
+					table.Columns [attrLocalName].Namespace = table.Namespace;
 
-					rowValue.Add(attrLocalName, attr.Value);
+					rowValue.Add (attrLocalName, attr.Value);
 				}
 			}
 
@@ -406,7 +383,7 @@ namespace System.Data
 
 		// this method calculates the depth of child nodes tree
 		// and it counts nodes of type XmlNodeType.Element only
-		private static int XmlNodeElementsDepth(XmlElement node)
+		static int XmlNodeElementsDepth (XmlElement node)
 		{
 			int maxDepth = -1;
             if ((node != null)) {
@@ -414,14 +391,14 @@ namespace System.Data
 				if  ((node.HasChildNodes) && (node.FirstChild.NodeType == XmlNodeType.Element)) {
 					for (int i=0; i<node.ChildNodes.Count; i++) {
 						if (node.ChildNodes[i].NodeType == XmlNodeType.Element) {
-							int childDepth = XmlNodeElementsDepth(node.ChildNodes[i] as XmlElement);
+							int childDepth = XmlNodeElementsDepth (node.ChildNodes[i] as XmlElement);
 							maxDepth = (maxDepth < childDepth) ? childDepth : maxDepth;
 						}
 					}
 				}
 #else
 				if  (node.HasElements) {
-					maxDepth = node.Elements().Max(e => XmlNodeElementsDepth(e));
+					maxDepth = node.Elements ().Max (e => XmlNodeElementsDepth (e));
 				}
 #endif
 				else {
@@ -435,10 +412,10 @@ namespace System.Data
 			return (maxDepth + 1);
 		}
 
-		private bool HaveChildElements(XmlElement node)
+		bool HaveChildElements (XmlElement node)
 		{
 			bool haveChildElements = false;
-				foreach(XmlNode childNode in XmlHelper.GetChildNodes(node)) {
+				foreach(XmlNode childNode in node.GetChildNodes ()) {
 					if (childNode.NodeType != XmlNodeType.Element) {
 						haveChildElements = false;
 						break;
@@ -448,10 +425,10 @@ namespace System.Data
 			return haveChildElements;
 		}
 
-		private bool HaveText(XmlElement node)
+		bool HaveText (XmlElement node)
 		{
 			bool haveText = false;
-				foreach(XmlNode childNode in XmlHelper.GetChildNodes(node)) {
+				foreach(XmlNode childNode in node.GetChildNodes ()) {
 					if (childNode.NodeType != XmlNodeType.Text) {
 						haveText = false;
 						break;
@@ -461,14 +438,14 @@ namespace System.Data
 			return haveText;
 		}
 
-		private bool IsRepeat(XmlElement node)
+		bool IsRepeat (XmlElement node)
 		{
 			bool isRepeat = false;
-			XmlNodeList siblings = XmlHelper.GetSiblings(node);
-			if(siblings != null) {
-				foreach(XmlNode baseChildNode in siblings) {
+			XmlNodeList siblings = node.GetSiblings ();
+			if (siblings != null) {
+				foreach (XmlNode baseChildNode in siblings) {
 					XmlElement childNode = baseChildNode as XmlElement;
-					if(childNode != node && childNode.Name == node.Name) {
+					if (childNode != node && childNode.Name == node.Name) {
 						isRepeat = true;
 						break;
 					}
@@ -477,12 +454,12 @@ namespace System.Data
 			return isRepeat;
 		}
 
-		private bool HaveAttributes(XmlElement node)
+		bool HaveAttributes (XmlElement node)
 		{
 			return node.HasAttributes;
 		}
 
-		private bool IsInferredAsTable(XmlElement node)
+		bool IsInferredAsTable (XmlElement node)
 		{
 			// Elements that have attributes are inferred as tables. 
 			// Elements that have child elements are inferred as tables. 
@@ -496,15 +473,15 @@ namespace System.Data
 		/// (i.e. is child node of node's parent, have the same name and is not the node itself)
 		/// have child elements
 		/// </summary>
-		private bool IsRepeatedHaveChildNodes(XmlElement node)
+		bool IsRepeatedHaveChildNodes (XmlElement node)
 		{
 			bool isRepeatedHaveChildElements = false;
-			XmlNodeList siblings = XmlHelper.GetSiblings(node);
-			if(siblings != null) {
-				foreach(XmlNode baseChildNode in siblings) {
+			XmlNodeList siblings = node.GetSiblings ();
+			if (siblings != null) {
+				foreach (XmlNode baseChildNode in siblings) {
 					XmlElement childNode = baseChildNode as XmlElement;
 					if(childNode != node && childNode.Name == node.Name) {
-						if (HaveChildElements(childNode)) {
+						if (HaveChildElements (childNode)) {
 							isRepeatedHaveChildElements = true;
 							break;
 						}

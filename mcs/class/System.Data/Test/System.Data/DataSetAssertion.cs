@@ -88,7 +88,7 @@ namespace MonoTests.System.Data
 			return writer.ToString ();
 		}
 
-		private void SortAttributes (XmlElement el)
+		void SortAttributes (XmlElement el)
 		{
 			SortAttributesAttributes (el);
 			ArrayList al = new ArrayList ();
@@ -102,7 +102,7 @@ namespace MonoTests.System.Data
 				el.RemoveChild (n);
 		}
 
-		private void SortAttributesAttributes (XmlElement el)
+		void SortAttributesAttributes (XmlElement el)
 		{
 			ArrayList al = new ArrayList ();
 			foreach (XmlAttribute a in el.Attributes)
@@ -128,29 +128,29 @@ namespace MonoTests.System.Data
 			return writer.ToString ();
 		}
 
-		private void SortAttributes (XElement el)
+		void SortAttributes (XElement el)
 		{
 			SortAttributesAttributes (el);
 			ArrayList al = new ArrayList ();
-			foreach (XNode n in el.Nodes()) {
+			foreach (XNode n in el.Nodes ()) {
 				if (n.NodeType == XmlNodeType.Element)
 					SortAttributes (n as XElement);
 				if (n.NodeType == XmlNodeType.Comment)
 					al.Add (n);
 			}
 			foreach (XNode n in al)
-				n.Remove();
+				n.Remove ();
 		}
 
-		private void SortAttributesAttributes (XElement el)
+		void SortAttributesAttributes (XElement el)
 		{
-			XAttribute[] attrs = el.Attributes().ToArray();
-			el.RemoveAttributes();
-			el.Add(attrs.OrderBy(x => {
-				string prefix = el.GetPrefixOfNamespace(x.Name.Namespace);
+			XAttribute[] attrs = el.Attributes ().ToArray ();
+			el.RemoveAttributes ();
+			el.Add (attrs.OrderBy (x => {
+				string prefix = el.GetPrefixOfNamespace (x.Name.Namespace);
 				string localName = x.Name.LocalName;
 				return (prefix != null) ? (prefix + ":" + localName) : localName;
-			}).Where(x => x.Name.LocalName != "xmlns"));
+			}).Where (x => x.Name.LocalName != "xmlns"));
 		}
 #endif
 

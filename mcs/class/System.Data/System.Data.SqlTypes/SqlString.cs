@@ -70,9 +70,9 @@ namespace System.Data.SqlTypes
 
 		// FIXME: locale id is not working yet
 #if !WINDOWS_PHONE && !NETFX_CORE
-		private int lcid;
+		int lcid;
 #else
-		private CultureInfo culture;
+		CultureInfo lcid;
 #endif
 		private SqlCompareOptions compareOptions;
 
@@ -102,7 +102,7 @@ namespace System.Data.SqlTypes
 #if !WINDOWS_PHONE && !NETFX_CORE
 			lcid = CultureInfo.CurrentCulture.LCID;
 #else
-			culture = CultureInfo.CurrentCulture;
+			lcid = CultureInfo.CurrentCulture;
 #endif
 			if (value != null)
 				notNull = true;
@@ -138,10 +138,11 @@ namespace System.Data.SqlTypes
 		public SqlString (string data, int lcid, SqlCompareOptions compareOptions) 
 		{
 			this.value = data;
+			this.lcid = 
 #if !WINDOWS_PHONE && !NETFX_CORE
-			this.lcid = lcid;
+				lcid;
 #else
-			this.culture = CultureInfo.CurrentCulture;
+				CultureInfo.CurrentCulture;
 #endif
 			this.compareOptions = compareOptions;
 			if (value != null)
@@ -151,10 +152,10 @@ namespace System.Data.SqlTypes
 		}
 
 #if WINDOWS_PHONE || NETFX_CORE
-		private SqlString(string data, CultureInfo culture, SqlCompareOptions compareOptions)
+		SqlString(string data, CultureInfo culture, SqlCompareOptions compareOptions)
 			: this (data, 0, compareOptions)
 		{
-			this.culture = culture;
+			this.lcid = culture;
 		}
 #endif
 
@@ -162,8 +163,6 @@ namespace System.Data.SqlTypes
 		// and whether unicode is encoded or not
 #if !WINDOWS_PHONE && !NETFX_CORE
 		public 
-#else
-		private
 #endif
 		SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
@@ -172,11 +171,14 @@ namespace System.Data.SqlTypes
 #else
 			Encoding encoding = Encoding.Unicode;
 #endif
-			this.value = encoding.GetString (data, 0, data.Length);
+			if (data.Length == 0)
+				value = String.Empty;
+			else
+				value = encoding.GetString (data, 0, data.Length);
 #if !WINDOWS_PHONE && !NETFX_CORE
 			this.lcid = lcid;
 #else
-			this.culture = CultureInfo.CurrentCulture;
+			this.lcid = CultureInfo.CurrentCulture;
 #endif
 			this.compareOptions = compareOptions;
 			if (value != null)
@@ -197,8 +199,6 @@ namespace System.Data.SqlTypes
 		// and whether unicode is encoded or not
 #if !WINDOWS_PHONE && !NETFX_CORE
 		public 
-#else
-		private
 #endif
 		SqlString(int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode)
 		{		       
@@ -211,7 +211,7 @@ namespace System.Data.SqlTypes
 #if !WINDOWS_PHONE && !NETFX_CORE
 			this.lcid = lcid;
 #else
-			this.culture = CultureInfo.CurrentCulture;
+			this.lcid = CultureInfo.CurrentCulture;
 #endif
 			this.compareOptions = compareOptions;
 			if (value != null)
@@ -227,11 +227,7 @@ namespace System.Data.SqlTypes
 
 		public CompareInfo CompareInfo {
 			get { 
-#if !WINDOWS_PHONE && !NETFX_CORE
-				return new CultureInfo (lcid).CompareInfo;
-#else
-				return ((CultureInfo) culture.Clone ()).CompareInfo;
-#endif
+				return CultureInfo.CompareInfo;
 			}
 		}
 
@@ -240,7 +236,7 @@ namespace System.Data.SqlTypes
 #if !WINDOWS_PHONE && !NETFX_CORE
 				return new CultureInfo (lcid);
 #else
-				return (CultureInfo) culture.Clone ();
+				return (CultureInfo) lcid.Clone ();
 #endif
 			}
 		}
@@ -294,11 +290,7 @@ namespace System.Data.SqlTypes
 
 		public SqlString Clone() 
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
 			return new  SqlString (value, lcid, compareOptions);
-#else
-			return new  SqlString (value, culture, compareOptions);
-#endif
 		}
 
 		public static CompareOptions CompareOptionsFromSqlCompareOptions (SqlCompareOptions compareOptions) 
@@ -374,11 +366,7 @@ namespace System.Data.SqlTypes
 			for (int i = 0; i < value.Length; i++)
 				result = 91 * result + (int)(value [i] ^ (value [i] >> 32));
 						
-#if !WINDOWS_PHONE && !NETFX_CORE
 			result = 91 * result + lcid.GetHashCode ();
-#else
-			result = 91 * result + culture.GetHashCode ();
-#endif
 			result = 91 * result + (int)compareOptions;
 
 			return result;

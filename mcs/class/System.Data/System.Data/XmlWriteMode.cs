@@ -38,9 +38,7 @@ namespace System.Data
 	/// Use the members of this enumeration when setting the WriteMode parameter of the WriteXml method.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum XmlWriteMode
 	{

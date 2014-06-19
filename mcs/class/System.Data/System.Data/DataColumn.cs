@@ -64,7 +64,7 @@ namespace System.Data {
 #endif
 	public class DataColumn : 
 #if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, 
+		MarshalByValueComponent,
 #endif
 		IDisposable
 	{
@@ -370,11 +370,7 @@ namespace System.Data {
 					value = String.Empty;
 
 				CultureInfo info = Table != null ? Table.Locale : CultureInfo.CurrentCulture;
-#if !NET_2_0
-				if (String.Compare (value, _columnName, true, info) != 0) {
-#else
 				if (String.Compare (value, _columnName, info, CompareOptions.IgnoreCase) != 0) {
-#endif
 					if (Table != null) {
 						if (value.Length == 0)
 							throw new ArgumentException ("ColumnName is required when it is part of a DataTable.");
@@ -391,11 +387,7 @@ namespace System.Data {
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
 #endif
-#if !NET_2_0
-				} else if (String.Compare (value, _columnName, false, info) != 0) {
-#else
 				} else if (String.Compare (value, _columnName, info, CompareOptions.None) != 0) {
-#endif
 					RaisePropertyChanging ("ColumnName");
 					_columnName = value;
 

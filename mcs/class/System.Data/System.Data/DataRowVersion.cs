@@ -36,9 +36,7 @@ namespace System.Data
 	/// Describes the version of a DataRow.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum DataRowVersion
 	{

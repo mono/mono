@@ -49,66 +49,60 @@ namespace MonoTests.System.Data.Utils
 {
 	public static class AssertHelpers
 	{
-		public static void AssertThrowsException<T>(Action action) 
+		public static void AssertThrowsException<T> (Action action) 
 			where T : Exception
 		{
-			AssertThrowsException<T>(action, "Expected an exception of type: " + typeof(T).Name);
+			AssertThrowsException<T> (action, "Expected an exception of type: " + typeof (T).Name);
 		}
 
 #if WINDOWS_PHONE || NETFX_CORE
-		public static void AssertThrowsException<T>(Action action, string message) 
+		public static void AssertThrowsException<T> (Action action, string message) 
 			where T : Exception
 		{
-			Assert.ThrowsException<T>(action, message);
+			Assert.ThrowsException<T> (action, message);
 		}
 #else
-		public static void AssertThrowsException<T>(Action action, string message) 
+		public static void AssertThrowsException<T> (Action action, string message) 
 			where T : Exception
 		{
-			try
-			{
-				action();
-				Assert.Fail(message);
+			try {
+				action ();
+				Assert.Fail (message);
 			}
-			catch (T)
-			{
+			catch (T) {
 				// do nothing as this was expected
 			}
-			catch (Exception ex)
-			{
-				AssertIsInstanceOfType<T>(ex, message);
+			catch (Exception ex) {
+				AssertIsInstanceOfType<T> (ex, message);
 			}
 		}
 #endif
 
-		public static void AssertIsInstanceOfType<T>(object value, string message)
+		public static void AssertIsInstanceOfType<T> (object value, string message)
 		{
-			AssertIsInstanceOfType(value, typeof(T), message);
+			AssertIsInstanceOfType (value, typeof (T), message);
 		}
 
-		public static void AssertIsInstanceOfType(object value, Type expectedType, string message)
+		public static void AssertIsInstanceOfType (object value, Type expectedType, string message)
 		{
 #if USE_MSUNITTEST
-			Assert.IsInstanceOfType(value, expectedType, message);
+			Assert.IsInstanceOfType (value, expectedType, message);
 #else
-			Assert.That (value, new InstanceOfTypeConstraint(expectedType), message);
+			Assert.That (value, new InstanceOfTypeConstraint (expectedType), message);
 #endif
 		}
 
 		public static void AreEqualArray<T>(T[] expected, T[] actual, string message)
 		{
 #if USE_MSUNITTEST
-			if (expected != actual)
-			{
-				Assert.AreEqual(expected.Length, actual.Length, "Expected arrays of equal length.");
-
-				for (int i = 0; i < expected.Length; i++)
-				{
-					Assert.AreEqual(expected[i], actual[i], message);
+			if (expected != actual) {
+				Assert.AreEqual (expected.Length, actual.Length, "Expected arrays of equal length.");
+				for (int i = 0; i < expected.Length; i++) {
+					Assert.AreEqual (expected [i], actual [i], message);
 				}
 			}
 #else
-			Assert.AreEqual(expected, actual, message);
+			Assert.AreEqual (expected, actual, message);
 #endif
 		}
 	} 

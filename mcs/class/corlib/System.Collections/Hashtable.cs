@@ -49,8 +49,10 @@ namespace System.Collections {
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
 	public class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable, IDeserializationCallback {
+#elif WINDOWS_PHONE || NETFX_CORE
+	public class Hashtable : IDictionary, ICollection, IEnumerable {
 #else
-	internal class Hashtable : IDictionary, ICollection, IEnumerable {
+	class Hashtable : IDictionary, ICollection, IEnumerable {
 #endif
 
 #if !WINDOWS_PHONE && !NETFX_CORE
@@ -113,7 +115,10 @@ namespace System.Collections {
 		public Hashtable () : this (0, 1.0f) {}
 
 		[Obsolete ("Please use Hashtable(int, float, IEqualityComparer) instead")]
-		public Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public
+#endif
+		Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
 			if (capacity<0)
 				throw new ArgumentOutOfRangeException ("capacity", "negative capacity");
 
@@ -164,7 +169,10 @@ namespace System.Collections {
 		}
 			
 		[Obsolete ("Please use Hashtable(int, IEqualityComparer) instead")]
-		public Hashtable (int capacity,
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public
+#endif
+		Hashtable (int capacity,
 		                  IHashCodeProvider hcp,
 		                  IComparer comparer)
 			: this (capacity, 1.0f, hcp, comparer)
@@ -172,7 +180,10 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")]
-		public Hashtable (IDictionary d, float loadFactor,
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public
+#endif
+		Hashtable (IDictionary d, float loadFactor,
 		                  IHashCodeProvider hcp, IComparer comparer)
 			: this (d!=null ? d.Count : 0,
 		                loadFactor, hcp, comparer)
@@ -199,13 +210,19 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IDictionary, IEqualityComparer) instead")]
-		public Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public
+#endif
+		Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
 		                 : this (d, 1.0f, hcp, comparer)
 		{
 		}
 
 		[Obsolete ("Please use Hashtable(IEqualityComparer) instead")]
-		public Hashtable (IHashCodeProvider hcp, IComparer comparer)
+#if !WINDOWS_PHONE && !NETFX_CORE
+		public
+#endif
+		Hashtable (IHashCodeProvider hcp, IComparer comparer)
 		                 : this (1, 1.0f, hcp, comparer)
 		{
 		}
@@ -254,7 +271,10 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use EqualityComparer property.")]
-		protected IHashCodeProvider hcp {
+#if !WINDOWS_PHONE && !NETFX_CORE
+		protected
+#endif
+		IHashCodeProvider hcp {
 			set {
 				hcpRef = value;
 			}

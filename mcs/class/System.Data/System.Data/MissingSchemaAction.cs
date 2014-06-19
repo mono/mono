@@ -38,9 +38,7 @@ namespace System.Data
 	/// Specifies the action to take when adding data to the DataSet and the required DataTable or DataColumn is missing.
 	/// </summary>
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-#endif
 #endif
 	public enum MissingSchemaAction
 	{

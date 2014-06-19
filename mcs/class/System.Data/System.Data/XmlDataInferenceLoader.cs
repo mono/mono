@@ -182,7 +182,7 @@ namespace System.Data
 
 		private void ReadXml ()
 		{
-			if (XmlHelper.GetRootElement (document) == null)
+			if (document.GetRootElement () == null)
 				return;
 
 			dataset.Locale = new CultureInfo ("en-US"); // default(!)
@@ -190,22 +190,22 @@ namespace System.Data
 			// If the root element is not a data table, treat 
 			// this element as DataSet.
 			// Read one element. It might be DataSet element.
-			XmlElement el = XmlHelper.GetRootElement (document);
+			XmlElement el = document.GetRootElement ();
 
-			if (XmlHelper.GetNamespaceUri (el) == XmlConstants.SchemaNamespace)
+			if (el.GetNamespaceUri () == XmlConstants.SchemaNamespace)
 				throw new InvalidOperationException ("DataSet is not designed to handle XML Schema as data content. Please use ReadXmlSchema method instead of InferXmlSchema method.");
 
 			if (IsDocumentElementTable ())
 				InferTopLevelTable (el);
 			else {
-				string localName = XmlHelper.Decode (XmlHelper.GetLocalName (el));
+				string localName = XmlHelper.Decode (el.GetLocalName ());
 				dataset.DataSetName = localName;
-				dataset.Namespace = XmlHelper.GetNamespaceUri (el);
-				dataset.Prefix = XmlHelper.GetPrefix (el);
-				foreach (XmlNode n in XmlHelper.GetChildNodes (el)) {
-					if (n.NodeType == XmlNodeType.Element && 
-						XmlHelper.GetNamespaceUri ((XmlElement) n) != XmlConstants.SchemaNamespace)
-						InferTopLevelTable (n as XmlElement);
+				dataset.Namespace = el.GetNamespaceUri ();
+				dataset.Prefix = el.GetPrefix ();
+				foreach (XmlNode n in el.GetChildNodes ()) {
+					XmlElement nEl = n as XmlElement;
+					if (nEl != null && nEl.GetNamespaceUri() != XmlConstants.SchemaNamespace)
+						InferTopLevelTable (nEl);
 				}
 			}
 
@@ -287,7 +287,7 @@ namespace System.Data
 
 		private void InferColumnElement (TableMapping table, XmlElement el)
 		{
-			string localName = XmlHelper.Decode (XmlHelper.GetLocalName (el));
+			string localName = XmlHelper.Decode (el.GetLocalName ());
 			DataColumn col = table.GetColumn (localName);
 			if (col != null) {
 				if (col.ColumnMapping != MappingType.Element)
@@ -304,8 +304,8 @@ namespace System.Data
 				return;
 
 			col = new DataColumn (localName, typeof (string));
-			col.Namespace = XmlHelper.GetNamespaceUri (el);
-			col.Prefix = XmlHelper.GetPrefix (el);
+			col.Namespace = el.GetNamespaceUri ();
+			col.Prefix = el.GetPrefix ();
 #if NET_2_0
 			table.Elements.Insert (++table.lastElementIndex, col);
 #else
@@ -317,7 +317,7 @@ namespace System.Data
 		{
 			if (parentTable == null)
 				return;
-			string localName = XmlHelper.Decode (XmlHelper.GetLocalName (el));
+			string localName = XmlHelper.Decode (el.GetLocalName ());
 			DataColumn elc = parentTable.GetColumn (localName);
 			if (elc != null)
 				parentTable.RemoveElementColumn (localName);
@@ -351,10 +351,10 @@ namespace System.Data
 
 		private void InferRepeatedElement (TableMapping parentTable, XmlElement el)
 		{
-			string localName = XmlHelper.Decode (XmlHelper.GetLocalName (el));
+			string localName = XmlHelper.Decode (el.GetLocalName ());
 			// FIXME: can be checked later
 			CheckExtraneousElementColumn (parentTable, el);
-			TableMapping table = GetMappedTable (parentTable, localName, XmlHelper.GetNamespaceUri (el));
+			TableMapping table = GetMappedTable (parentTable, localName, el.GetNamespaceUri ());
 
 			// If the mapping is actually complex type (not simple
 			// repeatable), then ignore it.
@@ -365,7 +365,7 @@ namespace System.Data
 			if (table.SimpleContent != null)
 				return;
 
-			GetMappedColumn (table, localName + "_Column", XmlHelper.GetPrefix (el), XmlHelper.GetNamespaceUri (el), MappingType.SimpleContent, null);
+			GetMappedColumn (table, localName + "_Column", el.GetPrefix (), el.GetNamespaceUri (), MappingType.SimpleContent, null);
 		}
 
 		private void InferTableElement (TableMapping parentTable, XmlElement el)
@@ -376,38 +376,34 @@ namespace System.Data
 			// loss of performance.
 			CheckExtraneousElementColumn (parentTable, el);
 
-			string localName = XmlHelper.Decode (XmlHelper.GetLocalName (el));
-			TableMapping table = GetMappedTable (parentTable, localName, XmlHelper.GetNamespaceUri (el));
+			string localName = XmlHelper.Decode (el.GetLocalName ());
+			TableMapping table = GetMappedTable (parentTable, localName, el.GetNamespaceUri ());
 
 			bool hasChildElements = false;
 			bool hasAttributes = false;
 			bool hasText = false;
 			bool isElementRepeated = false;
 
-			foreach (XmlAttribute attr in XmlHelper.GetAttributes (el)) {
-				if (XmlHelper.GetNamespaceUri (attr) == XmlConstants.XmlnsNS
-#if NET_2_0
-					|| XmlHelper.GetNamespaceUri (attr) == XmlConstants.XmlNS
-#endif
-#if WINDOWS_PHONE || NETFX_CORE
-					|| attr.IsNamespaceDeclaration
-#endif
+			foreach (XmlAttribute attr in el.GetAttributes ()) {
+				if (attr.GetNamespaceUri () == XmlConstants.XmlnsNS
+					|| attr.GetNamespaceUri () == XmlConstants.XmlNS
+					|| attr.IsNamespaceAttribute ()
 					)
 					continue;
 				if (ignoredNamespaces != null &&
-					ignoredNamespaces.Contains (XmlHelper.GetNamespaceUri (attr)))
+					ignoredNamespaces.Contains (attr.GetNamespaceUri ()))
 					continue;
 
 				hasAttributes = true;
 				GetMappedColumn (table,
-					XmlHelper.Decode (XmlHelper.GetLocalName (attr)),
-					XmlHelper.GetPrefix (el, attr),
-				        XmlHelper.GetNamespaceUri (attr),
+					XmlHelper.Decode (attr.GetLocalName ()),
+					el.GetPrefix (attr),
+				        attr.GetNamespaceUri (),
           				MappingType.Attribute,
           				null); 
 			}
 
-			foreach (XmlNode n in XmlHelper.GetChildNodes (el)) {
+			foreach (XmlNode n in el.GetChildNodes ()) {
 				switch (n.NodeType) {
 				case XmlNodeType.Comment:
 				case XmlNodeType.ProcessingInstruction: // ignore
@@ -420,7 +416,7 @@ namespace System.Data
 				case XmlNodeType.Element: // child
 					hasChildElements = true;
 					XmlElement cel = n as XmlElement;
-					string childLocalName = XmlHelper.Decode (XmlHelper.GetLocalName (cel));
+					string childLocalName = XmlHelper.Decode (cel.GetLocalName ());
 
 					switch (GetElementMappingType (cel, ignoredNamespaces, null)) {
 					case ElementMappingType.Simple:
@@ -511,52 +507,48 @@ namespace System.Data
 		{
 			if (existingTables == null)
 				return;
-			ArrayList al = existingTables [XmlHelper.GetNamespaceUri (el)] as ArrayList;
+			ArrayList al = existingTables [el.GetNamespaceUri ()] as ArrayList;
 			if (al == null) {
 				al = new ArrayList ();
-				existingTables [XmlHelper.GetNamespaceUri (el)] = al;
+				existingTables [el.GetNamespaceUri ()] = al;
 			}
-			if (al.Contains (XmlHelper.GetLocalName (el)))
+			if (al.Contains (el.GetLocalName ()))
 				return;
-			al.Add (XmlHelper.GetLocalName (el));
+			al.Add (el.GetLocalName ());
 		}
 
 		private static ElementMappingType GetElementMappingType (
 			XmlElement el, ArrayList ignoredNamespaces, Hashtable existingTables)
 		{
 			if (existingTables != null) {
-				ArrayList al = existingTables [XmlHelper.GetNamespaceUri (el)] as ArrayList;
-				if (al != null && al.Contains (XmlHelper.GetLocalName (el)))
+				ArrayList al = existingTables [el.GetNamespaceUri ()] as ArrayList;
+				if (al != null && al.Contains (el.GetLocalName ()))
 					// this is not precise, but it is enough
 					// for IsDocumentElementTable().
 					return ElementMappingType.Complex;
 			}
 
-			foreach (XmlAttribute attr in XmlHelper.GetAttributes (el)) {
-				if (XmlHelper.GetNamespaceUri (attr) == XmlConstants.XmlnsNS
-#if NET_2_0
-					|| XmlHelper.GetNamespaceUri (attr) == XmlConstants.XmlNS
-#endif
-#if WINDOWS_PHONE || NETFX_CORE
-					|| attr.IsNamespaceDeclaration
-#endif
+			foreach (XmlAttribute attr in el.GetAttributes ()) {
+				if (attr.GetNamespaceUri () == XmlConstants.XmlnsNS
+					|| attr.GetNamespaceUri () == XmlConstants.XmlNS
+					|| attr.IsNamespaceAttribute ()
 					)
 					continue;
-				if (ignoredNamespaces != null && ignoredNamespaces.Contains (XmlHelper.GetNamespaceUri (attr)))
+				if (ignoredNamespaces != null && ignoredNamespaces.Contains (attr.GetNamespaceUri ()))
 					continue;
 				SetAsExistingTable (el, existingTables);
 				return ElementMappingType.Complex;
 			}
-			foreach (XmlNode n in XmlHelper.GetChildNodes (el)) {
+			foreach (XmlNode n in el.GetChildNodes ()) {
 				if (n.NodeType == XmlNodeType.Element) {
 					SetAsExistingTable (el, existingTables);
 					return ElementMappingType.Complex;
 				}
 			}
 
-			for (XmlNode n = XmlHelper.GetNextSibling (el); n != null; n = XmlHelper.GetNextSibling (n)) {
+			for (XmlNode n = el.GetNextSibling (); n != null; n = n.GetNextSibling ()) {
 				XmlElement nEl = n as XmlElement;
-				if (n.NodeType == XmlNodeType.Element && XmlHelper.GetLocalName (nEl) == XmlHelper.GetLocalName (el)) {
+				if (n.NodeType == XmlNodeType.Element && nEl.GetLocalName () == el.GetLocalName ()) {
 					SetAsExistingTable (el, existingTables);
 					return GetElementMappingType (nEl,
 						ignoredNamespaces, null)
@@ -572,31 +564,27 @@ namespace System.Data
 		private bool IsDocumentElementTable ()
 		{
 			return IsDocumentElementTable (
-				XmlHelper.GetRootElement (document),
+				document.GetRootElement (),
 				ignoredNamespaces);
 		}
 
 		internal static bool IsDocumentElementTable (XmlElement top,
 			ArrayList ignoredNamespaces)
 		{
-			foreach (XmlAttribute attr in XmlHelper.GetAttributes (top)) {
-				if (XmlHelper.GetNamespaceUri (attr) == XmlConstants.XmlnsNS
-#if NET_2_0
-					|| XmlHelper.GetNamespaceUri (attr) == XmlConstants.XmlNS
-#endif
-#if WINDOWS_PHONE || NETFX_CORE
-					|| attr.IsNamespaceDeclaration
-#endif
+			foreach (XmlAttribute attr in top.GetAttributes ()) {
+				if (attr.GetNamespaceUri () == XmlConstants.XmlnsNS
+					|| attr.GetNamespaceUri () == XmlConstants.XmlNS
+					|| attr.IsNamespaceAttribute ()
 					)
 					continue;
 				if (ignoredNamespaces != null &&
-					ignoredNamespaces.Contains (XmlHelper.GetNamespaceUri (attr)))
+					ignoredNamespaces.Contains (attr.GetNamespaceUri ()))
 					continue;
 				// document element has attributes other than xmlns
 				return true;
 			}
 			Hashtable existingTables = new Hashtable ();
-			foreach (XmlNode n in XmlHelper.GetChildNodes (top)) {
+			foreach (XmlNode n in top.GetChildNodes ()) {
 				XmlElement el = n as XmlElement;
 				if (el == null)
 					continue;

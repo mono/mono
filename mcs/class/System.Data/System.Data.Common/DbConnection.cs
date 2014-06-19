@@ -504,11 +504,7 @@ namespace System.Data.Common {
 			int length = restrictionValues == null ? 0 : restrictionValues.Length;
 
 			foreach (DataRow row in schemaTable.Rows) {
-#if !NET_2_0
-				if (String.Compare ((string) row ["CollectionName"], collectionName, true) == 0) {
-#else
 				if (String.Compare ((string) row ["CollectionName"], collectionName, StringComparison.CurrentCultureIgnoreCase) == 0) {
-#endif
 					if (length > (int) row ["NumberOfRestrictions"]) {
 						throw new ArgumentException ("More restrictions were provided " +
 									     "than the requested schema ('" +
@@ -784,12 +780,12 @@ namespace System.Data.Common {
 #endif
 
 #if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose()
+		public void Dispose ()
 		{
-			Dispose(true);
+			Dispose (true);
 		}
 
-		protected virtual void Dispose(bool release_all)
+		protected virtual void Dispose (bool release_all)
 		{
 
 		}
