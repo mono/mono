@@ -127,7 +127,7 @@ mono_double_ParseImpl (char *ptr, double *result)
 
 	MONO_ARCH_SAVE_REGS;
 
-#ifdef __arm__
+#if defined (__arm__) && (defined (PLATFORM_ANDROID) || defined (TARGET_IOS))
 	if (*ptr)
 		*result = strtod (ptr, &endptr);
 #else
