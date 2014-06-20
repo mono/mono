@@ -27,12 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Data;
 using System.IO;
 using Mono.Data.Sqlite;
-
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
@@ -53,134 +51,106 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 using NUnit.Framework;
 #endif // USE_MSUNITTEST
 
-namespace MonoTests.Mono.Data.Sqlite
-{
-        [TestFixture]
-        public class SqliteConnectionTest : SqliteUnitTestsBase
-        {
-			[Test]
-			[Category ("NotWorking")]
-			public void ReleaseDatabaseFileHandles ()
-			{
-				string filename = "test_" + Guid.NewGuid ().ToString ("N") + ".db";
-				// open connection
-				SqliteConnection conn = new SqliteConnection ("Data Source=" + filename);
-				conn.Open ();
-				// start command
-				SqliteCommand cmd = (SqliteCommand) conn.CreateCommand ();
-				cmd.CommandText = "PRAGMA legacy_file_format;";
-				cmd.ExecuteScalar ();
-				// close connection before
-				conn.Dispose ();
-				// close command after
-				cmd.Dispose ();
-				// ensure file is not locked
-				File.Delete (filename);
+namespace MonoTests.Mono.Data.Sqlite {
+	[TestFixture]
+	public class SqliteConnectionTest : SqliteUnitTestsBase {
+		[Test]
+		[Category ("NotWorking")]
+		public void ReleaseDatabaseFileHandles ()
+		{
+			string filename = "test_" + Guid.NewGuid ().ToString ("N") + ".db";
+			// open connection
+			SqliteConnection conn = new SqliteConnection ("Data Source=" + filename);
+			conn.Open ();
+			// start command
+			SqliteCommand cmd = (SqliteCommand)conn.CreateCommand ();
+			cmd.CommandText = "PRAGMA legacy_file_format;";
+			cmd.ExecuteScalar ();
+			// close connection before
+			conn.Dispose ();
+			// close command after
+			cmd.Dispose ();
+			// ensure file is not locked
+			File.Delete (filename);
+		}		
+
+		[Test]
+		public void ConnectionStringTest_Null ()
+		{
+			try {
+				_conn.ConnectionString = null;
+				Assert.Fail ("Expected exception of type ArgumentNullException");
+			} catch (ArgumentNullException) {
+			} catch (Exception ex) {
+				Assert.Fail ("Expected exception of type ArgumentNullException, but was {0}", ex);
 			}
-		
-#if NET_2_0
-                [Test]
-                public void ConnectionStringTest_Null ()
-                {
-                    try {
-                        _conn.ConnectionString = null;
-                        Assert.Fail ("Expected exception of type ArgumentNullException");
-                    } catch (ArgumentNullException) {
-                    } catch (Exception ex) {
-                        Assert.Fail ("Expected exception of type ArgumentNullException, but was {0}", ex);
-                    }
-                }
+		}
 
-                [Test]
-                public void ConnectionStringTest_MustBeClosed ()
-                {
-                        _conn.ConnectionString = _connectionString;
-                        try {
-                    		_conn.Open ();
-                            try {
-                    		_conn.ConnectionString = _connectionString;
-                                Assert.Fail ("Expected exception of type InvalidOperationException");
-                            } catch (InvalidOperationException) {
-                            } catch (Exception ex) {
-                                Assert.Fail ("Expected exception of type InvalidOperationException, but was {0}", ex);
-                            }
-                    	} finally {
-                    		_conn.Close ();
-                    	}
-                }
-
-                [Test]
-                public void ConnectionStringTest_UsingDataDirectory ()
-                {
-                        _conn.ConnectionString = "Data Source=|DataDirectory|/test.db, Version=3";
-                        try {
-                    		_conn.Open ();
-                    	} finally {
-                    		_conn.Close ();
-                    	}
-                }
-
-				[Test]
-				public void ConnectionStringTest_UsingLocalDirectory()
-				{
-					_conn.ConnectionString = "Data Source=./test.db, Version=3";
-					try
-					{
-						_conn.Open();
-					}
-					finally
-					{
-						_conn.Close();
-					}
+		[Test]
+		public void ConnectionStringTest_MustBeClosed ()
+		{
+			_conn.ConnectionString = _connectionString;
+			try {
+				_conn.Open ();
+				try {
+					_conn.ConnectionString = _connectionString;
+					Assert.Fail ("Expected exception of type InvalidOperationException");
+				} catch (InvalidOperationException) {
+				} catch (Exception ex) {
+					Assert.Fail ("Expected exception of type InvalidOperationException, but was {0}", ex);
 				}
+			} finally {
+				_conn.Close ();
+			}
+		}
 
-#else
-                [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
-                public void ConnectionStringTest_Empty ()
-                {
-                        _conn.ConnectionString = "";
-                }
+		[Test]
+		public void ConnectionStringTest_UsingDataDirectory ()
+		{
+			_conn.ConnectionString = "Data Source=|DataDirectory|/test.db, Version=3";
+			try {
+				_conn.Open ();
+			} finally {
+				_conn.Close ();
+			}
+		}
 
-                [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
-                public void ConnectionStringTest_NoURI ()
-                {
-                        _conn.ConnectionString = "version=3";
-                }
+		[Test]
+		public void ConnectionStringTest_UsingLocalDirectory ()
+		{
+			_conn.ConnectionString = "Data Source=./test.db, Version=3";
+			try {
+				_conn.Open ();
+			} finally {
+				_conn.Close ();
+			}
+		}
 
-		// In 2.0 _conn.Database always returns "main"
-                [Test]
-                public void ConnectionStringTest_IgnoreSpacesAndTrim ()
-                {
-                        _conn.ConnectionString = "URI=file://xyz      , ,,, ,, version=3";
-                        Assert.AreEqual ("xyz", _conn.Database, "#1 file path is wrong");
-                }
-#endif
-				// behavior has changed, I guess
-                //opening a connection should not create db! though, leave for now
-                [Test]
-                [Ignore]
-                public void OpenTest ()
-                {
-                        try {
-                                _conn.ConnectionString = _connectionString;
-                                _conn.Open ();
-                                Assert.AreEqual (ConnectionState.Open, _conn.State, "#1 not opened");
-                                _conn.Close ();
+		[Test]
+		public void OpenTest ()
+		{
+			try {
+				_conn.ConnectionString = _connectionString;
+				_conn.Open ();
+				Assert.AreEqual (ConnectionState.Open, _conn.State, "#1 not opened");
+				_conn.Close ();
 
-                                // negative test: try opening a non-existent file
-                                _conn.ConnectionString = "URI=file://abcdefgh.db, version=3";
-                                try {
-                                        _conn.Open ();
-                                        Assert.Fail ("#1 should have failed on opening a non-existent db");
-                                } catch (ArgumentException e) {Console.WriteLine (e);}
+				// negative test: try opening a non-existent file
+				_conn.ConnectionString = "URI=file://abcdefgh.db, version=3, FailIfMissing=True";
+				try {
+					_conn.Open ();
+					Assert.Fail ("#2 should have failed on opening a non-existent db");
+				} catch (SqliteException e) {
+					// expected
+				} catch (Exception e) {
+					Assert.Fail ("#3 should not have thrown this one: {0}", e);
+				}
                                 
-                        } finally {
-                                if (_conn != null && _conn.State != ConnectionState.Closed)
-                                        _conn.Close ();
-                        }
-                }
+			} finally {
+				if (_conn != null && _conn.State != ConnectionState.Closed)
+					_conn.Close ();
+			}
+		}
 
-        }
+	}
 }

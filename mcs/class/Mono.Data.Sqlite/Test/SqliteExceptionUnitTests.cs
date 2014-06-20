@@ -2,7 +2,6 @@
 //
 // Author(s):	Thomas Zoechling <thomas.zoechling@gmx.at>
 
-
 using System;
 using System.Data;
 using System.IO;
@@ -28,27 +27,20 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 using NUnit.Framework;
 #endif // USE_MSUNITTEST
 
-namespace MonoTests.Mono.Data.Sqlite
-{
+namespace MonoTests.Mono.Data.Sqlite {
 	[TestFixture]
-	public class SqliteExceptionUnitTests : SqliteUnitTestsBaseWithT1
-	{
+	public class SqliteExceptionUnitTests : SqliteUnitTestsBaseWithT1 {
 		[Test]
-		public void WrongSyntax()
+		public void WrongSyntax ()
 		{
-			SqliteCommand insertCmd = new SqliteCommand("INSERT INTO t1 VALUES (,')",_conn);
-			using(_conn)
-			{
-				_conn.Open();
+			SqliteCommand insertCmd = new SqliteCommand ("INSERT INTO t1 VALUES (,')", _conn);
+			using (_conn) {
+				_conn.Open ();
 				try { 
-				int res = insertCmd.ExecuteNonQuery();
-				insertCmd.Dispose();
-				Assert.Fail("Expected an exception due to incorrect syntax");
-#if NET_2_0
+					int res = insertCmd.ExecuteNonQuery ();
+					insertCmd.Dispose ();
+					Assert.Fail ("Expected an exception due to incorrect syntax");
 				} catch (SqliteException) {
-#else
-				} catch (SqliteSyntaxException) {
-#endif
 				}
 			}
 		}

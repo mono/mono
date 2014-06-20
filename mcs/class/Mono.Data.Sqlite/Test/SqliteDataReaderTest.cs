@@ -27,14 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
 using Mono.Data.Sqlite;
-
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
@@ -55,34 +53,32 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 using NUnit.Framework;
 #endif // USE_MSUNITTEST
 
-namespace MonoTests.Mono.Data.Sqlite
-{
-        [TestFixture]
-        public class SqliteDataReaderTest : SqliteUnitTestsBaseWithT1
-        {
-                [Test]
-                [Category ("NotWorking")]
-                public void GetSchemaTableTest ()
-                {
-                        _conn.ConnectionString = _connectionString;
-                        SqliteDataReader reader = null;
-                        using (_conn) {
-                                _conn.Open ();
-                                SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
-                                cmd.CommandText = "select * from t1";
-                                reader = cmd.ExecuteReader ();
-                                try {
-                                        DataTable dt = reader.GetSchemaTable ();
-                                        Assert.IsNotNull (dt, "#GS1 should return valid table");
-                                        Assert.IsTrue (dt.Rows.Count > 0, "#GS2 should return with rows ;-)");
-                                } finally {
-                                        if (reader != null && !reader.IsClosed)
-                                                reader.Close ();
-                                        cmd.Dispose ();
-                                        _conn.Close ();
-                                }
-                        }
-                }
+namespace MonoTests.Mono.Data.Sqlite {
+	[TestFixture]
+	public class SqliteDataReaderTest : SqliteUnitTestsBaseWithT1 {
+		[Test]
+		[Category ("NotWorking")]
+		public void GetSchemaTableTest ()
+		{
+			_conn.ConnectionString = _connectionString;
+			SqliteDataReader reader = null;
+			using (_conn) {
+				_conn.Open ();
+				SqliteCommand cmd = (SqliteCommand)_conn.CreateCommand ();
+				cmd.CommandText = "select * from t1";
+				reader = cmd.ExecuteReader ();
+				try {
+					DataTable dt = reader.GetSchemaTable ();
+					Assert.IsNotNull (dt, "#GS1 should return valid table");
+					Assert.IsTrue (dt.Rows.Count > 0, "#GS2 should return with rows ;-)");
+				} finally {
+					if (reader != null && !reader.IsClosed)
+						reader.Close ();
+					cmd.Dispose ();
+					_conn.Close ();
+				}
+			}
+		}
 
 		[Test]
 		public void TypeOfNullInResultTest ()
@@ -91,11 +87,11 @@ namespace MonoTests.Mono.Data.Sqlite
 			SqliteDataReader reader = null;
 			using (_conn) {
 				_conn.Open ();
-				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
+				SqliteCommand cmd = (SqliteCommand)_conn.CreateCommand ();
 				cmd.CommandText = "select null from t1";
 				reader = cmd.ExecuteReader ();
 				try {
-					Assert.IsTrue (reader.Read());
+					Assert.IsTrue (reader.Read ());
 					Assert.IsNotNull (reader.GetFieldType (0));
 				} finally {
 					cmd.Dispose ();
@@ -105,20 +101,20 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
-		
+
 		[Test]
 		public void TimestampTest ()
 		{
 			_conn.ConnectionString = _connectionString;
 			using (_conn) {
 				_conn.Open ();
-				var cmd = (SqliteCommand) _conn.CreateCommand ();
+				var cmd = (SqliteCommand)_conn.CreateCommand ();
 				cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
 				cmd.ExecuteNonQuery ();
 				cmd.Dispose ();
 			
 				var query = "SELECT * FROM TestNullableDateTime;";
-				cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd = (SqliteCommand)_conn.CreateCommand ();
 				cmd.CommandText = query;
 				cmd.CommandType = CommandType.Text;
 			
@@ -136,13 +132,13 @@ namespace MonoTests.Mono.Data.Sqlite
 			_conn.ConnectionString = _connectionString + ",DateTimeFormat=UnixEpoch";
 			using (_conn) {
 				_conn.Open ();
-				var cmd = (SqliteCommand) _conn.CreateCommand ();
+				var cmd = (SqliteCommand)_conn.CreateCommand ();
 				cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
 				cmd.ExecuteNonQuery ();
 				cmd.Dispose ();
 			
 				var query = "SELECT * FROM TestNullableDateTime;";
-				cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd = (SqliteCommand)_conn.CreateCommand ();
 				cmd.CommandText = query;
 				cmd.CommandType = CommandType.Text;
 			
@@ -153,7 +149,7 @@ namespace MonoTests.Mono.Data.Sqlite
 				cmd.Dispose ();
 			}
 		}
-		
+
 		[Test]
 		public void CloseConnectionTest ()
 		{
@@ -166,7 +162,7 @@ namespace MonoTests.Mono.Data.Sqlite
 			_conn.ConnectionString = _connectionString;
 			using (_conn) {
 				_conn.Open ();
-				using (var cmd = (SqliteCommand) _conn.CreateCommand ()) {
+				using (var cmd = (SqliteCommand)_conn.CreateCommand ()) {
 					cmd.CommandText = @"CREATE TABLE IF NOT EXISTS TestNullableDateTime (nullable TIMESTAMP NULL, dummy int); INSERT INTO TestNullableDateTime (nullable, dummy) VALUES (124123, 2);";
 					cmd.ExecuteNonQuery ();
 				}
@@ -176,7 +172,7 @@ namespace MonoTests.Mono.Data.Sqlite
 				_conn.ConnectionString = _connectionString;
 				using (_conn) {
 					_conn.Open ();
-					using (var cmd = (SqliteCommand) _conn.CreateCommand ()) {
+					using (var cmd = (SqliteCommand)_conn.CreateCommand ()) {
 						cmd.CommandText = "SELECT * FROM TestNullableDateTime;";
 						cmd.CommandType = CommandType.Text;
 					
@@ -196,8 +192,7 @@ namespace MonoTests.Mono.Data.Sqlite
 			cm.Parameters.Add (param);
 		}
 
-		class D
-		{
+		class D {
 			public string Sql;
 			public Type Expected;
 			public object Value;
@@ -208,59 +203,56 @@ namespace MonoTests.Mono.Data.Sqlite
 		{
 			SqliteParameter param;
 			
-			var data = new List<D> ()
-			{
-				new D () { Sql = "DATETIME",            Expected = typeof (DateTime),   Value = DateTime.Now              },
-				new D () { Sql = "GUIDBLOB NOT NULL",   Expected = typeof (Guid),       Value = new byte [] { 3, 14, 15 } },
-				new D () { Sql = "BOOLEAN",             Expected = typeof (bool),       Value = true                      },
-				new D () { Sql = "INT32",               Expected = typeof (long),       Value = 1                         },
-				new D () { Sql = "INT32 NOT NULL",      Expected = typeof (long),       Value = 2                         },
-				new D () { Sql = "UINT1",               Expected = typeof (long),       Value = 3                         },
+			var data = new List<D> () {
+				new D () { Sql = "DATETIME",            Expected = typeof(DateTime),   Value = DateTime.Now              },
+				new D () { Sql = "GUIDBLOB NOT NULL",   Expected = typeof(Guid),       Value = new byte [] { 3, 14, 15 } },
+				new D () { Sql = "BOOLEAN",             Expected = typeof(bool),       Value = true                      },
+				new D () { Sql = "INT32",               Expected = typeof(long),       Value = 1                         },
+				new D () { Sql = "INT32 NOT NULL",      Expected = typeof(long),       Value = 2                         },
+				new D () { Sql = "UINT1",               Expected = typeof(long),       Value = 3                         },
 				
 				// these map to the INTEGER affinity
-				new D () { Sql = "INT",                 Expected = typeof (int),       Value = 4  },
-				new D () { Sql = "INTEGER",             Expected = typeof (long),      Value = 5 },
-				new D () { Sql = "TINYINT",             Expected = typeof (byte),      Value = 6 },
-				new D () { Sql = "SMALLINT",            Expected = typeof (short),     Value = 7 },
-				new D () { Sql = "MEDIUMINT",           Expected = typeof (long),      Value = 8 },
-				new D () { Sql = "BIGINT",              Expected = typeof (long),      Value = 9 },
-				new D () { Sql = "UNSIGNED BIG INT",    Expected = typeof (long),      Value = 0 },
-				new D () { Sql = "INT2",                Expected = typeof (long),      Value = 1 },
-				new D () { Sql = "INT4",                Expected = typeof (long),      Value = 2 },
+				new D () { Sql = "INT",                 Expected = typeof(int),       Value = 4  },
+				new D () { Sql = "INTEGER",             Expected = typeof(long),      Value = 5 },
+				new D () { Sql = "TINYINT",             Expected = typeof(byte),      Value = 6 },
+				new D () { Sql = "SMALLINT",            Expected = typeof(short),     Value = 7 },
+				new D () { Sql = "MEDIUMINT",           Expected = typeof(long),      Value = 8 },
+				new D () { Sql = "BIGINT",              Expected = typeof(long),      Value = 9 },
+				new D () { Sql = "UNSIGNED BIG INT",    Expected = typeof(long),      Value = 0 },
+				new D () { Sql = "INT2",                Expected = typeof(long),      Value = 1 },
+				new D () { Sql = "INT4",                Expected = typeof(long),      Value = 2 },
 				
 				// these map to the TEXT affinity
-				new D () { Sql = "CHARACTER(20)",          Expected = typeof (string),       Value = "a" },
-				new D () { Sql = "VARCHAR(255)",           Expected = typeof (string),       Value = "b" },
-				new D () { Sql = "VARYING CHARACTER(255)", Expected = typeof (string),       Value = "c" },
-				new D () { Sql = "NCHAR(55)",              Expected = typeof (string),       Value = "d" },
-				new D () { Sql = "NATIVE CHARACTER(70)",   Expected = typeof (string),       Value = "e" },
-				new D () { Sql = "NVARCHAR(100)",          Expected = typeof (string),       Value = "f" },
-				new D () { Sql = "TEXT",                   Expected = typeof (string),       Value = "g" },
-				new D () { Sql = "CLOB",                   Expected = typeof (string),       Value = "h" },
+				new D () { Sql = "CHARACTER(20)",          Expected = typeof(string),       Value = "a" },
+				new D () { Sql = "VARCHAR(255)",           Expected = typeof(string),       Value = "b" },
+				new D () { Sql = "VARYING CHARACTER(255)", Expected = typeof(string),       Value = "c" },
+				new D () { Sql = "NCHAR(55)",              Expected = typeof(string),       Value = "d" },
+				new D () { Sql = "NATIVE CHARACTER(70)",   Expected = typeof(string),       Value = "e" },
+				new D () { Sql = "NVARCHAR(100)",          Expected = typeof(string),       Value = "f" },
+				new D () { Sql = "TEXT",                   Expected = typeof(string),       Value = "g" },
+				new D () { Sql = "CLOB",                   Expected = typeof(string),       Value = "h" },
 				
 				// these map to the NONE affinity
-				new D () { Sql = "BLOB",           Expected = typeof (byte[]),       Value = new byte [] { 3, 14, 15 } },
-				new D () { Sql = "",               Expected = typeof (object),       Value = null                      },
+				new D () { Sql = "BLOB",           Expected = typeof(byte[]),       Value = new byte [] { 3, 14, 15 } },
+				new D () { Sql = "",               Expected = typeof(object),       Value = null                      },
 				
 				// these map to the REAL affinity
-				new D () { Sql = "REAL",               Expected = typeof (float),        Value = 3.2 },
-				new D () { Sql = "DOUBLE",             Expected = typeof (double),       Value = 4.2 },
-				new D () { Sql = "DOUBLE PRECISION",   Expected = typeof (double),       Value = 5.2 },
-				new D () { Sql = "FLOAT",              Expected = typeof (double),       Value = 6.2 },
+				new D () { Sql = "REAL",               Expected = typeof(float),        Value = 3.2 },
+				new D () { Sql = "DOUBLE",             Expected = typeof(double),       Value = 4.2 },
+				new D () { Sql = "DOUBLE PRECISION",   Expected = typeof(double),       Value = 5.2 },
+				new D () { Sql = "FLOAT",              Expected = typeof(double),       Value = 6.2 },
 				
 				// these map to the NUMERIC affinity
-				new D () { Sql = "NUMERIC",            Expected = typeof (decimal),        Value = 3.2          },
-				new D () { Sql = "DECIMAL(10,5)",      Expected = typeof (decimal),        Value = null         },
-				new D () { Sql = "BOOLEAN",            Expected = typeof (bool),           Value = true         },
-				new D () { Sql = "DATE",               Expected = typeof (DateTime),       Value = DateTime.Now },
-				new D () { Sql = "DATETIME",           Expected = typeof (DateTime),       Value = DateTime.Now },
-				
-				
+				new D () { Sql = "NUMERIC",            Expected = typeof(decimal),        Value = 3.2          },
+				new D () { Sql = "DECIMAL(10,5)",      Expected = typeof(decimal),        Value = null         },
+				new D () { Sql = "BOOLEAN",            Expected = typeof(bool),           Value = true         },
+				new D () { Sql = "DATE",               Expected = typeof(DateTime),       Value = DateTime.Now },
+				new D () { Sql = "DATETIME",           Expected = typeof(DateTime),       Value = DateTime.Now },
 			};
 			
 			_conn.ConnectionString = _connectionString;
 			using (_conn) {
-				_conn.Open();
+				_conn.Open ();
 				
 				using (var cm = _conn.CreateCommand ()) {
 					var sql = new StringBuilder ();
@@ -308,5 +300,5 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
-        }
+	}
 }

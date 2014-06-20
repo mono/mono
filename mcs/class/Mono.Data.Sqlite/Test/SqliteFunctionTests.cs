@@ -33,25 +33,23 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 using NUnit.Framework;
 #endif // USE_MSUNITTEST
 
-namespace MonoTests.Mono.Data.Sqlite
-{
+namespace MonoTests.Mono.Data.Sqlite {
 	[TestFixture]
-	public class SqliteFunctionTest : SqliteUnitTestsBase
-	{
+	public class SqliteFunctionTest : SqliteUnitTestsBase {
 		[Test]
-		public void CollationTest()
+		public void CollationTest ()
 		{
-			var builder = new SqliteConnectionStringBuilder();
+			var builder = new SqliteConnectionStringBuilder ();
 			builder.DataSource = _uri;
 
-			var connectionString = builder.ToString();
+			var connectionString = builder.ToString ();
 			using (var connection = new SqliteConnection (connectionString)) {
 				connection.Open ();
 				connection.Close ();
 			}
 		}
 
-		[SqliteFunction(Name = "TestCollation", FuncType = FunctionType.Collation)]
+		[SqliteFunction (Name = "TestCollation", FuncType = FunctionType.Collation)]
 		public class TestCollation : SqliteFunction
 		{
 			public override int Compare (string param1, string param2)
@@ -61,30 +59,28 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 
 		[Test]
-		public void ScalarFunctionTest()
+		public void ScalarFunctionTest ()
 		{
-			var builder = new SqliteConnectionStringBuilder();
+			var builder = new SqliteConnectionStringBuilder ();
 			builder.DataSource = _uri;
 
-			var connectionString = builder.ToString();
-			using (var connection = new SqliteConnection(connectionString))
-			{
-				connection.Open();
-				using (var cmd = connection.CreateCommand())
-				{
+			var connectionString = builder.ToString ();
+			using (var connection = new SqliteConnection (connectionString)) {
+				connection.Open ();
+				using (var cmd = connection.CreateCommand ()) {
 					cmd.CommandText = "SELECT TestFunction(12, 21);";
-					Assert.AreEqual(33L, cmd.ExecuteScalar());
+					Assert.AreEqual (33L, cmd.ExecuteScalar ());
 				}
-				connection.Close();
+				connection.Close ();
 			}
 		}
 
-		[SqliteFunction(Name = "TestFunction", FuncType = FunctionType.Scalar, Arguments = 2)]
+		[SqliteFunction (Name = "TestFunction", FuncType = FunctionType.Scalar, Arguments = 2)]
 		public class TestFunction : SqliteFunction
 		{
-			public override object Invoke(object[] args)
+			public override object Invoke (object[] args)
 			{
-				return Convert.ToInt32(args[0]) + Convert.ToInt32(args[1]);
+				return Convert.ToInt32 (args [0]) + Convert.ToInt32 (args [1]);
 			}
 		}
 	}

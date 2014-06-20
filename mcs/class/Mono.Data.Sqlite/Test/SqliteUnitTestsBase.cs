@@ -1,7 +1,6 @@
-// SqliteDataAdapterUnitTests.cs - NUnit Test Cases for Mono.Data.Sqlite.SqliteDataAdapter
+// SqliteUnitTestsBase.cs - Base logic for most tests
 //
-// Author(s):	Thomas Zoechling <thomas.zoechling@gmx.at>
-
+// Author(s):	Matthew Leibowitz <matthew.leibowitz@xamarin.com>
 
 using System;
 using System.Data;
@@ -28,60 +27,51 @@ using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCateg
 using NUnit.Framework;
 #endif // USE_MSUNITTEST
 
-namespace MonoTests.Mono.Data.Sqlite
-{
-	public class SqliteUnitTestsBase
-	{
+namespace MonoTests.Mono.Data.Sqlite {
+	public class SqliteUnitTestsBase {
 		protected readonly static string _uri = "test.sqlite";
 		protected readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
 		protected static SqliteConnection _conn = null;
 		protected readonly static string stringvalue = "my keyboard is better than yours : äöüß";
 
 		[TearDown]
-		public void Drop()
+		public void Drop ()
 		{
-			if (_conn != null)
-			{
-				_conn.Dispose();
+			if (_conn != null) {
+				_conn.Dispose ();
 				_conn = null;
 			}
-			if (File.Exists(_uri))
-			{
+			if (File.Exists (_uri)) {
 				// We want to start with a fresh db for each full run
 				// The database is created on the first open()
-				File.Delete(_uri);
+				File.Delete (_uri);
 			}
 		}
 
 		[SetUp]
-		public virtual void Create()
+		public virtual void Create ()
 		{
-			Drop();
+			Drop ();
 
-			_conn = new SqliteConnection(_connectionString);
+			_conn = new SqliteConnection (_connectionString);
 		}
 	}
 
-	public class SqliteUnitTestsBaseWithT1 : SqliteUnitTestsBase
-	{
+	public class SqliteUnitTestsBaseWithT1 : SqliteUnitTestsBase {
 		[SetUp]
-		public override void Create()
+		public override void Create ()
 		{
-			base.Create();
+			base.Create ();
 
-			try
-			{
-				using (SqliteCommand createCommand = new SqliteCommand("CREATE TABLE t1(t  TEXT,  f FLOAT, i INTEGER, b TEXT);", _conn))
-				using (SqliteCommand insertCommand = new SqliteCommand("INSERT INTO t1  (t, f, i, b ) VALUES('" + stringvalue + "',123,123,'123')", _conn))
-				{
-					_conn.Open();
-					createCommand.ExecuteNonQuery();
-					insertCommand.ExecuteNonQuery();
+			try {
+				using (SqliteCommand createCommand = new SqliteCommand ("CREATE TABLE t1(t  TEXT,  f FLOAT, i INTEGER, b TEXT);", _conn))
+				using (SqliteCommand insertCommand = new SqliteCommand ("INSERT INTO t1  (t, f, i, b ) VALUES('" + stringvalue + "',123,123,'123')", _conn)) {
+					_conn.Open ();
+					createCommand.ExecuteNonQuery ();
+					insertCommand.ExecuteNonQuery ();
 				}
-			}
-			finally
-			{
-				_conn.Close();
+			} finally {
+				_conn.Close ();
 			}
 		}
 	}
