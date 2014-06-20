@@ -1271,7 +1271,7 @@ namespace MonoTests.System.IO
 		/// In response to Bug #11699 
 		/// </summary>
 		[Test]
-		public void TestWriteAtCorrectPosition()
+		public void TestWriteAtCorrectPosition ()
 		{
 			const int pos = 1;
 			const int bufferSize = 128;
@@ -1282,7 +1282,7 @@ namespace MonoTests.System.IO
 			var bytes = new byte[bufferSize + 1];
 			new Random ().NextBytes (bytes);
 
-			using (var file = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, bufferSize, FileOptions.SequentialScan)) {
+			using (var file = new FileStream (filename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, bufferSize, FileOptions.SequentialScan)) {
 				file.Read (new byte[pos], 0, pos); 
 				Assert.AreEqual (pos, file.Position); 
 
@@ -1291,7 +1291,7 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (pos + bytes.Length, file.Length);
 			}
 
-			using (var filestream = File.Open(filename, FileMode.Open, FileAccess.Read)) {
+			using (var filestream = File.Open (filename, FileMode.Open, FileAccess.Read)) {
 				var bb = new byte[bytes.Length];
 				filestream.Position = pos;
 				filestream.Read (bb, 0, bb.Length);
