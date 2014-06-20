@@ -126,10 +126,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NativeWrapper.h" />
+    <ClInclude Include="DllImport/NativeWrapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NativeWrapper.cpp" />
+    <ClCompile Include="DllImport/NativeWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="SQLite.WP80, Version=3.8.4.3" />
