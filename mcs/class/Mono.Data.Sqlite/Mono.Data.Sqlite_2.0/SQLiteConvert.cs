@@ -59,7 +59,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// An Unicode Encoding instance, so we can convert strings to and from UTF-16
     /// </summary>
-    private static Encoding _utf16 = new UnicodeEncoding();
+    static Encoding _utf16 = new UnicodeEncoding();
     /// <summary>
     /// The default DateTime format for this instance
     /// </summary>
@@ -79,15 +79,15 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="sourceText">The string to convert to UTF-8</param>
     /// <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
-    public static byte[] ToUTF8(string sourceText)
+    public static byte[] ToUTF8 (string sourceText)
     {
       int size;
-      return ToUTF8(sourceText, out size);
+      return ToUTF8 (sourceText, out size);
     }
-    public static byte[] ToUTF8(string sourceText, out int nlen)
+    public static byte[] ToUTF8 (string sourceText, out int nlen)
     {
       Byte[] byteArray;
-      nlen = _utf8.GetByteCount(sourceText) + 1;
+      nlen = _utf8.GetByteCount (sourceText) + 1;
 
       byteArray = new byte[nlen];
       nlen = _utf8.GetBytes(sourceText, 0, sourceText.Length, byteArray, 0);
@@ -101,19 +101,19 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="sourceText">The string to convert to UTF-16</param>
     /// <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
-    public static byte[] ToUTF16(string sourceText)
+    public static byte[] ToUTF16 (string sourceText)
     {
       int size;
-      return ToUTF16(sourceText, out size);
+      return ToUTF16 (sourceText, out size);
     }
-    public static byte[] ToUTF16(string sourceText, out int nlen)
+    public static byte[] ToUTF16 (string sourceText, out int nlen)
     {
       Byte[] byteArray;
-      nlen = _utf16.GetByteCount(sourceText) + 1;
+      nlen = _utf16.GetByteCount (sourceText) + 1;
 
-      byteArray = new byte[nlen];
-      nlen = _utf16.GetBytes(sourceText, 0, sourceText.Length, byteArray, 0);
-      byteArray[nlen] = 0;
+      byteArray = new byte [nlen];
+      nlen = _utf16.GetBytes (sourceText, 0, sourceText.Length, byteArray, 0);
+      byteArray [nlen] = 0;
 
       return byteArray;
     }
@@ -131,9 +131,9 @@ namespace Mono.Data.Sqlite
     {
       return ToUTF8(ToString(dateTimeValue));
     }
-    public byte[] ToUTF8(DateTime dateTimeValue, out int size)
+    public byte[] ToUTF8 (DateTime dateTimeValue, out int size)
     {
-      return ToUTF8(ToString(dateTimeValue), out size);
+      return ToUTF8 (ToString (dateTimeValue), out size);
     }
 
     /// <summary>
@@ -682,11 +682,7 @@ namespace Mono.Data.Sqlite
         
       for (int n = 0; n < _typeNames.Length; n++)
       {
-#if NET_2_0
-        if (string.Compare(nameToCompare, _typeNames[n].typeName, StringComparison.InvariantCultureIgnoreCase) == 0)
-#else
-        if (string.Compare(nameToCompare, _typeNames[n].typeName, true, CultureInfo.InvariantCulture) == 0)
-#endif
+        if (string.Compare (nameToCompare, _typeNames [n].typeName, StringComparison.InvariantCultureIgnoreCase) == 0)
           return _typeNames[n].dataType; 
       }
       

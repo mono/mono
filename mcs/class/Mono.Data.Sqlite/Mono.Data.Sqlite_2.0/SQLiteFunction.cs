@@ -169,16 +169,15 @@ namespace Mono.Data.Sqlite
     /// <param name="nArgs">The number of arguments</param>
     /// <param name="argsptr">A pointer to the array of arguments</param>
     /// <returns>An object array of the arguments once they've been converted to .NET values</returns>
-    internal object[] ConvertParams(int nArgs, IntPtr[] argsptr)
+    internal object[] ConvertParams (int nArgs, IntPtr[] argsptr)
     {
-      object[] parms = new object[nArgs];
+      object[] parms = new object [nArgs];
 #if !PLATFORM_COMPACTFRAMEWORK
       IntPtr[] argint = argsptr;
 #else
       int[] argint = new int[nArgs];
-      for (int i = 0; i < nArgs; i++)
-      {
-        argint[i] = argsptr[i].ToInt32();
+      for (int i = 0; i < nArgs; i++) {
+        argint [i] = argsptr [i].ToInt32 ();
       }
 #endif
 
@@ -273,7 +272,7 @@ namespace Mono.Data.Sqlite
     /// <param name="context">A raw context pointer</param>
     /// <param name="nArgs">Number of arguments passed in</param>
     /// <param name="argsptr">A pointer to the array of arguments</param>
-    internal void ScalarCallback(IntPtr context, int nArgs, IntPtr[] argsptr)
+    internal void ScalarCallback (IntPtr context, int nArgs, IntPtr[] argsptr)
     {
       _context = context;
       SetReturnValue(context, Invoke(ConvertParams(nArgs, argsptr)));
@@ -310,7 +309,7 @@ namespace Mono.Data.Sqlite
     /// <param name="context">A raw context pointer</param>
     /// <param name="nArgs">Number of arguments passed in</param>
     /// <param name="argsptr">A pointer to the array of arguments</param>
-    internal void StepCallback(IntPtr context, int nArgs, IntPtr[] argsptr)
+    internal void StepCallback (IntPtr context, int nArgs, IntPtr[] argsptr)
     {
       long nAux;
       AggregateData data;
@@ -600,7 +599,7 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 #endif
-  internal delegate void SQLiteCallback(IntPtr context, int nArgs, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] IntPtr[] argsptr);
+  internal delegate void SQLiteCallback (IntPtr context, int nArgs, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] IntPtr[] argsptr);
   /// <summary>
   /// An internal final callback delegate declaration.
   /// </summary>

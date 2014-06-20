@@ -317,11 +317,7 @@ namespace Mono.Data.Sqlite
       int x = _parameterList.Count;
       for (int n = 0; n < x; n++)
       {
-#if NET_2_0
-        if (String.Compare(parameterName, _parameterList[n].ParameterName, StringComparison.InvariantCultureIgnoreCase) == 0)
-#else
-        if (String.Compare(parameterName, _parameterList[n].ParameterName, true, CultureInfo.InvariantCulture) == 0)
-#endif
+        if (String.Compare (parameterName, _parameterList [n].ParameterName, StringComparison.InvariantCultureIgnoreCase) == 0)
           return n;
       }
       return -1;

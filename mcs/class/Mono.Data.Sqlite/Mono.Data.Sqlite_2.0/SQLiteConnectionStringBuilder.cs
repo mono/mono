@@ -16,7 +16,8 @@ namespace Mono.Data.Sqlite
   using System.Reflection;
 
 #if !PLATFORM_COMPACTFRAMEWORK
-#if !WINDOWS_PHONE && !NETFX_CORE
+
+#if!WINDOWS_PHONE && !NETFX_CORE
   using System.ComponentModel.Design;
 #endif
 
@@ -24,9 +25,9 @@ namespace Mono.Data.Sqlite
   /// SQLite implementation of DbConnectionStringBuilder.
   /// </summary>
 #if !WINDOWS_PHONE && !NETFX_CORE
-  [DefaultProperty("DataSource")]
+  [DefaultProperty ("DataSource")]
+  [DefaultMember ("Item")]
 #endif
-  [DefaultMember("Item")]
   public sealed class SqliteConnectionStringBuilder : DbConnectionStringBuilder
   {
     /// <summary>
@@ -62,16 +63,13 @@ namespace Mono.Data.Sqlite
     {
       _properties = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
 #if !WINDOWS_PHONE && !NETFX_CORE
-      try
-      {
-        base.GetProperties(_properties);
-      }
-      catch(NotImplementedException)
-      {
-        FallbackGetProperties(_properties);
+      try {
+        base.GetProperties (_properties);
+      } catch (NotImplementedException) {
+        FallbackGetProperties (_properties);
       }
 #else
-      FallbackGetProperties(_properties);
+      FallbackGetProperties (_properties);
 #endif
 
       if (String.IsNullOrEmpty(cnnString) == false)
@@ -81,8 +79,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the default version of the SQLite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(3)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (3)]
     public int Version
     {
       get
@@ -103,9 +103,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the synchronization mode (file flushing) of the connection string.  Default is "Normal".
     /// </summary>
-    [DisplayName("Synchronous")]
-    [Browsable(true)]
-    [DefaultValue(SynchronizationModes.Normal)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Synchronous")]
+    [DefaultValue (SynchronizationModes.Normal)]
     public SynchronizationModes SyncMode
     {
       get
@@ -113,7 +115,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("synchronous", out value);
         if (value is string)
-          return (SynchronizationModes)Enum.Parse(typeof(SynchronizationModes), value as string, true);
+          return (SynchronizationModes)Enum.Parse (typeof (SynchronizationModes), value as string, true);
         else return (SynchronizationModes)value;
       }
       set
@@ -125,8 +127,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the encoding for the connection string.  The default is "False" which indicates UTF-8 encoding.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (false)]
     public bool UseUTF16Encoding
     {
       get
@@ -144,8 +148,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets whether or not to use connection pooling.  The default is "False"
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (false)]
     public bool Pooling
     {
       get
@@ -164,8 +170,10 @@ namespace Mono.Data.Sqlite
     /// Gets/Sets whethor not to store GUID's in binary format.  The default is True
     /// which saves space in the database.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(true)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (true)]
     public bool BinaryGUID
     {
       get
@@ -183,9 +191,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the filename to open on the connection string.
     /// </summary>
-    [DisplayName("Data Source")]
-    [Browsable(true)]
-    [DefaultValue("")]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Data Source")]
+    [DefaultValue ("")]
     public string DataSource
     {
       get
@@ -203,7 +213,9 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// An alternate to the data source property
     /// </summary>
-    [Browsable(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (false)]
+#endif
     public string Uri
     {
       get
@@ -222,9 +234,11 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
     /// commands used internally such as inside a SqliteTransaction, where setting the timeout is not possible.
     /// </summary>
-    [DisplayName("Default Timeout")]
-    [Browsable(true)]
-    [DefaultValue(30)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Default Timeout")]
+    [DefaultValue (30)]
     public int DefaultTimeout
     {
       get
@@ -243,8 +257,10 @@ namespace Mono.Data.Sqlite
     /// Determines whether or not the connection will automatically participate
     /// in the current distributed transaction (if one exists)
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(true)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (true)]
     public bool Enlist
     {
       get
@@ -263,8 +279,10 @@ namespace Mono.Data.Sqlite
     /// If set to true, will throw an exception if the database specified in the connection
     /// string does not exist.  If false, the database will be created automatically.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (false)]
     public bool FailIfMissing
     {
       get
@@ -283,9 +301,11 @@ namespace Mono.Data.Sqlite
     /// If enabled, uses the legacy 3.xx format for maximum compatibility, but results in larger
     /// database sizes.
     /// </summary>
-    [DisplayName("Legacy Format")]
-    [Browsable(true)]
-    [DefaultValue(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Legacy Format")]
+    [DefaultValue (false)]
     public bool LegacyFormat
     {
       get
@@ -303,9 +323,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// When enabled, the database will be opened for read-only access and writing will be disabled.
     /// </summary>
-    [DisplayName("Read Only")]
-    [Browsable(true)]
-    [DefaultValue(false)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Read Only")]
+    [DefaultValue (false)]
     public bool ReadOnly
     {
       get
@@ -323,11 +345,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/sets the database encryption password
     /// </summary>
-    [Browsable(true)]
 #if !WINDOWS_PHONE && !NETFX_CORE
-    [PasswordPropertyText(true)]
+    [Browsable (true)]
+    [PasswordPropertyText (true)]
 #endif
-    [DefaultValue("")]
+    [DefaultValue ("")]
     public string Password
     {
       get
@@ -345,9 +367,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the page size for the connection.
     /// </summary>
-    [DisplayName("Page Size")]
-    [Browsable(true)]
-    [DefaultValue(1024)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Page Size")]
+    [DefaultValue (1024)]
     public int PageSize
     {
       get
@@ -365,9 +389,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the maximum number of pages the database may hold
     /// </summary>
-    [DisplayName("Max Page Count")]
-    [Browsable(true)]
-    [DefaultValue(0)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Max Page Count")]
+    [DefaultValue (0)]
     public int MaxPageCount
     {
       get
@@ -385,9 +411,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the cache size for the connection.
     /// </summary>
-    [DisplayName("Cache Size")]
-    [Browsable(true)]
-    [DefaultValue(2000)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DisplayName ("Cache Size")]
+    [DefaultValue (2000)]
     public int CacheSize
     {
       get
@@ -405,8 +433,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the datetime format for the connection.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(SQLiteDateFormats.ISO8601)]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (SQLiteDateFormats.ISO8601)]
     public SQLiteDateFormats DateTimeFormat
     {
       get
@@ -414,7 +444,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("datetimeformat", out value);
         if (value is string)
-          return (SQLiteDateFormats)Enum.Parse(typeof(SQLiteDateFormats), value as string, true);
+          return (SQLiteDateFormats)Enum.Parse (typeof (SQLiteDateFormats), value as string, true);
         else return (SQLiteDateFormats)value;
       }
       set
@@ -426,9 +456,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Determines how SQLite handles the transaction journal file.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(SQLiteJournalModeEnum.Delete)]
-    [DisplayName("Journal Mode")]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (SQLiteJournalModeEnum.Delete)]
+    [DisplayName ("Journal Mode")]
     public SQLiteJournalModeEnum JournalMode
     {
       get
@@ -436,7 +468,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("journal mode", out value);
         if (value is string)
-          return (SQLiteJournalModeEnum)Enum.Parse(typeof(SQLiteJournalModeEnum), value as string, true);
+          return (SQLiteJournalModeEnum)Enum.Parse (typeof (SQLiteJournalModeEnum), value as string, true);
         else
           return (SQLiteJournalModeEnum)value;
       }
@@ -449,9 +481,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Sets the default isolation level for transactions on the connection.
     /// </summary>
-    [Browsable(true)]
-    [DefaultValue(IsolationLevel.Serializable)]
-    [DisplayName("Default Isolation Level")]
+#if !WINDOWS_PHONE && !NETFX_CORE
+    [Browsable (true)]
+#endif
+    [DefaultValue (IsolationLevel.Serializable)]
+    [DisplayName ("Default Isolation Level")]
     public IsolationLevel DefaultIsolationLevel
     {
       get
@@ -459,7 +493,7 @@ namespace Mono.Data.Sqlite
         object value;
         TryGetValue("default isolationlevel", out value);
         if (value is string)
-          return (IsolationLevel)Enum.Parse(typeof(IsolationLevel), value as string, true);
+          return (IsolationLevel)Enum.Parse (typeof (IsolationLevel), value as string, true);
         else
           return (IsolationLevel)value;
       }
@@ -481,7 +515,7 @@ namespace Mono.Data.Sqlite
 
       if (!_properties.ContainsKey(keyword)) return b;
 
-      PropertyInfo pd = _properties[keyword] as PropertyInfo;
+      PropertyInfo pd = _properties [keyword] as PropertyInfo;
 
       if (pd == null) return b;
 
@@ -491,12 +525,12 @@ namespace Mono.Data.Sqlite
         if (pd.PropertyType == typeof(Boolean))
           value = SqliteConvert.ToBoolean(value);
         else
-          value = Convert.ChangeType(value, pd.PropertyType);
+          value = Convert.ChangeType (value, pd.PropertyType);
       }
       else
       {
-        DefaultValueAttribute[] defaultValueAttributes = (DefaultValueAttribute[])pd.GetCustomAttributes(typeof(DefaultValueAttribute), false);
-        DefaultValueAttribute att = defaultValueAttributes.Length > 0 ? defaultValueAttributes[0] : null;
+        DefaultValueAttribute[] defaultValueAttributes = (DefaultValueAttribute[]) pd.GetCustomAttributes (typeof (DefaultValueAttribute), false);
+        DefaultValueAttribute att = defaultValueAttributes.Length > 0 ? defaultValueAttributes [0] : null;
         if (att != null)
         {
           value = att.Value;
@@ -512,26 +546,25 @@ namespace Mono.Data.Sqlite
     /// <param name="propertyList">The hashtable to fill with property descriptors</param>
     private void FallbackGetProperties(Hashtable propertyList)
     {
-      foreach (PropertyInfo property in this.GetType().GetProperties())
-      {
-        DisplayNameAttribute[] displayAttributes = (DisplayNameAttribute[])property.GetCustomAttributes(typeof(DisplayNameAttribute), false);
-        string displayName = displayAttributes.Length > 0 ? displayAttributes[0].DisplayName : property.Name;
-        if (property.Name != "ConnectionString" && propertyList.ContainsKey(displayName) == false)
-        {
-          propertyList.Add(displayName, property);
+      foreach (PropertyInfo property in this.GetType ().GetProperties ()) {
+        DisplayNameAttribute[] displayAttributes = (DisplayNameAttribute[]) property.GetCustomAttributes (typeof (DisplayNameAttribute), false);
+        string displayName = displayAttributes.Length > 0 ? displayAttributes [0].DisplayName : property.Name;
+        if (property.Name != "ConnectionString" && propertyList.ContainsKey (displayName) == false) {
+          propertyList.Add (displayName, property);
         }
       }
     }
   }
+
 #if WINDOWS_PHONE || NETFX_CORE
-  internal class DisplayNameAttribute : Attribute
-  {
-    public DisplayNameAttribute(string displayName)
+  internal class DisplayNameAttribute : Attribute {
+    public DisplayNameAttribute (string displayName)
     {
       DisplayName = displayName;
     }
     public string DisplayName { get; set; }
   }
 #endif
+
 #endif
 }

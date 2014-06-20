@@ -488,11 +488,7 @@ namespace Mono.Data.Sqlite
 
       for (int n = 0; n < x; n++)
       {
-#if NET_2_0
-        if (String.Compare(columnName, ColumnName(stmt, n), StringComparison.InvariantCultureIgnoreCase) == 0)
-#else
-        if (String.Compare(columnName, ColumnName(stmt, n), true, CultureInfo.InvariantCulture) == 0)
-#endif
+        if (String.Compare (columnName, ColumnName (stmt, n), StringComparison.InvariantCultureIgnoreCase) == 0)
           return n;
       }
       return -1;
@@ -625,8 +621,9 @@ namespace Mono.Data.Sqlite
       }
 #else
       if (nCopied > 0)
-        Marshal.Copy(ptr + nDataOffset, bDest, nStart, nCopied);
-      else nCopied = 0;
+        Marshal.Copy (ptr + nDataOffset, bDest, nStart, nCopied);
+      else
+        nCopied = 0;
 #endif
 
       return nCopied;
@@ -783,8 +780,9 @@ namespace Mono.Data.Sqlite
       }
 #else
       if (nCopied > 0)
-        Marshal.Copy(ptr + nDataOffset, bDest, nStart, nCopied);
-      else nCopied = 0;
+        Marshal.Copy (ptr + nDataOffset, bDest, nStart, nCopied);
+      else 
+        nCopied = 0;
 #endif
 
       return nCopied;

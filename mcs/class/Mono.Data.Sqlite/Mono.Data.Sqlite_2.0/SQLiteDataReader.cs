@@ -639,11 +639,7 @@ namespace Mono.Data.Sqlite
                 if (String.IsNullOrEmpty(strColumn) == false) row[SchemaTableColumn.BaseColumnName] = strColumn;
 
                 row[SchemaTableColumn.IsExpression] = String.IsNullOrEmpty(strColumn);
-#if NET_2_0
-                row[SchemaTableColumn.IsAliased] = (String.Compare(GetName(n), strColumn, StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
-                row[SchemaTableColumn.IsAliased] = (String.Compare(GetName(n), strColumn, true, CultureInfo.InvariantCulture) != 0);
-#endif
+                row [SchemaTableColumn.IsAliased] = (String.Compare (GetName (n), strColumn, StringComparison.InvariantCultureIgnoreCase) != 0);
 
                 temp = _command.Connection._sql.ColumnTableName(_activeStatement, n);
                 if (String.IsNullOrEmpty(temp) == false) row[SchemaTableColumn.BaseTableName] = temp;
@@ -713,12 +709,7 @@ namespace Mono.Data.Sqlite
               // Find the matching column
               while (rdTable.Read())
               {
-#if NET_2_0
-                if (String.Compare((string)row[SchemaTableColumn.BaseColumnName], rdTable.GetString(1), StringComparison.InvariantCultureIgnoreCase) == 0)
-#else
-                if (String.Compare((string)row[SchemaTableColumn.BaseColumnName], rdTable.GetString(1), true, CultureInfo.InvariantCulture) == 0)
-#endif
-                {
+                if (String.Compare ((string)row [SchemaTableColumn.BaseColumnName], rdTable.GetString (1), StringComparison.InvariantCultureIgnoreCase) == 0) {
                   if (rdTable.IsDBNull(4) == false)
                     row[SchemaTableOptionalColumn.DefaultValue] = rdTable[4];
 
@@ -755,12 +746,7 @@ namespace Mono.Data.Sqlite
                 });
               foreach (DataRow rowColumnIndex in tblIndexColumns.Rows)
               {
-#if NET_2_0
-                if (String.Compare((string)rowColumnIndex["COLUMN_NAME"], strColumn, StringComparison.InvariantCultureIgnoreCase) == 0)
-#else
-                if (String.Compare((string)rowColumnIndex["COLUMN_NAME"], strColumn, true, CultureInfo.InvariantCulture) == 0)
-#endif
-                {
+                if (String.Compare ((string)rowColumnIndex ["COLUMN_NAME"], strColumn, StringComparison.InvariantCultureIgnoreCase) == 0) {
                   if (tblIndexColumns.Rows.Count == 1 && (bool)row[SchemaTableColumn.AllowDBNull] == false)
                     row[SchemaTableColumn.IsUnique] = rowIndexes["UNIQUE"];
 
@@ -770,11 +756,7 @@ namespace Mono.Data.Sqlite
                   //        It is safer to only set Autoincrement on tables where we're SURE the user specified AUTOINCREMENT, even if its a rowid column.
 
                   if (tblIndexColumns.Rows.Count == 1 && (bool)rowIndexes["PRIMARY_KEY"] == true && String.IsNullOrEmpty(dataType) == false &&
-#if NET_2_0
-                    String.Compare(dataType, "integer", StringComparison.InvariantCultureIgnoreCase) == 0)
-#else
-                    String.Compare(dataType, "integer", true, CultureInfo.InvariantCulture) == 0)
-#endif
+                    String.Compare (dataType, "integer", StringComparison.InvariantCultureIgnoreCase) == 0)
                   {
                     //  row[SchemaTableOptionalColumn.IsAutoIncrement] = true;
                   }

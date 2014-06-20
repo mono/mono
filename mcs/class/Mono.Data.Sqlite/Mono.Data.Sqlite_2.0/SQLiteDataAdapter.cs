@@ -143,9 +143,9 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the select command for this DataAdapter
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DefaultValue((string)null)]
+    [DefaultValue ((string)null)]
 #if !WINDOWS_PHONE && !NETFX_CORE
-    [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
 #endif
     public new SqliteCommand SelectCommand
@@ -158,9 +158,9 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the insert command for this DataAdapter
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DefaultValue((string)null)]
+    [DefaultValue ((string)null)]
 #if !WINDOWS_PHONE && !NETFX_CORE
-    [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
 #endif
     public new SqliteCommand InsertCommand
@@ -173,9 +173,9 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the update command for this DataAdapter
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DefaultValue((string)null)]
+    [DefaultValue ((string)null)]
 #if !WINDOWS_PHONE && !NETFX_CORE
-    [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
 #endif
     public new SqliteCommand UpdateCommand
@@ -188,9 +188,9 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the delete command for this DataAdapter
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [DefaultValue((string)null)]
+    [DefaultValue ((string)null)]
 #if !WINDOWS_PHONE && !NETFX_CORE
-    [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
 #endif
     public new SqliteCommand DeleteCommand
