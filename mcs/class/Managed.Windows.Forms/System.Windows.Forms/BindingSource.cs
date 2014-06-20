@@ -207,6 +207,7 @@ namespace System.Windows.Forms {
 		private void OnParentCurrencyManagerChanged (object sender, EventArgs args)
 		{
 			// Essentially handles chained data sources (e.g. chained BindingSource)
+			ResetDataMemberIfInvalid ();
 			ResetList ();
 		}
 
@@ -349,6 +350,7 @@ namespace System.Windows.Forms {
 
 					DisconnectDataSourceEvents (datasource);
 					datasource = value;
+					ResetDataMemberIfInvalid ();
 					ConnectDataSourceEvents (datasource);
 					ResetList ();
 
@@ -451,6 +453,19 @@ namespace System.Windows.Forms {
 
 				ProcessSortString (value);
 				sort = value;
+			}
+		}
+
+		void ResetDataMemberIfInvalid ()
+		{
+			if (datamember == String.Empty)
+				return;
+
+			// if dataMember doesn't refer to a valid property of dataSource, we need to reset it
+			var property = ListBindingHelper.GetListItemProperties (datasource).Find (datamember, true);
+			if (property == null) {
+				datamember = String.Empty;
+				OnDataMemberChanged (EventArgs.Empty);
 			}
 		}
 
