@@ -210,6 +210,41 @@ namespace MonoTests.System.Net.WebSockets
 			}
 			Assert.Fail ("Should have thrown");
 		}
+		
+		[Test]
+		public async Task SendAsyncEndOfMessageTest() {
+			var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(30)).Token;
+			await SendAsyncEndOfMessageTest(false, WebSocketMessageType.Text, cancellationToken);
+			await SendAsyncEndOfMessageTest(true, WebSocketMessageType.Text, cancellationToken);
+			await SendAsyncEndOfMessageTest(false, WebSocketMessageType.Binary, cancellationToken);
+			await SendAsyncEndOfMessageTest(true, WebSocketMessageType.Binary, cancellationToken);
+		}
+		
+		public async Task SendAsyncEndOfMessageTest(bool expectedEndOfMessage, WebSocketMessageType webSocketMessageType, CancellationToken cancellationToken){
+			using (var client = new ClientWebSocket()) {	
+				// Configure the listener.
+				var serverReceive = HandleHttpWebSocketRequestAsync<WebSocketReceiveResult>(async socket => await socket.ReceiveAsync(new ArraySegment<byte>(new byte[32]), cancellationToken), cancellationToken);
+				
+				// Connect to the listener and make the request.
+				await client.ConnectAsync (new Uri ("ws://localhost:" + Port + "/"), cancellationToken);
+				await client.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes("test")), webSocketMessageType, expectedEndOfMessage, cancellationToken);
+				
+				// Wait for the listener to handle the request and return its result.
+				var result = await serverReceive;
+				
+				// Cleanup and check results.
+				await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Finished", cancellationToken);
+				Assert.AreEqual(expectedEndOfMessage, result.EndOfMessage, "EndOfMessage should be " + expectedEndOfMessage);
+			}
+		}
+		
+		async Task<T> HandleHttpWebSocketRequestAsync<T>(Func<WebSocket, Task<T>> action, CancellationToken cancellationToken) {
+			var ctx = await this.listener.GetContextAsync();
+			var wsContext = await ctx.AcceptWebSocketAsync(null);
+			var result = await action(wsContext.WebSocket);
+			await wsContext.WebSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Finished", cancellationToken);
+			return result;
+		}
 
 		async Task HandleHttpRequestAsync (Action<HttpListenerRequest, HttpListenerResponse> handler)
 		{
