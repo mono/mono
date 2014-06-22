@@ -1928,7 +1928,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		[Category("MobileNotWorking")]
+		[Category("NotWorking")]
 		public void TaskContinuationChainLeak()
 		{
 			// Start cranking out tasks, starting each new task upon completion of and from inside the prior task.

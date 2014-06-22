@@ -74,6 +74,13 @@ namespace MonoTests.System.Net.Sockets {
 			//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
 #endif
 
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
+
 			client = new MyUdpClient (AddressFamily.InterNetworkV6);
 			s = client.Client;
 			Assert.IsNotNull (s, "#B:Client");
@@ -296,6 +303,13 @@ namespace MonoTests.System.Net.Sockets {
 				Assert.AreEqual (IPAddress.Any, localEP.Address, "#A:Client:LocalEndPoint/Address");
 				Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
 			}
+
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
 
 			using (MyUdpClient client = new MyUdpClient (IPEndPoint.MaxPort, AddressFamily.InterNetworkV6))
 			{
@@ -656,6 +670,13 @@ namespace MonoTests.System.Net.Sockets {
 		[Test] // JoinMulticastGroup (Int32, IPAddress)
 		public void JoinMulticastGroup2_Socket_Closed ()
 		{
+#if NET_2_0
+			if (!Socket.OSSupportsIPv6)
+#else
+			if (!Socket.SupportsIPv6)
+#endif
+				Assert.Ignore ("IPv6 not enabled.");
+
 			IPAddress mcast_addr = null;
 
 			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234));

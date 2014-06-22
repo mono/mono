@@ -173,7 +173,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsTrue (channelDispatcher.Endpoints.Count == 1, "#2");
 			EndpointAddressMessageFilter filter = channelDispatcher.Endpoints [0].AddressFilter as EndpointAddressMessageFilter;
 			Assert.IsNotNull (filter, "#3");
-			Assert.IsTrue (filter.Address.Equals (new EndpointAddress ("http://localhost:8080/address")), "#4");
+			Assert.IsTrue (filter.Address.Equals (new EndpointAddress ("http://localhost:30158/address")), "#4");
 			Assert.IsFalse (filter.IncludeHostNameInComparison, "#5");
 			Assert.IsTrue (channelDispatcher.Endpoints [0].ContractFilter is MatchAllMessageFilter, "#6");
 			} finally {

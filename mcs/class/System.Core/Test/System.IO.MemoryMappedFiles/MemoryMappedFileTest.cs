@@ -305,6 +305,17 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 				Assert.AreEqual (0xFF, v1.ReadByte (i + 500));
 			}
 		}
+
+		[Test]
+		public void DoubleAccountingInOffsetCalculation ()
+		{
+			var memoryMappedFile90 = MemoryMappedFile.CreateNew (MkNamedMapping (), 4194304, MemoryMappedFileAccess.ReadWrite);
+			var stream = memoryMappedFile90.CreateViewStream (4186112, 3222, MemoryMappedFileAccess.Write);
+			using (var tw = new StreamWriter(stream))
+			{
+				tw.WriteLine ("Hello World!");
+			}
+		}
 	}
 }
 

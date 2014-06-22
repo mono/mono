@@ -1288,6 +1288,7 @@ namespace Mono.CSharp {
 				var async_body = ec.CurrentAnonymousMethod as AsyncInitializer;
 				if (async_body != null) {
 					var storey = (AsyncTaskStorey)async_body.Storey;
+					Label exit_label = async_body.BodyEnd;
 
 					//
 					// It's null for await without async
@@ -1296,13 +1297,12 @@ namespace Mono.CSharp {
 						//
 						// Special case hoisted return value (happens in try/finally scenario)
 						//
-						if (ec.HasSet (BuilderContext.Options.HoistedReturnResult)) {
-
+						if (ec.TryFinallyUnwind != null) {
 							if (storey.HoistedReturnValue is VariableReference) {
 								storey.HoistedReturnValue = ec.GetTemporaryField (storey.HoistedReturnValue.Type);
 							}
 
-							async_body.EmitRedirectedJump (ec, async_body.BodyEnd);
+							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body);
 						}
 
 						var async_return = (IAssignMethod)storey.HoistedReturnValue;
@@ -1310,9 +1310,12 @@ namespace Mono.CSharp {
 						ec.EmitEpilogue ();
 					} else {
 						expr.Emit (ec);
+
+						if (ec.TryFinallyUnwind != null)
+							exit_label = TryFinally.EmitRedirectedReturn (ec, async_body);
 					}
 
-					ec.Emit (OpCodes.Leave, async_body.BodyEnd);
+					ec.Emit (OpCodes.Leave, exit_label);
 					return;
 				}
 
@@ -1456,10 +1459,9 @@ namespace Mono.CSharp {
 
 			Label l = label.LabelTarget (ec);
 
-			if (try_finally != null && ec.HasSet (BuilderContext.Options.HoistedReturnResult) && IsLeavingFinally (label.Block)) {
+			if (ec.TryFinallyUnwind != null && IsLeavingFinally (label.Block)) {
 				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
-				async_body.EmitRedirectedJump (ec, l);
-				l = async_body.BodyEnd;
+				l = TryFinally.EmitRedirectedJump (ec, async_body, l, label.Block);
 			}
 
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
@@ -5526,10 +5528,10 @@ namespace Mono.CSharp {
 			EmitTryBodyPrepare (ec);
 			EmitTryBody (ec);
 
-			bool begin = EmitBeginFinallyBlock (ec);
+			bool beginFinally = EmitBeginFinallyBlock (ec);
 
 			Label start_finally = ec.DefineLabel ();
-			if (resume_points != null) {
+			if (resume_points != null && beginFinally) {
 				var state_machine = (StateMachineInitializer) ec.CurrentAnonymousMethod;
 
 				ec.Emit (OpCodes.Ldloc, state_machine.SkipFinally);
@@ -5554,7 +5556,7 @@ namespace Mono.CSharp {
 				EmitFinallyBody (ec);
 			}
 
-			if (begin)
+			if (beginFinally)
 				ec.EndExceptionBlock ();
 		}
 
@@ -6606,10 +6608,8 @@ namespace Mono.CSharp {
 	{
 		ExplicitBlock fini;
 		List<DefiniteAssignmentBitSet> try_exit_dat;
-
-		// TODO: Should be on stack only
-		Label prev_body_end;
-		Expression prev_HoistedReturn;
+		List<Label> redirected_jumps;
+		Label? start_fin_label;
 
 		public TryFinally (Statement stmt, ExplicitBlock fini, Location loc)
 			 : base (stmt, loc)
@@ -6646,14 +6646,15 @@ namespace Mono.CSharp {
 		protected override void EmitTryBody (EmitContext ec)
 		{
 			if (fini.HasAwait) {
-				prev_HoistedReturn = ec.AsyncTaskStorey.HoistedReturnValue;
-				var ai = (AsyncInitializer)ec.CurrentAnonymousMethod;
-				prev_body_end = ai.BodyEnd;
-				ai.BodyEnd = ec.DefineLabel ();
+				if (ec.TryFinallyUnwind == null)
+					ec.TryFinallyUnwind = new List<TryFinally> ();
 
-				using (ec.With (BuilderContext.Options.HoistedReturnResult, true)) {
-					stmt.Emit (ec);
-				}
+				ec.TryFinallyUnwind.Add (this);
+				stmt.Emit (ec);
+				ec.TryFinallyUnwind.Remove (this);
+
+				if (start_fin_label != null)
+					ec.MarkLabel (start_fin_label.Value);
 
 				return;
 			}
@@ -6698,13 +6699,6 @@ namespace Mono.CSharp {
 
 			ec.FreeTemporaryLocal (temp, type);
 
-			var ai = (AsyncInitializer)ec.CurrentAnonymousMethod;
-			ec.MarkLabel (ai.BodyEnd);
-			var local_return = ai.BodyEnd;
-			ai.BodyEnd = prev_body_end;
-			var fin_hoisted_return = ec.AsyncTaskStorey.HoistedReturnValue as StackFieldExpr;
-			ec.AsyncTaskStorey.HoistedReturnValue = prev_HoistedReturn;
-
 			fini.Emit (ec);
 
 			//
@@ -6722,9 +6716,86 @@ namespace Mono.CSharp {
 
 			exception_field.IsAvailableForReuse = true;
 
-			ai.EmitRedirectedJumpsTable (ec, fin_hoisted_return, local_return);
-			if (fin_hoisted_return != null)
-				fin_hoisted_return.PrepareCleanup (ec);
+			EmitUnwindFinallyTable (ec);
+		}
+
+		bool IsParentBlock (Block block)
+		{
+			for (Block b = fini; b != null; b = b.Parent) {
+				if (b == block)
+					return true;
+			}
+
+			return false;
+		}
+
+		public static Label EmitRedirectedJump (EmitContext ec, AsyncInitializer initializer, Label label, Block labelBlock)
+		{
+			bool set_return_state = true;
+
+			foreach (var fin in ec.TryFinallyUnwind) {
+				if (labelBlock != null && !fin.IsParentBlock (labelBlock))
+					break;
+
+				fin.EmitRedirectedExit (ec, label, initializer, set_return_state);
+				set_return_state = false;
+
+				if (fin.start_fin_label == null) {
+					fin.start_fin_label = ec.DefineLabel ();
+				}
+
+				label = fin.start_fin_label.Value;
+			}
+
+			return label;
+		}
+
+		public static Label EmitRedirectedReturn (EmitContext ec, AsyncInitializer initializer)
+		{
+			return EmitRedirectedJump (ec, initializer, initializer.BodyEnd, null);
+		}
+
+		void EmitRedirectedExit (EmitContext ec, Label label, AsyncInitializer initializer, bool setReturnState)
+		{
+			if (redirected_jumps == null) {
+				redirected_jumps = new List<Label> ();
+
+				// Add fallthrough label
+				redirected_jumps.Add (ec.DefineLabel ());
+				if (setReturnState)
+					initializer.HoistedReturnState = ec.GetTemporaryField (ec.Module.Compiler.BuiltinTypes.Int);
+			}
+
+			int index = redirected_jumps.IndexOf (label);
+			if (index < 0) {
+				redirected_jumps.Add (label);
+				index = redirected_jumps.Count - 1;
+			}
+
+			//
+			// Indicates we have captured return value
+			//
+			if (setReturnState) {
+				var value = new IntConstant (initializer.HoistedReturnState.Type, index, Location.Null);
+				initializer.HoistedReturnState.EmitAssign (ec, value, false, false);
+			}
+		}
+
+		//
+		// Emits state table of jumps outside of try block and reload of return
+		// value when try block returns value
+		//
+		void EmitUnwindFinallyTable (EmitContext ec)
+		{
+			if (redirected_jumps == null)
+				return;
+
+			var initializer = (AsyncInitializer)ec.CurrentAnonymousMethod;
+			initializer.HoistedReturnState.EmitLoad (ec);
+			ec.Emit (OpCodes.Switch, redirected_jumps.ToArray ());
+
+			// Mark fallthrough label
+			ec.MarkLabel (redirected_jumps [0]);
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
