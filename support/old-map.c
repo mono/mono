@@ -155,8 +155,10 @@ int map_Mono_Posix_Signals (int x)
 		 return SIGXFSZ;
 	if (x == Mono_Posix_Signals_SIGVTALRM)
 		 return SIGVTALRM;
+#ifdef SIGPROF
 	if (x == Mono_Posix_Signals_SIGPROF)
 		 return SIGPROF;
+#endif
 	if (x == Mono_Posix_Signals_SIGWINCH)
 		 return SIGWINCH;
 #ifdef SIGIO
