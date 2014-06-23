@@ -2663,7 +2663,8 @@ namespace Mono.CSharp {
 			FinallyBlock = 1 << 14,
 			CatchBlock = 1 << 15,
 			Iterator = 1 << 20,
-			NoFlowAnalysis = 1 << 21
+			NoFlowAnalysis = 1 << 21,
+			InitializationEmitted = 1 << 22
 		}
 
 		public Block Parent;
@@ -2939,12 +2940,10 @@ namespace Mono.CSharp {
 			DoEmit (ec);
 		}
 
-		public void EmitScopeInitializers (EmitContext ec)
+		protected void EmitScopeInitializers (EmitContext ec)
 		{
 			foreach (Statement s in scope_initializers)
 				s.Emit (ec);
-
-			scope_initializers = null;
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
@@ -3182,8 +3181,11 @@ namespace Mono.CSharp {
 			return am_storey;
 		}
 
-		public override void Emit (EmitContext ec)
+		public void EmitScopeInitialization (EmitContext ec)
 		{
+			if ((flags & Flags.InitializationEmitted) != 0)
+				return;
+
 			if (am_storey != null) {
 				DefineStoreyContainer (ec, am_storey);
 				am_storey.EmitStoreyInstantiation (ec, this);
@@ -3191,6 +3193,13 @@ namespace Mono.CSharp {
 
 			if (scope_initializers != null)
 				EmitScopeInitializers (ec);
+
+			flags |= Flags.InitializationEmitted;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			EmitScopeInitialization (ec);
 
 			if (ec.EmitAccurateDebugInfo && !IsCompilerGenerated && ec.Mark (StartLocation)) {
 				ec.Emit (OpCodes.Nop);
@@ -6471,7 +6480,7 @@ namespace Mono.CSharp {
 					EmitCatchVariableStore (ec);
 
 				if (Block.HasAwait) {
-					Block.EmitScopeInitializers (ec);
+					Block.EmitScopeInitialization (ec);
 				} else {
 					Block.Emit (ec);
 				}
