@@ -2319,7 +2319,7 @@ namespace MonoTests.System.Net
 
 		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request)
 		{
-			int port = rand.Next (20000, 65535);
+			int port = 30158;
 
 			ManualResetEvent completed = new ManualResetEvent (false);
 			Uri address = new Uri (string.Format ("http://localhost:{0}", port));
@@ -2333,7 +2333,7 @@ namespace MonoTests.System.Net
 
 		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request, Action<HttpListenerContext> processor)
 		{
-			int port = rand.Next (20000, 65535);
+			int port = 30158;
 
 			ManualResetEvent [] completed = new ManualResetEvent [2];
 			completed [0] = new ManualResetEvent (false);
