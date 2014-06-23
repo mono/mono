@@ -5,6 +5,9 @@
  * Author: Chris Toshok <toshok@ximian.com>
  */
 
+#include "map.h"
+#include "mph.h"
+
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -12,7 +15,9 @@
 #include <errno.h>
 #if defined(__APPLE__)
 #include "fakepoll.h"
-#else
+#elif defined(HAVE_POLL_H)
+#include <poll.h>
+#elif defined(HAVE_SYS_POLL_H)
 #include <sys/poll.h>
 #endif
 #include <sys/ioctl.h>
