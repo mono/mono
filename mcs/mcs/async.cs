@@ -421,8 +421,6 @@ namespace Mono.CSharp
 	public class AsyncInitializer : StateMachineInitializer
 	{
 		TypeInferenceContext return_inference;
-		List<Label> redirected_jumps;
-		FieldExpr HoistedReturnState;
 
 		public AsyncInitializer (ParametersBlock block, TypeDefinition host, TypeSpec returnType)
 			: base (block, host, returnType)
@@ -438,6 +436,10 @@ namespace Mono.CSharp
 		}
 
 		public TypeSpec DelegateType {
+			get; set;
+		}
+
+		public StackFieldExpr HoistedReturnState {
 			get; set;
 		}
 
@@ -483,57 +485,6 @@ namespace Mono.CSharp
 			var storey = (AsyncTaskStorey) Storey;
 			storey.EmitInitializer (ec);
 			ec.Emit (OpCodes.Ret);
-		}
-
-		//
-		// Emits state table of jumps outside of try block and reload of return
-		// value when try block returns value
-		//
-		public void EmitRedirectedJumpsTable (EmitContext ec, StackFieldExpr returnResult, Label localReturn)
-		{
-			if (redirected_jumps == null)
-				return;
-
-			int ret_index = redirected_jumps.IndexOf (localReturn);
-			if (ret_index >= 0) {
-				redirected_jumps [ret_index] = ec.DefineLabel ();
-			}
-
-			HoistedReturnState.Emit (ec);
-			ec.Emit (OpCodes.Switch, redirected_jumps.ToArray ());
-
-			if (ret_index >= 0) {
-				ec.MarkLabel (redirected_jumps [ret_index]);
-				var s = (AsyncTaskStorey)storey;
-				((IAssignMethod)s.HoistedReturnValue).EmitAssign (ec, returnResult, false, false);
-
-				ec.Emit (OpCodes.Leave, BodyEnd);
-			}
-
-			// Mark fallthrough label
-			ec.MarkLabel (redirected_jumps [0]);
-		}
-
-		public void EmitRedirectedJump (EmitContext ec, Label label)
-		{
-			if (redirected_jumps == null) {
-				redirected_jumps = new List<Label> ();
-
-				// Add fallthrough label
-				redirected_jumps.Add (ec.DefineLabel ());
-				HoistedReturnState = ec.GetTemporaryField (ec.Module.Compiler.BuiltinTypes.Int);
-			}
-
-			int index = redirected_jumps.IndexOf (label);
-			if (index < 0) {
-				redirected_jumps.Add (label);
-				index = redirected_jumps.Count - 1;
-			}
-
-			//
-			// Indicates we have return value captured
-			//
-			HoistedReturnState.EmitAssign (ec, new IntConstant (HoistedReturnState.Type, index, Location.Null), false, false);
 		}
 
 		public override void MarkReachable (Reachability rc)

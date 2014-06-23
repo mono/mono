@@ -62966,7 +62966,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithReturn&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>381</size>
+        <size>377</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -62974,7 +62974,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithReturnNoValue&gt;c__async2">
       <method name="Void MoveNext()" attrs="486">
-        <size>321</size>
+        <size>347</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -62982,7 +62982,7 @@
     </type>
     <type name="Test+&lt;TestFinallyWithGoto&gt;c__async3">
       <method name="Void MoveNext()" attrs="486">
-        <size>362</size>
+        <size>370</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -62990,7 +62990,50 @@
     </type>
     <type name="Test+&lt;TestFinallyWithGotoAndReturn&gt;c__async4">
       <method name="Void MoveNext()" attrs="486">
-        <size>411</size>
+        <size>407</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-70.cs">
+    <type name="Test">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] YieldValue(Int32)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestNestedReturn(Int32)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestNestedGoto(Int32)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>109</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;YieldValue&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>172</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestNestedReturn&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>845</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestNestedGoto&gt;c__async2">
+      <method name="Void MoveNext()" attrs="486">
+        <size>848</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>

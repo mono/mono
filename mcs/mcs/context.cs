@@ -665,8 +665,6 @@ namespace Mono.CSharp
 			ConstructorScope = 1 << 3,
 
 			AsyncBody = 1 << 4,
-
-			HoistedReturnResult = 1 << 5
 		}
 
 		// utility helper for CheckExpr, UnCheckExpr, Checked and Unchecked statements
