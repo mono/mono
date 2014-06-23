@@ -4166,6 +4166,16 @@ additive_expression
 
 		$$ = new Is ((Expression) $1, null, GetLocation ($2));
 	  }
+	| AWAIT IS type
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new Is (new SimpleName (lt.Value, lt.Location), (Expression) $3, GetLocation ($2));
+	  }
+	| AWAIT AS type
+	  {
+		var lt = (LocatedToken) $1;
+		$$ = new As (new SimpleName (lt.Value, lt.Location), (Expression) $3, GetLocation ($2));
+	  }
 	;
 
 shift_expression

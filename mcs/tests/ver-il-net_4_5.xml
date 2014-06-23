@@ -61200,6 +61200,14 @@
         <size>7</size>
       </method>
     </type>
+    <type name="AwaitNS.TypeChecks">
+      <method name="Void M(System.Object)" attrs="145">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-23.cs">
     <type name="MyContext">
