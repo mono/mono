@@ -25,7 +25,9 @@
 #endif /* def HAVE_SYS_STATVFS_H */
 
 #ifdef HAVE_GETFSSTAT
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <unistd.h>     /* for pathconf */
