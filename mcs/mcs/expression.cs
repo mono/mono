@@ -1449,6 +1449,11 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			expr.EmitSideEffect (ec);
+		}
+
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			expr.FlowAnalysis (fc);
@@ -1519,17 +1524,20 @@ namespace Mono.CSharp
 			}			
 			ec.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 		}
-		
-		Expression CreateConstantResult (ResolveContext ec, bool result)
+
+		Expression CreateConstantResult (ResolveContext rc, bool result)
 		{
 			if (result)
-				ec.Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
+				rc.Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
 					probe_type_expr.GetSignatureForError ());
 			else
-				ec.Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
+				rc.Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
 					probe_type_expr.GetSignatureForError ());
 
-			return ReducedExpression.Create (new BoolConstant (ec.BuiltinTypes, result, loc), this);
+			var c = new BoolConstant (rc.BuiltinTypes, result, loc);
+			return expr.IsSideEffectFree ?
+				ReducedExpression.Create (c, this) :
+				new SideEffectConstant (c, this, loc);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
