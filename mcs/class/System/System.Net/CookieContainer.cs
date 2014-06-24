@@ -134,11 +134,13 @@ namespace System.Net
 			if (cookie.Value.Length > maxCookieSize)
 				throw new CookieException ("value is larger than MaxCookieSize.");
 					
-			if ((cookie.Version == 1) && (cookie.Domain[0] != '.'))
-				throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
+			if (cookie.HasDomain) {
+				if ((cookie.Version == 1) && (cookie.Domain[0] != '.'))
+					throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
 
-			if (cookie.HasDomain && !CheckPublicRoots (cookie.Domain))
-				throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
+				if (!CheckPublicRoots (cookie.Domain))
+					throw new CookieException ("Invalid cookie domain: " + cookie.Domain);
+			}
 
 			if (cookies == null)
 				cookies = new CookieCollection ();
