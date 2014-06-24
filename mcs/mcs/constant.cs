@@ -2314,6 +2314,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool ContainsEmitWithAwait ()
+		{
+			return side_effect.ContainsEmitWithAwait ();
+		}
+
 		public override object GetValue ()
 		{
 			return value.GetValue ();
@@ -2339,6 +2344,11 @@ namespace Mono.CSharp {
 		{
 			side_effect.EmitSideEffect (ec);
 			value.EmitSideEffect (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			side_effect.FlowAnalysis (fc);
 		}
 
 		public override bool IsDefaultValue {
