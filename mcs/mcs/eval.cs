@@ -71,6 +71,8 @@ namespace Mono.CSharp
 		readonly ModuleContainer module;
 		readonly ReflectionImporter importer;
 		readonly CompilationSourceFile source_file;
+
+		int? listener_id;
 		
 		public Evaluator (CompilerContext ctx)
 		{
@@ -291,6 +293,30 @@ namespace Mono.CSharp
 			return compiled;
 		}
 
+		static MethodInfo listener_proxy_value;
+		internal void EmitValueChangedCallback (EmitContext ec, string name, TypeSpec type, Location loc)
+		{
+			if (listener_id == null)
+				listener_id = ListenerProxy.Register (ModificationListener);
+
+			if (listener_proxy_value == null)
+				listener_proxy_value = typeof (ListenerProxy).GetMethod ("ValueChanged");
+
+#if STATIC
+			throw new NotSupportedException ();
+#else
+			// object value, int row, int col, string name, int listenerId
+			if (type.IsStructOrEnum)
+				ec.Emit (OpCodes.Box, type);
+
+			ec.EmitInt (loc.Row);
+			ec.EmitInt (loc.Column);
+			ec.Emit (OpCodes.Ldstr, name);
+			ec.EmitInt (listener_id.Value);
+			ec.Emit (OpCodes.Call, listener_proxy_value);
+#endif
+		}
+
 		/// <summary>
 		///   Evaluates and expression or statement and returns any result values.
 		/// </summary>
@@ -341,6 +367,11 @@ namespace Mono.CSharp
 				Console.WriteLine ("Interrupted!\n{0}", e);
 			} finally {
 				invoking = false;
+
+				if (listener_id != null) {
+					ListenerProxy.Unregister (listener_id.Value);
+					listener_id = null;
+				}
 			}
 
 			//
@@ -447,6 +478,9 @@ namespace Mono.CSharp
 
 			return result;
 		}
+
+		// Experimental
+		public Action<string, int, int, object> ModificationListener { get; set; }
 
 		enum InputKind {
 			EOF,
@@ -737,6 +771,7 @@ namespace Mono.CSharp
 			}
 			
 			module.EmitContainer ();
+
 			if (Report.Errors != 0){
 				if (undo != null)
 					undo.ExecuteUndo ();
@@ -1257,5 +1292,38 @@ namespace Mono.CSharp
 			undo_actions = null;
 		}
 	}
-	
+
+	static class ListenerProxy
+	{
+		static readonly Dictionary<int, Action<string, int, int, object>> listeners = new Dictionary<int, Action<string, int, int, object>> (); 
+
+		static int counter;
+
+		public static int Register (Action<string, int, int, object> listener)
+		{
+			lock (listeners) {
+				var id = counter++;
+				listeners.Add (id, listener);
+				return id;
+			}
+		}
+
+		public static void Unregister (int listenerId)
+		{
+			lock (listeners) {
+				listeners.Remove (listenerId);
+			}
+		}
+
+		public static void ValueChanged (object value, int row, int col, string name, int listenerId)
+		{
+			Action<string, int, int, object> action;
+			lock (listeners) {
+				if (!listeners.TryGetValue (listenerId, out action))
+					return;
+			}
+
+			action (name, row, col, value);
+		}
+	}
 }
