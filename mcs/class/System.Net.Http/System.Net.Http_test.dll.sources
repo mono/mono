@@ -1,3 +1,4 @@
+System.Net.Http/DelegatingHandlerTest.cs
 System.Net.Http/ByteArrayContentTest.cs
 System.Net.Http/FormUrlEncodedContentTest.cs
 System.Net.Http/HttpClientHandlerTest.cs

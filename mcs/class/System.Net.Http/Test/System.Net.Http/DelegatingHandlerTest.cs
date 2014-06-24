@@ -1,10 +1,10 @@
 //
-// DelegatingHandler.cs
+// DelegatingHandlerTest.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,54 +26,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Threading;
+using System;
+using NUnit.Framework;
+using System.Net.Http;
+using System.IO;
 using System.Threading.Tasks;
 
-namespace System.Net.Http
+namespace MonoTests.System.Net.Http
 {
-	public abstract class DelegatingHandler : HttpMessageHandler
+	[TestFixture]
+	public class DelegatingHandlerTest
 	{
-		bool disposed;
-		HttpMessageHandler handler;
-		
-		protected DelegatingHandler ()
+		class DefaultHandler : DelegatingHandler
 		{
-		}
-		
-		protected DelegatingHandler(HttpMessageHandler innerHandler)
-		{
-			if (innerHandler == null)
-				throw new ArgumentNullException ("innerHandler");
-			
-			InnerHandler = innerHandler;
-		}
-		
-		public HttpMessageHandler InnerHandler {
-			get {
-				return handler;
-			}
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("InnerHandler");
-
-				handler = value;
-			}
-		}
-		
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing && !disposed) {
-				disposed = true;
-				if (InnerHandler != null)
-					InnerHandler.Dispose ();
-			}
-			
-			base.Dispose (disposing);
 		}
 
-		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+
+		[Test]
+		public void DisposeTest ()
 		{
-			return InnerHandler.SendAsync (request, cancellationToken);
+			var handler = new DefaultHandler ();
+			handler.Dispose ();
+		}
+
+		[Test]
+		public void InnerHandler_Invalid ()
+		{
+			var handler = new DefaultHandler ();
+			try {
+				handler.InnerHandler = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
 		}
 	}
 }
