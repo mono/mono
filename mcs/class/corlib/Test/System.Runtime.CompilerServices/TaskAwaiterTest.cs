@@ -102,6 +102,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 		string progress;
 		SynchronizationContext sc;
+		ManualResetEvent mre;
 
 		[SetUp]
 		public void Setup ()
@@ -270,6 +271,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		[Test]
 		public void CompletionOnDifferentCustomSynchronizationContext ()
 		{
+			mre = new ManualResetEvent (false);
 			progress = "";
 			var syncContext = new SingleThreadSynchronizationContext ();
 			SynchronizationContext.SetSynchronizationContext (syncContext);
@@ -293,14 +295,18 @@ namespace MonoTests.System.Runtime.CompilerServices
 		{
 			await Wait2 (ctx);
 
-			progress += "2";
+			if (mre.WaitOne (5000))
+				progress += "2";
 		}
 
 		async Task Wait2 (SynchronizationContext ctx)
 		{
 			await Task.Delay (10); // Force block suspend/return
 
-			ctx.Post (l => progress += "3", null);
+			ctx.Post (l => {
+				progress += "3";
+				mre.Set ();
+			}, null);
 
 			progress += "1";
 
