@@ -270,6 +270,14 @@ class Tester : Base
 		return 0;
 	}
 
+	async Task<bool> ArrayAccessTest_10 ()
+	{
+		var b = new bool [1] { true };
+		
+		var r = b [await Task.Factory.StartNew (() => 0)];
+		return r;
+	}
+
 	async Task<int> AssignTest_1 ()
 	{
 		field_int = await Task.Factory.StartNew (() => 0);

@@ -9636,6 +9636,7 @@ namespace Mono.CSharp
 			// CallRef (ref a[await Task.Factory.StartNew (() => 1)]);
 			//
 			ea.Expr = ea.Expr.EmitToField (ec);
+			ea.Arguments = ea.Arguments.Emit (ec, false, true);
 			return this;
 		}
 
