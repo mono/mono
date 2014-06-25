@@ -8,10 +8,12 @@ using System.Runtime.CompilerServices;
 struct S
 {
 	public int Value;
+	public S2 s2;
 	
 	public S (int a1, string a2)
 	{
 		Value = a1;
+		s2 = new S2 ();
 	}
 	
 	public void SetValue (int value)
@@ -30,6 +32,11 @@ struct S
 			Value = a.Value + b.Value
 		};
 	}
+}
+
+struct S2
+{
+	public int Value;
 }
 
 enum E
@@ -276,6 +283,13 @@ class Tester : Base
 		
 		var r = b [await Task.Factory.StartNew (() => 0)];
 		return r;
+	}
+
+	async Task<bool> ArrayAccessTest_11 ()
+	{
+		var a = new S [1];
+ 		a [await Task.Factory.StartNew (() => 0)].s2.Value += 5;
+		return a [await Task.Factory.StartNew(() => 0)].s2.Value == 5;
 	}
 
 	async Task<int> AssignTest_1 ()

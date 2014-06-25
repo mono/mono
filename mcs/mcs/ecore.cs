@@ -6120,7 +6120,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (TypeSpec.IsValueType (InstanceExpression.Type))
+				if (TypeSpec.IsValueType (InstanceExpression.Type) && InstanceExpression is VariableReference)
 					return;
 			}
 
@@ -6203,13 +6203,8 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
 		{
 			bool has_await_source = ec.HasSet (BuilderContext.Options.AsyncBody) && source.ContainsEmitWithAwait ();
-			if (isCompound && !(source is DynamicExpressionStatement)) {
-				if (has_await_source) {
-					if (IsInstance)
-						InstanceExpression = InstanceExpression.EmitToField (ec);
-				} else {
-					prepared = true;
-				}
+			if (isCompound && !(source is DynamicExpressionStatement) && !has_await_source) {
+				prepared = true;
 			}
 
 			if (IsInstance) {
