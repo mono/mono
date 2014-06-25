@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeLibTypeFlags" FullName="System.Runtime.InteropServices.TypeLibTypeFlags">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum TypeLibTypeFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TypeLibTypeFlags extends System.Enum" />
@@ -21,8 +22,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>TypeLibTypeFlags is used along with the <see cref="T:System.Runtime.InteropServices.TypeLibTypeAttribute" />. The flags are retained for reference only. They are not used by the common language runtime.</para>
+      <para>For more information, see TYPEFLAGS in the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the original settings of the <see cref="T:System.Runtime.InteropServices.TYPEFLAGS" /> in the COM type library from which the type was imported.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FAggregatable">
@@ -39,8 +47,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class supports aggregation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FAppObject">
@@ -57,8 +68,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type description that describes an Application object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FCanCreate">
@@ -75,8 +89,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instances of the type can be created by ITypeInfo::CreateInstance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FControl">
@@ -93,8 +110,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is a control from which other types will be derived, and should not be displayed to users.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FDispatchable">
@@ -111,8 +131,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the interface derives from IDispatch, either directly or indirectly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FDual">
@@ -129,8 +152,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interface supplies both IDispatch and V-table binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FHidden">
@@ -147,8 +173,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type should not be displayed to browsers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FLicensed">
@@ -165,8 +194,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is licensed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FNonExtensible">
@@ -183,8 +215,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interface cannot add members at run time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FOleAutomation">
@@ -201,8 +236,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The types used in the interface are fully compatible with Automation, including vtable binding support.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FPreDeclId">
@@ -219,8 +257,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is predefined. The client application should automatically create a single instance of the object that has this attribute. The name of the variable that points to the object is the same as the class name of the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FReplaceable">
@@ -237,8 +278,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object supports IConnectionPointWithDefault, and has default behaviors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FRestricted">
@@ -255,8 +299,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This flag is intended for system-level types or types that type browsers should not display.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FReverseBind">
@@ -273,8 +320,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates base interfaces should be checked for name resolution before checking child interfaces. This is the reverse of the default behavior.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LCIDConversionAttribute" FullName="System.Runtime.InteropServices.LCIDConversionAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class LCIDConversionAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit LCIDConversionAttribute extends System.Attribute" />
@@ -22,8 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to methods.</para>
+      <para>This attribute indicates that the marshaler should expect an LCID to be passed after the designated method argument. When calls are made from managed to unmanaged code, the marshaler supplies the LCID argument automatically.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a method's unmanaged signature expects a locale identifier (LCID) parameter.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +48,13 @@
         <Parameter Name="lcid" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="lcid">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the LCIDConversionAttribute class with the position of the LCID in the unmanaged signature.</para>
+        </summary>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates the position of the LCID argument in the unmanaged signature, where 0 is the first argument. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -58,9 +70,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the position of the LCID argument in the unmanaged signature.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

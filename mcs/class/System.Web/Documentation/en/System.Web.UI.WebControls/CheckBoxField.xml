@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CheckBoxField" FullName="System.Web.UI.WebControls.CheckBoxField">
   <TypeSignature Language="C#" Value="public class CheckBoxField : System.Web.UI.WebControls.BoundField" />
   <AssemblyInfo>
@@ -9,9 +10,76 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class is used by data-bound controls (such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />) to display the value of a Boolean data field in a check box. The <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object is displayed differently depending on the data-bound control in which it is used. For example, the <see cref="T:System.Web.UI.WebControls.GridView" /> control displays a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object as a column, while the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control displays it as a row.</para>
+      <block subset="none" type="note">
+        <para>A check box is disabled (read-only) until the data-bound control displays a record that contains the check box in edit mode. For more information on how to put a record into edit mode, see the documentation for the parent control that contains the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+      </block>
+      <para>To specify the field to display in a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object, set the <see cref="P:System.Web.UI.WebControls.BoundField.DataField" /> property with the field's name.</para>
+      <block subset="none" type="note">
+        <para>Because a check box can display only a selected or an unselected state, a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object can be bound only to a field with a Boolean data type or a string that can be parsed by <see cref="M:System.Boolean.Parse(System.String)" />.</para>
+      </block>
+      <para>You can display a caption next to each check box by setting the <see cref="P:System.Web.UI.WebControls.CheckBoxField.Text" /> property. A <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object is hidden in a data-bound control when the <see cref="P:System.Web.UI.WebControls.DataControlField.Visible" /> property is set to false. To prevent the value of a field from being modified in edit mode, set the <see cref="P:System.Web.UI.WebControls.BoundField.ReadOnly" /> property to true. In data-bound controls that support inserting records (such as the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control), you can hide a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object in insert mode by setting the <see cref="P:System.Web.UI.WebControls.DataControlField.InsertVisible" /> property to false.</para>
+      <para>You can customize the header and footer sections of a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object. To display a caption in the header or footer sections, set the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderText" /> or <see cref="P:System.Web.UI.WebControls.DataControlField.FooterText" /> properties, respectively. Instead of displaying text in the header section, you can display an image by setting the <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderImageUrl" /> property. The header section can be hidden in the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object by setting the <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" /> property to false.</para>
+      <block subset="none" type="note">
+        <para>Some data-bound controls (such as the <see cref="T:System.Web.UI.WebControls.GridView" /> control) can show or hide only the entire header section of the control. These data-bound controls do not support the <see cref="P:System.Web.UI.WebControls.DataControlField.ShowHeader" /> property for an individual bound field. To show or hide the entire header section of a data-bound control (if available), use the control's ShowHeader property.</para>
+      </block>
+      <para>You also can customize the appearance of the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object (font color, background color, and so on) by setting the style properties for the different parts of the field. The following table lists the different style properties.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Style property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.ControlStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the child Web server controls of the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.FooterStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the footer section of the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.HeaderStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the header section of the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.DataControlField.ItemStyle" /> </para>
+          </term>
+          <description>
+            <para>The style settings for the data items in the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object. </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Boolean field that is displayed as a check box in a data-bound control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +87,19 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class. This constructor is commonly used when adding fields to a dynamically created data-bound control.</para>
+          <para>To dynamically add a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object to a data-bound control, create a new <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object, set its properties, and then add it to the data-bound control's field collection. For example, if you are using the <see cref="T:System.Web.UI.WebControls.GridView" /> control, add the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object to the <see cref="P:System.Web.UI.WebControls.GridView.Columns" /> collection.</para>
+          <block subset="none" type="note">
+            <para>Although you can dynamically add fields to a data-bound control, it is strongly recommended that all fields be statically declared and then shown or hidden, as appropriate. Statically declaring all your fields reduces the size of the view state for the parent data-bound control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +123,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CheckBoxField.ApplyFormatInEditMode" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.BoundField" /> class, but is not applicable to the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class. Any attempt to access the value of this property will throw a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="P:System.Web.UI.WebControls.BoundField.ApplyFormatInEditMode" /> property. This property is not supported by the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +156,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CheckBoxField.ConvertEmptyStringToNull" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.BoundField" /> class, but is not applicable to the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class. Any attempt to access the value of this property will throw a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="P:System.Web.UI.WebControls.BoundField.ConvertEmptyStringToNull" /> property. This property is not supported by the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +181,17 @@
         <Parameter Name="newField" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="newField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxField.CopyProperties(System.Web.UI.WebControls.DataControlField)" /> method is a helper method used by the <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method to copy the properties of the current <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object to the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object created by the <see cref="M:System.Web.UI.WebControls.CheckBoxField.CopyProperties(System.Web.UI.WebControls.DataControlField)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the properties of the current <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object to the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object.</para>
+        </summary>
+        <param name="newField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to copy the properties of the current <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,10 +205,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxField.CreateField" /> method is a helper method used by the <see cref="M:System.Web.UI.WebControls.DataControlField.CloneField" /> method to create an empty <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object to which the properties of the current <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object can be copied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an empty <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Web.UI.WebControls.CheckBoxField" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +241,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CheckBoxField.DataFormatString" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.BoundField" /> class, but is not applicable to the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class. Any attempt to access the value of this property will throw a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that specifies the display format for the value of the field. This property is not supported by the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,13 +269,30 @@
         <Parameter Name="includeReadOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dictionary">To be added.</param>
-        <param name="cell">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <param name="includeReadOnly">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxField.ExtractValuesFromCell(System.Collections.Specialized.IOrderedDictionary,System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState,System.Boolean)" /> method is provided as a convenient way to retrieve the values of the fields from the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object in a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+          <block subset="none" type="note">
+            <para>This method is used primarily by control developers.</para>
+          </block>
+          <para>This method does not have a return value. Instead, the field values are returned by reference through the <see cref="T:System.Collections.IDictionary" /> object passed in for the <paramref name="dictionary" /> parameter. After the method has been called, iterate through the <see cref="T:System.Collections.IDictionary" /> object to access the field values.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object contains read-only field values, you must pass in true for the <paramref name="includeReadOnly" /> parameter to include those values.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills the specified <see cref="T:System.Collections.IDictionary" /> object with the values from the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object.</para>
+        </summary>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> used to store the values of the specified cell.</param>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> that contains the values to retrieve.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values.</param>
+        <param name="includeReadOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include the values of read-only fields; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -177,10 +306,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxField.GetDesignTimeValue" /> method is a helper method used to determine what value to display for a field when rendering the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object in a designer. If real data can not be retrieved from the data source at design time, the value returned by this method is displayed instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value used for the field's value when rendering the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object in a designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns true.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -204,10 +342,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CheckBoxField.HtmlEncode" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.BoundField" /> class, but is not applicable to the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class. Any attempt to access the value of this property will throw a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the <see cref="P:System.Web.UI.WebControls.BoundField.HtmlEncode" /> property. This property is not supported by the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -224,11 +368,19 @@
         <Parameter Name="rowState" Type="System.Web.UI.WebControls.DataControlRowState" />
       </Parameters>
       <Docs>
-        <param name="cell">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxField.InitializeDataCell(System.Web.UI.WebControls.DataControlFieldCell,System.Web.UI.WebControls.DataControlRowState)" /> method is a helper method used to initialize a cell in the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the specified <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> object to the specified row state.</para>
+        </summary>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlFieldCell" /> to initialize.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -252,10 +404,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CheckBoxField.NullDisplayText" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.BoundField" /> class, but is not applicable to the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class. Any attempt to access the value of this property will throw a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed for a field when the field's value is null. This property is not supported by the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -272,11 +430,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxField.OnDataBindField(System.Object,System.EventArgs)" /> method is a helper method used to bind the value of a field in the data source to a corresponding check box in the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds the value of a field to a check box in the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -289,10 +455,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML encoding is not supported for this control, and this property always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value indicating whether the control supports HTML encoding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -313,10 +485,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CheckBoxField.Text" /> property is used to display a caption next to each check box in a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object. If the <see cref="P:System.Web.UI.WebControls.CheckBoxField.Text" /> property is set to an empty string, no caption is displayed.</para>
+          <block subset="none" type="note">
+            <para>All check boxes in the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object share the same caption.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the caption to display next to each check box in a <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

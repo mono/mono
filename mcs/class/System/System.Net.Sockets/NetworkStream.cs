@@ -254,8 +254,8 @@ namespace System.Net.Sockets
 
 			try {
 				retval = s.BeginSend (buffer, offset, size, 0, callback, state);
-			} catch {
-				throw new IOException ("BeginWrite failure");
+			} catch (Exception e) {
+				throw new IOException ("BeginWrite failure", e);
 			}
 
 			return retval;

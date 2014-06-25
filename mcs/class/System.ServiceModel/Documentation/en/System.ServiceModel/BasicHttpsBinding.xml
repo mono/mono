@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BasicHttpsBinding" FullName="System.ServiceModel.BasicHttpsBinding">
   <TypeSignature Language="C#" Value="public class BasicHttpsBinding : System.ServiceModel.HttpBindingBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BasicHttpsBinding extends System.ServiceModel.HttpBindingBase implements class System.ServiceModel.Channels.IBindingRuntimePreferences" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies basic https binding settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.BasicHttpsBinding" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +45,13 @@
         <Parameter Name="securityMode" Type="System.ServiceModel.BasicHttpsSecurityMode" />
       </Parameters>
       <Docs>
-        <param name="securityMode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.BasicHttpsBinding" /> class with the specified type of security mode.</para>
+        </summary>
+        <param name="securityMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of <see cref="T:System.ServiceModel.BasicHttpsSecurityMode" /> that specifies the type of security.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +65,13 @@
         <Parameter Name="configurationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="configurationName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.BasicHttpsBinding" /> class with the specified type of configuration name.</para>
+        </summary>
+        <param name="configurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding configuration name for the BasicHttpsBindingElement.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBindingElements">
@@ -71,9 +86,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an ordered collection of binding elements contained in the current binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered collection of binding elements contained in the current binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MessageEncoding">
@@ -87,9 +108,12 @@
         <ReturnType>System.ServiceModel.WSMessageEncoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether MTOM or Text is used to encode SOAP messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scheme">
@@ -119,9 +143,12 @@
         <ReturnType>System.ServiceModel.BasicHttpsSecurity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of security used with the binding.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

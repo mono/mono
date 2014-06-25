@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SmtpNetworkElement" FullName="System.Net.Configuration.SmtpNetworkElement">
   <TypeSignature Language="C#" Value="public sealed class SmtpNetworkElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SmtpNetworkElement extends System.Configuration.ConfigurationElement" />
@@ -11,9 +12,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this class to configure an SMTP client.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the network element in the SMTP configuration file. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +33,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.SmtpNetworkElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultCredentials">
@@ -48,10 +58,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether or not default user credentials are used to access an SMTP server. The default value is false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableSsl">
@@ -70,9 +83,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Configuration.SmtpNetworkElement.EnableSsl" /> property indicates if SSL is used to access an SMTP mail server. The <see cref="T:System.Net.Mail.SmtpClient" /> class only supports the SMTP Service Extension for Secure SMTP over Transport Layer Security as defined in RFC 3207. In this mode, the SMTP session begins on an unencrypted channel, then a STARTTLS command is issued by the client to the server to switch to secure communication using SSL. See RFC 3207 published by the Internet Engineering Task Force (IETF) for more information. </para>
+          <para>An alternate connection method is where an SSL session is established up front before any protocol commands are sent. This connection method is sometimes called SMTPS and by default uses port 465. This alternate connection method using SSL is not currently supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether SSL is used to access an SMTP mail server. The default value is false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Host">
@@ -92,10 +112,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the SMTP server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Password">
@@ -115,10 +138,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting <see cref="P:System.Net.Configuration.SmtpNetworkElement.DefaultCredentials" /> takes precedence over setting <see cref="P:System.Net.Configuration.SmtpNetworkElement.UserName" /> and <see cref="P:System.Net.Configuration.SmtpNetworkElement.Password" />. <see cref="P:System.Net.Configuration.SmtpNetworkElement.UserName" /> and <see cref="P:System.Net.Configuration.SmtpNetworkElement.Password" /> are used only if <see cref="P:System.Net.Configuration.SmtpNetworkElement.DefaultCredentials" /> is set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user password to use to connect to an SMTP mail server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Port">
@@ -138,10 +167,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the port that SMTP clients use to connect to an SMTP mail server. The default value is 25.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostDeserialize">
@@ -194,9 +226,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.Configuration.SmtpNetworkElement.TargetName" /> property allows an application to get or set the SPN to use for authentication when integrated Windows authentication with extended protection. If the <see cref="P:System.Net.Configuration.SmtpNetworkElement.TargetName" /> property is not set, the default value for this SPN is of the form "SMTPSVC/&lt;host&gt;" where &lt;host&gt; is the hostname of the SMTP mail server. </para>
+          <para>The default value for this network element in the SMTP configuration file can also be changed by manually editing the machine or application configuration files directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Service Provider Name (SPN) to use for authentication when using extended protection to connect to an SMTP mail server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserName">
@@ -216,10 +255,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting <see cref="P:System.Net.Configuration.SmtpNetworkElement.DefaultCredentials" /> takes precedence over setting <see cref="P:System.Net.Configuration.SmtpNetworkElement.UserName" /> and <see cref="P:System.Net.Configuration.SmtpNetworkElement.Password" />. <see cref="P:System.Net.Configuration.SmtpNetworkElement.UserName" /> and <see cref="P:System.Net.Configuration.SmtpNetworkElement.Password" /> are used only if <see cref="P:System.Net.Configuration.SmtpNetworkElement.DefaultCredentials" /> is set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user name to connect to an SMTP mail server.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

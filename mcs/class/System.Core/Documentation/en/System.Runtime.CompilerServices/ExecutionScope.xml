@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExecutionScope" FullName="System.Runtime.CompilerServices.ExecutionScope">
   <TypeSignature Language="C#" Value="public class ExecutionScope" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.CompilerServices.ExecutionScope" /> type is used by the expression tree compiler, which is an internal component of the vbteclinq expression tree API, and by the dynamic methods that it generates.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the runtime state of a dynamically generated method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateDelegate">
@@ -27,11 +34,19 @@
         <Parameter Name="locals" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="indexLambda">To be added.</param>
-        <param name="locals">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a delegate that can be used to execute a dynamically generated method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Delegate" /> that can execute a dynamically generated method.</para>
+        </returns>
+        <param name="indexLambda">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the object that stores information about associated lambda expression of the dynamic method.</param>
+        <param name="locals">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the hoisted local variables from the parent context.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateHoistedLocals">
@@ -45,9 +60,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an array to store the hoisted local variables.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array to store hoisted local variables.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Globals">
@@ -60,8 +81,11 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the non-trivial constants and locally executable expressions that are referenced by a dynamically generated method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsolateExpression">
@@ -78,11 +102,19 @@
         <Parameter Name="locals" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="locals">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees a specified expression tree of external parameter references by replacing the parameter with its current value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An expression tree that does not contain external parameter references.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />An expression tree to free of external parameter references.</param>
+        <param name="locals">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the hoisted local variables.</param>
       </Docs>
     </Member>
     <Member MemberName="Locals">
@@ -95,8 +127,11 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the hoisted local variables from the parent context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parent">
@@ -109,8 +144,11 @@
         <ReturnType>System.Runtime.CompilerServices.ExecutionScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the execution scope of the calling delegate.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDeclaration" FullName="System.Xml.XmlDeclaration">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlDeclaration : System.Xml.XmlLinkedNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDeclaration extends System.Xml.XmlLinkedNode" />
@@ -15,11 +16,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>An XML declaration node in the document.</summary>
     <remarks>
-      <para>This node represents the (optional) XML declaration at the start of a document.  XML declarations look like:</para>
-      <code lang="XML">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</code>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is a Microsoft extension to the Document Object Model (DOM).</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the XML declaration node &lt;?xml version='1.0'...?&gt;.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,12 +42,22 @@
         <Parameter Name="doc" Type="System.Xml.XmlDocument" />
       </Parameters>
       <Docs>
-        <param name="version">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <param name="standalone">To be added.</param>
-        <param name="doc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not instantiate an <see cref="T:System.Xml.XmlDeclaration" /> directly; instead, use methods such as <see cref="Overload:System.Xml.XmlDocument.CreateNode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlDeclaration" /> class.</para>
+        </summary>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML version; see the <see cref="P:System.Xml.XmlDeclaration.Version" /> property.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding scheme; see the <see cref="P:System.Xml.XmlDeclaration.Encoding" /> property.</param>
+        <param name="standalone">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the XML document depends on an external DTD; see the <see cref="P:System.Xml.XmlDeclaration.Standalone" /> property.</param>
+        <param name="doc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent XML document.</param>
       </Docs>
     </Member>
     <Member MemberName="CloneNode">
@@ -62,10 +76,21 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="deep">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>CloneNode serves as a copy constructor for nodes. To see how this method behaves with other node types, see <see cref="M:System.Xml.XmlNode.CloneNode(System.Boolean)" />.</para>
+          <para>The cloned node has no parent (<see cref="P:System.Xml.XmlNode.ParentNode" /> returns null).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate of this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned node.</para>
+        </returns>
+        <param name="deep">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself. Because XmlDeclaration nodes do not have children, the cloned node always includes the data value, regardless of the parameter setting. </param>
       </Docs>
     </Member>
     <Member MemberName="Encoding">
@@ -82,9 +107,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unlike most XML attributes, encoding attribute values are not case-sensitive. This is because encoding character names follow ISO and Internet Assigned Numbers Authority (IANA) standards.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encoding level of the XML document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InnerText">
@@ -100,9 +131,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the concatenated values of the XmlDeclaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalName">
@@ -118,9 +152,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local name of the node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -136,9 +173,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name of the node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -154,9 +194,12 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Standalone">
@@ -173,9 +216,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the standalone attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -191,9 +237,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the XmlDeclaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -209,9 +258,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML version of the document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteContentTo">
@@ -230,9 +282,13 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the children of the node to the specified <see cref="T:System.Xml.XmlWriter" />. Because XmlDeclaration nodes do not have children, this method has no effect.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -251,9 +307,16 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the encoding and standalone attributes are determined by the <see cref="P:System.Xml.XmlDeclaration.Encoding" /> and <see cref="P:System.Xml.XmlDeclaration.Standalone" /> properties. If either of the properties is not set, the corresponding attribute is not written. The version attribute is always written out with a value of 1.0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the node to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
     </Member>
   </Members>

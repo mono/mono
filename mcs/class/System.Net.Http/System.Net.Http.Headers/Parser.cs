@@ -143,6 +143,8 @@ namespace System.Net.Http.Headers
 
 		public static class MD5
 		{
+			public new static readonly Func<object, string> ToString = l => Convert.ToBase64String ((byte[]) l);
+
 			public static bool TryParse (string input, out byte[] result)
 			{
 				try {

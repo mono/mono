@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValidatorCollection" FullName="System.Web.UI.ValidatorCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ValidatorCollection : System.Collections.ICollection" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each <see cref="T:System.Web.UI.ValidatorCollection" /> reference is associated with a validation server control contained on the requested page. These controls add themselves to this collection when the <see cref="E:System.Web.UI.Control.Init" /> event of the <see cref="T:System.Web.UI.Page" /> object is handled. They remove themselves when the <see cref="E:System.Web.UI.Control.Unload" /> event of the <see cref="T:System.Web.UI.Page" /> object is handled. The <see cref="T:System.Web.UI.Page" /> class inherits both of these methods from the <see cref="T:System.Web.UI.Control" /> class.</para>
+      <para>You can access this collection, its methods, and its properties through the <see cref="P:System.Web.UI.Page.Validators" /> property. If the tested condition of any validator in this collection fails, the <see cref="P:System.Web.UI.Page.IsValid" /> property is set to false.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes an array of <see cref="T:System.Web.UI.IValidator" /> references. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ValidatorCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +56,16 @@
         <Parameter Name="validator" Type="System.Web.UI.IValidator" />
       </Parameters>
       <Docs>
-        <param name="validator">To be added: an object of type 'IValidator'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When added to the <see cref="T:System.Web.UI.ValidatorCollection" /> collection of a <see cref="T:System.Web.UI.Page" /> object through the <see cref="P:System.Web.UI.Page.Validators" /> property, the <see cref="T:System.Web.UI.IValidator" /> implementation takes part in validation. Its <see cref="M:System.Web.UI.IValidator.Validate" /> method is called together with the <see cref="M:System.Web.UI.IValidator.Validate" /> methods of all other validators. All validators then share in determining whether the <see cref="T:System.Web.UI.Page" /> object as a whole is valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified validation server control to the <see cref="T:System.Web.UI.ValidatorCollection" /> collection.</para>
+        </summary>
+        <param name="validator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation server control to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,10 +82,17 @@
         <Parameter Name="validator" Type="System.Web.UI.IValidator" />
       </Parameters>
       <Docs>
-        <param name="validator">To be added: an object of type 'IValidator'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified validation server control is contained within the page's <see cref="T:System.Web.UI.ValidatorCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the validation server control is in the collection; otherwise, false.</para>
+        </returns>
+        <param name="validator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation server control to check for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,10 +110,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the validator collection to the specified array, beginning at the specified location.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection to which the validation server control is added. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index where the validation server control is copied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -102,9 +132,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of references in the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +152,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create an <see cref="T:System.Collections.IEnumerator" /> instance that can be iterated through easily to get each item in the <see cref="T:System.Web.UI.ValidatorCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> instance for the <see cref="T:System.Web.UI.ValidatorCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.IEnumerator" /> for the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +177,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Web.UI.ValidatorCollection" /> collection is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -151,9 +196,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the collection is synchronized, it is thread safe.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Web.UI.ValidatorCollection" /> collection is synchronized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -190,9 +241,13 @@
         <Parameter Name="validator" Type="System.Web.UI.IValidator" />
       </Parameters>
       <Docs>
-        <param name="validator">To be added: an object of type 'IValidator'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified validation server control from the page's <see cref="T:System.Web.UI.ValidatorCollection" /> collection.</para>
+        </summary>
+        <param name="validator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation server control to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -206,9 +261,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize the <see cref="T:System.Web.UI.ValidatorCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

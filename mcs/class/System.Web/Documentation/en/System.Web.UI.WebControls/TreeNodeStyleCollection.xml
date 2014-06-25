@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeNodeStyleCollection" FullName="System.Web.UI.WebControls.TreeNodeStyleCollection">
   <TypeSignature Language="C#" Value="public sealed class TreeNodeStyleCollection : System.Web.UI.StateManagedCollection" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> class is used to store and manage a collection of <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> objects. The <see cref="P:System.Web.UI.WebControls.TreeView.LevelStyles" /> property, of type <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" />, stores the node styles for the individual levels of a tree.</para>
+      <para>The <see cref="P:System.Web.UI.WebControls.TreeView.LevelStyles" /> property is an alternative to the individual style properties, such as the <see cref="P:System.Web.UI.WebControls.TreeView.NodeStyle" /> property, that control node styles at different levels of the tree. The first style in the collection corresponds to the node style in the first level of the tree. The second style in the collection corresponds to the node style in the second level of the tree, and so on. The <see cref="P:System.Web.UI.WebControls.TreeView.LevelStyles" /> property is most often used to generate table of contents–style navigation menus where nodes at a certain level should have the same appearance, regardless of whether they have child nodes.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> class inherits most of its members from the <see cref="T:System.Web.UI.StateManagedCollection" /> class. For more information about the inherited members, see <see cref="T:System.Web.UI.StateManagedCollection" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> objects that is in a <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -24,11 +33,24 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Add(System.Web.UI.WebControls.TreeNodeStyle)" /> method to append the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object to the end of the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> allows you to add null, as well as duplicate <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> objects.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object to the end of the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> was inserted.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to append. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,11 +66,21 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Contains(System.Web.UI.WebControls.TreeNodeStyle)" /> method to determine whether a <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object is contained in the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object. The <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Contains(System.Web.UI.WebControls.TreeNodeStyle)" /> method is commonly used to test for the existence of a <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object before performing a task, such as adding or removing the node from the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object is in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object is contained in the collection; otherwise, false.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to find. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +98,17 @@
       </Parameters>
       <Docs>
         <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.CopyTo(System.Web.UI.WebControls.TreeNodeStyle[],System.Int32)" /> method to copy the contents of the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object into the specified zero-based array of <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> objects. Items are copied starting at the specified index of the target array. You can then use the array to access the items in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all the items from the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object to a compatible one-dimensional array of <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> objects, starting at the specified index in the target array.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the target array at which to start receiving the copied content.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,11 +161,24 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.IndexOf(System.Web.UI.WebControls.TreeNodeStyle)" /> method to determine the zero-based index of the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object in the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object. If the node is not in the collection, the method returns -1.</para>
+          <block subset="none" type="note">
+            <para>If the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object appears multiple times in the collection, the index of the first occurrence is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="style" /> within the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" />, if found; otherwise, -1.</para>
+        </returns>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to locate.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,11 +195,20 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Insert(System.Int32,System.Web.UI.WebControls.TreeNodeStyle)" /> method to insert the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object into the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object at the specified zero-based index.</para>
+          <para>As an alternative, you can append a <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object to the end of the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> by using the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Add(System.Web.UI.WebControls.TreeNodeStyle)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object into the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object at the specified index location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index location at which to insert the <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" />. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to insert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -183,10 +244,18 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Remove(System.Web.UI.WebControls.TreeNodeStyle)" /> method to remove the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object from the collection. The indexes of the remaining objects are updated to be consecutive.</para>
+          <para>As an alternative, you can remove a node at specific index by using the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.RemoveAt(System.Int32)" /> method. You can also remove every node in the collection by using the <see cref="M:System.Web.UI.StateManagedCollection.Clear" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object from the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object.</para>
+        </summary>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,10 +271,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.RemoveAt(System.Int32)" /> method to remove the <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object at the specified zero-based index location from a <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object. All the items that are located after the removed node are then moved up one level to fill the vacant position in the tree structure. The indexes of the moved items are also updated.</para>
+          <para>As an alternative, you can remove a specific <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object by using the <see cref="M:System.Web.UI.WebControls.TreeNodeStyleCollection.Remove(System.Web.UI.WebControls.TreeNodeStyle)" /> method. You can also remove every node in the collection by using the <see cref="M:System.Web.UI.WebControls.TreeNodeCollection.Clear" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object at the specified index location from the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index location of the <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

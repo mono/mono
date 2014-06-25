@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapMessage" FullName="System.Web.Services.Protocols.SoapMessage">
   <TypeSignature Language="C#" Value="public abstract class SoapMessage" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The primary use of the <see cref="T:System.Web.Services.Protocols.SoapMessage" /> class is for SOAP extensions, representing the data in a SOAP request or SOAP response. When the <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" /> method is called, a <see cref="T:System.Web.Services.Protocols.SoapExtension" /> receives a <see cref="T:System.Web.Services.Protocols.SoapMessage" /> at each <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />. It is up to the particular SOAP extension to choose how to process the <see cref="T:System.Web.Services.Protocols.SoapMessage" />. Common SOAP extensions include encryption and compression.</para>
+      <para>SOAP extensions can be applied to either or both an XML Web service method created using ASP.NET or an XML Web service client. When a SOAP extension is applied to an XML Web service method, the <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" /> method receives an instance of <see cref="T:System.Web.Services.Protocols.SoapServerMessage" />, which derives from <see cref="T:System.Web.Services.Protocols.SoapMessage" />. Likewise, when a SOAP extension is applied to an XML Web service client, <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" /> receives an instance of <see cref="T:System.Web.Services.Protocols.SoapClientMessage" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the data in a SOAP request or SOAP response at a specific <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Action">
@@ -24,9 +32,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapMessage.Action" /> property can be accessed during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the SOAPAction HTTP request header field for the SOAP request or SOAP response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +58,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP extension can set the <see cref="P:System.Web.Services.Protocols.SoapMessage.ContentEncoding" /> property to provide supplementary information about the encoding of a SOAP message without changing the media type as expressed in the Content-Type HTTP header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contents of the Content-Encoding HTTP header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentType">
@@ -57,9 +77,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapMessage.ContentType" /> property can only be accessed in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" /> and <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeDeserialize" /> stages; otherwise, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
+          <para>Use the <see cref="P:System.Web.Services.Protocols.SoapMessage.ContentEncoding" /> property, instead of the <see cref="P:System.Web.Services.Protocols.SoapMessage.ContentType" /> property to provide supplementary information about the encoding of a SOAP message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP Content-Type of the SOAP request or SOAP response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -74,8 +101,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asserted stage is different for XML Web service clients and XML Web service methods. An XML Web service method's in parameters are available after the SOAP request is deserialized in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" /> stage. For an XML Web service client, the in parameters are available prior to the SOAP request serialization process in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" /> stage.</para>
+          <para>
+            <see cref="M:System.Web.Services.Protocols.SoapMessage.EnsureInStage" /> can be called during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />, however an <see cref="T:System.InvalidOperationException" /> is thrown when in parameters are not available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, asserts that the current <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> is a stage where in parameters are available.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,8 +125,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asserted stage is different for XML Web service clients and XML Web service methods. An XML Web service method's out parameters are available prior to the SOAP response serialization process in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" /> stage. In an XML Web service client, the out parameters are available after the SOAP response deserialization process in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" /> stage.</para>
+          <para>
+            <see cref="M:System.Web.Services.Protocols.SoapMessage.EnsureOutStage" /> can be called during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />, however an <see cref="T:System.InvalidOperationException" /> is thrown when out parameters are not available.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, asserts that the current <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> stage is a stage where out parameters are available.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,9 +151,18 @@
         <Parameter Name="stage" Type="System.Web.Services.Protocols.SoapMessageStage" />
       </Parameters>
       <Docs>
-        <param name="stage">To be added: an object of type 'SoapMessageStage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiple stages can be asserted by performing a bitwise OR operation on multiple instances of the <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> class.</para>
+          <para>
+            <see cref="M:System.Web.Services.Protocols.SoapMessage.EnsureStage(System.Web.Services.Protocols.SoapMessageStage)" /> can be called during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ensures that the <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> of the call to the XML Web service method is the stage or stages passed in. If the current processing stage is not one of the stages passed in, an exception is thrown.</para>
+        </summary>
+        <param name="stage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> asserted. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +176,15 @@
         <ReturnType>System.Web.Services.Protocols.SoapException</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapException'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapMessage.Exception" /> property can be accessed during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Protocols.SoapException" /> from the call to the XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,10 +201,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.SoapMessage.GetInParameterValue(System.Int32)" /> property is only accessible when in parameters are available. ASP.NET throws <see cref="T:System.InvalidOperationException" /> when accessing the <see cref="M:System.Web.Services.Protocols.SoapMessage.GetInParameterValue(System.Int32)" /> property if in parameters are not available.</para>
+          <para>In a <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> the in parameters are available in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" /> <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />. In a <see cref="T:System.Web.Services.Protocols.SoapServerMessage" /> the in parameters are available in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" /> <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameter passed into the XML Web service method at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the parameter at the specified index.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the parameter in the array of parameters. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -163,10 +232,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If out parameters are not available, ASP.NET throws an <see cref="T:System.InvalidOperationException" /> when accessing the <see cref="M:System.Web.Services.Protocols.SoapMessage.GetOutParameterValue(System.Int32)" /> property.</para>
+          <para>In a <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> the out parameters are available in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" /> <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />. In a <see cref="T:System.Web.Services.Protocols.SoapServerMessage" /> the out parameters are available in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" /> of the <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the out parameter passed into the XML Web service method at the specified index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the parameter at the specified index.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the parameter in the array of parameters. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -181,9 +261,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a return value is not available, ASP.NET throws <see cref="T:System.InvalidOperationException" /> when accessing the <see cref="M:System.Web.Services.Protocols.SoapMessage.GetReturnValue" /> property.</para>
+          <para>In a <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> the return value is available when the <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> value is <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" />. In a <see cref="T:System.Web.Services.Protocols.SoapServerMessage" /> the return value is available when <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> value is <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return value of an XML Web service method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the return value of the XML Web service method.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +287,16 @@
         <ReturnType>System.Web.Services.Protocols.SoapHeaderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapHeaderCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP headers are an optional portion of a SOAP request or SOAP response. For more details on using SOAP headers in XML Web services created using ASP.NET and their clients, see the <see cref="T:System.Web.Services.Protocols.SoapHeader" /> class.</para>
+          <para>Although the <see cref="P:System.Web.Services.Protocols.SoapMessage.Headers" /> property can be accessed at any stage, it is only populated with the SOAP header information in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" /> and <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" /> stages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the SOAP headers applied to the current SOAP request or SOAP response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +310,15 @@
         <ReturnType>System.Web.Services.Protocols.LogicalMethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LogicalMethodInfo'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although <see cref="P:System.Web.Services.Protocols.SoapMessage.MethodInfo" /> can be accessed during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />, it only has data during <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterDeserialize" /> and <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeSerialize" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a representation of the method prototype for the XML Web service method for which the SOAP request is intended.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,9 +332,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="P:System.Web.Services.Protocols.SoapDocumentMethodAttribute.OneWay" /> property of <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> for details about one-way XML Web service methods.</para>
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapMessage.OneWay" /> property is accessible in all stages of <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the <see cref="P:System.Web.Services.Protocols.SoapDocumentMethodAttribute.OneWay" /> property of either the <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or the <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> attribute applied to the XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,9 +366,15 @@
         <ReturnType>System.Web.Services.Protocols.SoapProtocolVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a <see cref="T:System.Web.Services.Protocols.SoapServerMessage" />, the <see cref="P:System.Web.Services.Protocols.SoapServerMessage.SoapVersion" /> property is guaranteed to be valid after the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeDeserialize" /> stage. In the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeDeserialize" /> stage the property is available, however the SOAP message has not been completely processed and SOAP extensions that may alter the contents of the SOAP message have not run.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the SOAP protocol used to communicate with the XML Web service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Stage">
@@ -268,9 +384,15 @@
         <ReturnType>System.Web.Services.Protocols.SoapMessageStage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapMessageStage'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapMessage.Stage" /> property can be accessed at any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> of the <see cref="T:System.Web.Services.Protocols.SoapMessage" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -285,9 +407,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.IO.Stream" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP extensions that inspect the data representing a SOAP request or SOAP response, such as a logging SOAP extension, can use the Stream property to view the data at each <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+          <para>SOAP extensions that modify the data representing a SOAP request or SOAP response, such as encryption or compression SOAP extensions, should do so with the <see cref="T:System.IO.Stream" /> passed into the <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" /> method of <see cref="T:System.Web.Services.Protocols.SoapExtension" />. The <see cref="P:System.Web.Services.Protocols.SoapMessage.Stream" /> property of <see cref="T:System.Web.Services.Protocols.SoapMessage" /> passed into <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" /> is read-only.</para>
+          <para>For more information on modifying the data representing a SOAP request or SOAP response, see <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data representing the SOAP request or SOAP response in the form of a <see cref="T:System.IO.Stream" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -301,9 +431,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapMessage.Url" /> property can be accessed during any <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the base URL of the XML Web service.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

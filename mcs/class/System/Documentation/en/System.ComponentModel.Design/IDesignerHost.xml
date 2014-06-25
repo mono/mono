@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignerHost" FullName="System.ComponentModel.Design.IDesignerHost">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesignerHost : IServiceProvider, System.ComponentModel.Design.IServiceContainer" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerHost implements class System.ComponentModel.Design.IServiceContainer, class System.IServiceProvider" />
@@ -24,8 +25,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.IDesignerHost" /> is an interface that works with the .NET Framework forms designer architecture to provide support for designer transaction and component management.</para>
+      <para>The .NET Framework does not provide an implementation of this interface. The interface is implemented by development tools that support designers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for managing designer transactions and components.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Activate">
@@ -42,8 +51,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Designers should be activated before they display their user interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Activates the designer that this host is hosting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Activated">
@@ -60,8 +75,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A designer is activated before it is displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when this designer is activated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Container">
@@ -77,9 +98,15 @@
         <ReturnType>System.ComponentModel.IContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ComponentModel.IContainer'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="T:System.ComponentModel.IContainer" /> contains the components of the current design mode document. You can list or access any of the components of the current design mode document through the <see cref="P:System.ComponentModel.IContainer.Components" /> member of this <see cref="T:System.ComponentModel.IContainer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the container for this designer host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateComponent">
@@ -98,10 +125,21 @@
         <Parameter Name="componentClass" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentClass">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.IComponent'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type cannot be resolved into an object that implements <see cref="T:System.ComponentModel.IComponent" />, an exception is thrown.</para>
+          <para>This method does not specify a name for the component. The method creates the component and adds it to the designer container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a component of the specified type and adds it to the design document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created component.</para>
+        </returns>
+        <param name="componentClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the component to create. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateComponent">
@@ -121,11 +159,23 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="componentClass">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ComponentModel.IComponent'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type cannot be resolved into an object that implements <see cref="T:System.ComponentModel.IComponent" />, an exception is thrown.</para>
+          <para>This method creates the component and adds it to the designer container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a component of the specified type and name, and adds it to the design document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created component.</para>
+        </returns>
+        <param name="componentClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the component to create. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name for the component. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateTransaction">
@@ -142,9 +192,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DesignerTransaction'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can be used to encapsulate a series of operations. Designer transactions can improve performance, reduce flicker caused by multiple updates during a process of operations, and enable most operations to be undone.</para>
+          <para>Lengthy operations that involve multiple components can raise many events. These events can cause side effects, such as flicker or degraded performance. When operating on multiple components at one time, or setting multiple properties on a single component, you can improve performance by performing these changes within a transaction. Some operations handle the <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionOpening" /> and <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionClosed" /> events and perform work only when a transaction is not in progress. For more information on using transactions, see the documentation for <see cref="T:System.ComponentModel.Design.DesignerTransaction" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can encapsulate event sequences to improve performance and enable undo and redo support functionality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.ComponentModel.Design.DesignerTransaction" />. When you complete the steps in your transaction, you should call <see cref="M:System.ComponentModel.Design.DesignerTransaction.Commit" /> on this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateTransaction">
@@ -163,10 +223,21 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="description">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DesignerTransaction'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can be used to encapsulate a series of operations. Designer transactions can improve performance, reduce flicker caused by multiple updates during a process of operations, and enable most operations to be undone.</para>
+          <para>Lengthy operations that involve multiple components can raise many events. These events can cause side effects, such as flicker or degraded performance. When operating on multiple components at one time, or setting multiple properties on a single component, you can improve performance by performing these changes within a transaction. Some operations handle the <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionOpening" /> and <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionClosed" /> events and perform work only when a transaction is not in progress. For more information on using transactions, see the documentation for <see cref="T:System.ComponentModel.Design.DesignerTransaction" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can encapsulate event sequences to improve performance and enable undo and redo support functionality, using the specified transaction description.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.Design.DesignerTransaction" />. When you have completed the steps in your transaction, you should call <see cref="M:System.ComponentModel.Design.DesignerTransaction.Commit" /> on this object.</para>
+        </returns>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />A title or description for the newly created transaction. </param>
       </Docs>
     </Member>
     <Member MemberName="Deactivated">
@@ -183,8 +254,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A designer is deactivated just before it is no longer displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when this designer is deactivated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DestroyComponent">
@@ -203,9 +280,13 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Destroys the specified component and removes it from the designer container.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to destroy. </param>
       </Docs>
     </Member>
     <Member MemberName="GetDesigner">
@@ -224,10 +305,17 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'ComponentModel.IComponent'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDesigner'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the designer instance that contains the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.Design.IDesigner" />, or null if there is no designer for the specified component.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to retrieve the designer for. </param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -246,10 +334,17 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an instance of the specified, fully qualified type name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type object for the specified type name, or null if the type cannot be found.</para>
+        </returns>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to load. </param>
       </Docs>
     </Member>
     <Member MemberName="InTransaction">
@@ -265,9 +360,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the designer host is currently in a transaction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadComplete">
@@ -284,8 +382,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs after a designer completes loading its document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when this designer completes loading its document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Loading">
@@ -301,9 +405,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the designer host is currently loading the document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RootComponent">
@@ -319,9 +426,15 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ComponentModel.IComponent'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This base class is typically a <see cref="T:System.Windows.Forms.Form" /> or <see cref="T:System.Windows.Forms.UserControl" /> instance; it defines the class for which the user's derived class extends.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the instance of the base class used as the root component for the current design.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RootComponentClassName">
@@ -337,9 +450,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified name of the class being designed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionClosed">
@@ -356,8 +472,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs after a transaction is closed.</para>
+          <para>A transaction can sometimes change multiple values. The transaction methods provide a way to prevent performance and flicker problems by avoiding repetitive processing. These methods defer processing until after the transaction has closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an event handler for the <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionClosed" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionClosing">
@@ -374,8 +497,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs just before a transaction is completed.</para>
+          <para>A transaction can sometimes change multiple values. The transaction methods provide a way to prevent performance and flicker problems by avoiding repetitive processing. These methods defer processing until after the transaction has closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an event handler for the <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionClosing" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionDescription">
@@ -391,9 +521,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The description is the last description specified with <see cref="M:System.ComponentModel.Design.IDesignerHost.CreateTransaction" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the current transaction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionOpened">
@@ -410,8 +546,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs when a transaction has begun.</para>
+          <para>A transaction can sometimes change multiple values. The transaction methods provide a way to prevent performance and flicker problems by avoiding repetitive processing. These methods defer processing until after the transaction has closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an event handler for the <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionOpened" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionOpening">
@@ -428,8 +571,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs when a transaction is about to begin.</para>
+          <para>This method allows designer host clients to perform operations before other handlers are notified that a transaction has begun. The specified handler is called only when the first call to <see cref="M:System.ComponentModel.Design.IDesignerHost.CreateTransaction" /> is made. Subsequent calls do not generate this event until all transaction objects have been disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an event handler for the <see cref="E:System.ComponentModel.Design.IDesignerHost.TransactionOpening" /> event.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

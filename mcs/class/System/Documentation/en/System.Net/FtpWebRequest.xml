@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FtpWebRequest" FullName="System.Net.FtpWebRequest">
   <TypeSignature Language="C#" Value="public sealed class FtpWebRequest : System.Net.WebRequest" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FtpWebRequest extends System.Net.WebRequest" />
@@ -11,9 +12,30 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To obtain an instance of <see cref="T:System.Net.FtpWebRequest" />, use the <see cref="M:System.Net.WebRequest.Create(System.String)" /> method. You can also use the <see cref="T:System.Net.WebClient" /> class to upload and download information from an FTP server. Using either of these approaches, when you specify a network resource that uses the FTP scheme (for example, "ftp://contoso.com") the <see cref="T:System.Net.FtpWebRequest" /> class provides the ability to programmatically interact with FTP servers.</para>
+      <para>The URI may be relative or absolute. If the URI is of the form "ftp://contoso.com/%2fpath" (%2f is an escaped '/'), then the URI is absolute, and the current directory is /path. If, however, the URI is of the form "ftp://contoso.com/path", first the .NET Framework logs into the FTP server (using the user name and password set by the <see cref="P:System.Net.FtpWebRequest.Credentials" /> property), then the current directory is set to &lt;UserLoginDirectory&gt;/path.</para>
+      <para>You must have a valid user name and password for the server or the server must allow anonymous logon. You can specify the credentials used to connect to the server by setting the <see cref="P:System.Net.FtpWebRequest.Credentials" /> property or you can include them in the <see cref="P:System.Uri.UserInfo" /> portion of the URI passed to the <see cref="Overload:System.Net.WebRequest.Create" /> method. If you include <see cref="P:System.Uri.UserInfo" /> information in the URI, the <see cref="P:System.Net.FtpWebRequest.Credentials" /> property is set to a new network credential with the specified user name and password information. </para>
+      <block subset="none" type="note">
+        <para>Unless the <see cref="P:System.Net.FtpWebRequest.EnableSsl" /> property is true, all data and commands, including your user name and password information, are sent to the server in clear text. Anyone monitoring network traffic can view your credentials and use them to connect to the server. If you are connecting to an FTP server that requires credentials and supports Secure Sockets Layer (SSL), you should set <see cref="P:System.Net.FtpWebRequest.EnableSsl" /> to true.</para>
+      </block>
+      <para>You must have <see cref="T:System.Net.WebPermission" /> to access the FTP resource; otherwise, a <see cref="T:System.Security.SecurityException" /> exception is thrown.</para>
+      <para>Specify the FTP command to send to the server by setting the <see cref="P:System.Net.FtpWebRequest.Method" /> property to a value defined in the <see cref="T:System.Net.WebRequestMethods.Ftp" /> structure. To transmit text data, change the <see cref="P:System.Net.FtpWebRequest.UseBinary" /> property from its default value (true) to false. For details and restrictions, see <see cref="P:System.Net.FtpWebRequest.Method" />. </para>
+      <para>When using an <see cref="T:System.Net.FtpWebRequest" /> object to upload a file to a server, you must write the file content to the request stream obtained by calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> method or its asynchronous counterparts, the <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.FtpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> methods. You must write to the stream and close the stream before sending the request. </para>
+      <para>Requests are sent to the server by calling the <see cref="M:System.Net.FtpWebRequest.GetResponse" /> method or its asynchronous counterparts, the <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> methods. When the requested operation completes, an <see cref="T:System.Net.FtpWebResponse" /> object is returned. The <see cref="T:System.Net.FtpWebResponse" /> object provides the status of the operation and any data downloaded from the server.</para>
+      <para>You can set a time-out value for reading or writing to the server by using the <see cref="P:System.Net.FtpWebRequest.ReadWriteTimeout" /> property. If the time-out period is exceeded, the calling method throws a <see cref="T:System.Net.WebException" /> with <see cref="T:System.Net.WebExceptionStatus" /> set to <see cref="F:System.Net.WebExceptionStatus.Timeout" />.</para>
+      <para>When downloading a file from an FTP server, if the command was successful, the contents of the requested file are available in the response object's stream. You can access this stream by calling the <see cref="M:System.Net.FtpWebResponse.GetResponseStream" /> method. For more information, see <see cref="T:System.Net.FtpWebResponse" />.</para>
+      <para>If the <see cref="P:System.Net.FtpWebRequest.Proxy" /> property is set, either directly or in a configuration file, communications with the FTP server are made through the specified proxy. If the specified proxy is an HTTP proxy, only the <see cref="F:System.Net.WebRequestMethods.Ftp.DownloadFile" />, <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectory" />, and <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectoryDetails" /> commands are supported.</para>
+      <para>Only downloaded binary content is cached; that is, content received using the <see cref="F:System.Net.WebRequestMethods.Ftp.DownloadFile" /> command with the <see cref="P:System.Net.FtpWebRequest.UseBinary" /> property set to true. </para>
+      <para>Multiple <see cref="T:System.Net.FtpWebRequest" />s reuse existing connections, if possible.</para>
+      <para>For more information about the FTP protocol, see RFC 959, "File Transfer Protocol," available at <see cref="http://www.ietf.org/rfc/rfc959.txt">http://www.rfc-editor.org/</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a File Transfer Protocol (FTP) client.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abort">
@@ -29,9 +51,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no operation in progress, this method does nothing. If a file transfer is in progress, this method terminates the transfer.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates an asynchronous FTP operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeginGetRequestStream">
@@ -50,12 +81,28 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must complete the asynchronous operation by calling the <see cref="M:System.Net.FtpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method. Typically, <see cref="M:System.Net.FtpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> is called by the method referenced by <paramref name="callback" />. To determine the state of the operation, check the properties in the <see cref="T:System.IAsyncResult" /> object returned by this method.</para>
+          <para>This method does not block while waiting for the stream. To block, call <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> in place of this method.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ED-450A-9664-AB93FCC6F1FB">[&lt;topic://cpovrAsynchronousProgrammingOverview&gt;]</a></format>.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins asynchronously opening a request's content stream for writing.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that indicates the status of the operation.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the operation is complete. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="callback" /> delegate when the operation completes. </param>
       </Docs>
     </Member>
     <Member MemberName="BeginGetResponse">
@@ -74,12 +121,31 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must complete the asynchronous operation by calling the <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> method. Typically, <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> is called by the method referenced by <paramref name="callback" />. To determine the state of the operation, check the properties in the <see cref="T:System.IAsyncResult" /> object returned by the <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method.</para>
+          <para>If the <see cref="P:System.Net.FtpWebRequest.Proxy" /> property is set, either directly or in a configuration file, communications with the FTP server are made through the specified proxy.</para>
+          <para>
+            <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> does not block while waiting for the response from the server. To block, call the <see cref="M:System.Net.FtpWebRequest.GetResponse" /> method in place of <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</para>
+          <para>For more information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ED-450A-9664-AB93FCC6F1FB">[&lt;topic://cpovrAsynchronousProgrammingOverview&gt;]</a></format>.</para>
+          <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If a <see cref="T:System.Net.WebException" /> is thrown, use the <see cref="P:System.Net.WebException.Response" /> and <see cref="P:System.Net.WebException.Status" /> properties of the exception to determine the response from the server.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins sending a request and receiving a response from an FTP server asynchronously.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that indicates the status of the operation.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the operation is complete. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the operation. This object is passed to the <paramref name="callback" /> delegate when the operation completes. </param>
       </Docs>
     </Member>
     <Member MemberName="ClientCertificates">
@@ -99,9 +165,18 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Client certificates are used to authenticate the client during the initial SSL connection negotiation. For more information, see <see cref="P:System.Net.FtpWebRequest.EnableSsl" />. </para>
+          <block subset="none" type="note">
+            <para>The .NET Framework caches SSL sessions as they are created and attempts to reuse a cached session for a new request, if possible. When attempting to reuse an SSL session, the .NET Framework uses the first element of <see cref="P:System.Net.HttpWebRequest.ClientCertificates" /> (if there is one), or tries to reuse an anonymous session if <see cref="P:System.Net.HttpWebRequest.ClientCertificates" /> is empty.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the certificates used for establishing an encrypted connection to the FTP server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionGroupName">
@@ -121,9 +196,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Connection groups associate a set of requests with a particular connection or set of connections. The connections in a connection group can be reused only by requests originating in the same application domain, when the credentials on the request are the same and the request specifies the connection group name. When a request does not specify a connection group name, any existing connection to the requested server that is not associated with a connection group can be used. When the credentials are not the same, the existing connection is closed and the new request must be reauthenticated.</para>
+          <para>Using connection groups can improve performance because this allows all of the requests for a user to reuse the connection authenticated with the user's credentials.</para>
+          <para>Changing the <see cref="P:System.Net.FtpWebRequest.ConnectionGroupName" /> property after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the connection group that contains the service point used to send the current request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentLength">
@@ -138,10 +221,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.ContentLength" /> property is provided only for compatibility with other implementations of the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes. There is no reason to use <see cref="P:System.Net.FtpWebRequest.ContentLength" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that is ignored by the <see cref="T:System.Net.FtpWebRequest" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentOffset">
@@ -156,10 +245,18 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.Net.FtpWebRequest.ContentOffset" /> property when downloading a file from an FTP server. This offset indicates the position in the server's file that marks the start of the data to be downloaded. The offset is specified as the number of bytes from the start of the file; the offset of the first byte is zero.  </para>
+          <para>Setting <see cref="P:System.Net.FtpWebRequest.ContentOffset" /> causes the <see cref="T:System.Net.FtpWebRequest" /> to send a restart (REST) command to the server. This command is ignored by most FTP server implementations if you are uploading data to the server.</para>
+          <para>Changing <see cref="P:System.Net.FtpWebRequest.ContentOffset" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a byte offset into the file being downloaded by this request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentType">
@@ -174,10 +271,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.ContentType" /> property is provided only for compatibility with other implementations of the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes. There is no reason to use <see cref="P:System.Net.FtpWebRequest.ContentType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Credentials">
@@ -192,10 +295,20 @@
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You are not required to specify credentials when connecting using anonymous logon. You must set the <see cref="P:System.Net.FtpWebRequest.Credentials" /> property by using a credential of type <see cref="T:System.Net.NetworkCredential" />; this ensures that the user name and password can be read and sent to the server.</para>
+          <block subset="none" type="note">
+            <para>Credentials information is not encrypted when transmitted to the server unless the <see cref="P:System.Net.FtpWebRequest.EnableSsl" /> property is set to true.</para>
+          </block>
+          <para>Changing <see cref="P:System.Net.FtpWebRequest.Credentials" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the credentials used to communicate with the FTP server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultCachePolicy">
@@ -215,9 +328,101 @@
         <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only content received using the <see cref="F:System.Net.WebRequestMethods.Ftp.DownloadFile" /> command is cached. </para>
+          <para>The following table describes the effects of FTP caching policies on <see cref="T:System.Net.FtpWebRequest" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Policy</para>
+                </term>
+                <description>
+                  <para>Effect</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.Default" />
+                </para>
+              </term>
+              <description>
+                <para>Returns the cached resource if the resource is fresh, the content length is accurate, and the expiration, modification, and content length attributes are present. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.BypassCache" />
+                </para>
+              </term>
+              <description>
+                <para>Returns the resource from the server. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.CacheOnly" />
+                </para>
+              </term>
+              <description>
+                <para>Returns the cached resource if the content length is present and matches the entry size; otherwise, throws a <see cref="T:System.Net.WebException" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.CacheIfAvailable" />
+                </para>
+              </term>
+              <description>
+                <para>Returns the cached resource if the content length is provided and matches the entry size; otherwise, the resource is downloaded from the server and is returned to the caller.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.Revalidate" />
+                </para>
+              </term>
+              <description>
+                <para>Returns the cached resource if the timestamp of the cached resource is the same as the time stamp of the resource on the server; otherwise, the resource is downloaded from the server, stored in the cache, and returned to the caller.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.Reload" />
+                </para>
+              </term>
+              <description>
+                <para>Downloads the resource from the server, stores it in the cache, and returns the resource to the caller.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Cache.RequestCacheLevel.NoCacheNoStore" />
+                </para>
+              </term>
+              <description>
+                <para>If a cached resource exists, it is deleted. The resource is downloaded from the server and is returned to the caller.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Setting <see cref="P:System.Net.FtpWebRequest.DefaultCachePolicy" /> overrides any configuration setting.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the default cache policy for all FTP requests.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableSsl">
@@ -232,10 +437,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Unless the <see cref="P:System.Net.FtpWebRequest.EnableSsl" /> property is true, all data and commands, including your user name and password information, are sent to the server in clear text. Anyone monitoring network traffic can view your credentials and use them to connect to the server. If you are connecting to an FTP server that requires credentials and supports SSL, you should set <see cref="P:System.Net.FtpWebRequest.EnableSsl" /> to true.</para>
+          </block>
+          <para>The "AUTH TLS" command is sent to the server to request an encrypted session. If the server does not recognize this command, you receive a <see cref="T:System.Net.WebException" /> exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> that specifies that an SSL connection should be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndGetRequestStream">
@@ -253,11 +467,25 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the operation has not completed, the <see cref="M:System.Net.FtpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method blocks until the operation completes. To determine whether the operation has completed, check the <see cref="P:System.IAsyncResult.IsCompleted" /> property before calling <see cref="M:System.Net.FtpWebRequest.EndGetRequestStream(System.IAsyncResult)" />.</para>
+          <para>In addition to the exceptions noted in "Exceptions," <see cref="M:System.Net.FtpWebRequest.EndGetRequestStream(System.IAsyncResult)" /> rethrows exceptions that were thrown while opening the stream for writing.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends a pending asynchronous operation started with <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A writable <see cref="T:System.IO.Stream" /> instance associated with this instance.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> object that was returned when the operation started. </param>
       </Docs>
     </Member>
     <Member MemberName="EndGetResponse">
@@ -275,11 +503,25 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the operation has not completed at the time the <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> method is called, <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> blocks until the operation completes. To prevent blocking, check the <see cref="P:System.IAsyncResult.IsCompleted" /> property before calling <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" />.</para>
+          <para>In addition to the exceptions noted in "Exceptions," <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> rethrows exceptions that were thrown while communicating with the server.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends a pending asynchronous operation started with <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> reference that contains an <see cref="T:System.Net.FtpWebResponse" /> instance. This object contains the FTP server's response to the request.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> that was returned when the operation started. </param>
       </Docs>
     </Member>
     <Member MemberName="GetRequestStream">
@@ -295,10 +537,25 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the request properties before calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> method. After writing the data to the stream, you must close the stream prior to sending the request.</para>
+          <para>If you have not set the <see cref="P:System.Net.FtpWebRequest.Method" /> property to <see cref="F:System.Net.WebRequestMethods.Ftp.UploadFile" /> or <see cref="F:System.Net.WebRequestMethods.Ftp.AppendFile" />, you cannot get the stream.</para>
+          <para>
+            <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> blocks while waiting for the stream. To prevent this, call the <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method in place of <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />.</para>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the stream used to upload data to an FTP server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A writable <see cref="T:System.IO.Stream" /> instance used to store data to be sent to the server by the current request.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetResponse">
@@ -314,10 +571,27 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To access the FTP-specific properties, you must cast the <see cref="T:System.Net.WebResponse" /> object returned by this method to <see cref="T:System.Net.FtpWebResponse" />.</para>
+          <para>
+            <see cref="M:System.Net.FtpWebRequest.GetResponse" /> causes a control connection to be established, and might also create a data connection. <see cref="M:System.Net.FtpWebRequest.GetResponse" /> blocks until the response is received. To prevent this, you can perform this operation asynchronously by calling the <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.FtpWebRequest.EndGetResponse(System.IAsyncResult)" /> methods in place of <see cref="M:System.Net.FtpWebRequest.GetResponse" />.</para>
+          <para>If the <see cref="P:System.Net.FtpWebRequest.Proxy" /> property is set, either directly or in a configuration file, communications with the FTP server are made through the proxy.</para>
+          <para>If a <see cref="T:System.Net.WebException" /> is thrown, use the <see cref="P:System.Net.WebException.Response" /> and <see cref="P:System.Net.WebException.Status" /> properties of the exception to determine the response from the server.</para>
+          <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Multiple calls to <see cref="M:System.Net.FtpWebRequest.GetResponse" /> return the same response object; the request is not reissued.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the FTP server response.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> reference that contains an <see cref="T:System.Net.FtpWebResponse" /> instance. This object contains the FTP server's response to the request.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -337,9 +611,15 @@
         <ReturnType>System.Net.WebHeaderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.Headers" /> property is provided only for compatibility with other implementations of the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes. There is no reason to use <see cref="P:System.Net.FtpWebRequest.Headers" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an empty <see cref="T:System.Net.WebHeaderCollection" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeepAlive">
@@ -359,10 +639,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Net.FtpWebRequest.KeepAlive" /> property is set to false, the control connection is closed when you call the <see cref="M:System.Net.FtpWebResponse.Close" /> method.</para>
+          <para>Changing <see cref="P:System.Net.FtpWebRequest.KeepAlive" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that specifies whether the control connection to the FTP server is closed after the request completes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Method">
@@ -377,10 +664,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.Method" /> property determines which command is sent to the server. You set the <see cref="P:System.Net.FtpWebRequest.Method" /> by using the strings defined in the public field members of the <see cref="T:System.Net.WebRequestMethods.Ftp" /> class. Note that the strings defined in the <see cref="T:System.Net.WebRequestMethods.Ftp" /> class are the only supported options for the <see cref="P:System.Net.FtpWebRequest.Method" /> property. Setting the <see cref="P:System.Net.FtpWebRequest.Method" /> property to any other value will result in an <see cref="T:System.ArgumentException" /> exception.</para>
+          <para>When setting <see cref="P:System.Net.FtpWebRequest.Method" /> to <see cref="F:System.Net.WebRequestMethods.Ftp.UploadFile" />, you must do so before calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> method. Failure to call these members in the correct order causes a <see cref="T:System.Net.ProtocolViolationException" /> exception when you attempt to get the request stream.</para>
+          <para>The credentials supplied for the <see cref="T:System.Net.FtpWebRequest" /> object must have permission to perform the specified method. If not, the FTP command fails.</para>
+          <para>To determine the success or failure of a command, check the <see cref="P:System.Net.FtpWebResponse.StatusCode" /> and <see cref="P:System.Net.FtpWebResponse.StatusDescription" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the command to send to the FTP server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreAuthenticate">
@@ -395,10 +691,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.PreAuthenticate" /> property is provided only for compatibility with other implementations of the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Proxy">
@@ -413,10 +715,19 @@
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.Proxy" /> property identifies the <see cref="T:System.Net.IWebProxy" /> instance that communicates with the FTP server. The proxy is set by the system by using configuration files and the Internet Explorer Local Area Network settings. To specify that no proxy should be used, set <see cref="P:System.Net.FtpWebRequest.Proxy" /> to the proxy instance returned by the <see cref="M:System.Net.GlobalProxySelection.GetEmptyWebProxy" /> method. For more information about automatic proxy detection, see <format type="text/html"><a href="fcd9c3bd-93de-4c92-8ff3-837327ad18de">Automatic Proxy Detection</a></format>.</para>
+          <para>You must set <see cref="P:System.Net.FtpWebRequest.Proxy" /> before writing data to the request's stream or getting the response. Changing <see cref="P:System.Net.FtpWebRequest.Proxy" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+          <para>The <see cref="T:System.Net.FtpWebRequest" /> class supports HTTP and ISA Firewall Client proxies.</para>
+          <para>If the specified proxy is an HTTP proxy, only the <see cref="F:System.Net.WebRequestMethods.Ftp.DownloadFile" />, <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectory" />, and <see cref="F:System.Net.WebRequestMethods.Ftp.ListDirectoryDetails" /> commands are supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the proxy used to communicate with the FTP server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadWriteTimeout">
@@ -431,10 +742,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.ReadWriteTimeout" /> is used when writing to the stream returned by the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> method or reading from the stream returned by the <see cref="M:System.Net.FtpWebResponse.GetResponseStream" /> method.</para>
+          <para>Specifically, the <see cref="P:System.Net.FtpWebRequest.ReadWriteTimeout" /> property controls the time-out for the <see cref="M:System.IO.Stream.Read(System.Byte[],System.Int32,System.Int32)" /> method, which is used to read the stream returned by the <see cref="M:System.Net.FtpWebResponse.GetResponseStream" /> method, and for the <see cref="M:System.IO.Stream.Write(System.Byte[],System.Int32,System.Int32)" /> method, which is used to write to the stream returned by the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> method. If the time-out period is exceeded, the calling method throws a <see cref="T:System.Net.WebException" /> with <see cref="T:System.Net.WebExceptionStatus" /> set to <see cref="F:System.Net.WebExceptionStatus.Timeout" />.</para>
+          <para>To specify the amount of time to wait for the request to complete, use the <see cref="P:System.Net.FtpWebRequest.Timeout" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a time-out when reading from or writing to a stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RenameTo">
@@ -449,10 +768,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the new name of a file being renamed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestUri">
@@ -467,10 +789,16 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Net.FtpWebRequest.RequestUri" /> property is the URI specified when the <see cref="M:System.Net.WebRequest.Create(System.String)" /> method was called to obtain this instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI requested by this instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServicePoint">
@@ -485,10 +813,16 @@
         <ReturnType>System.Net.ServicePoint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no <see cref="T:System.Net.ServicePoint" /> object exists, one is created for the FTP server. To set the maximum number of connections that can be open for an FTP server, set the <see cref="P:System.Net.ServicePoint.ConnectionLimit" /> property of the <see cref="T:System.Net.ServicePoint" /> instance returned by this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Net.ServicePoint" /> object used to connect to the FTP server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Timeout">
@@ -503,10 +837,20 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To specify an infinite value, set the <see cref="P:System.Net.FtpWebRequest.Timeout" /> property to <see cref="F:System.Threading.Timeout.Infinite" /> (-1). This is the default value.</para>
+          <para>
+            <see cref="P:System.Net.FtpWebRequest.Timeout" /> is the number of milliseconds that a synchronous request made with the <see cref="M:System.Net.FtpWebRequest.GetResponse" /> method waits for a response and that the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" /> method waits for a stream. If a resource does not respond within the time-out period, the request throws a <see cref="T:System.Net.WebException" /> with the <see cref="P:System.Net.WebException.Status" /> property set to <see cref="F:System.Net.WebExceptionStatus.Timeout" />.</para>
+          <para>Changing <see cref="P:System.Net.FtpWebRequest.Timeout" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+          <para>A Domain Name System (DNS) query may take up to 15 seconds to return or time out. If your request contains a host name that requires resolution and you set <see cref="P:System.Net.FtpWebRequest.Timeout" /> to a value less than 15 seconds, it may take 15 seconds or more before a <see cref="T:System.Net.WebException" /> is thrown to indicate a time-out on your request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of milliseconds to wait for a request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseBinary">
@@ -521,10 +865,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are sending binary data, such as an image, set this property to true. If you are sending text, set the property to false. Specifying true causes the <see cref="T:System.Net.FtpWebRequest" /> to send a "TYPE I" command to the server. Specifying false causes the <see cref="T:System.Net.FtpWebRequest" /> to send a "Type A" command to the server. FTP servers can ignore these commands.</para>
+          <para>Changing <see cref="P:System.Net.FtpWebRequest.UseBinary" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that specifies the data type for file transfers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultCredentials">
@@ -544,9 +895,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.FtpWebRequest.UseDefaultCredentials" /> property is provided only for compatibility with other implementations of the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebResponse" /> classes. There is no reason to use <see cref="P:System.Net.FtpWebRequest.UseDefaultCredentials" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UsePassive">
@@ -561,10 +918,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Net.FtpWebRequest.UsePassive" /> property to true sends the "PASV" command to the server. This command requests the server to listen on a data port and to wait for a connection rather than initiate one upon receipt of a transfer command.</para>
+          <para>For a description of the behaviors that are specified using <see cref="P:System.Net.FtpWebRequest.UsePassive" />, see RFC 959, "File Transfer Protocol," Section 3.2, "Establishing Data Connections" and Section 4.1.2, "Transfer Parameter Commands," available at <see cref="">http://www.rfc-editor.org/</see>.</para>
+          <para>Changing <see cref="P:System.Net.FtpWebRequest.UsePassive" /> after calling the <see cref="M:System.Net.FtpWebRequest.GetRequestStream" />, <see cref="M:System.Net.FtpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.FtpWebRequest.GetResponse" />, or <see cref="M:System.Net.FtpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method causes an <see cref="T:System.InvalidOperationException" /> exception.</para>
+          <para>If <see cref="P:System.Net.FtpWebRequest.UsePassive" /> is set to true, the FTP server may not send the size of the file, and download progress can always be zero. If <see cref="P:System.Net.FtpWebRequest.UsePassive" /> is set to false, a firewall can raise an alert and block the file download.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the behavior of a client application's data transfer process.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

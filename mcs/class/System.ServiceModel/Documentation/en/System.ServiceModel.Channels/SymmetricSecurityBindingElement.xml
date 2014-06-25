@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SymmetricSecurityBindingElement" FullName="System.ServiceModel.Channels.SymmetricSecurityBindingElement">
   <TypeSignature Language="C#" Value="public sealed class SymmetricSecurityBindingElement : System.ServiceModel.Channels.SecurityBindingElement, System.ServiceModel.Description.IPolicyExportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SymmetricSecurityBindingElement extends System.ServiceModel.Channels.SecurityBindingElement implements class System.ServiceModel.Description.IPolicyExportExtension" />
@@ -14,8 +15,39 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A custom binding contains a collection of binding elements arranged in a specific order: the element that represents the top of the binding stack is added first, the next element down in the binding stack, is added second, and so forth.</para>
+      <procedure>
+        <format type="text/html">
+          <h2>To add this class to a binding</h2>
+        </format>
+        <steps>
+          <step>
+            <para>Create a <see cref="T:System.ServiceModel.Channels.BindingElementCollection" />.</para>
+          </step>
+          <step>
+            <para>Create custom binding elements that is above this binding element in the binding stack, such as the optional <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElement" /> and <see cref="T:System.ServiceModel.Channels.ReliableSessionBindingElement" />.</para>
+          </step>
+          <step>
+            <para>Add the created elements, in the order mentioned previously, to the <see cref="T:System.ServiceModel.Channels.BindingElementCollection" /> using the <see cref="M:System.ServiceModel.Channels.BindingElementCollection.InsertItem(System.Int32,System.ServiceModel.Channels.BindingElement)" /> method.</para>
+          </step>
+          <step>
+            <para>Create an instance of <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> and add it to the collection.</para>
+          </step>
+          <step>
+            <para>Add any additional custom binding elements to the collection, such as <see cref="T:System.ServiceModel.Channels.TcpTransportBindingElement" />.</para>
+          </step>
+        </steps>
+      </procedure>
+      <block subset="none" type="note">
+        <para>Once an instance of this object is created, you should treat the properties of its base class, <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" />, as immutable. Calling set on some properties may have unpredictable effects: the binding may behave as if the property retained its old value, with a run-time failure being the only indication of an issue. Two properties known to behave this way are <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.KeyType" /> and <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.MessageSecurityVersion" />. There may be other properties for which this is true.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a custom binding element that supports channel security using symmetric encryption.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +59,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +77,13 @@
         <Parameter Name="protectionTokenParameters" Type="System.ServiceModel.Security.Tokens.SecurityTokenParameters" />
       </Parameters>
       <Docs>
-        <param name="protectionTokenParameters">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> class using specified security token parameters. </para>
+        </summary>
+        <param name="protectionTokenParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</param>
       </Docs>
     </Member>
     <Member MemberName="BuildChannelFactoryCore&lt;TChannel&gt;">
@@ -112,9 +151,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This creates a complete copy of the current binding element object tree, also called a deep clone. A deep clone of an object creates a copy of the object and a copy of everything directly or indirectly referenced by that object. This can also be described as copying the entire object graph. Returning a deep clone enables the runtime to support the case in which multiple custom bindings share a custom binding element. If a deep clone is not returned, the run-time behavior is undefined. </para>
+          <para>A shallow clone of an object, by contrast, is a copy of the object only. If the object contains references to other objects, the shallow copy does not create copies of the referred objects; instead, it copies only the references to the original objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of this class initialized from the current one.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.BindingElement" /> object with property values equal to those of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetProperty&lt;T&gt;">
@@ -138,11 +187,22 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method gets the specified object from the base class or from one of that class's ancestors. The object returned is usually a collection of properties, for example an object that implements <see cref="T:System.ServiceModel.Channels.ISecurityCapabilities" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified object of type <paramref name="T" /> from the <see cref="T:System.ServiceModel.Channels.BindingContext" />, or null if the object is not found.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to get.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="MessageProtectionOrder">
@@ -156,9 +216,18 @@
         <ReturnType>System.ServiceModel.Security.MessageProtectionOrder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If there is nothing in the message that is encrypted, the signature element is not encrypted even when the <see cref="P:System.ServiceModel.Channels.SymmetricSecurityBindingElement.MessageProtectionOrder" /> property is set to <see cref="F:System.ServiceModel.Security.MessageProtectionOrder.SignBeforeEncryptAndEncryptSignature" />. This behavior occurs even with system-provided bindings. However, the WSDL generated by indigo2 still contains the &lt;sp:EncryptSignature&gt; assertion.</para>
+          </block>
+          <para>For a listing of the members and their descriptions, see <see cref="T:System.ServiceModel.Security.MessageProtectionOrder" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order of message encryption and signing for this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProtectionTokenParameters">
@@ -172,9 +241,12 @@
         <ReturnType>System.ServiceModel.Security.Tokens.SecurityTokenParameters</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the protection token parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequireSignatureConfirmation">
@@ -188,9 +260,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies whether the signature must be encrypted. If the value is true, the primary signature must be encrypted and any signature confirmation elements must also be encrypted. If the value is false, the primary signature must not be encrypted and any signature confirmation elements must not be encrypted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether message signatures must be confirmed. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetKeyDerivation">
@@ -207,9 +285,16 @@
         <Parameter Name="requireDerivedKeys" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="requireDerivedKeys">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derived key is created from an existing key and makes it possible to vary the key used in the course of a conversation. This makes it more difficult for a hacker to decrypt the communication.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a value that indicates whether derived keys are required.</para>
+        </summary>
+        <param name="requireDerivedKeys">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that derived keys are required; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy">
@@ -227,10 +312,20 @@
         <Parameter Name="policyContext" Type="System.ServiceModel.Description.PolicyConversionContext" />
       </Parameters>
       <Docs>
-        <param name="exporter">To be added.</param>
         <param name="policyContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes binding-related statements into the WSDL information exposed by a particular contract and is used by indigo1 to communicate to clients of the existence of this custom binding element in the binding stack.</para>
+          <para>This method takes two parameters: the <see cref="T:System.ServiceModel.Description.MetadataExporter" /> and <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> objects. Use the <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" />, <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" />, and <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> methods to obtain collections of policy assertions that have already been exported at various scopes. Then use this method to add your own policy assertions to the appropriate collection.</para>
+          <para>The <see cref="P:System.ServiceModel.Description.PolicyConversionContext.Contract" /> property exposes the <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the endpoint that is being exported. This allows this method to correctly scope their exported policy assertions. For example, security attributes in code may add behaviors to the <see cref="T:System.ServiceModel.Description.ContractDescription" /> that indicate where security policy assertions should be added.</para>
+          <para>Once custom policy assertions are attached to the WSDL information, clients can detect and import the custom binding assertions by implementing the <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> interface. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports a custom policy assertion about bindings.</para>
+        </summary>
+        <param name="exporter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExporter" /> that you can use to modify the exporting process.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -245,9 +340,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information returned by <see cref="M:System.ServiceModel.Channels.SymmetricSecurityBindingElement.ToString" /> includes the <see cref="P:System.ServiceModel.Channels.SymmetricSecurityBindingElement.MessageProtectionOrder" />, <see cref="P:System.ServiceModel.Channels.SymmetricSecurityBindingElement.RequireSignatureConfirmation" />, and <see cref="P:System.ServiceModel.Channels.SymmetricSecurityBindingElement.ProtectionTokenParameters" /> values of the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents this <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

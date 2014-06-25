@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RowUpdatedEventArgs" FullName="System.Data.Common.RowUpdatedEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class RowUpdatedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The RowUpdated event message is typically raised when an <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> to a row is completed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the RowUpdated event of a .NET Framework data provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,12 +35,19 @@
         <Parameter Name="tableMapping" Type="System.Data.Common.DataTableMapping" />
       </Parameters>
       <Docs>
-        <param name="dataRow">To be added: an object of type 'Data.DataRow'</param>
-        <param name="command">To be added: an object of type 'Data.IDbCommand'</param>
-        <param name="statementType">To be added: an object of type 'Data.StatementType'</param>
-        <param name="tableMapping">To be added: an object of type 'DataTableMapping'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Common.RowUpdatedEventArgs" /> class.</para>
+        </summary>
+        <param name="dataRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRow" /> sent through an <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />. </param>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.IDbCommand" /> executed when <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> is called. </param>
+        <param name="statementType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of SQL statement executed. </param>
+        <param name="tableMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DataTableMapping" /> sent through an <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +61,12 @@
         <ReturnType>System.Data.IDbCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.IDbCommand'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.IDbCommand" /> executed when <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> is called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,9 +86,18 @@
         <Parameter Name="array" Type="System.Data.DataRow[]" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="array" /> must be at least <see cref="P:System.Data.Common.RowUpdatedEventArgs.RowCount" /> in length.</para>
+          <para>Throws an <see cref="T:System.ArgumentNullException" /> for a null instance of <see cref="T:System.Data.DataRow" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies references to the modified rows into the provided array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Data.DataRow" /> to copy into.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyToRows">
@@ -88,10 +114,20 @@
         <Parameter Name="arrayIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="arrayIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <paramref name="array" /> must be at least <see cref="P:System.Data.Common.RowUpdatedEventArgs.RowCount" /> + <paramref name="arrayIndex" /> in length.</para>
+          <para>Throws an <see cref="T:System.ArgumentNullException" /> for a null instance of <see cref="T:System.Data.DataRow" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies references to the modified rows into the provided array. </para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Data.DataRow" /> to copy into.</param>
+        <param name="arrayIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the array to start copying into.</param>
       </Docs>
     </Member>
     <Member MemberName="Errors">
@@ -103,9 +139,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Exception'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets any errors generated by the .NET Framework data provider when the <see cref="P:System.Data.Common.RowUpdatedEventArgs.Command" /> was executed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +158,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +177,15 @@
         <ReturnType>System.Data.DataRow</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.DataRow'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When batching is enabled, the value of this property will be null. Updated rows can be accessed through one of the RowUpdatedEventArgs.CopyToRows methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.DataRow" /> sent through an <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,9 +202,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows processed in a batch of updated records.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StatementType">
@@ -166,9 +217,30 @@
         <ReturnType>System.Data.StatementType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.StatementType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.Common.RowUpdatedEventArgs.StatementType" /> can be one of the following values: </para>
+          <list type="bullet">
+            <item>
+              <para>Select </para>
+            </item>
+            <item>
+              <para>Insert </para>
+            </item>
+            <item>
+              <para>Update </para>
+            </item>
+            <item>
+              <para>Delete </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of SQL statement executed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,9 +256,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.UpdateStatus'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.UpdateStatus" /> of the <see cref="P:System.Data.Common.RowUpdatedEventArgs.Command" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -200,9 +275,12 @@
         <ReturnType>System.Data.Common.DataTableMapping</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataTableMapping'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.Common.DataTableMapping" /> sent through an <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

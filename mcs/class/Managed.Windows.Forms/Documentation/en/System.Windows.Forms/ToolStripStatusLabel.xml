@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripStatusLabel" FullName="System.Windows.Forms.ToolStripStatusLabel">
   <TypeSignature Language="C#" Value="public class ToolStripStatusLabel : System.Windows.Forms.ToolStripLabel" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> is a version of <see cref="T:System.Windows.Forms.ToolStripLabel" /> designed specifically for use in <see cref="T:System.Windows.Forms.StatusStrip" />. The special features include <see cref="P:System.Windows.Forms.ToolStripStatusLabel.BorderStyle" />, <see cref="P:System.Windows.Forms.ToolStripStatusLabel.BorderSides" />, and <see cref="P:System.Windows.Forms.ToolStripStatusLabel.Spring" />.</para>
+      <para>A <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> can contain text or an icon that reflects the status of an application. Use the <see cref="T:System.Windows.Forms.ToolStripItemCollection" /> class to find, add, or remove <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> objects.</para>
+      <para>Although <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> replaces and adds functionality to the <see cref="T:System.Windows.Forms.StatusBarPanel" /> control of previous versions, <see cref="T:System.Windows.Forms.StatusBarPanel" /> is retained for both backward compatibility and future use if you choose.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a panel in a <see cref="T:System.Windows.Forms.StatusStrip" /> control. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +47,14 @@
         <Parameter Name="image" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <param name="image">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> class that displays the specified image. </para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Image" /> that is displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +67,14 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> class that displays the specified text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the text to be displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,11 +88,16 @@
         <Parameter Name="image" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="image">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> class that displays the specified image and text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the text to be displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Image" /> that is displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,12 +112,18 @@
         <Parameter Name="onClick" Type="System.EventHandler" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="image">To be added.</param>
-        <param name="onClick">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> class that displays the specified image and text, and that carries out the specified action when the user clicks the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the text to be displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Image" /> that is displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
+        <param name="onClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the action to carry out when the control is clicked.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,13 +139,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="image">To be added.</param>
-        <param name="onClick">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> class with the specified name that displays the specified image and text, and that carries out the specified action when the user clicks the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the text to be displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Image" /> that is displayed on the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
+        <param name="onClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the action to carry out when the control is clicked.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,10 +165,16 @@
         <ReturnType>System.Windows.Forms.ToolStripItemAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The meaning of the <see cref="P:System.Windows.Forms.ToolStripStatusLabel.Alignment" /> property is affected by the setting of the <see cref="P:System.Windows.Forms.ToolStripItem.RightToLeft" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines where the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> is aligned on the <see cref="T:System.Windows.Forms.StatusStrip" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,10 +195,13 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates which sides of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> show borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -171,10 +219,13 @@
         <ReturnType>System.Windows.Forms.Border3DStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -210,11 +261,18 @@
         <Parameter Name="constrainingSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="constrainingSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the size of a rectangular area into which a <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> can be fitted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered pair of type <see cref="T:System.Drawing.Size" />, representing the width and height of a rectangle.</para>
+        </returns>
+        <param name="constrainingSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom-sized area for a control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -254,9 +312,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.Windows.Forms.ToolStripStatusLabel.Spring" /> property to true to enable the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> to smoothly resize along with its container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> automatically fills the available space on the <see cref="T:System.Windows.Forms.StatusStrip" /> as the form is resized. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

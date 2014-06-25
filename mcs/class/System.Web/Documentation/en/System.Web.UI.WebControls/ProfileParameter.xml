@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileParameter" FullName="System.Web.UI.WebControls.ProfileParameter">
   <TypeSignature Language="C#" Value="public class ProfileParameter : System.Web.UI.WebControls.Parameter" />
   <AssemblyInfo>
@@ -9,8 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class to bind the value of an ASP.NET Profile parameter to a parameter used in a parameterized SQL query, business object method, or filtering expression. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class provides the <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" /> property in addition to those inherited from the <see cref="T:System.Web.UI.WebControls.Parameter" /> class. The <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" /> property identifies the ASP.NET Profile property from which the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> retrieves a value. </para>
+      <block subset="none" type="note">
+        <para>Controls that bind data to the parameter might throw an exception if a <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object is specified but no corresponding profile property is set. Similarly, they might display no data if the profile property is set with null. Set the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property to avoid these situations where appropriate.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Binds the value of an ASP.NET Profile property to a parameter object. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +32,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object created with the <see cref="M:System.Web.UI.WebControls.ProfileParameter.#ctor" /> constructor is initialized with default values for all its properties. The <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" /> properties are initialized to <see cref="F:System.String.Empty" />. Additionally, the <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> property is initialized to <see cref="F:System.String.Empty" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> property is initialized to <see cref="F:System.TypeCode.Object" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />, and the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is initialized to null (Nothing in Visual Basic).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -35,9 +52,16 @@
         <Parameter Name="original" Type="System.Web.UI.WebControls.ProfileParameter" />
       </Parameters>
       <Docs>
-        <param name="original">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ProfileParameter.#ctor(System.Web.UI.WebControls.ProfileParameter)" /> constructor is a protected copy constructor used to clone a <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> instance. The values of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" />, including <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" />, <see cref="P:System.Web.UI.WebControls.Parameter.Name" />, and <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> are all transferred to the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class with the values of the instance specified by the <paramref name="original" /> parameter.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> instance from which the current instance is initialized.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -51,10 +75,18 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object created with the <see cref="M:System.Web.UI.WebControls.ProfileParameter.#ctor(System.String,System.String)" /> constructor is initialized with the specified parameter name and <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" />, which identifies the ASP.NET Profile property that the parameter binds to. Other properties, including <see cref="P:System.Web.UI.WebControls.Parameter.Type" />, <see cref="P:System.Web.UI.WebControls.Parameter.Direction" />, and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class, using the specified property name to identify which ASP.NET Profile property to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter.</param>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the ASP.NET Profile property that the parameter object is bound to. The default is <see cref="F:System.String.Empty" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,11 +101,20 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object created with the <see cref="M:System.Web.UI.WebControls.ProfileParameter.#ctor(System.String,System.TypeCode,System.String)" /> constructor is initialized with the specified parameter name, <see cref="P:System.Web.UI.WebControls.Parameter.Type" />, and <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" />. Only the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> properties are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named and strongly typed instance of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class, using the specified property name to identify which ASP.NET Profile property to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the parameter represents. The default is <see cref="F:System.TypeCode.Object" />.</param>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the ASP.NET Profile property that the parameter object is bound to. The default is <see cref="F:System.String.Empty" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -87,9 +128,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ProfileParameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.ProfileParameter.#ctor(System.Web.UI.WebControls.ProfileParameter)" /> copy constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class with the values of the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object that is an exact duplicate of the current one.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Evaluate">
@@ -106,11 +156,23 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> attempts to bind to the value of the Profile property every time the <see cref="M:System.Web.UI.WebControls.ProfileParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is called.</para>
+          <para>The <paramref name="context" /> parameter is used by the <see cref="M:System.Web.UI.WebControls.ProfileParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method to retrieve the ASP.NET Profile that the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> binds to. The <paramref name="control" /> parameter is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the updated and current value of the parameter. If the context or the ASP.NET Profile is null (Nothing in Visual Basic), the <see cref="M:System.Web.UI.WebControls.ProfileParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method returns null.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> of the request.</param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Control" /> that is associated with the Web Form where the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> is used.</param>
       </Docs>
     </Member>
     <Member MemberName="PropertyName">
@@ -123,9 +185,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ProfileParameter.PropertyName" /> property identifies a property of the current ASP.NET Profile available through the current <see cref="T:System.Web.HttpContext" /> object. If the property does not exist for the Profile, the <see cref="M:System.Web.UI.WebControls.ProfileParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method fails to bind the parameter to a value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the ASP.NET Profile property that the parameter binds to.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SubjectIdentifierType" FullName="System.Security.Cryptography.Pkcs.SubjectIdentifierType">
   <TypeSignature Language="C#" Value="public enum SubjectIdentifierType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SubjectIdentifierType extends System.Enum" />
@@ -10,9 +11,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Pkcs.SubjectIdentifierType" /> enumeration defines the type of subject identifier.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IssuerAndSerialNumber">
@@ -27,8 +31,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.SubjectIdentifierType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subject is identified by the certificate issuer and serial number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoSignature">
@@ -43,8 +50,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.SubjectIdentifierType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subject is identified as taking part in an integrity check operation that uses only a hashing algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubjectKeyIdentifier">
@@ -59,8 +69,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.SubjectIdentifierType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subject is identified by the hash of the subject's public key. The hash algorithm used is determined by the signature algorithm suite in the subject's certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -75,8 +88,11 @@
         <ReturnType>System.Security.Cryptography.Pkcs.SubjectIdentifierType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of subject identifier is unknown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

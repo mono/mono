@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AccessibleSelection" FullName="System.Windows.Forms.AccessibleSelection">
   <TypeSignature Language="C#" Value="public enum AccessibleSelection" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A focused object is the one object that receives keyboard input. The object with the keyboard focus is either the active window or a child object of the active window. A selected object is marked to participate in some type of group operation.</para>
+      <para>This enumeration is used by <see cref="M:System.Windows.Forms.AccessibleObject.Select(System.Windows.Forms.AccessibleSelection)" />.</para>
+      <para>For additional information on the accessibility application, search for "Microsoft Active Accessibility" in the Microsoft Developer Network (MSDN) library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how an accessible object is selected or receives focus.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddSelection">
@@ -25,7 +34,10 @@
         <ReturnType>System.Windows.Forms.AccessibleSelection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the object to the selection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +51,10 @@
         <ReturnType>System.Windows.Forms.AccessibleSelection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects all objects between the anchor and the selected object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +68,10 @@
         <ReturnType>System.Windows.Forms.AccessibleSelection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The selection or focus of an object is unchanged.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +85,10 @@
         <ReturnType>System.Windows.Forms.AccessibleSelection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the object from the selection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,7 +102,10 @@
         <ReturnType>System.Windows.Forms.AccessibleSelection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns focus to an object and makes it the anchor, which is the starting point for the selection. Can be combined with TakeSelection, ExtendSelection, AddSelection, or RemoveSelection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,7 +119,10 @@
         <ReturnType>System.Windows.Forms.AccessibleSelection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the object and deselects all other objects in the container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

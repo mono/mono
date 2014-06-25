@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CommonObjectSecurity" FullName="System.Security.AccessControl.CommonObjectSecurity">
   <TypeSignature Language="C#" Value="public abstract class CommonObjectSecurity : System.Security.AccessControl.ObjectSecurity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CommonObjectSecurity extends System.Security.AccessControl.ObjectSecurity" />
@@ -11,9 +12,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls access to objects without direct manipulation of access control lists (ACLs). This class is the abstract base class for the <see cref="T:System.Security.AccessControl.NativeObjectSecurity" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +32,14 @@
         <Parameter Name="isContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> class.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new object is a container object.</param>
       </Docs>
     </Member>
     <Member MemberName="AddAccessRule">
@@ -49,10 +57,18 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding an access rule might cause existing access rules in the DACL to be merged.</para>
+          <para>To avoid unintentionally allowing access to principals, applications should check for the existence of an allow everyone full access (AEFA) access control entry (ACE) and remove it before modifying a DACL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified access rule to the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddAuditRule">
@@ -70,10 +86,17 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding an audit rule might cause existing access rules in the SACL to be merged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified audit rule to the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to add.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAccessRules">
@@ -93,13 +116,22 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="includeExplicit">To be added.</param>
-        <param name="includeInherited">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the access rules associated with the specified security identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of access rules associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
+        <param name="includeExplicit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include access rules explicitly set for the object.</param>
+        <param name="includeInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include inherited access rules.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether the security identifier for which to retrieve access rules is of type T:System.Security.Principal.SecurityIdentifier or type T:System.Security.Principal.NTAccount. The value of this parameter must be a type that can be translated to  the <see cref="T:System.Security.Principal.SecurityIdentifier" /> type.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAuditRules">
@@ -119,13 +151,22 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="includeExplicit">To be added.</param>
-        <param name="includeInherited">To be added.</param>
-        <param name="targetType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the audit rules associated with the specified security identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of audit rules associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
+        <param name="includeExplicit">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include audit rules explicitly set for the object.</param>
+        <param name="includeInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include inherited audit rules.</param>
+        <param name="targetType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security identifier for which to retrieve audit rules. This must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="ModifyAccess">
@@ -195,11 +236,23 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Access removal is accomplished by using a complex algorithm that might add access control rules in addition to removing them.</para>
+          <para>This method fails to remove the access rule and returns false if the inheritance rules associated with the access rule are too complex for the removal algorithm to succeed.</para>
+          <para>To avoid unintentionally allowing access to principals, applications should check for the existence of an allow everyone full access (AEFA) access control entry (ACE) and remove it before modifying a DACL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes access rules that contain the same security identifier and access mask as the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the access rule was successfully removed; otherwise, false.</para>
+        </returns>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAccessRuleAll">
@@ -217,10 +270,17 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid unintentionally allowing access to principals, applications should check for the existence of an allow everyone full access (AEFA) access control entry (ACE) and remove it before modifying a DACL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules that have the same security identifier as the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAccessRuleSpecific">
@@ -238,10 +298,17 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid unintentionally allowing access to principals, applications should check for the existence of an allow everyone full access (AEFA) access control entry (ACE) and remove it before modifying a DACL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules that exactly match the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAuditRule">
@@ -259,11 +326,22 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Audit removal is accomplished by using a complex algorithm that might add audit control rules in addition to removing them.</para>
+          <para>This method fails to remove the audit rule and returns false if the inheritance rules associated with the audit rule are too complex for the removal algorithm to succeed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes audit rules that contain the same security identifier and access mask as the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the audit rule was successfully removed; otherwise, false.</para>
+        </returns>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAuditRuleAll">
@@ -281,10 +359,14 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that have the same security identifier as the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAuditRuleSpecific">
@@ -302,10 +384,14 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that exactly match the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="ResetAccessRule">
@@ -323,10 +409,17 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid unintentionally allowing access to principals, applications should check for the existence of an allow everyone full access (AEFA) access control entry (ACE) and remove it before modifying a DACL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules in the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object and then adds the specified access rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to reset.</param>
       </Docs>
     </Member>
     <Member MemberName="SetAccessRule">
@@ -344,10 +437,17 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To avoid unintentionally allowing access to principals, applications should check for the existence of an allow everyone full access (AEFA) access control entry (ACE) and remove it before modifying a DACL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all access rules that contain the same security identifier and qualifier as the specified access rule in the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object and then adds the specified access rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access rule to set.</param>
       </Docs>
     </Member>
     <Member MemberName="SetAuditRule">
@@ -365,10 +465,14 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AuditRule" />
       </Parameters>
       <Docs>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all audit rules that contain the same security identifier and qualifier as the specified audit rule in the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object and then adds the specified audit rule.</para>
+        </summary>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to set.</param>
       </Docs>
     </Member>
   </Members>

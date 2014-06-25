@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ArraySegment&lt;T&gt;" FullName="System.ArraySegment&lt;T&gt;">
   <TypeSignature Language="C#" Value="public struct ArraySegment&lt;T&gt; : System.Collections.Generic.ICollection&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;, System.Collections.Generic.IList&lt;T&gt;, System.Collections.Generic.IReadOnlyCollection&lt;T&gt;, System.Collections.Generic.IReadOnlyList&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit ArraySegment`1&lt;T&gt; extends System.ValueType implements class System.Collections.Generic.ICollection`1&lt;!T&gt;, class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.Generic.IList`1&lt;!T&gt;, class System.Collections.Generic.IReadOnlyCollection`1&lt;!T&gt;, class System.Collections.Generic.IReadOnlyList`1&lt;!T&gt;, class System.Collections.IEnumerable" />
@@ -31,9 +32,31 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ArraySegment`1" /> is a wrapper around an array that delimits a range of elements in that array. Multiple <see cref="T:System.ArraySegment`1" /> instances can refer to the same original array and can overlap. The original array must be one-dimensional and must have zero-based indexing. </para>
+      <para>The <see cref="P:System.ArraySegment`1.Array" /> property returns the entire original array, not a copy of the array; therefore, changes made to the array returned by the <see cref="P:System.ArraySegment`1.Array" /> property are made to the original array.</para>
+      <para>The <see cref="M:System.ArraySegment`1.Equals(System.ArraySegment{`0})" /> method and the equality and inequality operators test for reference equality when they compare two <see cref="T:System.ArraySegment`1" /> objects. For two <see cref="T:System.ArraySegment`1" /> objects to be considered equal, they must meet all of the following conditions: </para>
+      <list type="bullet">
+        <item>
+          <para>Reference the same array. </para>
+        </item>
+        <item>
+          <para>Begin at the same index in the array. </para>
+        </item>
+        <item>
+          <para>Have the same number of elements. </para>
+        </item>
+      </list>
+      <para>If you want to retrieve an element by its index in the <see cref="T:System.ArraySegment`1" /> object, you must cast it to an <see cref="T:System.Collections.Generic.IList`1" /> object and retrieve it or modify it by using the <see cref="P:System.Collections.Generic.IList`1.Item(System.Int32)" /> property. The following example retrieves the element in an <see cref="T:System.ArraySegment`1" /> object that delimits a section of a string array. </para>
+      <para>code reference: System.ArraySegment.Class#1</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Delimits a section of a one-dimensional array.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -88,10 +111,16 @@
         <ReturnType>T[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ArraySegment`1.Array" /> property returns the original array, not a copy of the array; therefore, changes made through the property are made directly to the original array. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the original array containing the range of elements that the array segment delimits.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -106,10 +135,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements in the range delimited by the array segment.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -149,11 +181,32 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.ArraySegment`1" /> objects are considered to be equal if all the following conditions are met: </para>
+          <list type="bullet">
+            <item>
+              <para>They reference the same array. </para>
+            </item>
+            <item>
+              <para>They begin at the same index in the array. </para>
+            </item>
+            <item>
+              <para>They have the same number of elements. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is equal to the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is a <see cref="T:System.ArraySegment`1" /> structure and is equal to the current instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared with the current instance.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -169,10 +222,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Offset">
@@ -187,10 +246,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the position of the first element in the range delimited by the array segment, relative to the start of the original array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -482,9 +544,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ArraySegment`1" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through an array segment.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the array segment.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

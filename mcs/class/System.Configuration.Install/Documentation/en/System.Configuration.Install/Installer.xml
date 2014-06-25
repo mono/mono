@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Installer" FullName="System.Configuration.Install.Installer">
   <TypeSignature Language="C#" Value="public class Installer : System.ComponentModel.Component" />
   <AssemblyInfo>
@@ -15,8 +16,37 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is the base class for all custom installers in the .NET Framework. Installers are components that help install applications on a computer.</para>
+      <para>There are several steps you must follow to use an <see cref="T:System.Configuration.Install.Installer" />: </para>
+      <list type="bullet">
+        <item>
+          <para>Inherit the <see cref="T:System.Configuration.Install.Installer" /> class.</para>
+        </item>
+        <item>
+          <para>Override the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, and <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods.</para>
+        </item>
+        <item>
+          <para>Add the <see cref="T:System.ComponentModel.RunInstallerAttribute" /> to your derived class and set it to true.</para>
+        </item>
+        <item>
+          <para>Put your derived class in the assembly with your application to install.</para>
+        </item>
+        <item>
+          <para>Invoke the installers. For example, use the InstallUtil.exe to invoke the installers.</para>
+        </item>
+      </list>
+      <para>The <see cref="P:System.Configuration.Install.Installer.Installers" /> property contains a collection of installers. If this instance of <see cref="T:System.Configuration.Install.Installer" /> is part of an installer collection, the <see cref="P:System.Configuration.Install.Installer.Parent" /> property is set to the <see cref="T:System.Configuration.Install.Installer" /> instance that contains the collection. For an example of the use of the <see cref="P:System.Configuration.Install.Installer.Installers" /> collection, see the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class.</para>
+      <para>The <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, and <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods of the <see cref="T:System.Configuration.Install.Installer" /> class go through the collection of installers stored in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property, and invokes the corresponding method of each installer.</para>
+      <para>The <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, and <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods are not always called on the same <see cref="T:System.Configuration.Install.Installer" /> instance. For example, one <see cref="T:System.Configuration.Install.Installer" /> instance might be used while installing and committing an application, and then the reference to that instance is released. Later, uninstalling the application creates a reference to a new <see cref="T:System.Configuration.Install.Installer" /> instance, meaning that the <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> method is called by a different instance of <see cref="T:System.Configuration.Install.Installer" />. For this reason, in your derived class, do not save the state of a computer in an installer. Instead, use an <see cref="T:System.Collections.IDictionary" /> that is preserved across calls and passed into your <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, and <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods.</para>
+      <para>Two situations illustrate the need to save information in the state-saver <see cref="T:System.Collections.IDictionary" />. First, suppose that your installer sets a registry key. It should save the key's original value in the <see cref="T:System.Collections.IDictionary" />. If the installation is rolled back, the original value can be restored. Second, suppose the installer replaces an existing file. Save the existing file in a temporary directory and the location of the new location of the file in the <see cref="T:System.Collections.IDictionary" />. If the installation is rolled back, the newer file is deleted and replaced by the original from the temporary location.</para>
+      <para>The <see cref="P:System.Configuration.Install.Installer.Context" /> property contains information about the installation. For example, information about the location of the log file for the installation, the location of the file to save information required by the <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> method, and the command line that was entered when the installation executable was run.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the foundation for custom installations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +54,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.Installer" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,8 +72,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> methods of all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property have run.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,8 +90,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the installations of all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,8 +108,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property perform their uninstallation operations.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,8 +126,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> method of each installer in the installer collection has run.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,8 +144,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,8 +162,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property perform their uninstall operations.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +183,13 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, completes the install transaction.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the collection have run. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,8 +203,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property have committed their installations.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -163,8 +221,11 @@
         <ReturnType>System.Configuration.Install.InstallEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property committ their installations.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,9 +247,17 @@
         <ReturnType>System.Configuration.Install.InstallContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.Install.Installer.Context" /> property contains installation information. For example, information about the location of the log file for the installation, the location of the file to save information required by the <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> method, and the command line that was entered when the installation executable was run.</para>
+          <para>The program that calls the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, or <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods sets the <see cref="P:System.Configuration.Install.Installer.Context" /> property with information that the methods need.</para>
+          <para>If an installer belongs to an installer collection, the parent installer sets the <see cref="P:System.Configuration.Install.Installer.Context" /> property before calling any of these methods. The parent installer can be accessed through the <see cref="P:System.Configuration.Install.Installer.Parent" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets information about the current installation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -202,9 +271,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the help text for all the installers in the installer collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -221,9 +293,13 @@
         <Parameter Name="stateSaver" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="stateSaver">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs the installation.</para>
+        </summary>
+        <param name="stateSaver">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> used to save information needed to perform a commit, rollback, or uninstall operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,9 +313,16 @@
         <ReturnType>System.Configuration.Install.InstallerCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.Install.Installer.Installers" /> property contains a collection of installers that install objects needed by this <see cref="T:System.Configuration.Install.Installer" /> instance to correctly install the component. The <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, and <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods of the <see cref="T:System.Configuration.Install.Installer" /> class go through the collection of installers and invokes the corresponding method of each installer.</para>
+          <para>If this instance of <see cref="T:System.Configuration.Install.Installer" /> is contained in an installer collection, the <see cref="P:System.Configuration.Install.Installer.Parent" /> property is the <see cref="T:System.Configuration.Install.Installer" /> instance that contains the collection. For an example of the use of the <see cref="P:System.Configuration.Install.Installer.Installers" /> collection, see the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of installers that this installer contains.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,9 +339,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called after the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> methods of all the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> run.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnAfterInstall(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.AfterInstall" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property have completed their installations. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -275,9 +367,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called after the <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" /> methods of all the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> have run.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnAfterRollback(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.AfterRollback" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after the installers contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -294,9 +395,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called after the <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods of all the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> have run.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnAfterUninstall(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.AfterUninstall" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers contained in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are uninstalled. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -313,9 +423,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called before the <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" /> methods of the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> are called.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnBeforeInstall(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.BeforeInstall" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are installed. This <see cref="T:System.Collections.IDictionary" /> object should be empty at this point. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -332,9 +451,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called before the <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" /> methods of the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> are called.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnBeforeRollback(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.BeforeRollback" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are rolled back. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,9 +479,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called before the <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods of the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> are uninstalled.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnBeforeUninstall(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.BeforeUninstall" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property uninstall their installations. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -370,9 +507,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called after the <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" /> methods of all the installers contained in this instance's installer collection run.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnCommitted(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.Committed" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property run. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,9 +535,18 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called before the <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" /> methods of the installers in this instance's <see cref="T:System.Configuration.Install.InstallerCollection" /> run.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Configuration.Install.Installer.OnCommitting(System.Collections.IDictionary)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Configuration.Install.Installer.Committing" /> event.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property are committed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -405,9 +560,16 @@
         <ReturnType>System.Configuration.Install.Installer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this instance of <see cref="T:System.Configuration.Install.Installer" /> is part of an installer collection, the <see cref="P:System.Configuration.Install.Installer.Parent" /> property is set to the <see cref="T:System.Configuration.Install.Installer" /> instance that contains the collection. For an example of the use of the <see cref="P:System.Configuration.Install.Installer.Installers" /> collection, see the <see cref="T:System.Configuration.Install.AssemblyInstaller" /> class.</para>
+          <para>The <see cref="P:System.Configuration.Install.Installer.Installers" /> property contains a collection of installers. The <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, and <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods of the <see cref="T:System.Configuration.Install.Installer" /> class go through the collection of installers and invokes the corresponding method of each installer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the installer containing the collection that this installer belongs to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -424,9 +586,13 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, restores the pre-installation state of the computer.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,9 +609,13 @@
         <Parameter Name="savedState" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, removes an installation.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after the installation was complete. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

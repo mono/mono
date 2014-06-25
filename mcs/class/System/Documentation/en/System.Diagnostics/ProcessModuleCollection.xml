@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessModuleCollection" FullName="System.Diagnostics.ProcessModuleCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ProcessModuleCollection : System.Collections.ReadOnlyCollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ProcessModuleCollection extends System.Collections.ReadOnlyCollectionBase" />
@@ -16,8 +17,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A module is an executable file or a dynamic link library (DLL). Each process consists of one or more modules. You can use this class to get iterate over a collection of process modules on the system. A module is identified by its module name and fully qualified file path.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a strongly typed collection of <see cref="T:System.Diagnostics.ProcessModule" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessModuleCollection" /> class, with no associated <see cref="T:System.Diagnostics.ProcessModule" /> instances.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +60,13 @@
         <Parameter Name="processModules" Type="System.Diagnostics.ProcessModule[]" />
       </Parameters>
       <Docs>
-        <param name="processModules">To be added: an object of type 'ProcessModule []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessModuleCollection" /> class, using the specified array of <see cref="T:System.Diagnostics.ProcessModule" /> instances.</para>
+        </summary>
+        <param name="processModules">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.ProcessModule" /> instances with which to initialize this <see cref="T:System.Diagnostics.ProcessModuleCollection" /> instance. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -71,10 +85,20 @@
         <Parameter Name="module" Type="System.Diagnostics.ProcessModule" />
       </Parameters>
       <Docs>
-        <param name="module">To be added: an object of type 'ProcessModule'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A module is identified by its module name and its fully qualified file path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified process module exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the module exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="module">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.ProcessModule" /> instance that indicates the module to find in this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -94,10 +118,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'ProcessModule []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies an array of <see cref="T:System.Diagnostics.ProcessModule" /> instances to the collection, at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.ProcessModule" /> instances to add to the collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location at which to add the new instances. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -116,10 +145,17 @@
         <Parameter Name="module" Type="System.Diagnostics.ProcessModule" />
       </Parameters>
       <Docs>
-        <param name="module">To be added: an object of type 'ProcessModule'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the location of a specified module within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index that defines the location of the module within the <see cref="T:System.Diagnostics.ProcessModuleCollection" />.</para>
+        </returns>
+        <param name="module">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.ProcessModule" /> whose index is retrieved. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">

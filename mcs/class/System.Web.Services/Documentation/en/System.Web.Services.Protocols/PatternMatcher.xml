@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PatternMatcher" FullName="System.Web.Services.Protocols.PatternMatcher">
   <TypeSignature Language="C#" Value="public sealed class PatternMatcher" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> class performs pattern matching using regular expressions to find Web method return values in text encoded in the body of an HTTP response. The <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> class is called by the client-side <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class, which deserializes Web service return values.</para>
+      <para>Text pattern matching provides a way for Web services to retrieve HTML content without converting it to XML documents that must be bound to XML Schema definitions. Regular expression search targets are specified in a Web Services Description Language (WSDL) document via match XML elements within text elements. Both elements belong to the namespace http://microsoft.com/wsdl/mime/textMatching/.</para>
+      <para>When match elements are specified in a WSDL document, the Wsdl.exe tool applies <see cref="T:System.Web.Services.Protocols.MatchAttribute" /> attributes to the corresponding Web methods in the client proxy class that is generated. A <see cref="T:System.Web.Services.Protocols.MatchAttribute" /> attribute's properties establish the search criteria for a <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> instance.</para>
+      <para>A developer typically does not need to directly use <see cref="T:System.Web.Services.Protocols.PatternMatcher" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Searches HTTP response text for return values for Web service clients.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +35,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> instance's properties, such as the regular expression to make the search target, are populated based on <see cref="T:System.Web.Services.Protocols.MatchAttribute" /> attributes applied to fields of the return type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> instance based on the input type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that specifies the return type for a Web method.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,10 +61,20 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.PatternMatcher.Match(System.String)" /> method's return value is the Web method return value deserialized from the input text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches a text input to deserialize an object representing a Web method return value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing a Web method return value.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to search, which is the body of the HTTP response.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

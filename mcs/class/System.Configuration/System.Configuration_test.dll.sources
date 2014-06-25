@@ -1,3 +1,4 @@
+System.Configuration/AppSettingsSectionTest.cs
 System.Configuration/CallbackValidatorTest.cs
 System.Configuration/CommaDelimitedStringCollectionConverterTest.cs
 System.Configuration/CommaDelimitedStringCollectionTest.cs

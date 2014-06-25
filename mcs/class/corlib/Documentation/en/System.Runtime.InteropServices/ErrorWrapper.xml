@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ErrorWrapper" FullName="System.Runtime.InteropServices.ErrorWrapper">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ErrorWrapper" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ErrorWrapper extends System.Object" />
@@ -19,8 +20,115 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By default, <see cref="T:System.Object" /> type arguments are marshaled as a VARIANT type, where the object type determines the VARTYPE value of the VARIANT.</para>
+      <para>The <see cref="T:System.Runtime.InteropServices.ErrorWrapper" /> type must to be passed as an <see cref="T:System.Object" /> type to be marshaled as a VARIANT of type VT_ERROR, otherwise the <see cref="T:System.Runtime.InteropServices.ErrorWrapper" /> type is marshaled as an integer.</para>
+      <para>The following table illustrates marshaling in a managed call to a native function, using platform invoke.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Managed signature parameter</para>
+            </term>
+            <description>
+              <para>pArr value</para>
+            </description>
+            <description>
+              <para>Marshaled as</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>ErrorWrapper[] pArr</para>
+          </term>
+          <description>
+            <para>ErrorWrapper[10] of ErrorWrapper(77)</para>
+          </description>
+          <description>
+            <para>Int[10]</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Object[] pArr</para>
+          </term>
+          <description>
+            <para>ErrorWrapper[10] of ErrorWrapper(77)</para>
+          </description>
+          <description>
+            <para>VARIANT[10] of VT_ERROR</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Object[] pArr</para>
+          </term>
+          <description>
+            <para>Object[10] of ErrorWrapper(77)</para>
+          </description>
+          <description>
+            <para>VARIANT[10] of VT_ERROR</para>
+          </description>
+        </item>
+      </list>
+      <para>The following table illustrates marshaling data in a managed call to a native function, using COM runtime callable wrappers (RCW).</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Managed signature parameter</para>
+            </term>
+            <description>
+              <para>pArr value</para>
+            </description>
+            <description>
+              <para>Marshaled as</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>ErrorWrapper[] pArr</para>
+          </term>
+          <description>
+            <para>ErrorWrapper[10] of ErrorWrapper(77)</para>
+          </description>
+          <description>
+            <para>Int[10]</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Object[] pArr</para>
+          </term>
+          <description>
+            <para>ErrorWrapper[10] of ErrorWrapper(77)</para>
+          </description>
+          <description>
+            <para>SafeArrayTypeMismatch exception</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Object[] pArr</para>
+          </term>
+          <description>
+            <para>Object[10] of ErrorWrapper(77)</para>
+          </description>
+          <description>
+            <para>SAFEARRAY(VARIANT)</para>
+          </description>
+        </item>
+      </list>
+      <para>Note that <see cref="T:System.Runtime.InteropServices.ErrorWrapper" /> objects are not marshaled as type VT_ERROR after they are passed back from COM.  A single value is marshaled back from COM as type VT_I4, while arrays are marshaled back from COM as type VT_UI4.  </para>
+      <para>For more information on VT_ERROR, please see the existing documentation for VARENUM::VT_ERROR in the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Wraps objects the marshaler should marshal as a VT_ERROR.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +145,13 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'Exception'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ErrorWrapper" /> class with the HRESULT that corresponds to the exception supplied.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to be converted to an error code. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -56,9 +168,13 @@
         <Parameter Name="errorCode" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="errorCode">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ErrorWrapper" /> class with the HRESULT of the error.</para>
+        </summary>
+        <param name="errorCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HRESULT of the error. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -75,9 +191,13 @@
         <Parameter Name="errorCode" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="errorCode">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ErrorWrapper" /> class with an object containing the HRESULT of the error.</para>
+        </summary>
+        <param name="errorCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing the HRESULT of the error. </param>
       </Docs>
     </Member>
     <Member MemberName="ErrorCode">
@@ -93,9 +213,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error code of the wrapper.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

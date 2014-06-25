@@ -57,6 +57,20 @@ namespace Mono.Debugger.Soft
 		static OpCode [] OneByteOpCode = new OpCode [0xe0 + 1];
 		static OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
 
+		Dictionary<int, ResolvedToken> tokensCache = new Dictionary<int, ResolvedToken> ();
+
+		ResolvedToken ResolveToken (int token)
+		{
+			lock (tokensCache) {
+				ResolvedToken resolvedToken;
+				if (!tokensCache.TryGetValue (token, out resolvedToken)) {
+					resolvedToken = vm.conn.Method_ResolveToken (Method.Id, token);
+					tokensCache.Add (token, resolvedToken);
+				}
+				return resolvedToken;
+			}
+		}
+
 		// Adapted from Cecil
 		List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
 		{
@@ -152,7 +166,7 @@ namespace Mono.Debugger.Soft
 					break;
 				case OperandType.InlineString :
 					token = br.ReadInt32 ();
-					t = vm.conn.Method_ResolveToken (Method.Id, token);
+					t = ResolveToken (token);
 					if (t.Type == TokenType.STRING)
 						instr.Operand = t.Str;
 					break;
@@ -162,7 +176,7 @@ namespace Mono.Debugger.Soft
 				case OperandType.InlineTok :
 					token = br.ReadInt32 ();
 
-					t = vm.conn.Method_ResolveToken (Method.Id, token);
+					t = ResolveToken (token);
 
 					switch (t.Type) {
 					case TokenType.TYPE:

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="QueryStringParameter" FullName="System.Web.UI.WebControls.QueryStringParameter">
   <TypeSignature Language="C#" Value="public class QueryStringParameter : System.Web.UI.WebControls.Parameter" />
   <AssemblyInfo>
@@ -14,9 +15,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class to bind the value of a field that is passed as part of an HTTP request query string to a parameter that is used in a parameterized query or command. The field is retrieved from the <see cref="P:System.Web.HttpRequest.QueryString" /> collection. </para>
+      <para>Controls that bind data to the parameter might throw an exception if a <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object is referenced, but no corresponding query-string name/value pair is passed. Similarly, they might display no data if the query-string field name is passed without a corresponding value. To avoid these situations, set the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property where appropriate.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class provides the <see cref="P:System.Web.UI.WebControls.QueryStringParameter.QueryStringField" /> property, which identifies the name of the query string value to bind to. It also provides the properties that are inherited from the <see cref="T:System.Web.UI.WebControls.Parameter" /> class. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class does not validate the value that is passed; it provides the raw value. However, you can validate the value of a <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object in a data source control. To do so, handle the Selecting, Updating, Inserting, or Deleting event of the data source control and check the parameter value in the event handler. If the value of the parameter does not pass the validation tests, you can cancel the data operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the associated <see cref="T:System.ComponentModel.CancelEventArgs" /> class to true.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Binds the value of an HTTP request query-string field to a parameter object. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +36,37 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object that is created by using the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.#ctor" /> constructor is initialized with default values for all its properties. The properties are initialized as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.QueryStringParameter.QueryStringField" /> is initialized to an empty string ("").</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> is initialized to an empty string ("").</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> is initialized to <see cref="F:System.TypeCode.Object" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> is initialized to <see cref="F:System.Data.ParameterDirection.Input" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> is initialized to null.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new unnamed instance of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +79,17 @@
         <Parameter Name="original" Type="System.Web.UI.WebControls.QueryStringParameter" />
       </Parameters>
       <Docs>
-        <param name="original">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.QueryStringParameter.#ctor(System.Web.UI.WebControls.QueryStringParameter)" /> constructor is a protected copy constructor that is used to clone a <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> instance. The values of the <see cref="P:System.Web.UI.WebControls.QueryStringParameter.QueryStringField" />, <see cref="P:System.Web.UI.WebControls.Parameter.Name" />, and <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> properties are transferred to the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class, using the values of the instance that is specified by the <paramref name="original" /> parameter.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> instance from which the current instance is initialized. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +103,19 @@
         <Parameter Name="queryStringField" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="queryStringField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object that is created by using the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.#ctor(System.String,System.String)" /> constructor is initialized with the specified parameter name that identifies the query-string field that the parameter binds to. The <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> and <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> properties are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class, using the specified string to identify which query-string field to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="queryStringField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the query-string field that the parameter object is bound to. The default is an empty string (""). </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,12 +130,21 @@
         <Parameter Name="queryStringField" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="queryStringField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object that is created by using the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.#ctor(System.String,System.TypeCode,System.String)" /> constructor is initialized with the specified parameter name, the parameter type, and a string that identifies the query-string field that the parameter binds to. The <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> properties are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named and strongly typed instance of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class, using the specified string to identify which query-string field to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the parameter represents. The default is <see cref="F:System.TypeCode.Object" />. </param>
+        <param name="queryStringField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the query-string field that the parameter object is bound to. The default is an empty string (""). </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +158,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.#ctor(System.Web.UI.WebControls.QueryStringParameter)" /> constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> class by using the values of the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplicate of the current instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,11 +188,22 @@
       </Parameters>
       <Docs>
         <param name="ctx">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object tries to bind to the query-string field every time that the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is called.</para>
+          <para>The <paramref name="context" /> parameter is used by the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method to retrieve the value of the specified query-string field from the query string. The <paramref name="control" /> parameter is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the current value of the parameter. If the context or the request is null, the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method returns null. </para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Web server control that is associated with the ASP.NET Web page where the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object is used.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,10 +221,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.QueryStringParameter.QueryStringField" /> property identifies a name/value pair that is passed with the query string. The <see cref="P:System.Web.UI.WebControls.QueryStringParameter.QueryStringField" /> property identifies the name of the pair, whereas the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> property binds to its corresponding value at run time. If the expected query-string name/value pair is not passed to the page with the query string, the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method then tries to bind the parameter to the value of the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property. If the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is not set, the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method fails to bind the parameter to a value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the query-string field that the parameter binds to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

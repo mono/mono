@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpMethod" FullName="System.Net.Http.HttpMethod">
   <TypeSignature Language="C#" Value="public class HttpMethod : IEquatable&lt;System.Net.Http.HttpMethod&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpMethod extends System.Object implements class System.IEquatable`1&lt;class System.Net.Http.HttpMethod&gt;" />
@@ -14,8 +15,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The most common usage of <see cref="T:System.Net.Http.HttpMethod" /> is to use one of the static properties on this class.  However, if an app needs a different value for the HTTP method, the <see cref="M:System.Net.Http.HttpMethod.#ctor(System.String)" /> constructor initializes a new instance of the <see cref="T:System.Net.Http.HttpMethod" /> with an HTTP method that the app specifies. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A helper class for retrieving and comparing standard HTTP methods and for creating new HTTP methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +36,16 @@
         <Parameter Name="method" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="method">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an app needs a different value for the HTTP method from one of the static properties, the <see cref="M:System.Net.Http.HttpMethod.#ctor(System.String)" /> constructor initializes a new instance of the <see cref="T:System.Net.Http.HttpMethod" /> with an HTTP method that the app specifies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.HttpMethod" /> class with a specific HTTP method.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP method.</param>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -45,9 +59,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP DELETE protocol method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -64,10 +81,18 @@
         <Parameter Name="other" Type="System.Net.Http.HttpMethod" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Net.Http.HttpMethod" /> is equal to the current <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Boolean" />.</para>
+          <para>true if the specified object is equal to the current object; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP method to compare with the current object.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -84,10 +109,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Boolean" />.</para>
+          <para>true if the specified object is equal to the current object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
     </Member>
     <Member MemberName="Get">
@@ -101,9 +134,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP GET protocol method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -118,9 +154,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code is a numeric value that is used to identify an object during equality testing. It can also serve as an index for an object in a collection.The <see cref="M:System.Net.Http.HttpMethod.GetHashCode" /> method is suitable for use in hashing algorithms and data structures such as a hash table. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for this type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Int32" />.</para>
+          <para>A hash code for the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Head">
@@ -134,9 +180,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP HEAD protocol method. The HEAD method is identical to GET except that the server only returns message-headers in the response, without a message-body.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Method">
@@ -150,9 +199,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTTP method. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -170,11 +222,20 @@
         <Parameter Name="right" Type="System.Net.Http.HttpMethod" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equality operator for comparing two <see cref="T:System.Net.Http.HttpMethod" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Boolean" />.</para>
+          <para>true if the specified <paramref name="left" /> and <paramref name="right" /> parameters are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The left <see cref="T:System.Net.Http.HttpMethod" /> to an equality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The right  <see cref="T:System.Net.Http.HttpMethod" /> to an equality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -192,11 +253,20 @@
         <Parameter Name="right" Type="System.Net.Http.HttpMethod" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The inequality operator for comparing two <see cref="T:System.Net.Http.HttpMethod" /> objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Boolean" />.</para>
+          <para>true if the specified <paramref name="left" /> and <paramref name="right" /> parameters are inequal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The left <see cref="T:System.Net.Http.HttpMethod" /> to an inequality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The right  <see cref="T:System.Net.Http.HttpMethod" /> to an inequality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="Options">
@@ -210,9 +280,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP OPTIONS protocol method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Post">
@@ -226,9 +299,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP POST protocol method that is used to post a new entity as an addition to a URI.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Put">
@@ -242,9 +318,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP PUT protocol method that is used to replace an entity identified by a URI.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -259,9 +338,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.String" />.</para>
+          <para>A string representing the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Trace">
@@ -275,9 +361,12 @@
         <ReturnType>System.Net.Http.HttpMethod</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an HTTP TRACE protocol method.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

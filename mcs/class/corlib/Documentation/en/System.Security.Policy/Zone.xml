@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Zone" FullName="System.Security.Policy.Zone">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class Zone : System.Security.Policy.EvidenceBase, System.Security.Policy.IBuiltInEvidence, System.Security.Policy.IIdentityPermissionFactory" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit Zone extends System.Security.Policy.EvidenceBase implements class System.Security.Policy.IBuiltInEvidence, class System.Security.Policy.IIdentityPermissionFactory" />
@@ -26,8 +27,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The presence of <see cref="T:System.Security.Policy.Zone" /> evidence produces a <see cref="T:System.Security.Permissions.ZoneIdentityPermission" /> in the grant set. If there is a <see cref="M:System.Security.CodeAccessPermission.Demand" /> for <see cref="T:System.Security.Permissions.ZoneIdentityPermission" />, the <see cref="T:System.Security.Permissions.ZoneIdentityPermission" /> that corresponds to the <see cref="T:System.Security.Policy.Zone" /> evidence will be compared with the demanded permission.</para>
+      <para>Zones are defined by the <see cref="T:System.Security.SecurityZone" /> enumeration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the security zone of a code assembly as evidence for policy evaluation. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,9 +52,13 @@
         <Parameter Name="zone" Type="System.Security.SecurityZone" />
       </Parameters>
       <Docs>
-        <param name="zone">To be added: an object of type 'Security.SecurityZone'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.Zone" /> class with the zone from which a code assembly originates.</para>
+        </summary>
+        <param name="zone">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zone of origin for the associated code assembly. </param>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -63,9 +75,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an equivalent copy of the evidence object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, identical copy of the evidence object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFromUrl">
@@ -84,10 +102,20 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Zone'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zone determination for the specified URL is based on the zone mapping settings in Microsoft Internet Explorer and can therefore differ from computer to computer. The zone mapping settings are located on the Security tab of the Internet Options dialog launched from the Tools menu.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new zone with the specified URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new zone with the specified URL.</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL from which to create the zone. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateIdentityPermission">
@@ -106,10 +134,17 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an identity permission that corresponds to the current instance of the <see cref="T:System.Security.Policy.Zone" /> evidence class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.ZoneIdentityPermission" /> for the specified <see cref="T:System.Security.Policy.Zone" /> evidence.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence set from which to construct the identity permission. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -128,10 +163,21 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Security.Policy.Zone" /> objects are equal if they designate the same <see cref="T:System.Security.SecurityZone" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the current <see cref="T:System.Security.Policy.Zone" /> evidence object to the specified object for equivalence.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Security.Policy.Zone" /> objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Zone" /> evidence object to test for equivalence with the current object. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -148,9 +194,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code of the current zone.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current zone.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SecurityZone">
@@ -166,9 +218,12 @@
         <ReturnType>System.Security.SecurityZone</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Security.SecurityZone'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the zone from which the code assembly originates.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Security.Policy.IBuiltInEvidence.GetRequiredSize">
@@ -257,9 +312,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the current <see cref="T:System.Security.Policy.Zone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the current <see cref="T:System.Security.Policy.Zone" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

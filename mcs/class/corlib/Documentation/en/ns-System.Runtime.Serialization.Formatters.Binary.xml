@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Serialization.Formatters.Binary" FullName="System.Runtime.Serialization.Formatters.Binary" FullNameSP="System.Runtime.Serialization.Formatters.Binary" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Serialization.Formatters.Binary" /> namespace contains the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> class, which can be used to serialize and deserialize objects in binary format.</para>
+    </summary>
   </Docs>
 </Namespace>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpSessionState" FullName="System.Web.SessionState.HttpSessionState">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class HttpSessionState : System.Collections.ICollection" />
   <AssemblyInfo>
@@ -17,8 +18,20 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET provides session-state management to enable you to store information associated with a unique browser session across multiple requests. You can store a collection of values referenced by a key name or by numerical index. Access to session values and functionality is available using the <see cref="T:System.Web.SessionState.HttpSessionState" /> class, which is accessible through the <see cref="P:System.Web.HttpContext.Session" /> property of the current <see cref="T:System.Web.HttpContext" />, or the <see cref="P:System.Web.UI.Page.Session" /> property of the <see cref="T:System.Web.UI.Page" />.</para>
+      <para>Session data is associated with a specific browser session using a unique identifier. By default, this identifier is stored in a non-expiring session cookie in the browser, but you can also configure your application to store the session identifier in the URL by setting the cookieless attribute to true or <see cref="F:System.Web.HttpCookieMode.UseUri" /> in the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> element of your application configuration. You can have ASP.NET determine whether cookies are supported by the browser by specifying a value of <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" /> for the cookieless attribute. You can also have ASP.NET determine whether cookies are enabled for the browser by specifying a value of <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> for the cookieless attribute. If cookies are supported when <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" /> is specified, or enabled when <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> is specified, then the session identifier will be stored in a cookie; otherwise the session identifier will be stored in the URL.</para>
+      <para>Sessions are started during the first request and session values will persist as long as a new request is made by the browser before the number of minutes specified in the <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> property pass. When a new session begins, the session <see cref="E:System.Web.SessionState.SessionStateModule.Start" /> event is raised. You can use this event to perform any additional work at the start of a session, such as setting default session values. When a session times out, the <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> method is called, or the ASP.NET application is shut down, the session <see cref="E:System.Web.SessionState.SessionStateModule.End" /> event is raised. You can use this event to perform any necessary cleanup. The <see cref="E:System.Web.SessionState.SessionStateModule.End" /> event is raised only when the session state mode is set to <see cref="F:System.Web.SessionState.SessionStateMode.InProc" />.</para>
+      <para>To improve performance, sessions that use cookies do not allocate session storage until data is actually stored in the <see cref="P:System.Web.UI.Page.Session" /> object. For more information, see the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property.</para>
+      <para>Session state does not persist across ASP.NET application boundaries. If a browser navigates to another application, the session information is not available to the new application.</para>
+      <para>Session values are stored in memory on the Web server, by default. You can also store session values in a SQL Server database, an ASP.NET state server, or a custom server. This enables you to preserve session values in cases where the ASP.NET or IIS process or the ASP.NET application restarts and to make session values available across all the servers in a Web farm. This behavior is configured by setting the mode attribute to a valid <see cref="T:System.Web.SessionState.SessionStateMode" /> value in the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> element of your application configuration. For more information, see <format type="text/html"><a href="0bb0a3a3-650f-4c47-a0c5-b08b9b591bb4">Session State Modes</a></format>.</para>
+      <para>Alternatives to session state include application state (see the <see cref="P:System.Web.HttpApplication.Application" /> property) and the ASP.NET cache (see the <see cref="N:System.Web.Caching" /> namespace), which store variables that can be accessed by all users of an ASP.NET application; the ASP.NET profile (see the <see cref="N:System.Web.Profile" /> namespace), which persists user values in a data store without expiring them using a time-out; ASP.NET <see cref="N:System.Web.UI.WebControls" />, which persist control values in the <see cref="P:System.Web.UI.Control.ViewState" />; <see cref="P:System.Web.HttpResponse.Cookies" />; the <see cref="P:System.Web.HttpRequest.QueryString" /> property; and fields on an HTML form that are available from an HTTP POST using the <see cref="P:System.Web.HttpRequest.Form" /> collection. For more details on the differences between session state and other state-management alternatives, see <format type="text/html"><a href="af79fa0d-4bc8-47a6-9915-d8e355bfb732">ASP.NET State-Management Recommendations</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to session-state values as well as session-level settings and lifetime management methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abandon">
@@ -29,8 +42,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once the <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> method is called, the current session is no longer valid and a new session can be started. <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> causes the <see cref="E:System.Web.SessionState.SessionStateModule.End" /> event to be raised. A new <see cref="E:System.Web.SessionState.SessionStateModule.Start" /> event will be raised on the next request.</para>
+          <para>Session identifiers for abandoned or expired sessions are recycled by default. That is, if a request is made that includes the session identifier for an expired or abandoned session, a new session is started using the same session identifier. You can disable this by setting regenerateExpiredSessionId attribute of the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> configuration element to true. For more information, see <format type="text/html"><a href="146ca206-d151-4f2e-a548-bcca05ccf0cb">Session Identifiers</a></format>.</para>
+          <para>The <see cref="E:System.Web.SessionState.SessionStateModule.End" /> event is supported only when the <see cref="P:System.Web.SessionState.HttpSessionState.Mode" /> property is set to <see cref="F:System.Web.SessionState.SessionStateMode.InProc" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels the current session.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,10 +69,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="name" /> parameter refers to an existing session state item, the existing item is overwritten with the specified <paramref name="value" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the session-state collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the item to add to the session-state collection. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the item to add to the session-state collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,8 +95,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all keys and values from the session-state collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +114,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character set (code page) is used to interpret multi-byte character data, determining character value, and therefore sort order. Code-page settings apply only to multi-byte character data, not to Unicode character data.</para>
+          <para>This <see cref="P:System.Web.SessionState.IHttpSessionState.CodePage" /> property is provided for compatibility with earlier versions of ASP only. If you do not need to maintain backward compatibility with ASP pages, use the <see cref="P:System.Web.HttpResponse.ContentEncoding" /> property instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character-set identifier for the current session.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +137,15 @@
         <ReturnType>System.Web.SessionState.HttpSessionState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HttpSessionState'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.Contents" /> property is provided for compatibility with earlier versions of ASP.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the current session-state object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,10 +163,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the collection of session-state values to a one-dimensional array, starting at the specified index in the array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> that receives the session values. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> from which copying starts. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,9 +185,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items in the session-state collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,9 +205,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can be used to read all the session-state variable names in the current session.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can iterate through the variable names in the session-state collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -168,9 +227,26 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET identifies sessions uniquely with each browser. By default, the unique identifier for a session is stored in a non-expiring session cookie in the browser. You can specify that session identifiers not be stored in a cookie by setting the cookieless attribute to true in the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> configuration element.</para>
+          <block subset="none" type="note">
+            <para>To improve the security of your application, your application should allow users to log out, at which point it should call the <see cref="M:System.Web.SessionState.HttpSessionState.Abandon" /> method. This reduces the potential for an unwanted source using the unique identifier in the URL to retrieve private data stored in the session for a user.</para>
+          </block>
+          <para>ASP.NET maintains cookieless session state by automatically inserting a unique session ID into the page's URL. For example, the following URL has been modified by ASP.NET to include the unique session ID lit3py55t21z5v55vlm25s55: </para>
+          <code>http://www.example.com/(S(4danlfat035muve4g0mvgfrr))/orderform.aspx</code>
+          <para>ASP.NET modifies the links contained in all requested pages by embedding a session-ID value in the links just before sending each page to the browser. Session state is maintained as long as the user follows the path of links that the site provides. However, if the user agent rewrites a URL, the session-state instance will be lost.</para>
+          <para>The session ID is embedded in the URL after the slash that follows the application name and before any remaining file or virtual-directory identifier. This allows ASP.NET to resolve the application name before involving the <see cref="T:System.Web.SessionState.SessionStateModule" /> in the request.</para>
+          <para>By default, session identifiers used in cookieless sessions are recycled. That is, if a request is made with a session ID that has expired, a new session is started using the session ID supplied with the request. This behavior can result in the unwanted sharing of session data when a link that contains a cookieless session ID is shared with multiple browsers, perhaps through a search engine or other program. You can reduce the possibility of session data being shared by multiple clients by disabling the recycling of session identifiers. To do this, set the regenerateExpiredSessionId attribute of the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> configuration element to true. This will result in a new session ID being generated when a cookieless session request is made with an expired session ID. Note that if the request made with the expired session ID uses the HTTP POST method, then any posted data will be lost when regenerateExpiredSessionId is true, as ASP.NET performs a redirect to ensure that the browser has the new session identifier in the URL.</para>
+          <block subset="none" type="note">
+            <para>While setting the regenerateExpiredSessionId attribute to true reduces the possibility of unwanted sharing of session data, it does not protect against an unwanted source gaining access to the session of another user by obtaining the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value and including it in requests to the server. If you are storing private or sensitive information in session state, it is recommended that you use SSL to encrypt any communication between the browser and server that includes the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the session ID is embedded in the URL or stored in an HTTP cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +261,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Boolean" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the session was created with the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -201,9 +280,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the session is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,9 +299,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection of session-state values is synchronized (thread safe).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -274,9 +359,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameObjectCollectionBase+KeysCollection" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the keys for all values stored in the session-state collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -291,9 +379,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.LCID" /> property is provided for compatibility with earlier versions of ASP only. If you do not need to maintain backward compatibility with ASP pages, use the <see cref="P:System.Globalization.CultureInfo.LCID" /> property instead.</para>
+          <para>ASP.NET does not store the locale identifier in session state. The <see cref="P:System.Web.SessionState.HttpSessionState.LCID" /> property accesses the <see cref="P:System.Globalization.CultureInfo.LCID" /> property to get and set the identifier.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the locale identifier (LCID) of the current session.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -307,9 +402,15 @@
         <ReturnType>System.Web.SessionState.SessionStateMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SessionStateMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For information about how to configure your server for <see cref="F:System.Web.SessionState.SessionStateMode.StateServer" /> or <see cref="F:System.Web.SessionState.SessionStateMode.SQLServer" /> session-state storage, see <format type="text/html"><a href="6d60d381-6521-4e1d-9089-da6464f2a9bc">ASP.NET Session State Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current session-state mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -326,9 +427,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the session-state collection does not contain an element with the specified <paramref name="name" />, the collection remains unchanged. No exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes an item from the session-state collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the item to delete from the session-state collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -343,8 +451,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.SessionState.HttpSessionState.RemoveAll" /> performs the same function as <see cref="M:System.Web.SessionState.HttpSessionState.Clear" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all keys and values from the session-state collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -361,9 +476,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes an item at a specified index from the session-state collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to remove from the session-state collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -377,9 +496,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property is used to uniquely identify a browser with session data on the server. The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value is randomly generated by ASP.NET and stored in a non-expiring session cookie in the browser. The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value is then sent in a cookie with each request to the ASP.NET application.</para>
+          <para>If you want to disable the use of cookies in your ASP.NET application and still make use of session state, you can configure your application to store the session identifier in the URL instead of a cookie by setting the cookieless attribute of the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> configuration element to true, or to <see cref="F:System.Web.HttpCookieMode.UseUri" />, in the Web.config file for your application. You can have ASP.NET determine whether cookies are supported by the browser by specifying a value of <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" /> for the cookieless attribute. You can also have ASP.NET determine whether cookies are enabled for the browser by specifying a value of <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> for the cookieless attribute. If cookies are supported when <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" /> is specified, or enabled when <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> is specified, then the session identifier will be stored in a cookie; otherwise the session identifier will be stored in the URL. For more information, see the <see cref="P:System.Web.SessionState.HttpSessionState.IsCookieless" /> property.</para>
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> is sent between the server and the browser in clear text, either in a cookie or in the URL. As a result, an unwanted source could gain access to the session of another user by obtaining the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value and including it in requests to the server. If you are storing private or sensitive information in session state, it is recommended that you use SSL to encrypt any communication between the browser and server that includes the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" />.</para>
+          <para>When using cookie-based session state, ASP.NET does not allocate storage for session data until the <see cref="P:System.Web.UI.Page.Session" /> object is used. As a result, a new session ID is generated for each page request until the session object is accessed. If your application requires a static session ID for the entire session, you can either implement the Session_Start method in the application's Global.asax file and store data in the <see cref="P:System.Web.UI.Page.Session" /> object to fix the session ID, or you can use code in another part of your application to explicitly store data in the <see cref="P:System.Web.UI.Page.Session" /> object.</para>
+          <para>If your application uses cookieless session state, the session ID is generated on the first page view and is maintained for the entire session.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier for the session.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -394,9 +523,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpStaticObjectsCollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an object on a page does not support serialization and <see cref="P:System.Web.SessionState.HttpSessionState.Mode" /> is out-of-process (<see cref="F:System.Web.SessionState.SessionStateMode.SQLServer" /> or <see cref="F:System.Web.SessionState.SessionStateMode.StateServer" />), the object will not be created and will not be added to this collection.</para>
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.StaticObjects" /> property is provided for compatibility with earlier versions of ASP.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of objects declared by &lt;object Runat="Server" Scope="Session"/&gt; tags within the ASP.NET application file Global.asax.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -410,9 +546,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection of session-state values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -427,9 +566,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> property can be set in the Web.config file for an application using the timeout attribute of the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState</a></format> configuration element, or you can set the <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> property value directly using application code.</para>
+          <para>The <see cref="P:System.Web.SessionState.HttpSessionState.Timeout" /> property cannot be set to a value greater than 525,600 minutes (1 year). The default value is 20 minutes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the amount of time, in minutes, allowed between requests before the session-state provider terminates the session.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

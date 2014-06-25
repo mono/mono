@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ILogger" FullName="Microsoft.Build.Framework.ILogger">
   <TypeSignature Language="C#" Value="public interface ILogger" />
   <AssemblyInfo>
@@ -11,9 +12,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>All logger classes must implement this interface to be recognized by the vstecmsbuild engine.</para>
+      <para>Instead of implementing this interface directly, you can also derive your class from the helper class, <see cref="T:Microsoft.Build.Utilities.Logger" />, which provides default implementations of some <see cref="T:Microsoft.Build.Framework.ILogger" /> members.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an vstecmsbuild logger, which subscribes to build system events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Initialize">
@@ -26,10 +34,14 @@
         <Parameter Name="eventSource" Type="Microsoft.Build.Framework.IEventSource" />
       </Parameters>
       <Docs>
-        <param name="eventSource">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subscribes loggers to specific events. This method is called when the logger is registered with the build engine, before any events are raised.</para>
+        </summary>
+        <param name="eventSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events available to loggers.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +54,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameters may be represented in this property in any format. For example, to represent two parameters and values, you could use the string "parameter1=value1;parameter2=value2".</para>
+          <para>This property can be a null reference (Nothing in vbprvb).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user-defined parameters of the logger. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,9 +78,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources allocated to the logger at the time of initialization or during the build. This method is called when the logger is unregistered from the engine, after all events are raised. A host of vstecmsbuild typically unregisters loggers immediately before quitting.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,10 +96,16 @@
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>While a logger is free to choose the events it logs, following the verbosity guidelines creates a consistent user experience.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the level of detail to show in the event log.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

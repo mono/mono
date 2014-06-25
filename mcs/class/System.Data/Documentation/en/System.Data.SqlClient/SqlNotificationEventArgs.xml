@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlNotificationEventArgs" FullName="System.Data.SqlClient.SqlNotificationEventArgs">
   <TypeSignature Language="C#" Value="public class SqlNotificationEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the set of arguments passed to the notification event handler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +27,21 @@
         <Parameter Name="source" Type="System.Data.SqlClient.SqlNotificationSource" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="info">To be added.</param>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.SqlClient.SqlNotificationEventArgs" /> object. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Data.SqlClient.SqlNotificationType" /> value that indicates whether this notification is generated because of an actual change, or by the subscription. </param>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Data.SqlClient.SqlNotificationInfo" /> value that indicates the reason for the notification event. This may occur because the data in the store actually changed, or the notification became invalid (for example, it timed out). </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Data.SqlClient.SqlNotificationSource" /> value that indicates the source that generated the notification. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +54,16 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event may occur because the data in the store actually changed, or the notification is no longer valid (for example, it timed out).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the reason for the notification event, such as a row in the database being modified or a table being truncated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +76,13 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationSource</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the source that generated the notification, such as a change to the query data or the database’s state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,10 +95,13 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this notification is generated because of an actual change, or by the subscription.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

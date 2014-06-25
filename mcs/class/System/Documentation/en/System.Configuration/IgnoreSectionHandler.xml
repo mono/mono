@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IgnoreSectionHandler" FullName="System.Configuration.IgnoreSectionHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class IgnoreSectionHandler : System.Configuration.IConfigurationSectionHandler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit IgnoreSectionHandler extends System.Object implements class System.Configuration.IConfigurationSectionHandler" />
@@ -19,8 +20,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The configuration system completely parses configuration files to collect configuration information and throws exceptions when it encounters configuration sections that do not have a corresponding entry in the configSections section. </para>
+      <para>For those sections not handled by the <see cref="N:System.Configuration" /> types, the new wrapper type <see cref="T:System.Configuration.IgnoreSection" /> is provided. This is to prevent configuration-file parsing exceptions. </para>
+      <para>For legacy purposes the <see cref="T:System.Configuration.IgnoreSectionHandler" /> is also provided.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a legacy section-handler definition for configuration sections that are not handled by the <see cref="N:System.Configuration" /> types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +44,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.IgnoreSectionHandler" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -57,12 +69,21 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added: an object of type 'object'</param>
-        <param name="configContext">To be added: an object of type 'object'</param>
-        <param name="section">To be added: an object of type 'Xml.XmlNode'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new configuration handler and adds the specified configuration object to the section-handler collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created configuration handler object.</para>
+        </returns>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration settings in a corresponding parent configuration section. </param>
+        <param name="configContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path for which the configuration section handler computes configuration values. Normally this parameter is reserved and is null. </param>
+        <param name="section">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNode" /> that contains the configuration information to be handled. Provides direct access to the XML contents of the configuration section. </param>
       </Docs>
     </Member>
   </Members>

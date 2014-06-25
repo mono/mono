@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSerializerNamespaces" FullName="System.Xml.Serialization.XmlSerializerNamespaces">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSerializerNamespaces" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSerializerNamespaces extends System.Object" />
@@ -14,8 +15,76 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> contains a collection of XML namespaces, each with an associated prefix. The <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses an instance of the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> class to create qualified names in an XML document.</para>
+      <para>XML namespaces contained by the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> must conform to the www.w3.org specification named <paramref name="Namespaces in XML" />.</para>
+      <para>XML namespaces provide a way to qualify the names of XML elements and attributes in XML documents. A qualified name consists of a prefix and a local name, separated by a colon. The prefix functions only as a placeholder; it is mapped to a URI that specifies a namespace. The combination of the universally-managed URI namespace and the local name produces a name that is guaranteed to be universally unique.</para>
+      <para>To create qualified names in an XML document: </para>
+      <list type="ordered">
+        <item>
+          <para>Create an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> instance.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Xml.Serialization.XmlSerializerNamespaces.Add(System.String,System.String)" /> each prefix and namespace pair that you want to the instance.</para>
+        </item>
+        <item>
+          <para>Apply the appropriate.NET attribute to each property or class that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> serializes into an XML document. The available attributes are: </para>
+        </item>
+      </list>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlArrayAttribute" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlAttributeAttribute" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlElementAttribute" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlRootAttribute" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlTypeAttribute" />
+          </para>
+        </item>
+      </list>
+      <list type="ordered">
+        <item>
+          <para>Set the Namespace property of each attribute to one of the namespace values from the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> object.</para>
+        </item>
+        <item>
+          <para>Pass the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> to the <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize(System.IO.TextWriter,System.Object)" /> method of the <see cref="T:System.Xml.Serialization.XmlSerializer" />.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>The creation of an empty namespace and prefix pair is not supported. That is, you cannot create a pair using the following code:</para>
+      </block>
+      <code>XmlSerializerNamespaces ns = new XmlSerializerNamespaces(); 
+ns.Add("", "");</code>
+      <code>Dim ns As XmlSerializerNamespaces ns = New XmlSerializerNamespaces()
+ns.Add("", "")</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the XML namespaces and prefixes that the <see cref="T:System.Xml.Serialization.XmlSerializer" /> uses to generate qualified names in an XML-document instance.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +99,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,9 +120,13 @@
         <Parameter Name="namespaces" Type="System.Xml.Serialization.XmlSerializerNamespaces" />
       </Parameters>
       <Docs>
-        <param name="namespaces">To be added: an object of type 'XmlSerializerNamespaces'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> class, using the specified instance of XmlSerializerNamespaces containing the collection of prefix and namespace pairs.</para>
+        </summary>
+        <param name="namespaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" />containing the namespace and prefix pairs. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,9 +143,13 @@
         <Parameter Name="namespaces" Type="System.Xml.XmlQualifiedName[]" />
       </Parameters>
       <Docs>
-        <param name="namespaces">To be added: an object of type 'System.Xml.XmlQualifiedName[]'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> class.</para>
+        </summary>
+        <param name="namespaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Xml.XmlQualifiedName" /> objects. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -89,10 +169,19 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added: an object of type 'string'</param>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want the <see cref="T:System.Xml.Serialization.XmlSerializer" /> to qualify the element and attribute names in an XML document, you must <see cref="M:System.Xml.Serialization.XmlSerializerNamespaces.Add(System.String,System.String)" /> the prefix and namespace pairs to an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> object.</para>
+          <para>Any namespaces that you add must conform to the www.w3.org specification <paramref name="Namespaces in XML" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a prefix and namespace pair to an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> object.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix associated with an XML namespace. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XML namespace. </param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -108,9 +197,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of prefix and namespace pairs in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToArray">
@@ -127,9 +219,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'System.Xml.XmlQualifiedName[]'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the array of prefix and namespace pairs in an <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Xml.XmlQualifiedName" /> objects that are used as qualified names in an XML document.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

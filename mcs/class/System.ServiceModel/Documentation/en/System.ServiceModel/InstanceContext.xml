@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InstanceContext" FullName="System.ServiceModel.InstanceContext">
   <TypeSignature Language="C#" Value="public sealed class InstanceContext : System.ServiceModel.Channels.CommunicationObject, System.ServiceModel.IExtensibleObject&lt;System.ServiceModel.InstanceContext&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InstanceContext extends System.ServiceModel.Channels.CommunicationObject implements class System.ServiceModel.IExtensibleObject`1&lt;class System.ServiceModel.InstanceContext&gt;" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the context information for a service instance.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +33,16 @@
         <Parameter Name="implementation" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="implementation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This sets the service host associated with the instance context to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InstanceContext" /> class for a specified object that implements the service instance.</para>
+        </summary>
+        <param name="implementation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the service instance.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -45,9 +56,13 @@
         <Parameter Name="host" Type="System.ServiceModel.ServiceHostBase" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InstanceContext" /> class for a service hosted by a specified host.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.ServiceHostBase" /> that hosts the service.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -62,10 +77,15 @@
         <Parameter Name="implementation" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="host">To be added.</param>
-        <param name="implementation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.InstanceContext" /> class for a specified object that implements the service instance and is hosted by a specified host.</para>
+        </summary>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.ServiceHostBase" /> that hosts the service.</param>
+        <param name="implementation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the service instance.</param>
       </Docs>
     </Member>
     <Member MemberName="DefaultCloseTimeout">
@@ -111,9 +131,12 @@
         <ReturnType>System.ServiceModel.IExtensionCollection&lt;System.ServiceModel.InstanceContext&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the extension collection, if any, associated with the service instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetServiceInstance">
@@ -128,9 +151,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the instance of the service for the instance context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that represents the service instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetServiceInstance">
@@ -147,10 +176,20 @@
         <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The general idea is that you only create an instance of the service when a message directed at it arrives, by calling <see cref="M:System.ServiceModel.Channels.CommunicationObject.Open" />; then if no message arrives, no <see cref="T:System.ServiceModel.InstanceContext" /> is created and no service object is created, and so resources are not deployed until actually required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the instance of the service for the instance context in response to an incoming message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that represents the service instance.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The incoming message that triggered the creation of a service object.</param>
       </Docs>
     </Member>
     <Member MemberName="Host">
@@ -164,9 +203,12 @@
         <ReturnType>System.ServiceModel.ServiceHostBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the host for the service instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IncomingChannels">
@@ -180,9 +222,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Channels.IChannel&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sessionful channels that are incoming to the service instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IncrementManualFlowControlLimit">
@@ -199,10 +244,17 @@
         <Parameter Name="incrementBy" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="incrementBy">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Increases the number of messages that can be processed by the service instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new limit on the number of messages, after <paramref name="incrementBy" /> is added, that can be processed by the service instance.</para>
+        </returns>
+        <param name="incrementBy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The additional number of messages that can be processed by the service instance.</param>
       </Docs>
     </Member>
     <Member MemberName="ManualFlowControlLimit">
@@ -216,9 +268,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.ServiceModel.InstanceContext.ManualFlowControlLimit" /> value reaches zero no more messages can be processed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a limit on the number of messages that can be processed by the instance context.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAbort">
@@ -436,9 +494,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Channels.IChannel&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the sessionful channels that are outgoing from the service instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReleaseServiceInstance">
@@ -453,8 +514,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the service instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SynchronizationContext">
@@ -468,9 +532,12 @@
         <ReturnType>System.Threading.SynchronizationContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the context used for thread synchronization with the current instance context.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

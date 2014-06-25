@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IResourceReader" FullName="System.Resources.IResourceReader">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IResourceReader : IDisposable, System.Collections.IEnumerable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IResourceReader implements class System.Collections.IEnumerable, class System.IDisposable" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Resource readers are used to read a stream of data from resource files in a particular format. Implement this interface when you want to control the way in which a resource file is read (for example, if the resource file was written by using a customized <see cref="T:System.Resources.ResourceWriter" />) or if you are using a non-standard format or file type for storing resources. Otherwise, use the default <see cref="T:System.Resources.ResourceReader" /> class, which reads resource information from binary .resources files, or the <see cref="T:System.Resources.ResXResourceReader" /> class, which reads resource information from XML resource (.resx) files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base functionality for reading data from resource files.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -41,8 +48,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to close a network connection or a file, if necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the resource reader after releasing any resources associated with it.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -59,9 +72,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IDictionaryEnumerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because <see cref="T:System.Resources.IResourceReader" /> inherits the <see cref="T:System.Collections.IEnumerable" /> interface, it must also provide an implementation of the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method, which returns an <see cref="T:System.Collections.IEnumerator" /> object that can be used to enumerate a collection. Typically, <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> is implemented as an explicit interface implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a dictionary enumerator of the resources for this reader.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dictionary enumerator for the resources for this reader.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISecurityContextSecurityTokenCache" FullName="System.ServiceModel.Security.Tokens.ISecurityContextSecurityTokenCache">
   <TypeSignature Language="C#" Value="public interface ISecurityContextSecurityTokenCache" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISecurityContextSecurityTokenCache" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When implemented, this interface specifies a contract for a security context token cache.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddContext">
@@ -25,9 +29,13 @@
         <Parameter Name="token" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a security context security token to the token cache.</para>
+        </summary>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ClearContexts">
@@ -42,8 +50,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the token cache of content.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAllContexts">
@@ -60,10 +71,17 @@
         <Parameter Name="contextId" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of security context security token IDs that match a specified context ID.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic collection of <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />s.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
       </Docs>
     </Member>
     <Member MemberName="GetContext">
@@ -81,11 +99,19 @@
         <Parameter Name="generation" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <param name="generation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security context security token ID that matches a specified context ID and generation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</para>
+        </returns>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the generation.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAllContexts">
@@ -102,9 +128,13 @@
         <Parameter Name="contextId" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all tokens from the cache that match a given context ID.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveContext">
@@ -122,10 +152,15 @@
         <Parameter Name="generation" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <param name="contextId">To be added.</param>
-        <param name="generation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the token from the cache that matches a given context ID and generation.</para>
+        </summary>
+        <param name="contextId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified security context ID.</param>
+        <param name="generation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the generation.</param>
       </Docs>
     </Member>
     <Member MemberName="TryAddContext">
@@ -142,10 +177,17 @@
         <Parameter Name="token" Type="System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tries to add a token to the cache.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token was added successfully to the cache; otherwise, false. </para>
+        </returns>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</param>
       </Docs>
     </Member>
     <Member MemberName="UpdateContextCachingTime">
@@ -163,10 +205,15 @@
         <Parameter Name="expirationTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="expirationTime">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the expiration date for a token in the cache.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.Tokens.SecurityContextSecurityToken" />.</param>
+        <param name="expirationTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new expiration time and date.</param>
       </Docs>
     </Member>
   </Members>

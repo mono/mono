@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlInputFile" FullName="System.Web.UI.HtmlControls.HtmlInputFile">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlInputFile : System.Web.UI.HtmlControls.HtmlInputControl, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -22,8 +23,29 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>This class implements the required methods to handle file uploads to the server as an HTML control.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> server control to handle uploading binary or text files from a browser client to the server. File upload works with Microsoft Internet Explorer version 3.02 or later.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control is designed to be used only in postback scenarios and not in asynchronous postback scenarios during partial-page rendering. When you use a <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control inside an <see cref="T:System.Web.UI.UpdatePanel" /> control, the file must be uploaded by using a control that is a <see cref="T:System.Web.UI.PostBackTrigger" /> object for the panel. <see cref="T:System.Web.UI.UpdatePanel" /> controls are used to update selected regions of a page instead of updating the whole page with a postback. For more information, see <format type="text/html"><a href="29a2265d-9674-4c19-b70e-e5560ee9689a">UpdatePanel Control Overview</a></format> and <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+      </block>
+      <para>To specify the file to upload, enter the full path to the file (for example, "C:\MyFiles\Test.txt") in the text box of the control. You can also select the file by clicking the <ui>Browse</ui> button and then locating it in the <ui>Choose file</ui> dialog box.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Enctype" /> property of an <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control must be set to "multipart/form-data" for this control to work properly.</para>
+      </block>
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control does not have a built-in way to post back to the server. To upload the file to the server, use the <see cref="M:System.Web.HttpPostedFile.SaveAs(System.String)" /> method of the <see cref="T:System.Web.HttpPostedFile" /> object contained in the <see cref="P:System.Web.UI.HtmlControls.HtmlInputFile.PostedFile" /> property. This operation is usually done in an event-handling method, such as for a button click.</para>
+      <block subset="none" type="note">
+        <para>When you use the <see cref="M:System.Web.HttpPostedFile.SaveAs(System.String)" /> method of the <see cref="T:System.Web.HttpPostedFile" /> class, make sure to specify a rooted path (for example, "C:\MyFiles\Test.txt"). The behavior of the <see cref="M:System.Web.HttpPostedFile.SaveAs(System.String)" /> method can be specified in the <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">httpRuntime Element (ASP.NET Settings Schema)</a></format> configuration section with the requireRootedSaveAsPath attribute. The default value of this attribute is true. If you set this attribute to false, then using the <see cref="M:System.Web.HttpPostedFile.SaveAs(System.String)" /> method with no path specified will attempt to place the file in the <paramref name="systemroot" /> \system32\inetsrv directory. By default, this directory is write-protected; therefore, the file can not be saved there. Make sure to provide write permission for the account used by ASP.NET for the directory where you want to store the file. </para>
+      </block>
+      <para>When uploading large files, use the maxRequestLength attribute of the <format type="text/html"><a href="E9B81350-8AAF-47CC-9843-5F7D0C59F369">&lt;httpRuntime&gt;</a></format> element to increase the maximum allowable file size. A DNS error is generated in the browser when the file exceeds the specified size. You might also receive the following error message when uploading large files: </para>
+      <para>aspnet_wp.exe (PID: 1520) was recycled because memory consumption exceeded 460 MB (60 percent of available RAM).</para>
+      <para>If you encounter this error message, increase the value of the memoryLimit attribute in the <format type="text/html"><a href="4B8FE20E-74C8-4566-B72C-CE5F83C8E32D">&lt;processModel&gt;</a></format> element of the Machine.config file.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlInputFile.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows programmatic access to the HTML &lt;input type= file&gt; element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +54,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Type" /> </para>
+              </term>
+              <description>
+                <para>The "file" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +98,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the file type that can be uploaded to the server. For example, to restrict the selection to images, set this property to "image/*".</para>
+          <block subset="none" type="note">
+            <para>Support for this property is browser-dependent. Check your browser to determine whether it supports this property. It is recommended that you use server-side code to ensure that the file is of the expected type.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a comma-separated list of MIME encodings used to constrain the file types the user can select.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,11 +138,23 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control implements the <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface, which has two methods: <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> and <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" />. The <see cref="M:System.Web.UI.HtmlControls.HtmlInputFile.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is called by the <see cref="M:System.Web.UI.HtmlControls.HtmlInputFile.System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method and always returns false, indicating that the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control's state is not managed by the ASP.NET page framework.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputFile.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the postback data for the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always returns false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
     </Member>
     <Member MemberName="MaxLength">
@@ -94,9 +165,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify a limit for the number of characters that can be entered for the path to the file to upload.</para>
+          <block subset="none" type="note">
+            <para>Support for this property is browser-dependent. Check your browser to determine whether it supports this property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum length of the file path for the file to upload from the client computer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -125,9 +205,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no encoding is specified for the Web page's <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control, the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Enctype" /> property is set to "multipart/form-data".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event for the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="PostedFile">
@@ -138,9 +225,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpPostedFile" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Browser security restrictions prevent this value from being maintained across multiple requests.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets access to the uploaded file specified by a client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -166,8 +259,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control implements the <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface, which has two methods: <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> and <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" />. The <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method does not participate in the processing of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control and is included to complete the interface implementation.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputFile.RaisePostDataChangedEvent" /> method is used primarily by control developers to extend the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control that the state of the control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -178,9 +278,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the width of the text box in which to enter the file path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the text box in which the file path is entered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,11 +316,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control's state has changed as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -229,8 +346,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -249,9 +372,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlInputFile.Value" /> property retrieves the full path of the file on the client's computer (for example "C:\MyFiles\Test.txt"). This is useful when you need to know where the file is stored on the computer submitting the file. This property is also commonly used to determine the original file name. To get the original file name, parse the value of this property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlInputFile.Value" /> property is read-only. If you attempt to assign a value to this property, a <see cref="T:System.NotSupportedException" /> is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full path of the file on the client's computer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

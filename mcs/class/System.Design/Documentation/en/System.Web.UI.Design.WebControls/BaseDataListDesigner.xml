@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BaseDataListDesigner" FullName="System.Web.UI.Design.WebControls.BaseDataListDesigner">
   <TypeSignature Language="C#" Value="public abstract class BaseDataListDesigner : System.Web.UI.Design.TemplatedControlDesigner, System.Web.UI.Design.IDataSourceProvider" />
   <AssemblyInfo>
@@ -14,8 +15,39 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a designer host, when the user switches from Source to Design view, the markup source code that describes a control derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> abstract class is parsed and a design-time version of the control is created on the design surface. When the user switches back to Source view, the design-time control is persisted to markup source code and edited into the markup for the Web page. The <see cref="T:System.Web.UI.Design.WebControls.BaseDataListDesigner" /> abstract class serves as a base class for components that provide design-time support for controls that are derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> in a designer host.</para>
+      <para>The <see cref="T:System.Web.UI.Design.WebControls.BaseDataListDesigner" /> class properties provide the following functionality:</para>
+      <para>The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.ActionLists" /> property returns a <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" />  object, which typically contains an object that is derived from the <see cref="T:System.ComponentModel.Design.DesignerActionList" /> class for each level in the inheritance tree of the designer. </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataKeyField" />, <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataMember" />, <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataSource" />, and <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataSourceID" /> properties provide access to the corresponding properties of the associated control. </para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataSourceDesigner" /> property provides access to the designer of the data source of the associated control. The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DesignerView" /> property gets the default view of the data source. </para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.UI.Design.WebControls.BaseDataListDesigner" /> class methods provide the following functionality:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Initialize(System.ComponentModel.IComponent)" /> method prepares the designer to view, edit, and design the associated control. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.InvokePropertyBuilder(System.Int32)" /> method invokes a component editor for the control. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.PreFilterProperties(System.Collections.IDictionary)" /> method is used to add, remove, or shadow design-time properties of the associated control.</para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetDesignTimeDataSource" /> method generates an object that can be used as a data source at design time. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetSelectedDataSource" /> method gets the data source from the container of the associated control. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetResolvedSelectedDataSource" /> method gets the data source from the control container, resolved to a specific data member. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetTemplateContainerDataSource(System.String)" /> method gets the data source of the template container.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnComponentChanged(System.Object,System.ComponentModel.Design.ComponentChangedEventArgs)" /> method is called when there is a change to the associated control. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnDataSourceChanged" /> method is called when the associated control data source has changed. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnSchemaRefreshed" /> method is called when the schema of the associated control data source changes. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnAutoFormatApplied(System.Web.UI.Design.DesignerAutoFormat)" /> method is called when an automatic formatting scheme has been applied.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnStylesChanged" /> and <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnTemplateEditingVerbsChanged" /> methods can be overridden to implement functionality that should occur when an associated control style has changed or when the designer template-editing verbs have changed, respectively. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnPropertyBuilder(System.Object,System.EventArgs)" /> method handles the property-builder event. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for components that provide design-time support in a designer host for Web server controls that are derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +55,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework internally constructs a new instance of the <see cref="T:System.Web.UI.Design.WebControls.BaseDataListDesigner" /> class when it creates the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class or a copy of that control on the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.WebControls.BaseDataListDesigner" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,9 +76,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataKeyField" /> property provides access from the designer to the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataKeyField" /> property of the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class. The <see cref="P:System.Web.UI.WebControls.BaseDataList.DataKeyField" /> indicates the primary key of the data source that is bound to the associated control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the data key field of the associated control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,9 +98,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataMember" /> property provides access from the designer to the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataMember" /> property of the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class. The <see cref="P:System.Web.UI.WebControls.BaseDataList.DataMember" /> indicates the table or element of the data source that is bound to the associated control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the data member field of the associated control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +120,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataSource" /> property provides access from the designer to the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> property of the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the data source property of the associated control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,9 +161,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class has a <see cref="P:System.ComponentModel.IComponent.Site" /> property that implements the <see cref="T:System.ComponentModel.Design.IDesignerHost" /> interface, the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Dispose(System.Boolean)" /> method disconnects the <see cref="E:System.ComponentModel.Design.IDesignerHost.LoadComplete" /> event of the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> object. </para>
+          <para>If the <see cref="P:System.ComponentModel.IComponent.Site" /> implements the <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> method, the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Dispose(System.Boolean)" /> disconnects the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentAdded" />, <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRemoving" />, and <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRemoved" /> events. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Dispose(System.Boolean)" /> also disconnects the <see cref="E:System.Web.UI.Design.DataSourceDesigner.DataSourceChanged" /> and <see cref="E:System.Web.UI.Design.DataSourceDesigner.SchemaRefreshed" /> events of the <see cref="T:System.Web.UI.Design.WebControls.BaseDataListDesigner" /> object. It finally calls the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Dispose(System.Boolean)" /> base method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources that are used by the designer and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -168,9 +232,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetSelectedDataSource" /> method uses the <see cref="M:System.Web.UI.Design.DesignTimeData.GetSelectedDataSource(System.ComponentModel.IComponent,System.String,System.String)" /> method to construct a data source from the object that is specified by the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> and <see cref="P:System.Web.UI.WebControls.BaseDataList.DataMember" /> properties of the associated control derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data source component from the associated control container, resolved to a specific data member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object implementing an <see cref="T:System.Collections.IEnumerable" /> interface containing the design-time <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> of the associated control, resolved to the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataMember" /> parameter; otherwise, null if a data source is not found.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +258,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetSelectedDataSource" /> method uses the <see cref="M:System.Web.UI.Design.DesignTimeData.GetSelectedDataSource(System.ComponentModel.IComponent,System.String)" /> method to construct a data source from the object that is specified by the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> property of the associated control derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data source component from the associated control container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object implementing an <see cref="T:System.Collections.IEnumerable" /> interface containing the design-time <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> property of the associated control; otherwise, null if a data source is not found.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -205,9 +287,18 @@
       </Parameters>
       <Docs>
         <param name="template_name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetTemplateContainerDataSource(System.String)" /> method calls the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.GetResolvedSelectedDataSource" /> method to construct a data source from the object that is specified by the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> and <see cref="P:System.Web.UI.WebControls.BaseDataList.DataMember" /> properties of the associated control derived from <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data source of the template's container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements an <see cref="T:System.Collections.IEnumerable" /> interface containing a design-time <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -224,9 +315,18 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <param name="component">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer host calls the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Initialize(System.ComponentModel.IComponent)" /> method when it is ready to use the designer to render the control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class. The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Initialize(System.ComponentModel.IComponent)" /> method and its base methods configure properties and connect to events that are necessary for the operation of the designer.</para>
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Initialize(System.ComponentModel.IComponent)" /> connects to the design-time data source and updates the design-time markup. If the <see cref="P:System.ComponentModel.IComponent.Site" /> property implements the <see cref="T:System.ComponentModel.Design.IComponentChangeService" /> interface, the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.Initialize(System.ComponentModel.IComponent)" /> connects the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentAdded" />, <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRemoving" />, and <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRemoved" /> events. </para>
+          <para>The <paramref name="component" /> parameter is the control, derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" />, that is associated with this designer, or a copy of that control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares the designer to view, edit, and design the associated control.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A control derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" />, which implements an <see cref="T:System.ComponentModel.IComponent" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,8 +348,14 @@
       </Parameters>
       <Docs>
         <param name="initial_page">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.InvokePropertyBuilder(System.Int32)" /> method creates a <see cref="T:System.Web.UI.Design.WebControls.DataGridComponentEditor" /> or <see cref="T:System.Web.UI.Design.WebControls.DataListComponentEditor" /> object, and then invokes the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListComponentEditor.EditComponent(System.ComponentModel.ITypeDescriptorContext,System.Object,System.Windows.Forms.IWin32Window)" /> method of the component editor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes a component editor for the associated control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAutoFormat">
@@ -263,10 +369,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnAutoFormat(System.Object,System.EventArgs)" /> method is obsolete and has no functionality.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handles the AutoFormat event.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that raised the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -284,10 +398,18 @@
         <Parameter Name="e" Type="System.ComponentModel.Design.ComponentChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnComponentChanged(System.Object,System.ComponentModel.Design.ComponentChangedEventArgs)" /> method is called when the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentChanged" /> event of a control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class executes. Typically, this is in response to a property change on the control (for example, a <ui>Properties</ui> grid change). If the <see cref="P:System.Web.UI.Design.WebControls.BaseDataListDesigner.DataSource" /> object to which the control is bound is changed, the control is redrawn on the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when there is a change to the associated control.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that is the source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ComponentChangedEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -306,8 +428,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnDataSourceChanged" /> base method connects the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class to the current data source, and if that is different from the data source to which the control was connected, the method updates the design-time markup. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the data source for the associated control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnPropertyBuilder">
@@ -321,10 +449,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnPropertyBuilder(System.Object,System.EventArgs)" /> method invokes a component editor for the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class. It creates a <see cref="T:System.Web.UI.Design.WebControls.DataGridComponentEditor" /> or <see cref="T:System.Web.UI.Design.WebControls.DataListComponentEditor" /> object, and then invokes the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListComponentEditor.EditComponent(System.ComponentModel.ITypeDescriptorContext,System.Object,System.Windows.Forms.IWin32Window)" /> method of the component editor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the method that handles the property-builder event.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -343,8 +479,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnStylesChanged" /> method can serve as notification that a style of the associated control that is derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class has changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Can be overridden to implement functionality that should occur when a style of the associated control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnTemplateEditingVerbsChanged">
@@ -355,8 +497,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.OnTemplateEditingVerbsChanged" /> method can be implemented to perform additional processing, such recording that a change has occurred, when the template-editing verbs change.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Can be overridden to implement functionality that should occur when the designer template-editing verbs have changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -373,9 +521,17 @@
         <Parameter Name="properties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Control designers use methods that are derived from the <see cref="M:System.ComponentModel.Design.ComponentDesigner.PreFilterProperties(System.Collections.IDictionary)" /> method to shadow various control properties with corresponding design-time properties that the designer implements, and to add properties to or remove properties from the <ui>Properties</ui> grid.</para>
+          <para>For controls that are derived from the <see cref="T:System.Web.UI.WebControls.BaseDataList" /> class, the <see cref="M:System.Web.UI.Design.WebControls.BaseDataListDesigner.PreFilterProperties(System.Collections.IDictionary)" /> creates design-time properties to shadow the <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSource" />, <see cref="P:System.Web.UI.WebControls.BaseDataList.DataMember" />, <see cref="P:System.Web.UI.WebControls.BaseDataList.DataKeyField" />, and <see cref="P:System.Web.UI.WebControls.BaseDataList.DataSourceID" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the designer to remove properties from or add additional properties to the display in the <ui>Properties</ui> grid or to shadow properties of the associated control. </para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection implementing an <see cref="T:System.Collections.IDictionary" /> interface of the added and shadowed properties. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

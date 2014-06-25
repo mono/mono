@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileBase" FullName="System.Web.Profile.ProfileBase">
   <TypeSignature Language="C#" Value="public class ProfileBase : System.Configuration.SettingsBase" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET uses the <see cref="T:System.Web.Profile.ProfileBase" /> class to create the class used for the user profile. When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. Strongly typed accessors are added to the ProfileCommon class for each property defined in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section. The strongly typed accessors of the ProfileCommon class call the <see cref="M:System.Web.Profile.ProfileBase.GetPropertyValue(System.String)" /> and <see cref="M:System.Web.Profile.ProfileBase.SetPropertyValue(System.String,System.Object)" /> methods of the <see cref="T:System.Web.Profile.ProfileBase" /> base class to retrieve and set profile property values, respectively. An instance of the ProfileCommon class is set as the value of the <see cref="P:System.Web.HttpContext.Profile" /> property for the ASP.NET application.</para>
+      <para>To create an instance of a user profile in an ASP.NET application, it is recommended that you use the <see cref="Overload:System.Web.Profile.ProfileBase.Create" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides untyped access to profile property values and information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,19 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET uses the <see cref="T:System.Web.Profile.ProfileBase" /> class to create the class used for the user profile. When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. Strongly typed accessors are added to the ProfileCommon class for each property defined in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section. The strongly typed accessors of the ProfileCommon class call the <see cref="M:System.Web.Profile.ProfileBase.GetPropertyValue(System.String)" /> and <see cref="M:System.Web.Profile.ProfileBase.SetPropertyValue(System.String,System.Object)" /> methods of the <see cref="T:System.Web.Profile.ProfileBase" /> base class to retrieve and set profile property values, respectively. An instance of the ProfileCommon class is set as the value of the <see cref="P:System.Web.HttpContext.Profile" /> property for the ASP.NET application.</para>
+          <block subset="none" type="note">
+            <para>The base class used to generate the class stored in the <see cref="P:System.Web.HttpContext.Profile" /> property can be overridden using the inherits attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> section of the configuration file. In this case you would specify a custom class that inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> base class.</para>
+          </block>
+          <para>This constructor is not intended to be used from application code. To create an instance of a user profile, use the <see cref="Overload:System.Web.Profile.ProfileBase.Create" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.Profile.ProfileBase" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,11 +55,22 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileBase.Create(System.String)" /> method creates and initializes a new profile instance and is useful for applications that use a custom profile object or manage user profiles in a non-ASP.NET environment.</para>
+          <para>This overload of the <see cref="M:System.Web.Profile.ProfileBase.Create(System.String)" /> method assumes that the specified user name is an authenticated user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by ASP.NET to create an instance of a profile for the specified user name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.Profile.ProfileBase" /> that represents the profile for the specified user.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to create a profile for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,12 +87,24 @@
         <Parameter Name="isAuthenticated" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <param name="isAuthenticated">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileBase.Create(System.String,System.Boolean)" /> method creates and initializes a new profile instance and is useful for applications that use a custom profile object or manage user profiles in a non-ASP.NET environment.</para>
+          <para>This overload of the <see cref="M:System.Web.Profile.ProfileBase.Create(System.String,System.Boolean)" /> method can be used to create a profile for an authenticated user or an anonymous user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by ASP.NET to create an instance of a profile for the specified user name. Takes a parameter indicating whether the user is authenticated or anonymous.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileBase" /> object that represents the profile for the specified user.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to create a profile for.</param>
+        <param name="isAuthenticated">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the user is authenticated; false to indicate the user is anonymous.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,11 +120,21 @@
         <Parameter Name="groupName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="groupName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Profile properties can be separated into groups for better organization. The <see cref="M:System.Web.Profile.ProfileBase.GetProfileGroup(System.String)" /> property can be used to retrieve a group of properties by the group name. You can also access a profile property in a group by specifying the group name as a member of the Profile property available on each page. For example, the ZipCode profile property that is a member of the Address profile group could be accessed using Profile.Address.ZipCode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a group of properties identified by a group name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileGroupBase" /> object for a group of properties configured with the specified group name.</para>
+        </returns>
+        <param name="groupName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the group of properties.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,11 +150,22 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET uses the <see cref="T:System.Web.Profile.ProfileBase" /> class to create the class used for the user profile. When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. Strongly typed accessors are added to the ProfileCommon class for each property defined in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section. The strongly typed accessors of the ProfileCommon class call the <see cref="M:System.Web.Profile.ProfileBase.GetPropertyValue(System.String)" /> method to retrieve untyped values from the <see cref="T:System.Web.Profile.ProfileProvider" /> that the generated accessor then casts as the specified type and returns as the property value.</para>
+          <para>You can use the <see cref="M:System.Web.Profile.ProfileBase.GetPropertyValue(System.String)" /> method to retrieve property values of the user profile for your application by name. Returned values are untyped and must be cast as the specific object type when retrieved. For strongly typed access to profile property values, you can access the property by name as a member of the Profile property available on each page, for example, Profile.CustomerAddress.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of a profile property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified profile property, typed as object.</para>
+        </returns>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the profile property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -120,11 +182,19 @@
         <Parameter Name="isAuthenticated" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <param name="isAuthenticated">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be used from your code. Use one of the <see cref="Overload:System.Web.Profile.ProfileBase.Create" /> overloads to create an instance of the user profile.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the profile property values and information for the current user.</para>
+        </summary>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to initialize the profile for.</param>
+        <param name="isAuthenticated">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the user is authenticated; false to indicate the user is anonymous.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,10 +207,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Anonymous access to the user profile is enabled using the <format type="text/html"><a href="2bd927ef-9057-4703-9c55-4cfb6d7d0929">anonymousIdentification</a></format> configuration section and the allowAnonymous attribute of the <format type="text/html"><a href="d3ea033b-751b-4bdc-8917-a5d44560808e">add</a></format> configuration element used to specify profile properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user profile is for an anonymous user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,10 +229,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.ProfileBase.IsDirty" /> property can be used by a profile provider during the <see cref="M:System.Configuration.SettingsBase.Save" /> method to determine whether properties that are made up of primitive types, strings, or <see cref="T:System.DateTime" /> objects have been changed. Changed properties are then updated by the profile provider in the <see cref="M:System.Configuration.SettingsBase.Save" /> method. The <see cref="M:System.Configuration.SettingsBase.Save" /> method is automatically called at the end of page execution if the <see cref="P:System.Web.Profile.ProfileManager.AutomaticSaveEnabled" /> property is true</para>
+          <para>A profile provider called in the <see cref="M:System.Configuration.SettingsBase.Save" /> method cannot explicitly determine whether a profile property with a custom class type or a complex type, such as a collection, has changed. You can use the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event to determine whether a custom object has been modified and to continue with the automatic save for modified objects or cancel the automatic save if no objects have been modified. The default behavior of the <see cref="T:System.Web.Profile.ProfileBase" /> class is to set the <see cref="P:System.Web.Profile.ProfileBase.IsDirty" /> property to true for properties that are of a custom or complex type the first time the property is accessed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether any of the profile properties have been modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,10 +272,16 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property value is only modified by the default profile provider. Changes made to profile properties by a provider other than the default profile provider do not affect the value of the <see cref="P:System.Web.Profile.ProfileBase.LastActivityDate" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the most recent date and time that the profile was read or modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -205,10 +294,16 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property value is only modified by the default profile provider. Changes made to profile properties by a provider other than the default profile provider do not affect the value of the <see cref="P:System.Web.Profile.ProfileBase.LastUpdatedDate" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the most recent date and time that the profile was modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,10 +316,16 @@
         <ReturnType>System.Configuration.SettingsPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to get information about the profile properties configured for an application, including property names and types. You can also reference the <see cref="T:System.Web.Profile.ProfileProvider" /> of each property. A <see cref="T:System.Web.Profile.ProfileProvider" /> manages storage and retrieval of property values to and from the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Configuration.SettingsProperty" /> objects for each property in the profile.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,9 +339,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileBase.Save" /> method writes modified profile property values to the data source. The profile provider can reduce the amount of activity at the data source by performing updates only when the <see cref="P:System.Web.Profile.ProfileBase.IsDirty" /> property is set to true. This is the case for the default <see cref="T:System.Web.Profile.SqlProfileProvider" />. After the <see cref="M:System.Web.Profile.ProfileBase.Save" /> method has saved the property values to the data source, <see cref="P:System.Web.Profile.ProfileBase.IsDirty" /> is set to false.</para>
+          <para>You can use the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event to implement custom logic that determines whether a profile property with a custom type or a complex type has been modified and continue with the automatic save for modified objects or cancel the automatic save if no objects have been modified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the profile data source with changed profile property values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -257,11 +365,20 @@
         <Parameter Name="propertyValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added.</param>
-        <param name="propertyValue">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET uses the <see cref="T:System.Web.Profile.ProfileBase" /> class to create the class used for the user profile. When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. Strongly typed accessors are added to the ProfileCommon class for each property defined in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section. The strongly typed accessors of the ProfileCommon class call the <see cref="M:System.Web.Profile.ProfileBase.SetPropertyValue(System.String,System.Object)" /> method to pass property values to the <see cref="T:System.Web.Profile.ProfileProvider" /> to be stored at the data source.</para>
+          <para>You can use the <see cref="M:System.Web.Profile.ProfileBase.SetPropertyValue(System.String,System.Object)" /> method to assign property values in the user profile for your application by name. Values are untyped, and type checking will be done at run time, not compile time. For strongly typed access to profile property values, you can access the property by name as a member of the Profile property that is available on each page, for example, Profile.CustomerAddress.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of a profile property.</para>
+        </summary>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to set.</param>
+        <param name="propertyValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -274,10 +391,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.ProfileBase.UserName" /> property returns either the name of the authenticated user that the profile is associated with or the anonymous user identifier assigned to the profile if the <see cref="P:System.Web.Profile.ProfileBase.IsAnonymous" /> property is true.</para>
+          <para>Anonymous access to the user profile is enabled using the <format type="text/html"><a href="2bd927ef-9057-4703-9c55-4cfb6d7d0929">anonymousIdentification</a></format> configuration section and the allowAnonymous attribute of the <format type="text/html"><a href="d3ea033b-751b-4bdc-8917-a5d44560808e">add</a></format> configuration element used to specify profile properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user name for the profile.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

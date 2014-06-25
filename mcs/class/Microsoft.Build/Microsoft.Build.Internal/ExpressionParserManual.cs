@@ -60,14 +60,13 @@ namespace Microsoft.Build.Internal.Expressions
 			while (start < end) {
 				int bak = start;
 				ret.Add (ParseSingle (ref start, end));
-				SkipSpaces (ref start);
 				if (bak == start)
 					throw new Exception ("Parser failed to progress token position: " + source);
 			}
 			return ret;
 		}
 		
-		static readonly char [] token_starters = "$@%(),".ToCharArray ();
+		static readonly char [] token_starters = "$@%(),'\"".ToCharArray ();
 		
 		Expression ParseSingle (ref int start, int end)
 		{
@@ -101,7 +100,23 @@ namespace Microsoft.Build.Internal.Expressions
 					ret = EvaluateItemExpression (start, last);
 				start = last + 1;
 				return ret;
-				
+			
+			case '\'':
+			case '"':
+				var quoteChar = source [start];
+				start++;
+				last = FindMatchingCloseQuote (quoteChar, start, end);
+				if (last < 0) {
+					if (validation_type == ExpressionValidationType.StrictBoolean)
+						throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+					else {
+						start--;
+						goto default; // treat as raw literal to the section end
+					}
+				}
+				ret = new QuotedExpression () { QuoteChar = quoteChar, Contents = Parse (start, last) };
+				start = last + 1;
+				return ret;
 			// Below (until default) are important only for Condition evaluation
 			case '(':
 				if (validation_type == ExpressionValidationType.LaxString)
@@ -134,7 +149,7 @@ namespace Microsoft.Build.Internal.Expressions
 				return ret;
 			}
 		}
-		
+
 		int FindMatchingCloseParen (int start, int end)
 		{
 			int n = 0;
@@ -148,7 +163,21 @@ namespace Microsoft.Build.Internal.Expressions
 			}
 			return -1; // invalid
 		}
-		
+
+		int FindMatchingCloseQuote (char quote, int start, int end)
+		{
+			int n = 0;
+			for (int i = start; i < end; i++) {
+				if (i < end + 1 && source [i] == '\\' && (source [i + 1] == quote || source [i + 1] == '\\'))
+					n += 2;
+				else if (source [i] == quote) {
+					if (n-- == 0)
+						return i;
+				}
+			}
+			return -1; // invalid
+		}
+
 		static readonly string spaces = " \t\r\n";
 		
 		void SkipSpaces (ref int start)
@@ -166,6 +195,7 @@ namespace Microsoft.Build.Internal.Expressions
 				// property access without member specification
 				int parenAt = source.IndexOf ('(', start, end - start);
 				string name = parenAt < 0 ? source.Substring (start, end - start) : source.Substring (start, parenAt - start);
+				name = name.Trim ();
 				var access = new PropertyAccess () {
 					Name = new NameToken () { Name = name },
 					TargetType = PropertyTargetType.Object
@@ -181,6 +211,7 @@ namespace Microsoft.Build.Internal.Expressions
 				int mstart = dotAt + 1;
 				int parenAt = source.IndexOf ('(', mstart, end - mstart);
 				string name = parenAt < 0 ? source.Substring (mstart, end - mstart) : source.Substring (mstart, parenAt - mstart);
+				name = name.Trim ();
 				var access = new PropertyAccess () {
 					Name = new NameToken () { Name = name },
 					TargetType = PropertyTargetType.Object,
@@ -196,10 +227,11 @@ namespace Microsoft.Build.Internal.Expressions
 				string type = source.Substring (start, colonsAt - start);
 				if (type.Length < 2 || type [0] != '[' || type [type.Length - 1] != ']')
 					throw new InvalidProjectFileException (string.Format ("Static function call misses appropriate type name surrounded by '[' and ']' at {0} in \"{1}\"", start, source));
-				type = type.Substring (1, type.Length - 2);
+				type = type.Substring (1, type.Length - 2).Trim ();
 				start = colonsAt + 2;
 				int parenAt = source.IndexOf ('(', start, end - start);
 				string member = parenAt < 0 ? source.Substring (start, end - start) : source.Substring (start, parenAt - start);
+				member = member.Trim ();
 				if (member.Length == 0)
 					throw new InvalidProjectFileException ("Static member name is missing");
 				var access = new PropertyAccess () {
@@ -228,6 +260,7 @@ namespace Microsoft.Build.Internal.Expressions
 					if (source [start] != ',')
 						throw new InvalidProjectFileException (string.Format ("invalid function call arguments specification. ',' is expected, got '{0}'", source [start]));
 					start++;
+					SkipSpaces (ref start);
 				}
 				args.Add (ParseSingle (ref start, end));
 			} while (true);
@@ -258,7 +291,7 @@ namespace Microsoft.Build.Internal.Expressions
 		MetadataAccessExpression EvaluateMetadataExpression (int start, int end)
 		{
 			int idx = source.IndexOf ('.', start, end - start);
-			string item = idx < 0 ? null : source.Substring (start, idx);
+			string item = idx < 0 ? null : source.Substring (start, idx - start);
 			string meta = idx < 0 ? source.Substring (start, end - start) : source.Substring (idx + 1, end - idx - 1);
 			var access = new MetadataAccess () {
 					ItemType = item == null ? null : new NameToken () { Column = start, Name = item },

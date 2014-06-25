@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICodeDomDesignerReload" FullName="System.ComponentModel.Design.Serialization.ICodeDomDesignerReload">
   <TypeSignature Language="C#" Value="public interface ICodeDomDesignerReload" />
   <AssemblyInfo>
@@ -7,8 +8,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> can implement this interface to support optimized reloading by the designer. When a designer reparses a file for display, it can use this interface to improve performance.</para>
+      <para>To support this performance optimization method, the designer can pass a <see cref="T:System.CodeDom.CodeCompileUnit" /> that represents the document code to the <see cref="M:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload.ShouldReloadDesigner(System.CodeDom.CodeCompileUnit)" /> method. <see cref="M:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload.ShouldReloadDesigner(System.CodeDom.CodeCompileUnit)" /> returns a value that indicates whether the code has changed and typically, whether your code should reload the designer. Otherwise, it is unnecessary to spend time reloading the designer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that can be used to optimize the reloading of a designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ShouldReloadDesigner">
@@ -21,10 +29,17 @@
         <Parameter Name="newTree" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="newTree">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the designer should reload in order to import the specified compile unit correctly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the designer should reload; otherwise, false.</para>
+        </returns>
+        <param name="newTree">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> containing the designer document code. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

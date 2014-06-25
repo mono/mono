@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeGeneratorOptions" FullName="System.CodeDom.Compiler.CodeGeneratorOptions">
   <TypeSignature Language="C#" Value="public class CodeGeneratorOptions" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeGeneratorOptions extends System.Object" />
@@ -15,8 +16,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> is passed to the code generation methods of an <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation to specify options used during code generation.</para>
+      <para>The <see cref="P:System.CodeDom.Compiler.CodeGeneratorOptions.IndentString" /> property specifies the string to use for each spacing indentation. The <see cref="P:System.CodeDom.Compiler.CodeGeneratorOptions.BracingStyle" /> property specifies the placement style for braces indicating the boundaries of code blocks. The <see cref="P:System.CodeDom.Compiler.CodeGeneratorOptions.ElseOnClosing" /> property specifies whether to append an else, catch, or finally block, including brackets, at the closing line of each if or try block. The <see cref="P:System.CodeDom.Compiler.CodeGeneratorOptions.BlankLinesBetweenMembers" /> property specifies whether to insert blank lines between members.</para>
+      <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation can provide custom code generation options which you can set or pass data to using the <see cref="P:System.CodeDom.Compiler.CodeGeneratorOptions.Item(System.String)" /> dictionary indexer, which a code generator can search through to locate additional code generation options.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of options used by a code generator.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +44,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CodeGeneratorOptions" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BlankLinesBetweenMembers">
@@ -50,9 +66,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to insert blank lines between members.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BracingStyle">
@@ -70,9 +89,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is Block, which indicates that code should be generated so that braces start on the same line as the statement or declaration that they are associated with. A property value of C indicates that braces start on the line following the statement or declaration that they are associated with.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style to use for bracing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ElseOnClosing">
@@ -90,9 +115,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to append an else, catch, or finally block, including brackets, at the closing line of each previous if or try block.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IndentString">
@@ -110,9 +138,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is "/----/" (four spaces).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string to use for indentations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -154,9 +188,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default generates members by their type, for example; field, member, constructor, or property.  A code generator can use the <see cref="P:System.CodeDom.Compiler.CodeGeneratorOptions.VerbatimOrder" /> property to inject #region blocks into code, thus changing the order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to generate members in the order in which they occur in member collections.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

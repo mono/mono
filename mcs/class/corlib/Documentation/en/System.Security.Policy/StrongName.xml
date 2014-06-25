@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StrongName" FullName="System.Security.Policy.StrongName">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class StrongName : System.Security.Policy.EvidenceBase, System.Security.Policy.IBuiltInEvidence, System.Security.Policy.IIdentityPermissionFactory" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit StrongName extends System.Security.Policy.EvidenceBase implements class System.Security.Policy.IBuiltInEvidence, class System.Security.Policy.IIdentityPermissionFactory" />
@@ -26,8 +27,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Policy.StrongName" /> class represents evidence of a unique, cryptographically strong name of a code assembly. The strong name consists of a public key, a given name, and a version. The public key corresponds to the publisher's private key which is kept secret, and with which the assembly must be signed in order for the strong name to be valid.</para>
+      <para>Strong names are typically assigned to assemblies using either <see cref="T:System.Reflection.AssemblyKeyFileAttribute" />, <see cref="T:System.Reflection.AssemblyKeyNameAttribute" /> or <see cref="T:System.Reflection.AssemblyDelaySignAttribute" /> in conjunction with the SN utility (see <format type="text/html"><a href="C1D2B532-1B8E-4C7A-8AC5-53B801135EC6">[&lt;topic://cpgrfstrongnameutilitysnexe&gt;]</a></format>).</para>
+      <para>
+        <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" /> uses this class to confirm that calling code is in a particular strong-named code assembly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the strong name of a code assembly as evidence for policy evaluation. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -46,11 +56,21 @@
         <Parameter Name="version" Type="System.Version" />
       </Parameters>
       <Docs>
-        <param name="blob">To be added: an object of type 'Security.Permissions.StrongNamePublicKeyBlob'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="version">To be added: an object of type 'Version'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="name" /> parameter can be null, but it cannot be an empty string ("").</para>
+          <para>For more information about strong names, see <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" /> and <see cref="T:System.Security.Permissions.StrongNamePublicKeyBlob" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Policy.StrongName" /> class with the strong name public key blob, name, and version.</para>
+        </summary>
+        <param name="blob">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Permissions.StrongNamePublicKeyBlob" /> of the software publisher. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The simple name section of the strong name. </param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Version" /> of the strong name. </param>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -67,9 +87,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an equivalent copy of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, identical copy of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateIdentityPermission">
@@ -88,10 +114,20 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <param name="evidence">To be added: an object of type 'Evidence'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The identity permission for a strong name can be used to determine whether calling code is in a particular strong named code assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" /> that corresponds to the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" /> for the specified <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> from which to construct the <see cref="T:System.Security.Permissions.StrongNameIdentityPermission" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -110,10 +146,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified strong name is equal to the current strong name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified strong name is equal to the current strong name; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The strong name to compare against the current strong name. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -130,9 +173,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -148,9 +197,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the simple name of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PublicKey">
@@ -166,9 +218,16 @@
         <ReturnType>System.Security.Permissions.StrongNamePublicKeyBlob</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Security.Permissions.StrongNamePublicKeyBlob'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A blob is cryptographic information that uniquely specifies the public key of the software publisher.</para>
+          <para>Blobs differ from certificates in that the blob only has information about the public key; the certificate also includes information that associates the name of the holder with the key as well as information to verify the certificate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Security.Permissions.StrongNamePublicKeyBlob" /> of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Security.Policy.IBuiltInEvidence.GetRequiredSize">
@@ -257,9 +316,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful during debugging to get an easy-to-read representation of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a string representation of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -275,9 +343,12 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Version'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Version" /> of the current <see cref="T:System.Security.Policy.StrongName" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

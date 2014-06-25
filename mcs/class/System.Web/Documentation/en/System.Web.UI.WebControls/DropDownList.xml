@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DropDownList" FullName="System.Web.UI.WebControls.DropDownList">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DropDownList : System.Web.UI.WebControls.ListControl, System.Web.UI.IPostBackDataHandler" />
   <AssemblyInfo>
@@ -25,8 +26,118 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeclarativeSyntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#Introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control to create a single-selection drop-down list control. You can control the appearance of the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control by setting the <see cref="P:System.Web.UI.WebControls.DropDownList.BorderColor" />, <see cref="P:System.Web.UI.WebControls.DropDownList.BorderStyle" />, and <see cref="P:System.Web.UI.WebControls.DropDownList.BorderWidth" /> properties.</para>
+      <para>To specify the items that you want to appear in the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control, place a <see cref="T:System.Web.UI.WebControls.ListItem" /> object for each entry between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.DropDownList" /> control also supports data binding. To bind the control to a data source, create a data source, such as a <see cref="T:System.Collections.ArrayList" /> object, that contains the items to display in the control. Then, use the <see cref="M:System.Web.UI.Control.DataBind" /> method to bind the data source to the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.DropDownList.SelectedIndex" /> property to programmatically determine the index of the item selected by the user from the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control. The index can then be used to retrieve the selected item from the Items collection of the control.</para>
+      <format type="text/html">
+        <a href="#Accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:DropDownList
+    AccessKey="string"
+    AppendDataBoundItems="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    AutoPostBack="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CausesValidation="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    CssClass="string"
+    DataMember="string"
+    DataSource="string"
+    DataSourceID="string"
+    DataTextField="string"
+    DataTextFormatString="string"
+    DataValueField="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDataBound="DataBound event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnSelectedIndexChanged="SelectedIndexChanged event handler"
+    OnTextChanged="TextChanged event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SelectedIndex="integer"
+    SelectedValue="string"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    ValidationGroup="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+            &lt;asp:ListItem
+                Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Selected="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Text="string"
+                Value="string"
+            /&gt;
+&lt;/asp:DropDownList&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a control that allows the user to select a single item from a drop-down list. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +146,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DropDownList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DropDownList" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,9 +170,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is used primarily by control developers when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.DropDownList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds HTML attributes and styles that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream that renders HTML contents to the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +194,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DropDownList.BorderColor" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +224,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.BorderStyle" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DropDownList.BorderStyle" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,9 +254,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.Unit" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.DropDownList.BorderWidth" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border width for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -136,9 +284,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.ControlCollection" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a collection to store child controls.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an <see cref="T:System.Web.UI.EmptyControlCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,11 +313,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ASP.NET page framework tracks all the server controls that return true from this method call, and then invokes the <see cref="M:System.Web.UI.WebControls.DropDownList.RaisePostDataChangedEvent" /> method on the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes postback data for the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control's state changes as a result of the postback event; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the posted collection that references the content to load.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of all incoming name values posted to the server.</param>
       </Docs>
     </Member>
     <Member MemberName="RaisePostDataChangedEvent">
@@ -177,8 +342,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ASP.NET page framework calls the <see cref="M:System.Web.UI.WebControls.DropDownList.RaisePostDataChangedEvent" /> method on a <see cref="T:System.Web.UI.WebControls.DropDownList" /> control when the <see cref="M:System.Web.UI.WebControls.DropDownList.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method indicates that the state of the list items has changed in the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control. The <see cref="M:System.Web.UI.WebControls.DropDownList.RaisePostDataChangedEvent" /> method calls the <see cref="M:System.Web.UI.WebControls.ListControl.OnSelectedIndexChanged(System.EventArgs)" /> method to raise the <see cref="E:System.Web.UI.WebControls.ListControl.SelectedIndexChanged" /> event. Control developers can override the <see cref="M:System.Web.UI.WebControls.ListControl.OnSelectedIndexChanged(System.EventArgs)" /> method to perform custom processing when the user selects items in the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control when postback occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RenderContents">
@@ -207,9 +378,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Int32" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DropDownList.SelectedIndex" /> property to programmatically specify or determine the index of the selected item from the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control. An item is always selected in the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control. You cannot clear the selection from every item in the list at the same time.</para>
+          <block subset="none" type="note">
+            <para>The indexes for the items in the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control are zero-based.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the selected item in the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -239,11 +419,19 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes posted data for the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the posted content is different from the last posting; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key value used to index an entry in the collection. </param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> that contains post information.  </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -258,8 +446,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control on postback.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToolTip">
@@ -298,8 +489,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.DropDownList" /> control does not support multiple selections and throws an <see cref="T:System.Web.HttpException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws an <see cref="T:System.Web.HttpException" /> exception because multiple selection is not supported for the <see cref="T:System.Web.UI.WebControls.DropDownList" /> control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

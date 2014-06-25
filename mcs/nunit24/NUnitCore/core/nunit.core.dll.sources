@@ -61,4 +61,5 @@ TestRunnerThread.cs
 TestSuite.cs
 TestSuiteBuilder.cs
 TextCapture.cs
+ThreadUtility.cs
 ThreadedTestRunner.cs

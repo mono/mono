@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContextMenuStrip" FullName="System.Windows.Forms.ContextMenuStrip">
   <TypeSignature Language="C#" Value="public class ContextMenuStrip : System.Windows.Forms.ToolStripDropDownMenu" />
   <AssemblyInfo>
@@ -20,9 +21,39 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ContextMenuStrip" /> replaces <see cref="T:System.Windows.Forms.ContextMenu" />. You can associate a <see cref="T:System.Windows.Forms.ContextMenuStrip" /> with any control, and a right mouse click automatically displays the shortcut menu. You can show a <see cref="T:System.Windows.Forms.ContextMenuStrip" /> programmatically by using the <see cref="M:System.Windows.Forms.ToolStripDropDown.Show" /> method. <see cref="T:System.Windows.Forms.ContextMenuStrip" /> supports cancelable <see cref="E:System.Windows.Forms.ToolStripDropDown.Opening" /> and <see cref="E:System.Windows.Forms.ToolStripDropDown.Closing" /> events to handle dynamic population and multiple-click scenarios. <see cref="T:System.Windows.Forms.ContextMenuStrip" /> supports images, menu-item check state, text, access keys, shortcuts, and cascading menus. </para>
+      <para>The following items are specifically designed to work seamlessly with both <see cref="T:System.Windows.Forms.ToolStripSystemRenderer" /> and <see cref="T:System.Windows.Forms.ToolStripProfessionalRenderer" /> in all orientations. They are available by default at design time for the <see cref="T:System.Windows.Forms.ContextMenuStrip" /> control:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.ToolStripMenuItem" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.ToolStripSeparator" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.ToolStripTextBox" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.ToolStripComboBox" /> </para>
+        </item>
+      </list>
+      <para>Shortcut menus are typically used to combine different menu items from a <see cref="T:System.Windows.Forms.MenuStrip" /> of a form that are useful for the user given the context of the application. For example, you can use a shortcut menu assigned to a <see cref="T:System.Windows.Forms.TextBox" /> control to provide menu items for changing the font of the text, finding text within the control, or Clipboard features for copying and pasting text. You can also expose new <see cref="T:System.Windows.Forms.ToolStripMenuItem" /> objects in a shortcut menu that are not located within a <see cref="T:System.Windows.Forms.MenuStrip" /> to provide situation-specific commands that are inappropriate for the <see cref="T:System.Windows.Forms.MenuStrip" /> to display.</para>
+      <para>Typically, a shortcut menu is displayed when a user clicks the right mouse button over a control or the form itself. Many visible controls, as well as the <see cref="T:System.Windows.Forms.Form" /> itself, have a <see cref="P:System.Windows.Forms.Control.ContextMenuStrip" /> property that binds the <see cref="T:System.Windows.Forms.ContextMenuStrip" /> class to the control that displays the shortcut menu. More than one control can use a <see cref="T:System.Windows.Forms.ContextMenuStrip" />.</para>
+      <para>Set the <see cref="P:System.Windows.Forms.ToolStripDropDownMenu.ShowCheckMargin" /> property to true to add space to the left of a <see cref="T:System.Windows.Forms.ToolStripMenuItem" /> for a check mark that shows that the menu item is enabled or selected. The <see cref="P:System.Windows.Forms.ToolStripDropDownMenu.ShowImageMargin" /> property is set to true by default. Use this space to the left of the <see cref="T:System.Windows.Forms.ToolStripMenuItem" /> to display an image for that menu item. </para>
+      <para>Although <see cref="T:System.Windows.Forms.ContextMenuStrip" /> replaces and adds functionality to the <see cref="T:System.Windows.Forms.ContextMenu" /> control of previous versions, <see cref="T:System.Windows.Forms.ContextMenu" /> is retained for both backward compatibility and future use if so desired.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a shortcut menu. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +61,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ContextMenuStrip" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +79,17 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to ensure that the <see cref="T:System.Windows.Forms.ContextMenuStrip" /> is disposed of properly, since it is not a child of the form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ContextMenuStrip" /> class and associates it with the specified container.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component that implements <see cref="T:System.ComponentModel.IContainer" /> that is the container of the <see cref="T:System.Windows.Forms.ContextMenuStrip" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,10 +105,18 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.ContextMenuStrip" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ContextMenuStrip" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -83,10 +132,11 @@
         <Parameter Name="visible" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="visible">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <param name="visible">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to make the control visible; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,10 +149,24 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Common uses of the <see cref="P:System.Windows.Forms.ContextMenuStrip.SourceControl" /> property include the following: </para>
+          <list type="bullet">
+            <item>
+              <para>Adding, removing, enabling, or disabling a menu item during the <see cref="E:System.Windows.Forms.ToolStripDropDown.Opening" /> event.</para>
+            </item>
+            <item>
+              <para>Deciding on modifications of a chosen command based on the control that last displayed the <see cref="T:System.Windows.Forms.ContextMenuStrip" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last control that caused this <see cref="T:System.Windows.Forms.ContextMenuStrip" /> to be displayed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

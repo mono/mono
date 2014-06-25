@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObservableCollection&lt;T&gt;" FullName="System.Collections.ObjectModel.ObservableCollection&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class ObservableCollection&lt;T&gt; : System.Collections.ObjectModel.Collection&lt;T&gt;, System.Collections.Specialized.INotifyCollectionChanged, System.ComponentModel.INotifyPropertyChanged" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ObservableCollection`1&lt;T&gt; extends System.Collections.ObjectModel.Collection`1&lt;!T&gt; implements class System.Collections.Specialized.INotifyCollectionChanged, class System.ComponentModel.INotifyPropertyChanged" />
@@ -29,8 +30,47 @@
   </Attributes>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In many cases the data that you work with is a collection of objects. For example, a common scenario in data binding is to use an <see cref="T:System.Windows.Controls.ItemsControl" /> such as a <see cref="T:System.Windows.Controls.ListBox" />, <see cref="T:System.Windows.Controls.ListView" />, or <see cref="T:System.Windows.Controls.TreeView" /> to display a collection of records.</para>
+      <para>You can enumerate over any collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface. However, to set up dynamic bindings so that insertions or deletions in the collection update the TLA2#tla_ui automatically, the collection must implement the <see cref="T:System.Collections.Specialized.INotifyCollectionChanged" /> interface. This interface exposes the <see cref="E:System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged" /> event, an event that should be raised whenever the underlying collection changes.</para>
+      <para>TLA2#tla_winclient provides the <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> class, which is a built-in implementation of a data collection that implements the <see cref="T:System.Collections.Specialized.INotifyCollectionChanged" /> interface.</para>
+      <para>Before implementing your own collection, consider using <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> or one of the existing collection classes, such as <see cref="T:System.Collections.Generic.List`1" />, <see cref="T:System.Collections.ObjectModel.Collection`1" />, and <see cref="T:System.ComponentModel.BindingList`1" />, among many others. If you have an advanced scenario and want to implement your own collection, consider using <see cref="T:System.Collections.IList" />, which provides a non-generic collection of objects that can be individually accessed by index. Implementing <see cref="T:System.Collections.IList" /> provides the best performance with the data binding engine.</para>
+      <block subset="none" type="note">
+        <para> To fully support transferring data values from <format type="text/html"><a href="GTMT#binding_source#82edbb63-5cbf-46f8-bf38-164eb00a1ec1">binding source</a></format> objects to <format type="text/html"><a href="GTMT#binding_target#2b16294b-64eb-4210-83a4-c215cf4c140a">binding target</a></format>s, each object in your collection that supports bindable properties must implement an appropriate property changed notification mechanism such as the <see cref="T:System.ComponentModel.INotifyPropertyChanged" /> interface.</para>
+      </block>
+      <para>For more information, see "Binding to Collections" in <format type="text/html"><a href="c707c95f-7811-401d-956e-2fffd019a211">Data Binding Overview</a></format>.</para>
+      <format type="text/html">
+        <h2>Notes on XAML Usage</h2>
+      </format>
+      <para>
+        <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> can be used as a XAML object element in TLA#tla_winclient, in versions 3.0 and 3.5. However, the usage has substantial limitations.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> must be the root element, because the <format type="text/html"><a href="86561058-d393-4a44-b5c3-993a4513ea74">x:TypeArguments attribute</a></format> that must be used to specify the constrained type of the generic <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> is only supported on the object element for the root element.</para>
+        </item>
+        <item>
+          <para>You must declare an <format type="text/html"><a href="bc4a3d8e-76e2-423e-a5d1-159a023e82ec">x:Class attribute</a></format> (which entails that the build action for this XAML file must be Page or some other build action that compiles the XAML).</para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> is in a namespace and assembly that are not initially mapped to the default XML namespace. You must map a prefix for the namespace and assembly, and then use that prefix on the object element tag for <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" />.</para>
+        </item>
+      </list>
+      <para>A more straightforward way to use <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> capabilities from XAML in an application is to declare your own non-generic custom collection class that derives from <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" />, and constrains it to a specific type. Then map the assembly that contains this class, and reference it as an object element in your XAML.</para>
+      <format type="text/html">
+        <a href="#xamlTextUsage_ObservableCollection" />
+      </format>
+      <format type="text/html">
+        <h2>XAML Text Usage</h2>
+      </format>
+      <para>See Remarks.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a dynamic data collection that provides notifications when items get added, removed, or when the whole list is refreshed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,8 +82,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -90,9 +133,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disallows reentrant attempts to change this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that can be used to dispose of the object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CheckReentrancy">
@@ -107,8 +156,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks for reentrant attempts to change this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClearItems">
@@ -123,8 +175,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base class calls this method when the list is being cleared. This implementation raises the <see cref="E:System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged" /> event.</para>
+          <para>For more information, see the <see cref="M:System.Collections.ObjectModel.Collection`1.ClearItems" /> method of the <see cref="T:System.Collections.ObjectModel.Collection`1" /> base class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all items from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CollectionChanged">
@@ -138,8 +197,11 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an item is added, removed, changed, moved, or the entire list is refreshed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
@@ -178,10 +240,18 @@
         <Parameter Name="newIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="oldIndex">To be added.</param>
-        <param name="newIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subclasses can override the <see cref="M:System.Collections.ObjectModel.ObservableCollection`1.MoveItem(System.Int32,System.Int32)" /> method to provide custom behavior for this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the item at the specified index to a new location in the collection.</para>
+        </summary>
+        <param name="oldIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index specifying the location of the item to be moved.</param>
+        <param name="newIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index specifying the new location of the item.</param>
       </Docs>
     </Member>
     <Member MemberName="MoveItem">
@@ -199,10 +269,19 @@
         <Parameter Name="newIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="oldIndex">To be added.</param>
-        <param name="newIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation raises the <see cref="E:System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged" /> event.</para>
+          <para>Subclasses can override this protected method to provide custom behavior for the <see cref="M:System.Collections.ObjectModel.ObservableCollection`1.Move(System.Int32,System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the item at the specified index to a new location in the collection.</para>
+        </summary>
+        <param name="oldIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index specifying the location of the item to be moved.</param>
+        <param name="newIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index specifying the new location of the item.</param>
       </Docs>
     </Member>
     <Member MemberName="OnCollectionChanged">
@@ -219,9 +298,16 @@
         <Parameter Name="e" Type="System.Collections.Specialized.NotifyCollectionChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Properties and methods that modify this collection raise the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged" /> event through this virtual method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged" /> event with the provided arguments.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />Arguments of the event being raised.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPropertyChanged">
@@ -238,9 +324,13 @@
         <Parameter Name="e" Type="System.ComponentModel.PropertyChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.PropertyChanged" /> event with the provided arguments.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />Arguments of the event being raised.</param>
       </Docs>
     </Member>
     <Member MemberName="PropertyChanged">
@@ -254,8 +344,11 @@
         <ReturnType>System.ComponentModel.PropertyChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a property value changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
@@ -272,9 +365,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base class calls this method when an item is removed from the collection. This implementation raises the <see cref="E:System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged" /> event.</para>
+          <para>For more information, see the <see cref="M:System.Collections.ObjectModel.Collection`1.RemoveItem(System.Int32)" /> method of the <see cref="T:System.Collections.ObjectModel.Collection`1" /> base class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index of the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the element to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="SetItem">

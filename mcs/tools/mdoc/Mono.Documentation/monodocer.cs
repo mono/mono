@@ -3082,7 +3082,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 					XmlElement a = (XmlElement) e.SelectSingleNode (child.Name + "[@cref='" + cref.Value + "']");
 					if (a == null) {
 						a = e.OwnerDocument.CreateElement (child.Name);
-						a.SetAttribute ("cref", child.Attributes ["cref"].Value);
+						a.SetAttribute ("cref", cref.Value);
 						e.AppendChild (a);
 					}
 					a.InnerXml = child.InnerXml;
@@ -3095,7 +3095,7 @@ class MsxdocDocumentationImporter : DocumentationImporter {
 					XmlElement a = (XmlElement) e.SelectSingleNode ("altmember[@cref='" + cref.Value + "']");
 					if (a == null) {
 						a = e.OwnerDocument.CreateElement ("altmember");
-						a.SetAttribute ("cref", child.Attributes ["cref"].Value);
+						a.SetAttribute ("cref", cref.Value);
 						e.AppendChild (a);
 					}
 					break;

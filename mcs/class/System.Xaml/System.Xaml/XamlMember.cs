@@ -166,7 +166,6 @@ namespace System.Xaml
 			get { return directive_ns ?? (DeclaringType == null ? null : DeclaringType.PreferredXamlNamespace); }
 		}
 		
-#if !NET_2_1
 		public DesignerSerializationVisibility SerializationVisibility {
 			get {
 				var c= GetCustomAttributeProvider ();
@@ -174,7 +173,6 @@ namespace System.Xaml
 				return a != null ? a.Visibility : DesignerSerializationVisibility.Visible;
 			}
 		}
-#endif
 
 		public bool IsAttachable {
 			get { return is_attachable; }

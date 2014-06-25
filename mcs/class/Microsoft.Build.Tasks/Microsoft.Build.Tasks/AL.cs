@@ -57,9 +57,15 @@ namespace Microsoft.Build.Tasks {
 				else
 					commandLine.AppendSwitch ("/delaysign-");
 			commandLine.AppendSwitchIfNotNull ("/description:", Description);
-			if (EmbedResources != null)
-				foreach (ITaskItem item in EmbedResources)
-					commandLine.AppendSwitchIfNotNull ("/embed:", item.ItemSpec);
+			if (EmbedResources != null) {
+				foreach (ITaskItem item in EmbedResources) {
+					string logical_name = item.GetMetadata ("LogicalName");
+					if (!string.IsNullOrEmpty (logical_name))
+						commandLine.AppendSwitchIfNotNull ("/embed:", string.Format ("{0},{1}", item.ItemSpec, logical_name));
+					else
+						commandLine.AppendSwitchIfNotNull ("/embed:", item.ItemSpec);
+				}
+			}
 			commandLine.AppendSwitchIfNotNull ("/evidence:", EvidenceFile);
 			commandLine.AppendSwitchIfNotNull ("/fileversion:", FileVersion);
 			commandLine.AppendSwitchIfNotNull ("/flags:", Flags);

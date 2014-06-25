@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerResults" FullName="System.CodeDom.Compiler.CompilerResults">
   <TypeSignature Language="C#" Value="public class CompilerResults" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CompilerResults extends System.Object" />
@@ -15,8 +16,40 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains the following information about the results of a compilation by an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface implementation: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.CompiledAssembly" /> property indicates the compiled assembly.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.Evidence" /> property indicates the security evidence for the assembly.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.PathToAssembly" /> property indicates the path to the compiled assembly, if it was not generated only in memory.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.Errors" /> property indicates any compiler errors and warnings.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.Output" /> property contains the compiler output messages.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.NativeCompilerReturnValue" /> property indicates result code value returned by the compiler.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerResults.TempFiles" /> property indicates the temporary files generated during compilation and linking.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>This class contains an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the derived class does not have full-trust permission. For details about inheritance demands, see  <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the results of compilation that are returned from a compiler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,9 +66,13 @@
         <Parameter Name="tempFiles" Type="System.CodeDom.Compiler.TempFileCollection" />
       </Parameters>
       <Docs>
-        <param name="tempFiles">To be added: an object of type 'TempFileCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerResults" /> class that uses the specified temporary files.</para>
+        </summary>
+        <param name="tempFiles">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.TempFileCollection" /> with which to manage and store references to intermediate files generated during compilation. </param>
       </Docs>
     </Member>
     <Member MemberName="CompiledAssembly">
@@ -53,9 +90,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Reflection.Assembly'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The get accessor for the <see cref="P:System.CodeDom.Compiler.CompilerResults.CompiledAssembly" /> property calls the <see cref="Overload:System.AppDomain.Load" /> method to load the compiled assembly into the current application domain.  After calling the get accessor, the compiled assembly cannot be deleted until the current <see cref="T:System.AppDomain" /> is unloaded.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the compiled assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Errors">
@@ -71,9 +116,15 @@
         <ReturnType>System.CodeDom.Compiler.CompilerErrorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CompilerErrorCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>File and line number information is associated with each <see cref="T:System.CodeDom.Compiler.CompilerError" />, so that user code to locate and display the code that generated an error or warning, where possible, can be implemented.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of compiler errors and warnings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Evidence">
@@ -94,9 +145,12 @@
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the evidence object that represents the security policy permissions of the compiled assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NativeCompilerReturnValue">
@@ -114,9 +168,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains the numeric exit code returned by a command line compiler, if implemented. A value of 0 indicates success, while a non-zero value indicates failure.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the compiler's return value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Output">
@@ -132,9 +192,15 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.Specialized.StringCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the compiler returned no messages, the value of this property will be an empty collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the compiler output messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PathToAssembly">
@@ -152,9 +218,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path of the compiled assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TempFiles">
@@ -172,9 +241,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TempFileCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the temporary file collection to use.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

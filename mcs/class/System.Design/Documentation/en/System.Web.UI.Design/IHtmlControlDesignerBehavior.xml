@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IHtmlControlDesignerBehavior" FullName="System.Web.UI.Design.IHtmlControlDesignerBehavior">
   <TypeSignature Language="C#" Value="public interface IHtmlControlDesignerBehavior" />
   <AssemblyInfo>
@@ -7,8 +8,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.Design.IHtmlControlDesignerBehavior" /> interface is obsolete. Use the <see cref="T:System.Web.UI.Design.IControlDesignerTag" /> and <see cref="T:System.Web.UI.Design.IControlDesignerView" /> interfaces for equivalent control designer functionality.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an interface that enables the extension of specific behaviors of an HTML control designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Designer">
@@ -18,9 +27,12 @@
         <ReturnType>System.Web.UI.Design.HtmlControlDesigner</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the designer that the behavior is associated with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +46,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the element that the designer is associated with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,11 +69,24 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.IHtmlControlDesignerBehavior.GetAttribute(System.String,System.Boolean)" /> method is obsolete. Use the <see cref="M:System.Web.UI.Design.IControlDesignerTag.GetAttribute(System.String)" /> method on the <see cref="P:System.Web.UI.Design.ControlDesigner.Tag" /> property of the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class for equivalent control designer functionality.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the specified attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attribute that was retrieved.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to retrieve. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute syntax is case-insensitive; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,12 +105,26 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added.</param>
-        <param name="designTimeOnly">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.IHtmlControlDesignerBehavior.GetStyleAttribute(System.String,System.Boolean,System.Boolean)" /> method is obsolete. Use the <see cref="M:System.Web.UI.Design.ContainerControlDesigner.GetDesignTimeCssAttributes" /> method on the <see cref="T:System.Web.UI.Design.ContainerControlDesigner" /> class for equivalent control designer functionality.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the specified style attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The style attribute that was retrieved.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The style attribute to retrieve. </param>
+        <param name="designTimeOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute is only active at design time; otherwise, false. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute syntax is case-insensitive; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,10 +142,20 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.IHtmlControlDesignerBehavior.RemoveAttribute(System.String,System.Boolean)" /> method is obsolete. Use the <see cref="M:System.Web.UI.Design.IControlDesignerTag.RemoveAttribute(System.String)" /> method on the <see cref="P:System.Web.UI.Design.ControlDesigner.Tag" /> property of the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class for equivalent control designer functionality.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified attribute.</para>
+        </summary>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to remove. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute syntax is case-insensitive; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,11 +174,17 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added.</param>
-        <param name="designTimeOnly">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified style attribute.</para>
+        </summary>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The style attribute to remove. </param>
+        <param name="designTimeOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute is only active at design time; otherwise, false. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute syntax is case-insensitive; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -145,11 +203,22 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.IHtmlControlDesignerBehavior.SetAttribute(System.String,System.Object,System.Boolean)" /> method is obsolete. Use the <see cref="M:System.Web.UI.Design.IControlDesignerTag.SetAttribute(System.String,System.String)" /> method on the <see cref="P:System.Web.UI.Design.ControlDesigner.Tag" /> property of the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class for equivalent control designer functionality.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified attribute to the specified object.</para>
+        </summary>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to set. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which to set the attribute. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute syntax is case-insensitive; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -169,12 +238,24 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added.</param>
-        <param name="designTimeOnly">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Design.IHtmlControlDesignerBehavior.SetStyleAttribute(System.String,System.Boolean,System.Object,System.Boolean)" /> method is obsolete. Use the <see cref="M:System.Web.UI.Design.ContainerControlDesigner.AddDesignTimeCssAttributes(System.Collections.IDictionary)" /> method on the <see cref="T:System.Web.UI.Design.ContainerControlDesigner" /> class for equivalent control designer functionality.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified style attribute to the specified object.</para>
+        </summary>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to set. </param>
+        <param name="designTimeOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute is only active at design-time; otherwise, false. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to set the attribute on. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the attribute syntax is case-insensitive; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

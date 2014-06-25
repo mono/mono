@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BindableAttribute" FullName="System.ComponentModel.BindableAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class BindableAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit BindableAttribute extends System.Attribute" />
@@ -20,8 +21,22 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can specify this attribute for multiple members, typically properties, on a control.</para>
+      <para>If a property has been marked with the <see cref="T:System.ComponentModel.BindableAttribute" /> set to true, then a property change notification should be raised for that property. This means that if the <see cref="P:System.ComponentModel.BindableAttribute.Bindable" /> property is <see cref="F:System.ComponentModel.BindableAttribute.Yes" />, then two-way data binding is supported. If <see cref="P:System.ComponentModel.BindableAttribute.Bindable" /> is <see cref="F:System.ComponentModel.BindableAttribute.No" />, you can still bind to the property, but it should not be shown in the default set of properties to bind to, because it might or might not raise a property change notification.</para>
+      <block subset="none" type="note">
+        <para>When you mark a property with <see cref="M:System.ComponentModel.BindableAttribute.#ctor(System.Boolean)" /> set to true, the value of this attribute is set to the constant member <see cref="F:System.ComponentModel.BindableAttribute.Yes" />. For a property marked with the <see cref="M:System.ComponentModel.BindableAttribute.#ctor(System.Boolean)" /> set to false, the value is <see cref="F:System.ComponentModel.BindableAttribute.No" />. Therefore, to check the value of this attribute in your code, you must specify the attribute as <see cref="F:System.ComponentModel.BindableAttribute.Yes" /> or <see cref="F:System.ComponentModel.BindableAttribute.No" />.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>You can use this attribute at design time only. Nothing prevents you from binding to any property during run time.</para>
+      </block>
+      <para>For more information, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a member is typically used for binding. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,9 +53,16 @@
         <Parameter Name="bindable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="bindable">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you mark a property with the <see cref="T:System.ComponentModel.BindableAttribute" /> set to true, the value of this attribute is set to the constant member <see cref="F:System.ComponentModel.BindableAttribute.Yes" />. For a property marked with the <see cref="T:System.ComponentModel.BindableAttribute" /> set to false, the value is <see cref="F:System.ComponentModel.BindableAttribute.No" />. Therefore, to check the value of this attribute in your code, you must specify the attribute as <see cref="F:System.ComponentModel.BindableAttribute.Yes" /> or <see cref="F:System.ComponentModel.BindableAttribute.No" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.BindableAttribute" /> class with a Boolean value.</para>
+        </summary>
+        <param name="bindable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use property for binding; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +79,16 @@
         <Parameter Name="flags" Type="System.ComponentModel.BindableSupport" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added: an object of type 'BindableSupport'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you mark a property with the <see cref="T:System.ComponentModel.BindableAttribute" /> set to true, the value of this attribute is set to the constant member <see cref="F:System.ComponentModel.BindableAttribute.Yes" />. For a property marked with the <see cref="T:System.ComponentModel.BindableAttribute" /> set to false, the value is <see cref="F:System.ComponentModel.BindableAttribute.No" />. Therefore, to check the value of this attribute in your code, you must specify the attribute as <see cref="F:System.ComponentModel.BindableAttribute.Yes" /> or <see cref="F:System.ComponentModel.BindableAttribute.No" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.BindableAttribute" /> class with one of the <see cref="T:System.ComponentModel.BindableSupport" /> values.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.BindableSupport" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -75,10 +104,15 @@
         <Parameter Name="direction" Type="System.ComponentModel.BindingDirection" />
       </Parameters>
       <Docs>
-        <param name="bindable">To be added.</param>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.BindableAttribute" /> class.</para>
+        </summary>
+        <param name="bindable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use property for binding; otherwise, false.</param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.BindingDirection" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -94,10 +128,15 @@
         <Parameter Name="direction" Type="System.ComponentModel.BindingDirection" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.BindableAttribute" /> class.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.BindableSupport" /> values. </param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.BindingDirection" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Bindable">
@@ -113,9 +152,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating that a property is typically used for binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -132,8 +174,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you mark a property with this value, the <see cref="T:System.ComponentModel.BindableAttribute" /> is set to the constant member <see cref="F:System.ComponentModel.BindableAttribute.No" />. Therefore, when you want to check whether the attribute is set to this value in your code, you must specify the attribute as <see cref="F:System.ComponentModel.BindableAttribute.No" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default value for the <see cref="T:System.ComponentModel.BindableAttribute" />, which is <see cref="F:System.ComponentModel.BindableAttribute.No" />. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -148,9 +196,12 @@
         <ReturnType>System.ComponentModel.BindingDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the direction or directions of this property's data binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -169,10 +220,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether two <see cref="T:System.ComponentModel.BindableAttribute" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.ComponentModel.BindableAttribute" /> is equal to the current <see cref="T:System.ComponentModel.BindableAttribute" />; false if it is not equal.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -189,9 +247,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for the <see cref="T:System.ComponentModel.BindableAttribute" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.BindableAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefaultAttribute">
@@ -208,9 +272,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if this attribute is the default.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is the default value for this attribute class; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="No">
@@ -227,8 +297,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.ComponentModel.BindableAttribute.No" /> field is the default setting for the <see cref="T:System.ComponentModel.BindableAttribute" />.</para>
+          <para>When you mark a property with the <see cref="M:System.ComponentModel.BindableAttribute.#ctor(System.Boolean)" /> constructor of the value false, the value of this attribute is set to the constant member <see cref="F:System.ComponentModel.BindableAttribute.No" />. Therefore, to check whether the attribute is set to this value in your code, you must specify the attribute as <see cref="F:System.ComponentModel.BindableAttribute.No" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a property is not typically used for binding. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Yes">
@@ -245,8 +322,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you mark a property with the <see cref="M:System.ComponentModel.BindableAttribute.#ctor(System.Boolean)" /> constructor of the value true, the value of the <see cref="T:System.ComponentModel.BindableAttribute" /> is set to the constant member <see cref="F:System.ComponentModel.BindableAttribute.Yes" />. Therefore, to check whether the attribute is set to this value in your code, you must specify the attribute as <see cref="F:System.ComponentModel.BindableAttribute.Yes" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that a property is typically used for binding. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,6 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="Microsoft.Build.BuildEngine">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:Microsoft.Build.BuildEngine" /> namespace represents the MSBuild engine. For information, see <format type="text/html"><a href="e39f13f7-1e1d-4435-95ca-0c222bca071c">MSBuild</a></format>. </para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The classes in this namespace are deprecated. Please use the classes in these namespaces instead:</para>
+      <para>
+        <see cref="N:Microsoft.Build.Construction" />
+      </para>
+      <para>
+        <see cref="N:Microsoft.Build.Evaluation" />
+      </para>
+      <para>
+        <see cref="N:Microsoft.Build.Execution" />
+      </para>
+    </remarks>
   </Docs>
 </Namespace>

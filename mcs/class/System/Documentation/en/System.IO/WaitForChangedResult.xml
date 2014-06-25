@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WaitForChangedResult" FullName="System.IO.WaitForChangedResult">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct WaitForChangedResult" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit WaitForChangedResult extends System.ValueType" />
@@ -15,8 +16,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information on the change that occurred.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChangeType">
@@ -34,9 +38,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'WatcherChangeTypes'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of change that occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -54,9 +61,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the file or directory that changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OldName">
@@ -74,9 +84,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the original name of the file or directory that was renamed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimedOut">
@@ -94,9 +107,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the wait operation timed out.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

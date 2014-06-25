@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlElement" FullName="System.Xml.XmlElement">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlElement : System.Xml.XmlLinkedNode, System.Xml.IHasXmlChildNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlElement extends System.Xml.XmlLinkedNode implements class System.Xml.IHasXmlChildNode" />
@@ -18,8 +19,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>An element node.</summary>
-    <remarks>Elements are XML document nodes that contain character data (e.g. text and comments) or element nodes as children and may be marked with attributes.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Elements are one of the most common nodes in the W3C Document Object Model (DOM). Elements can have attributes associated with them. The XmlElement class has many methods for accessing attributes (<see cref="M:System.Xml.XmlElement.GetAttribute(System.String)" />, <see cref="M:System.Xml.XmlElement.SetAttribute(System.String,System.String)" />, <see cref="M:System.Xml.XmlElement.RemoveAttribute(System.String)" />, <see cref="M:System.Xml.XmlElement.GetAttributeNode(System.String)" />, and so on). You can also use the <see cref="P:System.Xml.XmlElement.Attributes" /> property which returns an <see cref="T:System.Xml.XmlAttributeCollection" /> enabling you to access attributes by name or index from the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,12 +45,22 @@
         <Parameter Name="doc" Type="System.Xml.XmlDocument" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
-        <param name="localName">To be added.</param>
-        <param name="namespaceURI">To be added.</param>
-        <param name="doc">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not instantiate an <see cref="T:System.Xml.XmlElement" /> directly; instead, use methods such as <see cref="Overload:System.Xml.XmlDocument.CreateElement" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlElement" /> class.</para>
+        </summary>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix; see the <see cref="P:System.Xml.XmlElement.Prefix" /> property.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name; see the <see cref="P:System.Xml.XmlElement.LocalName" /> property.</param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI; see the <see cref="P:System.Xml.XmlElement.NamespaceURI" /> property.</param>
+        <param name="doc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent XML document.</param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -59,9 +76,12 @@
         <ReturnType>System.Xml.XmlAttributeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.XmlAttributeCollection" /> containing the list of attributes for this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloneNode">
@@ -80,10 +100,20 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="deep">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method serves as a copy constructor for nodes. The duplicate node has no parent (<see cref="P:System.Xml.XmlNode.ParentNode" /> returns null).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a duplicate of this node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned node.</para>
+        </returns>
+        <param name="deep">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself (and its attributes if the node is an XmlElement). </param>
       </Docs>
     </Member>
     <Member MemberName="GetAttribute">
@@ -102,10 +132,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value for the attribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. An empty string is returned if a matching attribute is not found or if the attribute does not have a specified or default value.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to retrieve. This is a qualified name. It is matched against the Name property of the matching node. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAttribute">
@@ -125,11 +162,19 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value for the attribute with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. An empty string is returned if a matching attribute is not found or if the attribute does not have a specified or default value.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute to retrieve. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAttributeNode">
@@ -148,10 +193,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XmlAttribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified XmlAttribute or null if a matching attribute was not found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to retrieve. This is a qualified name. It is matched against the Name property of the matching node. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAttributeNode">
@@ -171,11 +223,19 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Xml.XmlAttribute" /> with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified XmlAttribute or null if a matching attribute was not found.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="GetElementsByTagName">
@@ -194,10 +254,23 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlNodeList'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nodes are placed in the order in which they would be encountered in a preorder traversal of the <see cref="T:System.Xml.XmlElement" /> tree.</para>
+          <block subset="none" type="note">
+            <para>It is recommended that you use the <see cref="Overload:System.Xml.XmlNode.SelectNodes" /> or <see cref="Overload:System.Xml.XmlNode.SelectSingleNode" /> method instead of the <see cref="M:System.Xml.XmlElement.GetElementsByTagName(System.String)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.XmlNodeList" /> containing a list of all descendant elements that match the specified <see cref="P:System.Xml.XmlElement.Name" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeList" /> containing a list of all matching nodes. The list is empty if there are no matching nodes.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name tag to match. This is a qualified name. It is matched against the Name property of the matching node. The asterisk (*) is a special value that matches all tags. </param>
       </Docs>
     </Member>
     <Member MemberName="GetElementsByTagName">
@@ -217,11 +290,25 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlNodeList'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nodes are placed in the order in which they would be encountered in a preorder traversal of the XmlElement tree.</para>
+          <block subset="none" type="note">
+            <para>It is recommended that you use the <see cref="Overload:System.Xml.XmlNode.SelectNodes" /> or <see cref="Overload:System.Xml.XmlNode.SelectSingleNode" /> method instead of the <see cref="M:System.Xml.XmlElement.GetElementsByTagName(System.String,System.String)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Xml.XmlNodeList" /> containing a list of all descendant elements that match the specified <see cref="P:System.Xml.XmlElement.LocalName" /> and <see cref="P:System.Xml.XmlElement.NamespaceURI" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeList" /> containing a list of all matching nodes. The list is empty if there are no matching nodes.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name to match. The asterisk (*) is a special value that matches all tags. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to match. </param>
       </Docs>
     </Member>
     <Member MemberName="HasAttribute">
@@ -240,10 +327,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current node has an attribute with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current node has the specified attribute; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to find. This is a qualified name. It is matched against the Name property of the matching node. </param>
       </Docs>
     </Member>
     <Member MemberName="HasAttribute">
@@ -263,11 +357,19 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the current node has an attribute with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current node has the specified attribute; otherwise, false.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute to find. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute to find. </param>
       </Docs>
     </Member>
     <Member MemberName="HasAttributes">
@@ -283,9 +385,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a boolean value indicating whether the current node has any attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InnerText">
@@ -301,9 +409,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property replaces all the children with the parsed contents of the given string.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the concatenated values of the node and all its children.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InnerXml">
@@ -319,9 +434,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property replaces the children of the node with the parsed contents of the given string. The parsing is done in the current namespace context.</para>
+          <para>This property is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the markup representing just the children of this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsEmpty">
@@ -338,9 +460,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a Microsoft extension of the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tag format of the element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalName">
@@ -356,9 +484,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the node does not have a prefix, LocalName is the same as <see cref="P:System.Xml.XmlElement.Name" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local name of the current node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -374,9 +508,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name of the node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NamespaceURI">
@@ -392,9 +529,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the namespace URI specified at creation time. For example, NamespaceURI is urn:samples for the element &lt;bk:book xmlns:bk= "urn:samples"&gt; </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace URI of this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NextSibling">
@@ -410,9 +553,12 @@
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlNode" /> immediately following this element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -428,9 +574,12 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the current node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OwnerDocument">
@@ -446,9 +595,15 @@
         <ReturnType>System.Xml.XmlDocument</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When adding nodes to the current node, use the XmlDocument returned by the OwnerDocument property to create the node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlDocument" /> to which this node belongs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParentNode">
@@ -483,9 +638,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property changes the <see cref="P:System.Xml.XmlElement.Name" /> property, which holds the qualified name for an XmlElement. However, changing the prefix does not change the namespace URI of the element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace prefix of this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveAll">
@@ -502,8 +663,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all specified attributes and children of the current node. Default attributes are not removed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveAllAttributes">
@@ -520,8 +684,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all specified attributes from the element. Default attributes are not removed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveAttribute">
@@ -540,9 +710,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the removed attribute is known to have a default value, an attribute immediately appears containing the default value and, if applicable, the corresponding namespace URI, local name, and prefix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an attribute by name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to remove.This is a qualified name. It is matched against the Name property of the matching node. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAttribute">
@@ -562,10 +739,18 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the removed attribute is known to have a default value, an attribute immediately appears containing the default value and, if applicable, the corresponding namespace URI, local name, and prefix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an attribute with the specified local name and namespace URI. (If the removed attribute has a default value, it is immediately replaced).</para>
+        </summary>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute to remove. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute to remove. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAttributeAt">
@@ -584,10 +769,20 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="i">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlNode'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the attribute node with the specified index from the element. (If the removed attribute has a default value, it is immediately replaced).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attribute node removed or null if there is no node at the given index.</para>
+        </returns>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the node to remove. The first node has index 0. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAttributeNode">
@@ -606,10 +801,17 @@
         <Parameter Name="oldAttr" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="oldAttr">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Xml.XmlAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The removed XmlAttribute or null if <paramref name="oldAttr" /> is not an attribute node of the XmlElement.</para>
+        </returns>
+        <param name="oldAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlAttribute node to remove. If the removed attribute has a default value, it is immediately replaced. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAttributeNode">
@@ -629,11 +831,19 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Xml.XmlAttribute" /> specified by the local name and namespace URI. (If the removed attribute has a default value, it is immediately replaced).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The removed XmlAttribute or null if the XmlElement does not have a matching attribute node.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SchemaInfo">
@@ -648,10 +858,16 @@
         <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.XmlElement.SchemaInfo" /> property is set when this node is validated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the post schema validation infoset that has been assigned to this node as a result of schema validation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetAttribute">
@@ -671,10 +887,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an attribute with the same name is already present in the element, its value is changed to that of <paramref name="value" />. <paramref name="value" /> is a simple string. It is not parsed as it is being set. Any markup, such as syntax to be recognized as an entity reference, is treated as literal text and needs to be properly escaped by the implementation when it is written out. In order to assign an attribute value that contains entity references, the user must create an <see cref="T:System.Xml.XmlAttribute" /> node plus any <see cref="T:System.Xml.XmlText" /> and <see cref="T:System.Xml.XmlEntityReference" /> nodes, build the appropriate subtree and use <see cref="M:System.Xml.XmlElement.SetAttributeNode(System.Xml.XmlAttribute)" /> to assign it as the value of an attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the attribute with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute to create or alter. This is a qualified name. If the name contains a colon it is parsed into prefix and local name components. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to set for the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetAttribute">
@@ -695,12 +919,21 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the attribute with the specified local name and namespace URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attribute value.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to set for the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="SetAttributeNode">
@@ -719,10 +952,20 @@
         <Parameter Name="newAttr" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <param name="newAttr">To be added: an object of type 'XmlAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an attribute with that name is already present in the element, it is replaced by the new one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Xml.XmlAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the attribute replaces an existing attribute with the same name, the old XmlAttribute is returned; otherwise, null is returned.</para>
+        </returns>
+        <param name="newAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlAttribute node to add to the attribute collection for this element. </param>
       </Docs>
     </Member>
     <Member MemberName="SetAttributeNode">
@@ -742,11 +985,22 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceURI">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute does not have any children. Use <see cref="P:System.Xml.XmlAttribute.Value" /> to assign a text value to the attribute or use <see cref="M:System.Xml.XmlNode.AppendChild(System.Xml.XmlNode)" /> (or a similar method) to add children to the attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Xml.XmlAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to add.</para>
+        </returns>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.IHasXmlChildNode.LastLinkedChild">
@@ -783,9 +1037,16 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves all the children of the node to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -804,9 +1065,16 @@
         <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the current node to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="w">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlWriter to which you want to save. </param>
       </Docs>
     </Member>
   </Members>

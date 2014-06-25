@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CustomAttributeNamedArgument" FullName="System.Reflection.CustomAttributeNamedArgument">
   <TypeSignature Language="C#" Value="public struct CustomAttributeNamedArgument" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit CustomAttributeNamedArgument extends System.ValueType" />
@@ -16,9 +17,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Code that is being examined in the reflection-only context cannot be executed, so it is not always possible to examine custom attributes by creating instances of them and then examining their properties, using methods like <see cref="Overload:System.Attribute.GetCustomAttributes" />, <see cref="Overload:System.Reflection.MemberInfo.GetCustomAttributes" />, and so on. If the code for the attribute type itself is loaded into the reflection-only context, it cannot be executed. </para>
+      <para>The <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structure is used by the <see cref="T:System.Reflection.CustomAttributeData" /> class to provide access to a named argument specified for a custom attribute instance, without executing the code of the corresponding property of the custom attribute type. The <see cref="P:System.Reflection.CustomAttributeNamedArgument.TypedValue" /> property returns a <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure that contains the type and value of the named argument.</para>
+      <block subset="none" type="note">
+        <para>Whether an argument is named or positional, you must access its type and value by using the <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure. </para>
+      </block>
+      <para>To create instances of the <see cref="T:System.Reflection.CustomAttributeData" /> class, use the static <see cref="Overload:System.Reflection.CustomAttributeData.GetCustomAttributes" /> factory method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a named argument of a custom attribute in the reflection-only context.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,10 +45,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="memberInfo">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is for use by inheritors of the <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> class. It is not intended for use in application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> class, which represents the specified field or property of the custom attribute, and specifies the value of the field or property.</para>
+        </summary>
+        <param name="memberInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field or property of the custom attribute. The new <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> object represents this member and its value.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the field or property of the custom attribute.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -51,10 +71,18 @@
         <Parameter Name="typedArgument" Type="System.Reflection.CustomAttributeTypedArgument" />
       </Parameters>
       <Docs>
-        <param name="memberInfo">To be added.</param>
-        <param name="typedArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is for use by inheritors of the <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> class. It is not intended for use in application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> class, which represents the specified field or property of the custom attribute, and specifies a <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> object that describes the type and value of the field or property.</para>
+        </summary>
+        <param name="memberInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field or property of the custom attribute. The new <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> object represents this member and its value.</param>
+        <param name="typedArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that describes the type and value of the field or property.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -72,10 +100,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -91,9 +126,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsField">
@@ -107,9 +148,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the named argument is a field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberInfo">
@@ -124,10 +168,16 @@
         <ReturnType>System.Reflection.MemberInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most cases, the member is a property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attribute member that would be used to set the named argument.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberName">
@@ -141,9 +191,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the attribute member that would be used to set the named argument.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -162,11 +215,19 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeNamedArgument" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The structure to the left of the equality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The structure to the right of the equality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -185,11 +246,19 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeNamedArgument" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are different.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are different; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The structure to the left of the inequality operator.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The structure to the right of the inequality operator.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -205,10 +274,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that consists of the argument name, the equal sign, and a string representation of the argument value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that consists of the argument name, the equal sign, and a string representation of the argument value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypedValue">
@@ -223,10 +298,16 @@
         <ReturnType>System.Reflection.CustomAttributeTypedArgument</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structure only contains information about how the argument value was set. Use this property to obtain a <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure that contains the type and value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure that can be used to obtain the type and value of the current named argument.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

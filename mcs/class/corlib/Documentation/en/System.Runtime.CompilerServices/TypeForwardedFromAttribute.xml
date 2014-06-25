@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeForwardedFromAttribute" FullName="System.Runtime.CompilerServices.TypeForwardedFromAttribute">
   <TypeSignature Language="C#" Value="public sealed class TypeForwardedFromAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeForwardedFromAttribute extends System.Attribute" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.CompilerServices.TypeForwardedFromAttribute" /> attribute enables the target framework provider to trace a loaded type back to the original assembly it was forwarded from.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a source <see cref="T:System.Type" /> in another assembly. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +37,13 @@
         <Parameter Name="assemblyFullName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="assemblyFullName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.TypeForwardedFromAttribute" /> class. </para>
+        </summary>
+        <param name="assemblyFullName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source <see cref="T:System.Type" /> in another assembly. </param>
       </Docs>
     </Member>
     <Member MemberName="AssemblyFullName">
@@ -46,9 +57,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the assembly-qualified name of the source type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Form" FullName="System.Windows.Forms.Form">
   <TypeSignature Language="C#" Value="public class Form : System.Windows.Forms.ContainerControl" />
   <AssemblyInfo>
@@ -39,8 +40,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.Form" /> is a representation of any window displayed in your application. The <see cref="T:System.Windows.Forms.Form" /> class can be used to create standard, tool, borderless, and floating windows. You can also use the <see cref="T:System.Windows.Forms.Form" /> class to create modal windows such as a dialog box. A special kind of form, the multiple-document interface (MDI) form, can contain other forms called MDI child forms. An MDI form is created by setting the <see cref="P:System.Windows.Forms.Form.IsMdiContainer" /> property to true. MDI child forms are created by setting the <see cref="P:System.Windows.Forms.Form.MdiParent" /> property to the MDI parent form that will contain the child form.</para>
+      <para>Using the properties available in the <see cref="T:System.Windows.Forms.Form" /> class, you can determine the appearance, size, color, and window management features of the window or dialog box you are creating. The <see cref="P:System.Windows.Forms.Control.Text" /> property allows you to specify the caption of the window in the title bar. The <see cref="P:System.Windows.Forms.Form.Size" /> and <see cref="P:System.Windows.Forms.Form.DesktopLocation" /> properties allow you to define the size and position of the window when it is displayed. You can use the <see cref="P:System.Windows.Forms.Control.ForeColor" /> color property to change the default foreground color of all controls placed on the form. The <see cref="P:System.Windows.Forms.Form.FormBorderStyle" />, <see cref="P:System.Windows.Forms.Form.MinimizeBox" />, and <see cref="P:System.Windows.Forms.Form.MaximizeBox" /> properties allow you to control whether the form can be minimized, maximized, or resized at run time.</para>
+      <para>In addition to properties, you can use the methods of the class to manipulate a form. For example, you can use the <see cref="M:System.Windows.Forms.Form.ShowDialog" /> method to show a form as a modal dialog box. You can use the <see cref="M:System.Windows.Forms.Form.SetDesktopLocation(System.Int32,System.Int32)" /> method to position the form on the desktop.</para>
+      <para>The events of the <see cref="T:System.Windows.Forms.Form" /> class allow you to respond to actions performed on the form. You can use the <see cref="E:System.Windows.Forms.Form.Activated" /> event to perform operations such as updating the data displayed in the controls of the form when the form is activated.</para>
+      <para>You can use a form as the starting class in your application by placing a method called Main in the class. In the Main method add code to create and show the form. You will also need to add the STAThread attribute to the Main method in order for the form to run. When the starting form is closed, the application is also closed.</para>
+      <para>If you set the <see cref="P:System.Windows.Forms.Control.Enabled" /> property to false before the <see cref="T:System.Windows.Forms.Form" /> is visible (for example, setting <see cref="P:System.Windows.Forms.Control.Enabled" /> to false in the TLA#tla_visualstu designer), the minimize, maximize, close, and system buttons remain enabled. If you set <see cref="P:System.Windows.Forms.Control.Enabled" /> to false after the <see cref="T:System.Windows.Forms.Form" /> is visible (for example, when the Load event occurs), the buttons are disabled.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a window or dialog box that makes up an application's user interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -48,8 +60,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default size of a form is 300 pixels in height and 300 pixels in width.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Form" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,9 +86,17 @@
         <ReturnType>System.Windows.Forms.IButtonControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to designate a default action to occur when the user presses the ENTER key in your application. The button assigned to this property must be an <see cref="T:System.Windows.Forms.IButtonControl" /> that is on the current form or located within a container on the current form.</para>
+          <para>You can use this property to allow the user to quickly navigate a simple form by allowing them to simply press the ENTER key when they are finished instead of manually clicking the accept button with their mouse.</para>
+          <para>The accept button might not be activated if the currently selected control on the form intercepts the ENTER key and processes it. For example, a multiline text box control allows the ENTER key to be pressed when it is selected to insert a new line character in the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the button on the form that is clicked when the user presses the ENTER key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,8 +111,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Activating a form brings it to the front if this is the active application, or it flashes the window caption if this is not the active application. The form must be visible for this method to have any effect. To determine the active form in an application, use the <see cref="P:System.Windows.Forms.Form.ActiveForm" /> property or the <see cref="P:System.Windows.Forms.Form.ActiveMdiChild" /> property if your forms are in a Multiple-document interface (MDI) application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Activates the form and gives it focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,8 +132,18 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>When the application is active and has multiple forms, the active form is the form with the input focus. A form that is not visible cannot be the active form. The simplest way to activate a visible form is to click it or use an appropriate keyboard combination.</para>
+          </block>
+          <para>To activate a form at run time using code, call the <see cref="M:System.Windows.Forms.Form.Activate" /> method. You can use this event for tasks such as updating the contents of the form based on changes made to the form's data when the form was not activated.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the form is activated in code or by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,9 +160,17 @@
         <Parameter Name="form" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <param name="form">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="form" /> parameter is already the active MDI child form, then the <see cref="M:System.Windows.Forms.Form.ActivateMdiChild(System.Windows.Forms.Form)" /> method simply returns. If <paramref name="form" /> is not null, then it is set to be the active MDI child form. </para>
+          <para>Whether the <paramref name="form" /> parameter is null or not, <see cref="M:System.Windows.Forms.Form.ActivateMdiChild(System.Windows.Forms.Form)" /> raises the <see cref="E:System.Windows.Forms.Form.MdiChildActivate" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Activates the MDI child of a form.</para>
+        </summary>
+        <param name="form">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child form to activate.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,9 +184,16 @@
         <ReturnType>System.Windows.Forms.Form</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to obtain a reference to the currently active form to perform actions on the form or its controls.</para>
+          <para>If your application is a multiple-document interface (MDI) application, use the <see cref="P:System.Windows.Forms.Form.ActiveMdiChild" /> property to obtain the currently active MDI child form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently active form for this application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -158,9 +215,16 @@
         <ReturnType>System.Windows.Forms.Form</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to determine whether there are any MDI child forms open in your MDI application. You can also use this method to perform operations on an MDI child window from its MDI parent form or from another form that is displayed in your application.</para>
+          <para>If the currently active form is not an MDI child form, you can use the <see cref="P:System.Windows.Forms.Form.ActiveForm" /> property to obtain a reference to it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently active multiple-document interface (MDI) child window.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -177,9 +241,20 @@
         <Parameter Name="ownedForm" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <param name="ownedForm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The form assigned to the owner form remains owned until the <see cref="M:System.Windows.Forms.Form.RemoveOwnedForm(System.Windows.Forms.Form)" /> method is called. You can also make a form owned by another by setting the <see cref="P:System.Windows.Forms.Form.Owner" /> property with a reference to its owner form.</para>
+          <para>When a form is owned by another form, it is closed or hidden with the owner form. For example, consider a form named Form2 that is owned by a form named Form1. If Form1 is closed or minimized, Form2 is also closed or hidden. Owned forms are also never displayed behind their owner form. You can use owned forms for windows such as find and replace windows, which should not be displayed behind the owner form when the owner form is selected.</para>
+          <block subset="none" type="note">
+            <para>If the form is a multiple-document interface (MDI) parent form, this property returns all forms that are displayed with the exception of any MDI child forms that are currently open. To obtain the MDI child forms opened in an MDI parent form, use the <see cref="P:System.Windows.Forms.Form.MdiChildren" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an owned form to this form.</para>
+        </summary>
+        <param name="ownedForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Form" /> that this form will own. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -196,9 +271,13 @@
         <Parameter Name="displayScrollbars" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="displayScrollbars">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adjusts the scroll bars on the container based on the current control positions and the control currently selected. </para>
+        </summary>
+        <param name="displayScrollbars">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to show the scroll bars; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -225,9 +304,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is automatically set to true if the Opacity is changed. When the opacity of a form is set using the Opacity property, the form will layer objects on the form. If you set the <see cref="P:System.Windows.Forms.Form.AllowTransparency" /> property to false the form will not be in layered mode which will improve the display performance of the form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the opacity of the form can be adjusted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,8 +327,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method determines the form size using the value of the <see cref="P:System.Windows.Forms.Form.AutoScaleBaseSize" /> property and the <see cref="P:System.Windows.Forms.Form.Size" /> value returned by the <see cref="M:System.Windows.Forms.Form.GetAutoScaleSize(System.Drawing.Font)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resizes the form according to the current value of the <see cref="P:System.Windows.Forms.Form.AutoScaleBaseSize" /> property and the size of the current font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -279,9 +370,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This member has been retained for backward compatibility. For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+          </block>
+          <para>You can use this property to allow your form and its controls to automatically adjust based on changes in the font. This can be useful in applications where the font might increase or decrease based on the language specified for use by Windows.</para>
+          <para>To obtain the size the form will auto scale to, use the <see cref="P:System.Windows.Forms.Form.AutoScaleBaseSize" /> property. If you want to determine the size the form will auto scale to based on a specific font, use the <see cref="M:System.Windows.Forms.Form.GetAutoScaleSize(System.Drawing.Font)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the form adjusts its size to fit the height of the font used on the form and scales its controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -309,9 +410,21 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para> This member has been retained for backward compatibility. For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+          </block>
+          <para>The value of the <see cref="P:System.Windows.Forms.Form.AutoScaleBaseSize" /> property is used at form-display time to compute the scaling factor for the form. The autoscaling base size is used by the form as a baseline for comparison to the system's font size to determine how much to scale the form when autoscaling is used. If you want to determine the size a form will auto scale to based on a specific font, use the <see cref="M:System.Windows.Forms.Form.GetAutoScaleSize(System.Drawing.Font)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The value of this property is used when the form is initially created. Once the property is set, it cannot be changed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the base size used for autoscaling of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -330,9 +443,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to true, scroll bars are displayed on the form if any controls are located outside the form's client region. Additionally, when autoscrolling is on, the client area of the form automatically scrolls to make the control with input focus visible.</para>
+          <para>You can use this property to prevent users from losing the ability to view controls when their video resolution settings are set to a low resolution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the form enables autoscrolling.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -360,9 +480,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="P:System.Windows.Forms.Form.AutoSize" /> to force a form to resize to fit its contents. </para>
+          <para>A form does not automatically resize in the Visual Studio forms designer, regardless of the values of the <see cref="P:System.Windows.Forms.Form.AutoSize" /> and <see cref="P:System.Windows.Forms.Form.AutoSizeMode" /> properties. The form correctly resizes itself at run time according to the values of these two properties. By contrast, a custom <see cref="T:System.Windows.Forms.UserControl" /> automatically resizes itself both at design time and at run time.</para>
+          <para>When using <see cref="P:System.Windows.Forms.Form.AutoSize" />, the <see cref="P:System.Windows.Forms.Control.MinimumSize" /> and <see cref="P:System.Windows.Forms.Control.MaximumSize" /> properties are respected, but the current value of the <see cref="P:System.Windows.Forms.Control.Size" /> property is ignored. Using <see cref="P:System.Windows.Forms.Form.AutoSize" /> and <see cref="P:System.Windows.Forms.Form.AutoSizeMode" /> also renders the <see cref="P:System.Windows.Forms.Form.AutoScroll" /> property superfluous, as there is no way to shrink the form to hide its contained controls from view.</para>
+          <para>See the <see cref="T:System.Windows.Forms.AutoSizeMode" /> enumeration for information on how a form behaves when <see cref="P:System.Windows.Forms.Form.AutoSize" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resize the form according to the setting of <see cref="P:System.Windows.Forms.Form.AutoSizeMode" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoSizeChanged">
@@ -383,8 +512,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.Form.AutoSize" /> property changes. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoSizeMode">
@@ -408,9 +540,16 @@
         <ReturnType>System.Windows.Forms.AutoSizeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Windows.Forms.Form.AutoSizeMode" /> property to a new value causes the form to be laid out again.</para>
+          <para>A form does not automatically resize in the Visual Studio forms designer, regardless of the values of the <see cref="P:System.Windows.Forms.Form.AutoSize" /> and <see cref="P:System.Windows.Forms.Form.AutoSizeMode" /> properties. The form correctly resizes itself at run time according to the values of these two properties. By contrast, a custom <see cref="T:System.Windows.Forms.UserControl" /> automatically resizes itself both at design time and at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the mode by which the form automatically resizes itself.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoValidate">
@@ -454,8 +593,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.Form.AutoValidate" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackColor">
@@ -486,9 +628,19 @@
         <ReturnType>System.Windows.Forms.IButtonControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cancel button for a form is the button control that is clicked whenever the user presses the ESC key. The button assigned to this property must be an <see cref="T:System.Windows.Forms.IButtonControl" /> that is on the current form or located within a container on the current form.</para>
+          <para>This property allows you to designate a default action to occur when the user presses the ESC key in your application. You can use this property to allow the user to quickly navigate a simple form by allowing them to simply press the ESC key to close a window without committing changes instead of manually clicking the cancel button with their mouse.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.Form.CancelButton" /> may not work if another control on the form intercepts the ESC key. For example, if you have a <see cref="T:System.Windows.Forms.ComboBox" /> open on your form, ESC will close the <see cref="T:System.Windows.Forms.ComboBox" /> instead of closing the Form.</para>
+          <para>The <see cref="T:System.Windows.Forms.IButtonControl" /> object assigned to <see cref="P:System.Windows.Forms.Form.CancelButton" /> must be visible on the form, or else pressing the ESC key will have no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the button control that is clicked when the user presses the ESC key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -503,8 +655,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not call the <see cref="M:System.Windows.Forms.Form.CenterToParent" /> method directly from your code. Instead, set the <see cref="P:System.Windows.Forms.Form.StartPosition" /> property to <see cref="F:System.Windows.Forms.FormStartPosition.CenterParent" />.</para>
+          <para>If the form or dialog is top-level, then <see cref="M:System.Windows.Forms.Form.CenterToParent" /> centers the form with respect to the screen or desktop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Centers the position of the form within the bounds of the parent form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -519,8 +678,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not call this directly from your code. Instead, set the <see cref="P:System.Windows.Forms.Form.StartPosition" /> property to <see cref="F:System.Windows.Forms.FormStartPosition.CenterScreen" />.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.CenterToScreen" /> method uses the following priority list to determine the screen used to center the form:</para>
+          <list type="ordered">
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.Form.Owner" /> property of the form.</para>
+            </item>
+            <item>
+              <para>The HWND owner of the form. </para>
+            </item>
+            <item>
+              <para>The screen that currently has the mouse cursor.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Centers the form on the current screen.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -542,9 +719,18 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the client area of the form is the size of the form excluding the borders and the title bar. The client area of a form is the area within a form where controls can be placed. You can use this property to get the proper dimensions when performing graphics operations or when sizing and positioning controls on the form. To get the size of the entire form, use the <see cref="P:System.Windows.Forms.Form.Size" /> property or use the individual properties <see cref="P:System.Windows.Forms.Control.Height" /> and <see cref="P:System.Windows.Forms.Control.Width" />.</para>
+          <block subset="none" type="note">
+            <para>You cannot currently bind to this property using application settings. For more information on application settings, see <format type="text/html"><a href="0dd8bca5-a6bf-4ac4-8eec-5725d08b38dc">Application Settings Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the client area of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -559,8 +745,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a form is closed, all resources created within the object are closed and the form is disposed. You can prevent the closing of a form at run time by handling the <see cref="E:System.Windows.Forms.Form.Closing" /> event and setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.ComponentModel.CancelEventArgs" /> passed as a parameter to your event handler. If the form you are closing is the startup form of your application, your application ends.</para>
+          <para>The two conditions when a form is not disposed on Close is when (1) it is part of a multiple-document interface (MDI) application, and the form is not visible; and (2) you have displayed the form using <see cref="M:System.Windows.Forms.Form.ShowDialog" />. In these cases, you will need to call <see cref="Overload:System.Windows.Forms.Form.Dispose" /> manually to mark all of the form's controls for garbage collection.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="M:System.Windows.Forms.Form.Close" /> method is called on a <see cref="T:System.Windows.Forms.Form" /> displayed as a modeless window, you cannot call the <see cref="M:System.Windows.Forms.Control.Show" /> method to make the form visible, because the form's resources have already been released. To hide a form and then make it visible, use the <see cref="M:System.Windows.Forms.Control.Hide" /> method.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Prior to the dnprdnshort 2.0, the <see cref="E:System.Windows.Forms.Form.Closed" /> and <see cref="E:System.Windows.Forms.Form.Closing" /> events are not raised when the <see cref="M:System.Windows.Forms.Application.Exit" /> method is called to exit your application. If you have validation code in either of these events that must be executed, you should call the <see cref="M:System.Windows.Forms.Form.Close" /> method for each open form individually before calling the <see cref="M:System.Windows.Forms.Application.Exit" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -574,8 +773,23 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Windows.Forms.Form.Closed" /> event is obsolete in the .NET Framework version 2.0; use the <see cref="E:System.Windows.Forms.Form.FormClosed" /> event instead.</para>
+          </block>
+          <para>This event occurs after the form has been closed by the user or by the <see cref="M:System.Windows.Forms.Form.Close" /> method of the form. To prevent a form from closing, handle the <see cref="E:System.Windows.Forms.Form.Closing" /> event and set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.ComponentModel.CancelEventArgs" /> passed to your event handler to true.</para>
+          <para>You can use this event to perform tasks such as freeing resources used by the form and to save information entered in the form or to update its parent form.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Windows.Forms.Form.Closed" /> and <see cref="E:System.Windows.Forms.Form.Closing" /> events are not raised when the <see cref="M:System.Windows.Forms.Application.Exit" /> method is called to exit your application. If you have validation code in either of these events that must be executed, you should call the <see cref="M:System.Windows.Forms.Form.Close" /> method for each open form individually before calling the <see cref="M:System.Windows.Forms.Application.Exit" /> method.</para>
+          </block>
+          <para>If the form is an MDI parent form, the <see cref="E:System.Windows.Forms.Form.Closing" /> events of all MDI child forms are raised before the MDI parent form's <see cref="E:System.Windows.Forms.Form.Closing" /> event is raised. In addition, the <see cref="E:System.Windows.Forms.Form.Closed" /> events of all MDI child forms are raised before the <see cref="E:System.Windows.Forms.Form.Closed" /> event of the MDI parent form is raised.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the form is closed. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -597,8 +811,26 @@
         <ReturnType>System.ComponentModel.CancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Windows.Forms.Form.Closing" /> event is obsolete in the .NET Framework version 2.0; use the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event instead.</para>
+          </block>
+          <para>The <see cref="E:System.Windows.Forms.Form.Closing" /> event occurs as the form is being closed. When a form is closed, all resources created within the object are released and the form is disposed. If you cancel this event, the form remains opened. To cancel the closure of a form, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.ComponentModel.CancelEventArgs" /> passed to your event handler to true.</para>
+          <para>When a form is displayed as a modal dialog box, clicking the <ui>Close</ui> button (the button with an X at the upper-right corner of the form) causes the form to be hidden and the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property to be set to DialogResult.Cancel. You can override the value assigned to the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property when the user clicks the <ui>Close</ui> button by setting the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property in an event handler for the <see cref="E:System.Windows.Forms.Form.Closing" /> event of the form.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="M:System.Windows.Forms.Form.Close" /> method is called on a <see cref="T:System.Windows.Forms.Form" /> displayed as a modeless window, you cannot call the <see cref="M:System.Windows.Forms.Control.Show" /> method to make the form visible, because the form's resources have already been released. To hide a form and then make it visible, use the <see cref="M:System.Windows.Forms.Control.Hide" /> method.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Windows.Forms.Form.Closed" /> and <see cref="E:System.Windows.Forms.Form.Closing" /> events are not raised when the <see cref="M:System.Windows.Forms.Application.Exit" /> method is called to exit your application. If you have validation code in either of these events that must be executed, you should call the <see cref="M:System.Windows.Forms.Form.Close" /> method for each open form individually before calling the <see cref="M:System.Windows.Forms.Application.Exit" /> method.</para>
+          </block>
+          <para>If the form is an MDI parent form, the <see cref="E:System.Windows.Forms.Form.Closing" /> events of all MDI child forms are raised before the MDI parent form's <see cref="E:System.Windows.Forms.Form.Closing" /> event is raised. In addition, the <see cref="E:System.Windows.Forms.Form.Closed" /> events of all MDI child forms are raised before the <see cref="E:System.Windows.Forms.Form.Closed" /> event of the MDI parent form is raised. Canceling the <see cref="E:System.Windows.Forms.Form.Closing" /> event of an MDI child form does not prevent the <see cref="E:System.Windows.Forms.Form.Closing" /> event of the MDI parent form from being raised. However, canceling the event will set to true the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.ComponentModel.CancelEventArgs" /> that is passed as a parameter to the parent form. To force all MDI parent and child forms to close, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to false in the MDI parent form.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the form is closing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -625,9 +857,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.Form.ControlBox" /> property is set to true, the control box is displayed in the upper-left corner of the caption bar. The control box is where the user can click to access the system menu.</para>
+          <para>If you set <see cref="P:System.Windows.Forms.Form.ControlBox" /> to false, and also set the <see cref="P:System.Windows.Forms.Form.Location" /> property, the <see cref="P:System.Windows.Forms.Form.Size" /> property of Form will not update to reflect that the non-client area of the form has been hidden. To fix this problem, put the code which alters the <see cref="P:System.Windows.Forms.Form.Location" /> property to the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event. </para>
+          <block subset="none" type="note">
+            <para>When set to false, the <see cref="P:System.Windows.Forms.Form.ControlBox" /> property has no effect on a Multiple-document interface (MDI) child form that is displayed maximized at time of creation.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a control box is displayed in the caption bar of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -664,8 +906,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the handle for the form. If a derived class overrides this function, it must call the base implementation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -700,8 +945,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this event to perform tasks such as updating another window in your application with data from the deactivated form.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the form loses focus and is no longer the active form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -715,9 +967,16 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An input method editor (IME) is a program that allows users to enter complex characters and symbols, such as Japanese Kanji characters, by using a standard keyboard.</para>
+          <para>As implemented in the <see cref="T:System.Windows.Forms.Form" /> class, this property always returns the <see cref="F:System.Windows.Forms.ImeMode.NoControl" /> value. The value of this property is assigned to the <see cref="P:System.Windows.Forms.Control.ImeMode" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default Input Method Editor (IME) mode supported by the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -779,9 +1038,16 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Desktop coordinates are based on the working area of the screen, which excludes the taskbar. The coordinate system of the desktop is pixel-based. If your application is running on a multiple monitor system, the coordinates of the form are the coordinates for the combined desktop.</para>
+          <para>You can use this property to size and position a form relative to other forms or applications on the Windows desktop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size and location of the form on the Windows desktop.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -803,9 +1069,18 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Desktop coordinates are based on the working area of the screen, which excludes the taskbar. The coordinate system of the desktop is pixel based. If your application is running on a multimonitor system, the coordinates of the form are the coordinates for the combined desktop.</para>
+          <para>You can use this property to position your form relative to other forms and applications on the Windows desktop.</para>
+          <para>If you call the <see cref="M:System.Windows.Forms.Form.SetDesktopLocation(System.Int32,System.Int32)" /> method before calling the <see cref="M:System.Windows.Forms.Form.Show(System.Windows.Forms.IWin32Window)" /> method, your form will be positioned at its default location, which is determined by the operating system. For more information about window positioning, see the "Window Size and Position" section of the "Window Features" document in the MSDN library at http://msdn.microsoft.com/library.</para>
+          <para>If you call <see cref="M:System.Windows.Forms.Form.SetDesktopLocation(System.Int32,System.Int32)" /> after calling <see cref="M:System.Windows.Forms.Form.Show(System.Windows.Forms.IWin32Window)" />, your form will be positioned at the location you specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the form on the Windows desktop.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -827,9 +1102,23 @@
         <ReturnType>System.Windows.Forms.DialogResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dialog result of a form is the value that is returned from the form when it is displayed as a modal dialog box. If the form is displayed as a dialog box, setting this property with a value from the <see cref="T:System.Windows.Forms.DialogResult" /> enumeration sets the value of the dialog box result for the form, hides the modal dialog box, and returns control to the calling form. This property is typically set by the <see cref="P:System.Windows.Forms.Button.DialogResult" /> property of a <see cref="T:System.Windows.Forms.Button" /> control on the form. When the user clicks the <see cref="T:System.Windows.Forms.Button" /> control, the value assigned to the <see cref="P:System.Windows.Forms.Button.DialogResult" /> property of the <see cref="T:System.Windows.Forms.Button" /> is assigned to the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property of the form.</para>
+          <para>When a form is displayed as a modal dialog box, clicking the <ui>Close</ui> button (the button with an X in the top-right corner of the form) causes the form to be hidden and the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property to be set to DialogResult.Cancel. The <see cref="M:System.Windows.Forms.Form.Close" /> method is not automatically called when the user clicks the <ui>Close</ui> button of a dialog box or sets the value of the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property. Instead, the form is hidden and can be shown again without creating a new instance of the dialog box. Because of this behavior, you must call the <see cref="M:System.Windows.Forms.Control.Dispose(System.Boolean)" /> method of the form when the form is no longer needed by your application.</para>
+          <para>You can use this property to determine how a dialog box is closed in order to properly process the actions performed in the dialog box.</para>
+          <block subset="none" type="note">
+            <para>You can override the value assigned to the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property when the user clicks the <ui>Close</ui> button by setting the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property in an event handler for the <see cref="E:System.Windows.Forms.Form.Closing" /> event of the form.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If a <see cref="T:System.Windows.Forms.Form" /> is displayed as a modeless window, the value returned by the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property might not return a value assigned to the form because the form's resources are automatically released when the form is closed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the dialog result for the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -846,9 +1135,19 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.Form" /> references. This method invokes the Dispose method of each referenced object.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.Form.Dispose(System.Boolean)" /> will be called automatically if the form is shown using the <see cref="Overload:System.Windows.Forms.Form.Show" /> method. If another method such as <see cref="Overload:System.Windows.Forms.Form.ShowDialog" /> is used, or the form is never shown at all, you must call <see cref="M:System.Windows.Forms.Form.Dispose(System.Boolean)" /> yourself within your application. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes of the resources (other than memory) used by the <see cref="T:System.Windows.Forms.Form" />.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -870,9 +1169,18 @@
         <ReturnType>System.Windows.Forms.FormBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The border style of the form determines how the outer edge of the form appears. In addition to changing the border display for a form, certain border styles prevent the form from being sized. For example, the FormBorderStyle.FixedDialog border style changes the border of the form to that of a dialog box and prevents the form from being resized. The border style can also affect the size or availability of the caption bar section of a form.</para>
+          <block subset="none" type="note">
+            <para>With the <see cref="F:System.Windows.Forms.FormBorderStyle.Sizable" /> style, it is impossible to resize the window below a certain minimum value, even if you have set <see cref="P:System.Windows.Forms.Form.ControlBox" /> to false and assigned a zero-length string to <see cref="P:System.Windows.Forms.Form.Text" />. Consider working around this by using the <see cref="F:System.Windows.Forms.FormBorderStyle.SizableToolWindow" /> style instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -886,9 +1194,18 @@
         <ReturnType>System.Windows.Forms.FormClosedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.FormClosed" /> event occurs after the form has been closed by the user or by the <see cref="M:System.Windows.Forms.Form.Close" /> method or the <see cref="M:System.Windows.Forms.Application.Exit" /> method of the <see cref="T:System.Windows.Forms.Application" /> class. To prevent a form from closing, handle the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event and set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.ComponentModel.CancelEventArgs" /> passed to your event handler to true.</para>
+          <para>You can use this event to perform tasks such as freeing resources used by the form and to save information entered in the form or to update its parent form.</para>
+          <para>If the form is a multiple-document interface (MDI) parent form, the <see cref="E:System.Windows.Forms.Form.FormClosing" /> events of all MDI child forms are raised before the MDI parent form's <see cref="E:System.Windows.Forms.Form.FormClosing" /> event is raised. Likewise, the <see cref="E:System.Windows.Forms.Form.FormClosed" /> events of all MDI child forms are raised before the <see cref="E:System.Windows.Forms.Form.FormClosed" /> event of the MDI parent form is raised. </para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the form is closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -901,9 +1218,21 @@
         <ReturnType>System.Windows.Forms.FormClosingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.FormClosing" /> event occurs as the form is being closed. When a form is closed, it is disposed, releasing all resources associated with the form. If you cancel this event, the form remains opened. To cancel the closure of a form, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> passed to your event handler to true.</para>
+          <para>When a form is displayed as a modal dialog box, clicking the <ui>Close</ui> button (the button with an X at the upper-right corner of the form) causes the form to be hidden and the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property to be set to DialogResult.Cancel. You can override the value assigned to the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property when the user clicks the <ui>Close</ui> button by setting the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property in an event handler for the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event of the form.</para>
+          <block subset="none" type="note">
+            <para>When the <see cref="M:System.Windows.Forms.Form.Close" /> method is called on a <see cref="T:System.Windows.Forms.Form" /> displayed as a modeless window, you cannot call the <see cref="M:System.Windows.Forms.Control.Show" /> method to make the form visible, because the form's resources have already been released. To hide a form and then make it visible, use the <see cref="M:System.Windows.Forms.Control.Hide" /> method.</para>
+          </block>
+          <para>If the form is a multiple-document interface (MDI) parent form, the <see cref="E:System.Windows.Forms.Form.FormClosing" /> events of all MDI child forms are raised before the MDI parent form's <see cref="E:System.Windows.Forms.Form.FormClosing" /> event is raised. Likewise, the <see cref="E:System.Windows.Forms.Form.FormClosed" /> events of all MDI child forms are raised before the <see cref="E:System.Windows.Forms.Form.FormClosed" /> event of the MDI parent form is raised. Canceling the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event of an MDI child form does not prevent the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event of the MDI parent form from being raised. However, canceling the event will set to true the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> class that is passed as a parameter to the parent form. To force all MDI parent and child forms to close, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to false in the MDI parent form.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the form is closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -919,10 +1248,23 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <param name="font">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Form.GetAutoScaleSize(System.Drawing.Font)" /> method is obsolete in.NET Framework version 2.0. This member has been retained for backward compatibility. For more information about automatic scaling, see <format type="text/html"><a href="68fad25b-afbc-44bd-8e1b-966fc43507a4">Automatic Scaling in Windows Forms</a></format>.</para>
+          </block>
+          <para>You can use this method to determine the size a form would autoscale to for a specific font before applying the font to the form. If you want to determine the size a form is autoscaled to based on the font currently assigned to the form, use the <see cref="P:System.Windows.Forms.Form.AutoScaleBaseSize" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size when autoscaling the form based on a specified font.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.SizeF" /> representing the autoscaled size of the form.</para>
+        </returns>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Font" /> representing the font to determine the autoscaled base size of the form. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -977,9 +1319,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, a small button with a question mark appears in the caption bar to the left of the <ui>Close</ui> button. You can use this button to display help for your application. You can create an event handler for the <see cref="E:System.Windows.Forms.Control.HelpRequested" /> event of the <see cref="T:System.Windows.Forms.Control" /> class to display Help information to the user when the Help button of the form is clicked.</para>
+          <block subset="none" type="note">
+            <para>The value of the <see cref="P:System.Windows.Forms.Form.HelpButton" /> property is ignored if the <ui>Maximize</ui> or <ui>Minimize</ui> buttons are shown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a Help button should be displayed in the caption box of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1004,8 +1355,15 @@
         <ReturnType>System.ComponentModel.CancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.HelpButtonClicked" /> event occurs when the <ui>Help</ui> button in the form's caption bar is clicked. The <ui>Help</ui> button is displayed when the <see cref="P:System.Windows.Forms.Form.HelpButton" /> property is set to true. <see cref="E:System.Windows.Forms.Form.HelpButtonClicked" /> can be canceled. </para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <ui>Help </ui>button is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Icon">
@@ -1023,9 +1381,16 @@
         <ReturnType>System.Drawing.Icon</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A form's icon designates the picture that represents the form in the taskbar as well as the icon that is displayed for the control box of the form.</para>
+          <para>This property will have no effect if <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> is set to <see cref="F:System.Windows.Forms.FormBorderStyle.FixedDialog" />. In that case, the form will not display an icon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the icon for the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1039,8 +1404,15 @@
         <ReturnType>System.Windows.Forms.InputLanguageChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this event to make changes to your form's appearance and text based on changes made to the input language of the form.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the input language of the form has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1054,8 +1426,15 @@
         <ReturnType>System.Windows.Forms.InputLanguageChangingEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event occurs before the change of input language is made for the form. You can cancel the language change by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Windows.Forms.InputLanguageChangingEventArgs" /> passed to your event handler to false. If the event is canceled, the input language is not changed. You can use this event to determine whether the requested input language change is appropriate for your application.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user attempts to change the input language for the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1077,9 +1456,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At run time, MDI child forms are displayed inside the client area of an MDI parent form. An MDI child form can be maximized, minimized, and moved within the MDI parent form. To create an MDI child form, assign the <see cref="T:System.Windows.Forms.Form" /> that will be the MDI parent form to the <see cref="P:System.Windows.Forms.Form.MdiParent" /> property of the child form. You can use the <see cref="P:System.Windows.Forms.Form.IsMdiContainer" /> property to determine whether a form is an MDI parent form.</para>
+          <para>You can use the <see cref="P:System.Windows.Forms.Form.IsMdiChild" /> property to determine whether a form returned by a method or property is an MDI child form or a standard form in your application such as a dialog box.</para>
+          <block subset="none" type="note">
+            <para>All MDI child forms have sizable borders, a control-menu box, and Minimize and <ui>Maximize</ui> buttons, regardless of the settings of the <see cref="P:System.Windows.Forms.Form.FormBorderStyle" />, <see cref="P:System.Windows.Forms.Form.ControlBox" />, <see cref="P:System.Windows.Forms.Form.MinimizeBox" />, and <see cref="P:System.Windows.Forms.Form.MaximizeBox" /> properties.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the form is a multiple-document interface (MDI) child form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1098,9 +1487,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property changes the display and behavior of the form to an MDI parent form. When this property is set to true, the form displays a sunken client area with a raised border. All MDI child forms assigned to the parent form are displayed within its client area.</para>
+          <para>When an MDI parent form is closed, the <see cref="E:System.Windows.Forms.Form.Closing" /> events of all MDI child forms are raised before the MDI parent form's <see cref="E:System.Windows.Forms.Form.Closing" /> event is raised. In addition, the <see cref="E:System.Windows.Forms.Form.Closed" /> events of all MDI child forms are raised before the <see cref="E:System.Windows.Forms.Form.Closed" /> event of the MDI parent form is raised.</para>
+          <block subset="none" type="note">
+            <para>If there are two <see cref="T:System.Windows.Forms.MenuStrip" /> controls on an MDI child form, setting <see cref="P:System.Windows.Forms.Form.IsMdiContainer" /> to true for the parent form merges the contents of only one of the <see cref="T:System.Windows.Forms.MenuStrip" /> controls. Use <see cref="M:System.Windows.Forms.ToolStripManager.Merge(System.Windows.Forms.ToolStrip,System.String)" /> to merge the contents of additional child <see cref="T:System.Windows.Forms.MenuStrip" /> controls on the MDI parent form.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the form is a container for multiple-document interface (MDI) child forms.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1122,9 +1521,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Form.IsRestrictedWindow" /> property determines whether the <see cref="F:System.Security.Permissions.UIPermissionWindow.AllWindows" /> permission is granted. This property is set at run time in the form's constructor, and is cached for the lifetime of the form. Windows Forms applications running in partial trust cannot circumvent this check, as the common language runtime ensures that the parent constructor is always called in partial trust. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the form can use all windows and user input events without restriction.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1143,9 +1548,22 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, the form will receive all <see cref="E:System.Windows.Forms.Control.KeyPress" />, <see cref="E:System.Windows.Forms.Control.KeyDown" />, and <see cref="E:System.Windows.Forms.Control.KeyUp" /> events. After the form's event handlers have completed processing the keystroke, the keystroke is then assigned to the control with focus. For example, if the <see cref="P:System.Windows.Forms.Form.KeyPreview" /> property is set to true and the currently selected control is a <see cref="T:System.Windows.Forms.TextBox" />, after the keystroke is handled by the event handlers of the form the <see cref="T:System.Windows.Forms.TextBox" /> control will receive the key that was pressed. To handle keyboard events only at the form level and not allow controls to receive keyboard events, set the <see cref="P:System.Windows.Forms.KeyPressEventArgs.Handled" /> property in your form's <see cref="E:System.Windows.Forms.Control.KeyPress" /> event handler to true.</para>
+          <para>You can use this property to process most keystrokes in your application and either handle the keystroke or call the appropriate control to handle the keystroke. For example, when an application uses function keys, you might want to process the keystrokes at the form level rather than writing code for each control that might receive keystroke events.</para>
+          <block subset="none" type="note">
+            <para>If a form has no visible or enabled controls, it automatically receives all keyboard events.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>A control on a form may be programmed to cancel any keystrokes it receives. Since the control never sends these keystrokes to the form, the form will never see them regardless of the setting of <see cref="P:System.Windows.Forms.Form.KeyPreview" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the form will receive key events before the event is passed to the control that has focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1162,9 +1580,16 @@
         <Parameter Name="value" Type="System.Windows.Forms.MdiLayout" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to arrange the MDI child forms in your MDI parent form to allow for easier navigation and manipulation of MDI child forms. MDI child forms can be tiled horizontally and vertically, cascaded, or as icons within the MDI parent form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Arranges the multiple-document interface (MDI) child forms within the MDI parent form.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.MdiLayout" /> values that defines the layout of MDI child forms. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1178,8 +1603,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this event to perform tasks such as allocating resources used by the form.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before a form is displayed for the first time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1193,10 +1625,18 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Drawing.Point" /> is a structure, which means that it is a value type. If you access a property in <see cref="T:System.Drawing.Point" />, a copy of the property is returned. Therefore, changing the <see cref="P:System.Drawing.Point.X" /> or <see cref="P:System.Drawing.Point.Y" /> properties of the <see cref="T:System.Drawing.Point" /> returned from the <see cref="P:System.Windows.Forms.Control.Location" /> property will not affect the <see cref="P:System.Windows.Forms.Control.Left" />, <see cref="P:System.Windows.Forms.Control.Right" />, <see cref="P:System.Windows.Forms.Control.Top" />, or <see cref="P:System.Windows.Forms.Control.Bottom" /> property values of the <see cref="T:System.Windows.Forms.Form" />. To adjust these properties, set each property value individually, or set the <see cref="P:System.Windows.Forms.Form.Location" /> property with a new <see cref="T:System.Drawing.Point" />.</para>
+          <para>The <see cref="P:System.Windows.Forms.Form.Location" /> property gets or sets the <see cref="P:System.Windows.Forms.Control.Location" /> property of the <see cref="T:System.Windows.Forms.Control" /> base class, and sets the <see cref="P:System.ComponentModel.SettingsBindableAttribute.Bindable" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Drawing.Point" /> that represents the upper-left corner of the <see cref="T:System.Windows.Forms.Form" /> in screen coordinates.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1226,9 +1666,16 @@
         <ReturnType>System.Windows.Forms.MenuStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In addition to setting the <see cref="P:System.Windows.Forms.Form.MainMenuStrip" /> property, you must <see cref="M:System.Windows.Forms.Control.ControlCollection.Add(System.Windows.Forms.Control)" /> the <see cref="T:System.Windows.Forms.MenuStrip" /> control to the <see cref="P:System.Windows.Forms.Control.Controls" /> collection of the form.</para>
+          <para>The <see cref="T:System.Windows.Forms.MenuStrip" /> class supersedes the <see cref="T:System.Windows.Forms.MainMenu" /> class in previous versions of the .NET Framework. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the primary menu container for the form.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Margin">
@@ -1249,9 +1696,12 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the space between controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MarginChanged">
@@ -1272,8 +1722,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.Form.Margin" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximizeBox">
@@ -1288,9 +1741,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <ui>Maximize</ui> button enables users to enlarge a window to full-screen size. To display a <ui>Maximize</ui> button, you must also set the form's <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> property to FormBorderStyle.FixedSingle, FormBorderStyle.Sizable, FormBorderStyle.Fixed3D, or FormBorderStyle.FixedDialog.</para>
+          <para>A <ui>Maximize</ui> button automatically becomes a restore button when a window is maximized. Minimizing or restoring a window automatically changes the restore button back to a <ui>Maximize</ui> button.</para>
+          <block subset="none" type="note">
+            <para>Maximizing a form at run time generates a <see cref="E:System.Windows.Forms.Control.Resize" /> event. The <see cref="P:System.Windows.Forms.Form.WindowState" /> property reflects the current state of the window. If you set the <see cref="P:System.Windows.Forms.Form.WindowState" /> property to FormWindowState.Maximized, the form is maximized independently of whatever settings are in effect for the <see cref="P:System.Windows.Forms.Form.MaximizeBox" /> and <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> properties.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <ui>Maximize</ui> button is displayed in the caption bar of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1304,9 +1767,12 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the size of the form when it is maximized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1320,8 +1786,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.Form.MaximizedBounds" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1346,9 +1818,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to limit the size of a form to a specified maximum size. You can use this feature when displaying multiple windows at the same time, to ensure that a single window does not cause other windows to be hidden. If this property is set to a <see cref="T:System.Drawing.Size" /> object that is 0 in height and 0 in width, the form will have no maximum size beyond the limits set by Windows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum size the form can be resized to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1362,8 +1840,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.Form.MaximumSize" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1377,8 +1861,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this event to perform tasks such as updating the contents of the MDI child form and changing the menu options available in the MDI parent form based on the status of the MDI child form that is activated.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a multiple-document interface (MDI) child form is activated or closed within an MDI application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1400,10 +1891,17 @@
         <ReturnType>System.Windows.Forms.Form[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property allows you to obtain references to all the MDI child forms currently opened in an MDI parent form. To create an MDI child form, assign the <see cref="T:System.Windows.Forms.Form" /> that will be the MDI parent form to the <see cref="P:System.Windows.Forms.Form.MdiParent" /> property of the child form.</para>
+          <para>You can use this property to loop through all the MDI child forms to perform operations such as saving data to a database when the MDI parent form closes or to update fields on the child forms based on actions performed in your application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of forms that represent the multiple-document interface (MDI) child forms that are parented to this form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1425,9 +1923,18 @@
         <ReturnType>System.Windows.Forms.Form</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To create an MDI child form, assign the <see cref="T:System.Windows.Forms.Form" /> that will be the MDI parent form to the <see cref="P:System.Windows.Forms.Form.MdiParent" /> property of the child form. You can use this property from an MDI child form to obtain global information that all child forms need or to invoke methods that perform actions to all child forms.</para>
+          <block subset="none" type="note">
+            <para>If there are two <see cref="T:System.Windows.Forms.MenuStrip" /> controls on an MDI child form, setting <see cref="P:System.Windows.Forms.Form.IsMdiContainer" /> to true for the parent form merges the contents of only one of the <see cref="T:System.Windows.Forms.MenuStrip" /> controls. Use <see cref="M:System.Windows.Forms.ToolStripManager.Merge(System.Windows.Forms.ToolStrip,System.String)" /> to merge the contents of additional child <see cref="T:System.Windows.Forms.MenuStrip" /> controls on the MDI parent form.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current multiple-document interface (MDI) parent form of this form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1452,10 +1959,16 @@
         <ReturnType>System.Windows.Forms.MainMenu</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to switch between complete menu sets at run time. For example, you can define one <see cref="T:System.Windows.Forms.MainMenu" /> to be displayed when your multiple-document interface (MDI) form has no active MDI child forms and another <see cref="T:System.Windows.Forms.MainMenu" /> to display when a child window is displayed. You can also use a different <see cref="T:System.Windows.Forms.MainMenu" /> when specific conditions exist in your application that require displaying a different menu set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.MainMenu" /> that is displayed in the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1469,8 +1982,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when you click on any menu item in a menu that results in a command being performed and the menu losing focus. You can use this event to perform tasks such as updating the text of a <see cref="T:System.Windows.Forms.StatusBar" /> control or enabling and disabling buttons on a <see cref="T:System.Windows.Forms.ToolBar" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the menu of a form loses focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1489,9 +2009,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when any menu item in the menu is clicked by the user. You can use this event to perform tasks such as enabling and disabling controls on the form that should not be accessed by the user when the menus are being accessed.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the menu of a form receives focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1521,10 +2048,16 @@
         <ReturnType>System.Windows.Forms.MainMenu</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is primarily used when the form is a multiple-document interface (MDI) child form that merges its menu with its parent form's menu. You can use this property to obtain the current menu structure in an MDI application to make changes or additions to the menu structure. To obtain the nonmerged <see cref="T:System.Windows.Forms.MainMenu" /> assigned to a form, use the <see cref="P:System.Windows.Forms.Form.Menu" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the merged menu for the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1543,9 +2076,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <ui>Minimize</ui> button enables users to minimize a window to an icon. To display a <ui>Minimize</ui> button, you must also set the form's <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> property to FormBorderStyle.FixedSingle, FormBorderStyle.Sizable, FormBorderStyle.Fixed3D, or FormBorderStyle.FixedDialog.</para>
+          <block subset="none" type="note">
+            <para>Minimizing a form at run time generates a <see cref="E:System.Windows.Forms.Control.Resize" /> event. The <see cref="P:System.Windows.Forms.Form.WindowState" /> property reflects the current state of the window. If you set the <see cref="P:System.Windows.Forms.Form.WindowState" /> property to FormWindowState.Minimized, the form is minimized independently of whatever settings are in effect for the <see cref="P:System.Windows.Forms.Form.MinimizeBox" /> and <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> properties.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <ui>Minimize</ui> button is displayed in the caption bar of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1567,9 +2109,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to limit the size of a form to a specified minimum size. You can use this feature to prevent a user from sizing a window to an undesirable size. If this property is set to a <see cref="T:System.Drawing.Size" /> object that is 0 in height and 0 in width, the form will have no minimum size beyond the limits set by Windows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum size the form can be resized to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1583,9 +2131,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.Form.MinimumSize" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1607,10 +2161,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a form is displayed modally, no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (usually in response to some user action) before input to another form can occur. Forms that are displayed modally are typically used as dialog boxes in an application.</para>
+          <para>You can use this property to determine whether a form that you have obtained from a method or property has been displayed modally.</para>
+          <para>To display a form modally use the <see cref="M:System.Windows.Forms.Form.ShowDialog" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this form is displayed modally.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1627,10 +2189,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnActivated(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. Overriding this method is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.Activated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1655,9 +2225,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnBackgroundImageChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.BackgroundImageChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnBackgroundImageLayoutChanged">
@@ -1673,9 +2251,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnBackgroundImageLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.BackgroundImageLayoutChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnClosed">
@@ -1688,10 +2274,24 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Form.OnClosed(System.EventArgs)" /> method is obsolete in the .NET Framework version 2.0; use the <see cref="M:System.Windows.Forms.Form.OnFormClosed(System.Windows.Forms.FormClosedEventArgs)" /> method instead.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnFormClosed(System.Windows.Forms.FormClosedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. Overriding this method is the preferred technique for handling the event in a derived class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Form.OnClosed(System.EventArgs)" /> and <see cref="M:System.Windows.Forms.Form.OnClosing(System.ComponentModel.CancelEventArgs)" /> methods are not called when the <see cref="M:System.Windows.Forms.Application.Exit" /> method is called to exit your application. If you have validation code in either of these methods that must be executed, you should call the <see cref="M:System.Windows.Forms.Form.Close" /> method for each open form individually before calling the <see cref="M:System.Windows.Forms.Application.Exit" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.Closed" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1713,10 +2313,24 @@
         <Parameter Name="e" Type="System.ComponentModel.CancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Form.OnClosing(System.ComponentModel.CancelEventArgs)" /> method is obsolete in the .NET Framework version 2.0; use the <see cref="M:System.Windows.Forms.Form.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)" /> method instead.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnClosing(System.ComponentModel.CancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. Overriding this method is the preferred technique for handling the event in a derived class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.Form.OnClosed(System.EventArgs)" /> and <see cref="M:System.Windows.Forms.Form.OnClosing(System.ComponentModel.CancelEventArgs)" /> methods are not called when the <see cref="M:System.Windows.Forms.Application.Exit" /> method is called to exit your application. If you have validation code in either of these methods that must be executed, you should call the <see cref="M:System.Windows.Forms.Form.Close" /> method for each open form individually before calling the <see cref="M:System.Windows.Forms.Application.Exit" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.Closing" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1736,8 +2350,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the CreateControl event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1759,10 +2379,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnDeactivate(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.Deactivate" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1815,9 +2443,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnEnter(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Enter" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnFontChanged">
@@ -1862,9 +2498,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.FormClosedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Form.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)" /> method removes the current form from the <see cref="P:System.Windows.Forms.Application.OpenForms" /> collection of the associated <see cref="T:System.Windows.Forms.Application" />. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnFormClosed(System.Windows.Forms.FormClosedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. Overriding this method is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.FormClosed" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.FormClosedEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnFormClosing">
@@ -1877,10 +2522,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.FormClosingEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnFormClosing(System.Windows.Forms.FormClosingEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.FormClosing" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.FormClosingEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1957,9 +2610,17 @@
         <Parameter Name="e" Type="System.ComponentModel.CancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnHelpButtonClicked(System.ComponentModel.CancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.HelpButtonClicked" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnInputLanguageChanged">
@@ -1972,10 +2633,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.InputLanguageChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnInputLanguageChanged(System.Windows.Forms.InputLanguageChangedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.InputLanguageChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.InputLanguageChangedEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1997,10 +2666,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.InputLanguageChangingEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnInputLanguageChanging(System.Windows.Forms.InputLanguageChangingEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.InputLanguageChanging" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.InputLanguageChangingEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2025,9 +2702,13 @@
         <Parameter Name="levent" Type="System.Windows.Forms.LayoutEventArgs" />
       </Parameters>
       <Docs>
-        <param name="levent">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Layout" /> event.</para>
+        </summary>
+        <param name="levent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnLoad">
@@ -2040,10 +2721,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnLoad(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.Load" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2065,9 +2754,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnMaximizedBoundsChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.MaximizedBoundsChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2089,9 +2786,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnMaximumSizeChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.MaximumSizeChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2113,9 +2818,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnMdiChildActivate(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.MdiChildActivate" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2137,9 +2850,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnMenuComplete(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.MenuComplete" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2161,10 +2882,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnMenuStart(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.MenuStart" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2186,10 +2915,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnMinimumSizeChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.MinimumSizeChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2267,9 +3004,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> event will only be raised if the form's <see cref="P:System.Windows.Forms.Control.CanRaiseEvents" /> property is set to true.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnResizeBegin(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnResizeEnd">
@@ -2290,9 +3036,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> event will only be raised if the form's <see cref="P:System.Windows.Forms.Control.CanRaiseEvents" /> property is set to true.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnResizeEnd(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftLayoutChanged">
@@ -2313,9 +3068,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the current form or one of its parents is disposing of resources, the <see cref="M:System.Windows.Forms.Form.OnRightToLeftLayoutChanged(System.EventArgs)" /> method will return without performing any action. If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of the form has a value of <see cref="F:System.Windows.Forms.RightToLeft.Yes" />, then the handles of the form and its child controls will be recreated through calls to the <see cref="M:System.Windows.Forms.Control.RecreateHandle" /> method.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnRightToLeftLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.RightToLeftLayoutChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnShown">
@@ -2336,9 +3100,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.Shown" /> event occurs whenever the form is first shown. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnShown(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Form.Shown" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnStyleChanged">
@@ -2399,9 +3172,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.Form.OnVisibleChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.VisibleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2428,10 +3209,20 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Form.Opacity" /> property enables you to specify a level of transparency for the form and its controls. When this property is set to a value less than 100 percent (1.00), the entire form, including borders, is made more transparent. Setting this property to a value of 0 percent (0.00) makes the form completely invisible. You can use this property to provide different levels of transparency or to provide effects such as phasing a form in or out of view. For example, you can phase a form into view by setting the <see cref="P:System.Windows.Forms.Form.Opacity" /> property to a value of 0 percent (0.00) and gradually increasing the value until it reaches 100 percent (1.00).</para>
+          <para>
+            <see cref="P:System.Windows.Forms.Form.Opacity" /> differs from the transparency provided by the <see cref="P:System.Windows.Forms.Form.TransparencyKey" />, which only makes a form and its controls completely transparent if they are the same color as the value specified in the <see cref="P:System.Windows.Forms.Form.TransparencyKey" /> property.</para>
+          <para>This property is not supported when <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> is true.</para>
+          <para>The <see cref="P:System.Windows.Forms.Form.Opacity" /> property depends on the Layered Windows API that was introduced with Windows 2000. For more information, see the "Layered Windows: A New Way to Use Translucency and Transparency Effects in Windows Applications" in the Platform SDK documentation at <see cref="http://msdn.microsoft.com/">http://msdn.microsoft.com</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the opacity level of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2453,10 +3244,20 @@
         <ReturnType>System.Windows.Forms.Form[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns an array that contains all forms that are owned by this form. To make a form owned by another form, call the <see cref="M:System.Windows.Forms.Form.AddOwnedForm(System.Windows.Forms.Form)" /> method. The form assigned to the owner form will remain owned until the <see cref="M:System.Windows.Forms.Form.RemoveOwnedForm(System.Windows.Forms.Form)" /> method is called. You can also make a form owned by another by setting the <see cref="P:System.Windows.Forms.Form.Owner" /> property with a reference to its owner form.</para>
+          <para>When a form is owned by another form, it is closed or hidden with the owner form. For example, consider a form named Form2 that is owned by a form named Form1. If Form1 is closed or minimized, Form2 is also closed or hidden. Owned forms are also never displayed behind their owner form. You can use owned forms for windows such as find and replace windows, which should not be displayed behind the owner form when the owner form is selected.</para>
+          <block subset="none" type="note">
+            <para>If the form is a multiple-document interface (MDI) parent form, this property will return all forms that are displayed with the exception of any MDI child forms that are currently open. To obtain the MDI child forms opened in an MDI parent form, use the <see cref="P:System.Windows.Forms.Form.MdiChildren" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of <see cref="T:System.Windows.Forms.Form" /> objects that represent all forms that are owned by this form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2478,9 +3279,16 @@
         <ReturnType>System.Windows.Forms.Form</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To make a form owned by another form, assign its <see cref="P:System.Windows.Forms.Form.Owner" /> property a reference to the form that will be the owner.</para>
+          <para>When a form is owned by another form, it is closed or hidden with the owner form. For example, consider a form named Form2 that is owned by a form named Form1. If Form1 is closed or minimized, Form2 is also closed or hidden. Owned forms are also never displayed behind their owner form. You can use owned forms for windows such as find and replace windows, which should not disappear when the owner form is selected. To determine the forms that are owned by a parent form, use the <see cref="P:System.Windows.Forms.Form.OwnedForms" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the form that owns this form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2519,10 +3327,17 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="charCode">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a dialog character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed by the control; otherwise, false.</para>
+        </returns>
+        <param name="charCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2544,10 +3359,20 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Form.ProcessDialogKey(System.Windows.Forms.Keys)" /> method overrides the base <see cref="M:System.Windows.Forms.ContainerControl.ProcessDialogKey(System.Windows.Forms.Keys)" /> implementation to provide additional handling of the RETURN and ESCAPE keys in dialog boxes. The method performs no processing on keystrokes that include the ALT or CONTROL modifiers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a dialog box key. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the keystroke was processed and consumed by the control; otherwise, false to allow further processing.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2587,10 +3412,17 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="charCode">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a mnemonic character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed as a mnemonic by the control; otherwise, false.</para>
+        </returns>
+        <param name="charCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
     </Member>
     <Member MemberName="ProcessTabKey">
@@ -2623,9 +3455,16 @@
         <Parameter Name="ownedForm" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <param name="ownedForm">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The form assigned to the owner form remains owned until the <see cref="M:System.Windows.Forms.Form.RemoveOwnedForm(System.Windows.Forms.Form)" /> method is called. In addition to removing the owned form from the list of owned form, this method also sets the owner form to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an owned form from this form.</para>
+        </summary>
+        <param name="ownedForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Form" /> representing the form to remove from the list of owned forms for this form. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2642,8 +3481,30 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> event is raised when the user begins to resize a form, typically by clicking and dragging one of the borders or the sizing grip located on the lower-right corner of the form. This action puts the form into a modal sizing loop until the resize operation is completed. Typically, the following set of events occurs during a resize operation:</para>
+          <list type="ordered">
+            <item>
+              <para>A single <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> event occurs as the form enters resizing mode.</para>
+            </item>
+            <item>
+              <para>Zero or more pairs of <see cref="E:System.Windows.Forms.Control.Resize" /> and <see cref="E:System.Windows.Forms.Control.SizeChanged" /> events occur as the form's <see cref="P:System.Windows.Forms.Form.Size" /> is modified.</para>
+            </item>
+            <item>
+              <para>A single <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> event occurs as the form exits resizing mode.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Just clicking without dragging on a border or resizing grip will generate the <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> and <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> events without any intermediate <see cref="E:System.Windows.Forms.Control.Resize" /> and <see cref="E:System.Windows.Forms.Control.SizeChanged" /> event pairs.</para>
+          </block>
+          <para>The <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> and <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> pair of events is also raised when the user moves the form, typically by clicking and dragging on the caption bar. These events are not generated by programmatic manipulation of the form, for example by changing the <see cref="P:System.Windows.Forms.Form.Size" /> or <see cref="P:System.Windows.Forms.Control.Location" /> properties.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a form enters resizing mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResizeEnd">
@@ -2656,8 +3517,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> event is raised when the user finishes resizing a form, typically by dragging one of the borders or the sizing grip located on the lower-right corner of the form, and then releasing it. For more information about the resizing operation, see the <see cref="E:System.Windows.Forms.Form.ResizeBegin" /> event.</para>
+          <para>The <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> event is also generated after the user moves a form, typically by clicking and dragging on the caption bar. This event is not generated by programmatic manipulation of the form, for example by changing the <see cref="P:System.Windows.Forms.Form.Size" /> or <see cref="P:System.Windows.Forms.Control.Location" /> properties.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a form exits resizing mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RestoreBounds">
@@ -2678,9 +3547,18 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you use the <see cref="P:System.Windows.Forms.Form.RestoreBounds" /> property to track the user's window size and position preferences for the form in its normal window state. You should track both the value of the <see cref="P:System.Windows.Forms.Form.WindowState" /> and <see cref="P:System.Windows.Forms.Form.RestoreBounds" /> properties when tracking the user's window preferences.</para>
+          <block subset="none" type="note">
+            <para>The value of the <see cref="P:System.Windows.Forms.Form.RestoreBounds" /> property is valid only when the <see cref="P:System.Windows.Forms.Form.WindowState" /> property of the <see cref="T:System.Windows.Forms.Form" /> class is not equal to <see cref="F:System.Windows.Forms.FormWindowState.Normal" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location and size of the form in its normal window state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayout">
@@ -2701,9 +3579,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> property is primarily useful for developing world-ready forms for worldwide audiences. Many forms are designed so that controls are laid out on a form in a left-to-right fashion. These forms are compatible with languages that follow this writing direction. However, when you display the same forms to users of right-to-left languages, it is often preferable to reverse the order of the controls on the form. If both the <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> and <see cref="P:System.Windows.Forms.Control.RightToLeft" /> properties are true, mirroring will be turned on for the form, and control placement and text flow will be right-to-left.</para>
+          <para>Unlike <see cref="P:System.Windows.Forms.Control.RightToLeft" />, <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> does not inherit. If you want it to take effect for child controls, you must set it on each child control that you want mirrored. </para>
+          <para>Owner draw is not supported when <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> is set to Yes. The owner draw events will still occur, but the behavior of any code you author in these events is not defined. Additionally, <see cref="P:System.Windows.Forms.Control.BackgroundImage" />, <see cref="P:System.Windows.Forms.Form.Opacity" />, <see cref="P:System.Windows.Forms.Form.TransparencyKey" />, and the painting events are not supported. </para>
+          <para>The <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> and <see cref="P:System.Windows.Forms.Control.RightToLeft" /> properties cause the following Win32 API window styles to be set:</para>
+          <list type="bullet">
+            <item>
+              <para>When <see cref="P:System.Windows.Forms.Control.RightToLeft" /> is set to Yes and <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> is set to true, Windows Forms sets the WS_EX_LAYOUTRTL window style, and removes the WS_EX_RIGHT and WS_EX_RTLREADING styles.</para>
+            </item>
+            <item>
+              <para>When <see cref="P:System.Windows.Forms.Control.RightToLeft" /> is set to Yes but <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> is set to No, Windows Forms sets the WS_EX_RIGHT and WS_EX_RTLREADING window styles. </para>
+            </item>
+          </list>
+          <para>Changing the value of this property raises the <see cref="E:System.Windows.Forms.Form.RightToLeftLayoutChanged" /> event.</para>
+          <para>For more information about globalization issues, see <format type="text/html"><a href="f08169c7-aad8-4ec3-9a21-9ebd3b89986c">Best Practices for Developing World-Ready Applications</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether right-to-left mirror placement is turned on.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayoutChanged">
@@ -2716,8 +3613,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Control.RightToLeft" /> and <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> properties are typically used in developing World-Ready applications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the value of the <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScaleControl">
@@ -2739,10 +3642,15 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="factor">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scales the location, size, padding, and margin of a control.</para>
+        </summary>
+        <param name="factor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The factor by which the height and width of the control are scaled.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BoundsSpecified" /> value that specifies the bounds of the control to use when defining its size and position.</param>
       </Docs>
     </Member>
     <Member MemberName="ScaleCore">
@@ -2756,10 +3664,15 @@
         <Parameter Name="y" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs scaling of the form.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />Percentage to scale the form horizontally </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />Percentage to scale the form vertically </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2782,10 +3695,15 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="directed">To be added.</param>
-        <param name="forward">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects this form, and optionally selects the next or previous control.</para>
+        </summary>
+        <param name="directed">
+          <attribution license="cc4" from="Microsoft" modified="false" />If set to true that the active control is changed </param>
+        <param name="forward">
+          <attribution license="cc4" from="Microsoft" modified="false" />If directed is true, then this controls the direction in which focus is moved. If this is true, then the next control is selected; otherwise, the previous control is selected. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2806,13 +3724,18 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <param name="specified">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate.</param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounds width.</param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounds height.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value from the BoundsSpecified enumeration.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2835,10 +3758,15 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the client size of the form. This will adjust the bounds of the form to make the client size the requested size.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />Requested width of the client region. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />Requested height of the client region.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2863,12 +3791,22 @@
         <Parameter Name="height" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Desktop coordinates are based on the working area of the screen, which excludes the taskbar. You can use this method to set the position and size of your form on the desktop. Since desktop coordinates are based on the working area of the form, you can use this method to ensure that your form is completely visible on the desktop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the bounds of the form in desktop coordinates.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the form's location. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the form's location. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the form. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the form. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2886,10 +3824,18 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Desktop coordinates are based on the working area of the screen, which excludes the taskbar. You can use this method to position your form on the desktop. Since desktop coordinates are based on the working area of the form, you can use this method to ensure that your form is completely visible on the desktop. This method is intended to be used primarily for top-level forms; use the <see cref="M:System.Windows.Forms.Form.LayoutMdi(System.Windows.Forms.MdiLayout)" /> method to position multiple-document interface (MDI) child forms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the location of the form in desktop coordinates.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate of the form's location. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The y-coordinate of the form's location. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2933,9 +3879,17 @@
         <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to display a non-modal form. When you use this method, the <see cref="P:System.Windows.Forms.Form.Owner" /> property of the form is set to <paramref name="owner" />. The non-modal form can use the <see cref="P:System.Windows.Forms.Form.Owner" /> property to get information about the owning form.  Calling this method is identical to setting the <see cref="P:System.Windows.Forms.Form.Owner" /> property of the non-modal and then calling the <see cref="M:System.Windows.Forms.Control.Show" /> method.</para>
+          <para>Showing the form is equivalent to setting the <see cref="P:System.Windows.Forms.Control.Visible" /> property to true. After the <see cref="M:System.Windows.Forms.Form.Show(System.Windows.Forms.IWin32Window)" /> method is called, the <see cref="P:System.Windows.Forms.Control.Visible" /> property returns a value of true until the <see cref="M:System.Windows.Forms.Control.Hide" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the form with the specified owner to the user.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any object that implements <see cref="T:System.Windows.Forms.IWin32Window" /> and represents the top-level window that will own this form. </param>
       </Docs>
     </Member>
     <Member MemberName="ShowDialog">
@@ -2946,10 +3900,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to display a modal dialog box in your application. When this method is called, the code following it is not executed until after the dialog box is closed. The dialog box can be assigned one of the values of the <see cref="T:System.Windows.Forms.DialogResult" /> enumeration by assigning it to the <see cref="P:System.Windows.Forms.Button.DialogResult" /> property of a <see cref="T:System.Windows.Forms.Button" /> on the form or by setting the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property of the form in code. This value is then returned by this method. You can use this return value to determine how to process the actions that occurred in the dialog box. For example, if the dialog box was closed and returned the DialogResult.Cancel value through this method, you could prevent code following the call to <see cref="M:System.Windows.Forms.Form.ShowDialog" /> from executing.</para>
+          <para>When a form is displayed as a modal dialog box, clicking the <ui>Close</ui> button (the button with an X at the upper-right corner of the form) causes the form to be hidden and the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property to be set to DialogResult.Cancel. Unlike non-modal forms, the <see cref="M:System.Windows.Forms.Form.Close" /> method is not called by the .NET Framework when the user clicks the close form button of a dialog box or sets the value of the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property. Instead the form is hidden and can be shown again without creating a new instance of the dialog box. Because a form displayed as a dialog box is hidden instead of closed, you must call the <see cref="M:System.Windows.Forms.Control.Dispose(System.Boolean)" /> method of the form when the form is no longer needed by your application.</para>
+          <para>This version of the <see cref="M:System.Windows.Forms.Form.ShowDialog" /> method does not specify a form or control as its owner. When this version is called, the currently active window is made the owner of the dialog box. If you want to specify a specific owner, use the other version of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the form as a modal dialog box.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2966,10 +3931,22 @@
         <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to display a modal dialog box in your application. When this method is called, the code following it is not executed until after the dialog box is closed. The dialog box can be assigned one of the values of <see cref="T:System.Windows.Forms.DialogResult" /> by assigning it to the <see cref="P:System.Windows.Forms.Button.DialogResult" /> property of a <see cref="T:System.Windows.Forms.Button" /> on the form or by setting the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property of the form in code. This value is then returned by this method. You can use this return value to determine how to process the actions that occurred in the dialog box. For example, if the dialog box was closed and returned the DialogResult.Cancel value through this method, you could prevent code following the call to <see cref="M:System.Windows.Forms.Form.ShowDialog" /> from executing.</para>
+          <para>When a form is displayed as a modal dialog box, clicking the <ui>Close</ui> button (the button with an X at the upper-right corner of the form) causes the form to be hidden and the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property to be set to DialogResult.Cancel. Unlike modeless forms, the <see cref="M:System.Windows.Forms.Form.Close" /> method is not called by the .NET Framework when the user clicks the close form button of a dialog box or sets the value of the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property. Instead the form is hidden and can be shown again without creating a new instance of the dialog box. Because a form displayed as a dialog box is hidden instead of closed, you must call the <see cref="M:System.Windows.Forms.Control.Dispose(System.Boolean)" /> method of the form when the form is no longer needed by your application.</para>
+          <para>This version of the <see cref="M:System.Windows.Forms.Form.ShowDialog" /> method allows you to specify a specific form that will own the dialog box that is shown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the form as a modal dialog box with the specified owner.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any object that implements <see cref="T:System.Windows.Forms.IWin32Window" /> that represents the top-level window that will own the modal dialog box. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2991,9 +3968,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Form.ShowIcon" /> property contains a <see cref="T:System.Boolean" /> value that indicates whether the form's <see cref="P:System.Windows.Forms.Form.Icon" /> is displayed in the caption bar of the form. If the <see cref="P:System.Windows.Forms.Form.ControlBox" /> property is false, both the icon and control box will be suppressed. </para>
+          <para>If <see cref="P:System.Windows.Forms.Form.ShowIcon" /> is false when the primary form is shown, a generic icon will be displayed in the taskbar button for the application.</para>
+          <para>This property has no effect if <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> is set to <see cref="F:System.Windows.Forms.FormBorderStyle.FixedDialog" />. In that case, the form does not display an icon. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an icon is displayed in the caption bar of the form.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShowInTaskbar">
@@ -3008,10 +3993,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a form is parented within another form, the parented form is not displayed in the Windows taskbar.</para>
+          <para>You can use this property to prevent users from selecting your form through the Windows taskbar. For example, if you display a Find and Replace tool window in your application, you might want to prevent that window from being selected through the Windows taskbar because you would need both the application's main window and the Find and Replace tool window displayed in order to process searches appropriately.</para>
+          <para>You will often wish to use this property when creating a form with the <see cref="F:System.Windows.Forms.FormBorderStyle.FixedToolWindow" /> style. Setting the <see cref="F:System.Windows.Forms.FormBorderStyle.FixedToolWindow" /> style does not alone guarantee that a window will not appear in the taskbar. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the form is displayed in the Windows taskbar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3028,8 +4021,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.Form.Shown" /> event is only raised the first time a form is displayed; subsequently minimizing, maximizing, restoring, hiding, showing, or invalidating and repainting will not raise this event. For more information about the order of events of a form, see <format type="text/html"><a href="e81db09b-4453-437f-b78a-62d7cd5c9829">Order of Events in Windows Forms</a></format>.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs whenever the form is first displayed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShowWithoutActivation">
@@ -3047,9 +4047,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property if you want to show a top-level window, but don't want to interrupt a user's work by taking the input focus away from the current window. This can be an informational pop-up window or a floating window, such as a Tools palette in the Paint application. </para>
+          <para>Because this property is read-only, you can only change its value by overriding <see cref="P:System.Windows.Forms.Form.ShowWithoutActivation" /> in your own form, and programming it to return true.</para>
+          <para>If your non-activated window needs to use UI controls, you should consider using the <see cref="T:System.Windows.Forms.ToolStrip" /> controls, such as <see cref="T:System.Windows.Forms.ToolStripDropDown" />. These controls are windowless, and will not cause a window to activate when they are selected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the window will be activated when it is shown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -3067,10 +4075,22 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property allows you to set both the height and width (in pixels) of the form at the same time instead of setting the <see cref="P:System.Windows.Forms.Control.Height" /> and <see cref="P:System.Windows.Forms.Control.Width" /> properties individually. If you want to set the size and location of a form, you can use the <see cref="P:System.Windows.Forms.Form.DesktopBounds" /> property to size and locate the form based on desktop coordinates or use the <see cref="P:System.Windows.Forms.Control.Bounds" /> property of the <see cref="T:System.Windows.Forms.Control" /> class to set the size and location of the form based on screen coordinates.</para>
+          <block subset="none" type="note">
+            <para>The maximum value of this property is limited by the resolution of the screen on which the form runs. The value cannot be greater than 12 pixels over each screen dimension (horizontal + 12 and vertical + 12).</para>
+          </block>
+          <block subset="none" type="note">
+            <para>On Pocket PC devices, you can create a resizable window by setting <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> to <userInput>None</userInput> and removing any <see cref="T:System.Windows.Forms.MainMenu" /> control. On SmartPhone devices, you can never resize a <see cref="T:System.Windows.Forms.Form" /> - it will always fill the entire screen. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3089,10 +4109,16 @@
         <ReturnType>System.Windows.Forms.SizeGripStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to determine when the sizing grip is displayed on the form. You can set this property to display the sizing grip or have it automatically displayed based on the setting of the <see cref="P:System.Windows.Forms.Form.FormBorderStyle" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the size grip to display in the lower-right corner of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3114,9 +4140,16 @@
         <ReturnType>System.Windows.Forms.FormStartPosition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables you to set the starting position of the form when it is displayed at run time. The form’s position can be specified manually by setting the <see cref="P:System.Windows.Forms.Form.Location" /> property or use the default location specified by Windows. You can also position the form to display in the center of the screen or in the center of its parent form for forms such as multiple-document interface (MDI) child forms.</para>
+          <para>This property should be set before the form is shown.  You can set this property before you call the <see cref="Overload:System.Windows.Forms.Form.Show" /> or <see cref="Overload:System.Windows.Forms.Form.ShowDialog" /> method or in your form's constructor. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the starting position of the form at run time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3141,10 +4174,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forms are not included in the tab order. Setting the <see cref="P:System.Windows.Forms.Form.TabIndex" /> property does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tab order of the control within its container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3166,8 +4205,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.Form.TabIndex" /> property changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3199,9 +4241,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user can give the focus to this control using the TAB key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TabStopChanged">
@@ -3222,8 +4267,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.Form.TabStop" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -3266,10 +4314,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A top-level form is a window that has no parent form, or whose parent form is the desktop window. Top-level windows are typically used as the main form in an application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to display the form as a top-level window.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3288,10 +4342,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A topmost form is a form that overlaps all the other (non-topmost) forms even if it is not the active or foreground form. Topmost forms are always displayed at the highest point in the z-order of the windows on the desktop. You can use this property to create a form that is always displayed in your application, such as a Find and Replace tool window.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the form should be displayed as a topmost form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3306,9 +4366,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representing the current instance of the form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string consisting of the fully qualified name of the form object's class, with the <see cref="P:System.Windows.Forms.Form.Text" /> property of the form appended to the end. For example, if the form is derived from the class MyForm in the MyNamespace namespace, and the <see cref="P:System.Windows.Forms.Form.Text" /> property is set to <userInput>Hello, World</userInput>, this method will return <userInput>MyNamespace.MyForm, Text: Hello, World</userInput>.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3322,10 +4388,17 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.Form.TransparencyKey" /> property is assigned a <see cref="T:System.Drawing.Color" />, the areas of the form that have the same <see cref="P:System.Windows.Forms.Control.BackColor" /> will be displayed transparently. Any mouse actions, such as the click of the mouse, that are performed on the transparent areas of the form will be transferred to the windows below the transparent area. For example, if the client region of a form is made transparent, clicking the mouse on that area would send the event notification of the click to any window that is below it. If the color assigned to the <see cref="P:System.Windows.Forms.Form.TransparencyKey" /> property is the same as any controls on the form, they also will be displayed transparently. For example, if you have a <see cref="T:System.Windows.Forms.Button" /> control on a form that has its <see cref="P:System.Windows.Forms.Form.TransparencyKey" /> property set to SystemColors.Control, the control will be displayed transparently unless the <see cref="P:System.Windows.Forms.Control.BackColor" /> property of the <see cref="T:System.Windows.Forms.Button" /> control is changed to a different color.</para>
+          <para>This property is not supported when <see cref="P:System.Windows.Forms.Form.RightToLeftLayout" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color that will represent transparent areas of the form.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3340,8 +4413,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Form.UpdateDefaultButton" /> method determines which button on the form raises its Click event when the user presses ENTER, according to the following priority:</para>
+          <list type="ordered">
+            <item>
+              <para>If the <see cref="P:System.Windows.Forms.ContainerControl.ActiveControl" /> property implements the <see cref="T:System.Windows.Forms.IButtonControl" /> interface, that control is the default button. </para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.Form.AcceptButton" /> property is the default button.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates which button is the default button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3411,10 +4498,16 @@
         <ReturnType>System.Windows.Forms.FormWindowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before a form is displayed, the <see cref="P:System.Windows.Forms.Form.WindowState" /> property is always set to FormWindowState.Normal, regardless of its initial setting. This is reflected in the <see cref="P:System.Windows.Forms.Control.Height" />, <see cref="P:System.Windows.Forms.Control.Left" />, <see cref="P:System.Windows.Forms.Control.Top" />, and <see cref="P:System.Windows.Forms.Control.Width" /> property settings. If a form is hidden after it has been shown, these properties reflect the previous state until the form is shown again, regardless of any changes made to the <see cref="P:System.Windows.Forms.Form.WindowState" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether form is minimized, maximized, or normal.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

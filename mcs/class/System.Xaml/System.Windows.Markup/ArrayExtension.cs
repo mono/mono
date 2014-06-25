@@ -32,9 +32,7 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Array))]
 	[ContentProperty ("Items")]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
-#endif
 	public class ArrayExtension : MarkupExtension
 	{
 		public ArrayExtension ()
@@ -62,9 +60,7 @@ namespace System.Windows.Markup
 		public Type Type { get; set; }
 
 		IList items;
-#if !NET_2_1
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-#endif
 		public IList Items {
 			get { return items; }
 		}

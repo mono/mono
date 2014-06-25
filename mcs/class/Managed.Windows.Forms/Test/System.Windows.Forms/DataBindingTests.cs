@@ -172,6 +172,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			row.Delete ();
 
+			Assert.AreEqual (-1, cm.Position);
+
 			// Console.WriteLine (event_log);
 
 			Assert.AreEqual (
@@ -220,6 +222,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			event_num = 0;
 
 			row.Delete ();
+
+			Assert.AreEqual (0, cm.Position);
 
 			Console.WriteLine (event_log);
 
@@ -273,6 +277,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			row.Delete ();
 
+			Assert.AreEqual (0, cm.Position);
+
 			Console.WriteLine (event_log);
 
 #if WITH_BINDINGS
@@ -322,6 +328,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			event_num = 0;
 
 			row.Delete ();
+
+			Assert.AreEqual (0, cm.Position);
 
 			Console.WriteLine (event_log);
 
@@ -379,6 +387,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			DataRow newrow = dataSet1.Tables[0].NewRow ();
 			dataSet1.Tables[0].Rows.Add(newrow);
 
+			Assert.AreEqual (0, cm.Position);
+
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
@@ -434,6 +444,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			newrow = dataSet1.Tables[0].NewRow ();
 			dataSet1.Tables[0].Rows.Add(newrow);
 
+			Assert.AreEqual (0, cm.Position);
+
 			Console.WriteLine (event_log);
 
 #if WITH_BINDINGS
@@ -488,6 +500,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			newrow = dataSet1.Tables[0].NewRow ();
 			dataSet1.Tables[0].Rows.InsertAt(newrow, 0);
+
+			Assert.AreEqual (2, cm.Position);
 
 			Console.WriteLine (event_log);
 
@@ -547,6 +561,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			newrow = dataSet1.Tables[0].NewRow ();
 			dataSet1.Tables[0].Rows.InsertAt(newrow, 1);
 
+			Assert.AreEqual (2, cm.Position);
+
 			Console.WriteLine (event_log);
 
 			Assert.AreEqual (
@@ -596,6 +612,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			dataSet1.Tables[0].Columns.Add();
 
+			Assert.AreEqual (-1, cm.Position);
+
 			Console.WriteLine (event_log);
 
 #if NET_2_0			
@@ -635,6 +653,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			dataSet1.Tables[0].Columns.Remove(dataSet1.Tables[0].Columns[1]);
 
+			Assert.AreEqual (-1, cm.Position);
+
 			Console.WriteLine (event_log);
 			
 			Assert.AreEqual ("0: MetaDataChanged\n", event_log, "2");
@@ -671,6 +691,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			event_num = 0;
 
 			dataSet1.Tables[0].Columns.Remove(dataSet1.Tables[0].Columns[0]);
+
+			Assert.AreEqual (-1, cm.Position);
 
 			Console.WriteLine (event_log);
 			
@@ -716,6 +738,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 				DataView_ListChanged);
 
 			dataSet1.Tables[0].Columns[0].ColumnName = "new name";
+
+			Assert.AreEqual (-1, cm.Position);
 
 			Console.WriteLine (event_log);
 			
@@ -774,6 +798,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			row.BeginEdit ();
 			row[column_name] = "hi";
 			row.EndEdit ();
+
+			Assert.AreEqual (0, cm.Position);
 
 			Console.WriteLine (event_log);
 
@@ -834,6 +860,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			row[column_name] = "hi";
 			cm.CancelCurrentEdit ();
 
+			Assert.AreEqual (0, cm.Position);
+
 			Console.WriteLine (event_log);
 			Assert.AreEqual ("0: ItemChanged (index = 0)\n", event_log, "2");
 
@@ -874,6 +902,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			DataRowView row = (DataRowView)cm.Current;
 			row.Delete ();
+
+			Assert.AreEqual (-1, cm.Position);
 
 			Console.WriteLine (event_log);
 

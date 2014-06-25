@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcConnectionStringBuilder" FullName="System.Data.Odbc.OdbcConnectionStringBuilder">
   <TypeSignature Language="C#" Value="public sealed class OdbcConnectionStringBuilder : System.Data.Common.DbConnectionStringBuilder" />
   <AssemblyInfo>
@@ -17,8 +18,83 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The connection string builders let developers programmatically create syntactically correct connection strings, and parse and rebuild existing connection strings, using properties and methods of the class. The connection string builder provides strongly typed properties corresponding to the known key/value pairs allowed by ODBC connections, and developers can add arbitrary key/value pairs for any other connection string values. </para>
+      <para>Developers needing to create connection strings as part of applications can use the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> class to build and modify connection strings. The class also makes it easy to manage connection strings stored in an application configuration file. <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> performs checks only for the limited set of known key/value pairs. Therefore, this class can be used to create invalid connection strings. The following table lists the specific known keys together with their corresponding properties within the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> class, and their default values. Besides these specific values, developers can add any key/value pairs to the collection that is contained within the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> instance.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Key</para>
+            </term>
+            <description>
+              <para>Property</para>
+            </description>
+            <description>
+              <para>Comment</para>
+            </description>
+            <description>
+              <para>Default value</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Driver</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Driver" />
+            </para>
+          </description>
+          <description>
+            <para>Developers should not include the braces surrounding the driver name when they set the <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Driver" /> property. The <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> instance adds braces as needed. </para>
+          </description>
+          <description>
+            <para>Empty string</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DSN</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Dsn" />
+            </para>
+          </description>
+          <description>
+            <para>  </para>
+          </description>
+          <description>
+            <para>Empty string</para>
+          </description>
+        </item>
+      </list>
+      <para>If any value (other than the <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Driver" /> value) within the connection string contains a semicolon (;), the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> surrounds the value with quotation marks in the connection string. In order to avoid this issue with the <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Driver" /> value that frequently contains a semicolon, the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> class always surrounds this value with braces. The ODBC specification indicates that driver values that contain semicolons must be surrounded with braces, and this class handles this for you.</para>
+      <para>The <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Item(System.String)" /> property handles attempts to insert malicious code. For example, the following code, using the default <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Item(System.String)" /> property (the indexer, in C#) correctly escapes the nested key/value pair.</para>
+      <para>[Visual Basic]</para>
+      <code>Dim builder As _
+ New System.Data.Odbc.OdbcConnectionStringBuilder
+' Take advantage of the Driver property. 
+builder.Driver = "SQL Server"
+builder("Server") = "MyServer;NewValue=Bad"
+Console.WriteLine(builder.ConnectionString)</code>
+      <para>[C#]</para>
+      <code>System.Data.Odbc.OdbcConnectionStringBuilder builder = 
+  new System.Data.Odbc.OdbcConnectionStringBuilder();
+// Take advantage of the Driver property. 
+builder.Driver = "SQL Server";
+builder["Server"] = "MyServer;NewValue=Bad";
+Console.WriteLine(builder.ConnectionString);</code>
+      <para>The result is the following connection string that handles the invalid value in a safe manner:</para>
+      <code>Driver={SQL Server};Server="MyServer;NewValue=Bad"</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a simple way to create and manage the contents of connection strings used by the <see cref="T:System.Data.Odbc.OdbcConnection" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +105,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,9 +122,16 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can pass a connection string in the constructor, or you can set the <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property explicitly. The behavior is the same either way.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> class. The provided connection string provides the data for the instance's internal connection information.</para>
+        </summary>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The basis for the object's internal connection information. Parsed into key/value pairs.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -59,8 +145,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.Odbc.OdbcConnectionStringBuilder.Clear" /> method removes all key/value pairs from the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> and resets the <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Driver" /> and <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Dsn" /> properties to their default values. The <see cref="M:System.Data.Odbc.OdbcConnectionStringBuilder.Clear" /> method also sets the <see cref="P:System.Data.Common.DbConnectionStringBuilder.Count" /> property to 0 and the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder.ConnectionString" /> property to an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the contents of the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainsKey">
@@ -76,10 +168,17 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> contains a specific key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> contains an element that has the specified key; otherwise false.</para>
+        </returns>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Driver">
@@ -100,9 +199,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value passed in is null when you try to set the property, the <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Driver" /> property is reset. If the value has not been set and the developer tries to retrieve the property, the return value is String.Empty. This property corresponds to the "Driver" key within the connection string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the ODBC driver associated with the connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dsn">
@@ -123,9 +228,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value passed in is null when you try to set the property, the <see cref="P:System.Data.Odbc.OdbcConnectionStringBuilder.Dsn" /> property is reset. If the value has not been set and the developer tries to retrieve the property, the return value is String.Empty. This property corresponds to the "Dsn" key within the connection string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the data source name (DSN) associated with the connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -157,9 +268,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The order of the values in the <see cref="T:System.Collections.ICollection" /> is the same order as the associated values in the <see cref="T:System.Collections.ICollection" /> returned by the <see cref="P:System.Data.Common.DbConnectionStringBuilder.Values" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> that contains the keys in the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -175,10 +292,20 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="M:System.Data.Odbc.OdbcConnectionStringBuilder.Remove(System.String)" /> method returns a value that indicates its success, it is not required to look for the existence of a key before trying to remove the key/value pair from the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the entry with the specified key from the <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key existed within the connection string and was removed; false if the key did not exist.</para>
+        </returns>
+        <param name="keyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key of the key/value pair to be removed from the connection string in this <see cref="T:System.Data.Odbc.OdbcConnectionStringBuilder" />.</param>
       </Docs>
     </Member>
     <Member MemberName="TryGetValue">

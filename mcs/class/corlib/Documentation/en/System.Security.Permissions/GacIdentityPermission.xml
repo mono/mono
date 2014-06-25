@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GacIdentityPermission" FullName="System.Security.Permissions.GacIdentityPermission">
   <TypeSignature Language="C#" Value="public sealed class GacIdentityPermission : System.Security.CodeAccessPermission, System.Security.Permissions.IBuiltInPermission" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit GacIdentityPermission extends System.Security.CodeAccessPermission implements class System.Security.Permissions.IBuiltInPermission" />
@@ -20,9 +21,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Files are either in the global assembly cache, or they are not. There are no variations to the permission granted, so all <see cref="T:System.Security.Permissions.GacIdentityPermission" /> objects are equal.</para>
+      <block subset="none" type="note">
+        <para>Starting with the net_v40_long, identity permissions are not used.</para>
+        <para>In the .NET Framework versions 1.0 and 1.1, demands on the identity permissions are effective even when the calling assembly is fully trusted. That is, although the calling assembly has full trust, a demand for an identity permission fails if the assembly does not meet the demanded criteria. Starting with the .NET Framework version 2.0, demands for identity permissions are ineffective if the calling assembly has full trust. This assures consistency for all permissions, eliminating the treatment of identity permissions as a special case.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the identity permission for files originating in the global assembly cache. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,9 +46,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Security.Permissions.GacIdentityPermission" /> with a <see cref="T:System.Security.Permissions.PermissionState" /> value of <see cref="F:System.Security.Permissions.PermissionState.None" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.GacIdentityPermission" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -52,10 +69,19 @@
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0 and 1.1, identity permissions cannot have an <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> permission state value. Starting with the .NET Framework version 2.0, identity permissions can have any permission state value. This means that in 2.0 and later versions, identity permissions have the same behavior as permissions that implement the <see cref="T:System.Security.Permissions.IUnrestrictedPermission" /> interface. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.GacIdentityPermission" /> class with fully restricted <see cref="T:System.Security.Permissions.PermissionState" />.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -71,10 +97,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of a permission represents the same access to resources as the original permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns an identical copy of the current permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -92,10 +127,17 @@
         <Parameter Name="securityElement" Type="System.Security.SecurityElement" />
       </Parameters>
       <Docs>
-        <param name="securityElement">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Permissions.GacIdentityPermission.FromXml(System.Security.SecurityElement)" /> method creates a <see cref="T:System.Security.Permissions.GacIdentityPermission" /> from an XML encoding defined by a <see cref="T:System.Security.SecurityElement" /> object. Use the <see cref="M:System.Security.Permissions.GacIdentityPermission.ToXml" /> method to XML-encode the <see cref="T:System.Security.Permissions.GacIdentityPermission" />, including state information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a permission from an XML encoding.</para>
+        </summary>
+        <param name="securityElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.SecurityElement" />  that contains the XML encoding to use to create the permission. </param>
       </Docs>
     </Member>
     <Member MemberName="Intersect">
@@ -113,11 +155,22 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The intersection of two permissions is a permission that describes the set of operations they both describe in common. Only a demand that passes both original permissions will pass the intersection.</para>
+          <para>A <see cref="T:System.Security.Permissions.GacIdentityPermission" /> only supports set operations (the <see cref="M:System.Security.Permissions.GacIdentityPermission.IsSubsetOf(System.Security.IPermission)" />, <see cref="M:System.Security.Permissions.GacIdentityPermission.Intersect(System.Security.IPermission)" />, and <see cref="M:System.Security.Permissions.GacIdentityPermission.Union(System.Security.IPermission)" /> methods) when the current permission is equal to the specified permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a permission that is the intersection of the current permission and the specified permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the intersection of the current permission and the specified permission. The new permission is null if the intersection is empty.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A permission to intersect with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
     </Member>
     <Member MemberName="IsSubsetOf">
@@ -135,11 +188,22 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current permission is a subset of the specified permission if the current permission represents a set of operations that is wholly contained by the specified permission. If this method returns true, the current permission represents no more access to the protected resource than does the specified permission.</para>
+          <para>A <see cref="T:System.Security.Permissions.GacIdentityPermission" /> only supports set operations (the <see cref="M:System.Security.Permissions.GacIdentityPermission.IsSubsetOf(System.Security.IPermission)" />, <see cref="M:System.Security.Permissions.GacIdentityPermission.Intersect(System.Security.IPermission)" />, and <see cref="M:System.Security.Permissions.GacIdentityPermission.Union(System.Security.IPermission)" /> methods) when the current permission is equal to the specified permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the current permission is a subset of the specified permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is a subset of the specified permission; otherwise, false.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A permission object to test for the subset relationship. The permission must be of the same type as the current permission. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Security.Permissions.IBuiltInPermission.GetTokenIndex">
@@ -174,10 +238,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.Permissions.GacIdentityPermission.FromXml(System.Security.SecurityElement)" /> method to create a <see cref="T:System.Security.Permissions.GacIdentityPermission" /> from a <see cref="T:System.Security.SecurityElement" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML encoding of the permission and its current state.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> that represents the XML encoding of the permission, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Union">
@@ -195,11 +268,22 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of a call to the <see cref="M:System.Security.Permissions.GacIdentityPermission.Union(System.Security.IPermission)" /> method is a permission that includes all the operations represented by both the current permission and the specified permission. Any demand that passes either permission passes their union.</para>
+          <para>A <see cref="T:System.Security.Permissions.GacIdentityPermission" /> only supports set operations (the <see cref="M:System.Security.Permissions.GacIdentityPermission.IsSubsetOf(System.Security.IPermission)" />, <see cref="M:System.Security.Permissions.GacIdentityPermission.Intersect(System.Security.IPermission)" />, and <see cref="M:System.Security.Permissions.GacIdentityPermission.Union(System.Security.IPermission)" /> methods) when the current permission is equal to the specified permission.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a permission that is the union of the current permission and the specified permission.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the union of the current permission and the specified permission.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A permission to combine with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
     </Member>
   </Members>

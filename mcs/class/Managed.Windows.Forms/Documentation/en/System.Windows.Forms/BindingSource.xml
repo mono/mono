@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BindingSource" FullName="System.Windows.Forms.BindingSource">
   <TypeSignature Language="C#" Value="public class BindingSource : System.ComponentModel.Component, System.ComponentModel.IBindingListView, System.ComponentModel.ICancelAddNew, System.ComponentModel.ISupportInitializeNotification, System.ComponentModel.ITypedList, System.Windows.Forms.ICurrencyManagerProvider" />
   <AssemblyInfo>
@@ -39,8 +40,34 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.BindingSource" /> component serves many purposes. First, it simplifies binding controls on a form to data by providing currency management, change notification, and other services between Windows Forms controls and data sources. This is accomplished by attaching the <see cref="T:System.Windows.Forms.BindingSource" /> component to your data source using the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property. For complex binding scenarios you can optionally set the <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> property to a specific column or list in the data source. You then bind controls to the <see cref="T:System.Windows.Forms.BindingSource" />. All further interaction with the data is accomplished with calls to the <see cref="T:System.Windows.Forms.BindingSource" /> component. For examples on how the <see cref="T:System.Windows.Forms.BindingSource" /> can simplify the binding process, see <format type="text/html"><a href="96494e6f-5f40-4f83-af97-bbd7192c2af8">How to: Bind Windows Forms Controls to DbNull Database Values</a></format> and <format type="text/html"><a href="eddc5bad-9513-47df-ab28-f02d8dff7892">How to: Handle Errors and Exceptions that Occur with Databinding</a></format>. Navigation and updating of the data source is accomplished through methods such as <see cref="M:System.Windows.Forms.BindingSource.MoveNext" />, <see cref="M:System.Windows.Forms.BindingSource.MoveLast" />, and <see cref="M:System.Windows.Forms.BindingSource.Remove(System.Object)" />. Operations such as sorting and filtering are handled through the <see cref="P:System.Windows.Forms.BindingSource.Sort" /> and <see cref="P:System.Windows.Forms.BindingSource.Filter" /> properties. For more information on using sorting and filtering with the <see cref="T:System.Windows.Forms.BindingSource" />, see <format type="text/html"><a href="6c206daf-d706-4602-9dbe-435343052063">How to: Sort and Filter ADO.NET Data with the Windows Forms BindingSource Component</a></format>.</para>
+      <para>In addition, the <see cref="T:System.Windows.Forms.BindingSource" /> component can act as a strongly typed data source. Typically the type of the underlying data source is fixed through one of the following mechanisms:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="M:System.Windows.Forms.BindingSource.Add(System.Object)" /> method to add an item to the <see cref="T:System.Windows.Forms.BindingSource" /> component.</para>
+        </item>
+        <item>
+          <para>Set the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property to a list, single object, or type.</para>
+        </item>
+      </list>
+      <para>Both of these mechanisms create a strongly-typed list. For more information on how to use the <see cref="T:System.Windows.Forms.BindingSource" /> to bind to a type, see <format type="text/html"><a href="94faeebb-d2bc-45d6-86d7-96a42661b43d">How to: Bind a Windows Forms Control to a Type</a></format>. You can also use the <see cref="T:System.Windows.Forms.BindingSource" /> to bind your controls to a factory object. For more information on how to do this, see <format type="text/html"><a href="7d59af89-ff82-41d8-a48a-f1fbae788b0d">How to: Bind a Windows Forms Control to a Factory Object</a></format>.</para>
+      <block subset="none" type="note">
+        <para>Because a <see cref="T:System.Windows.Forms.BindingSource" /> handles both simple and complex data sources, terminology is problematic. Within this class documentation, the term <newTerm>list</newTerm> refers to a data collection within the hosted data source, and <newTerm>item</newTerm> denotes a single element. When discussing functionality associated with complex data sources, the equivalent terms <newTerm>table</newTerm> and <newTerm>row</newTerm> are used.</para>
+      </block>
+      <para>
+        <see cref="T:System.Windows.Forms.BindingSource" /> provides members for accessing the underlying data. The current item can be retrieved through the <see cref="P:System.Windows.Forms.BindingSource.Current" /> property, and the entire list can be retrieved through the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. Editing operations are supported on the current item through <see cref="P:System.Windows.Forms.BindingSource.Current" /> and the <see cref="M:System.Windows.Forms.BindingSource.RemoveCurrent" />, <see cref="M:System.Windows.Forms.BindingSource.EndEdit" />, <see cref="M:System.Windows.Forms.BindingSource.CancelEdit" /> and <see cref="M:System.Windows.Forms.BindingSource.Add(System.Object)" /> and <see cref="M:System.Windows.Forms.BindingSource.AddNew" /> methods. Although currency management is handled automatically for all underlying data source types, this class exposes a number of events, such as <see cref="E:System.Windows.Forms.BindingSource.CurrentItemChanged" /> and <see cref="E:System.Windows.Forms.BindingSource.DataSourceChanged" />, that allow for customization.</para>
+      <para>Data sources that are bound to a <see cref="T:System.Windows.Forms.BindingSource" /> component can also be navigated and managed with the <see cref="T:System.Windows.Forms.BindingNavigator" /> class, which provides a VCR-like user interface (UI) for navigating items within a list. Although <see cref="T:System.Windows.Forms.BindingNavigator" /> can be bound to any data source, it was designed to integrate with a <see cref="T:System.Windows.Forms.BindingSource" /> component through its <see cref="P:System.Windows.Forms.BindingNavigator.BindingSource" /> property.</para>
+      <para>The default property for the <see cref="T:System.Windows.Forms.BindingSource" /> class is <see cref="P:System.Windows.Forms.BindingSource.DataSource" />. The default event is <see cref="E:System.Windows.Forms.BindingSource.CurrentChanged" />.</para>
+      <block subset="none" type="note">
+        <para>  Many of the members of the <see cref="T:System.Windows.Forms.BindingSource" /> class operate on the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property and simply refer their operation to the underlying list. Therefore, when the <see cref="T:System.Windows.Forms.BindingSource" /> is bound to a custom implementation of <see cref="T:System.Collections.IList" />, the exact behavior of these members may differ from the behavior described in the class documentation. For example, the <see cref="M:System.Windows.Forms.BindingSource.RemoveAt(System.Int32)" /> method calls <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" />. The <see cref="T:System.Windows.Forms.BindingSource" /> documentation describes the <see cref="M:System.Windows.Forms.BindingSource.RemoveAt(System.Int32)" /> method with the understanding that the <see cref="M:System.Collections.IList.RemoveAt(System.Int32)" /> method for the underlying <see cref="T:System.Collections.IList" /> is correctly implemented.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the data source for a form.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -51,8 +78,77 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the default <see cref="T:System.Windows.Forms.BindingSource" /> property values initialized by this constructor.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Default value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.DataSource" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.DataMember" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.String.Empty" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.Sort" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.Filter" />
+                </para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" />
+                </para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.BindingSource" /> class to the default property values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -65,9 +161,16 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor calls the default constructor, and then adds the current <see cref="T:System.Windows.Forms.BindingSource" /> to the specified container. It is not typically used by the solutions programmer, but instead by authors of design-time environments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.BindingSource" /> class and adds the <see cref="T:System.Windows.Forms.BindingSource" /> to the specified container.</para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IContainer" /> to add the current <see cref="T:System.Windows.Forms.BindingSource" /> to.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -81,10 +184,15 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="dataMember">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.BindingSource" /> class with the specified data source and data member.</para>
+        </summary>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source for the <see cref="T:System.Windows.Forms.BindingSource" />.</param>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specific column or list name within the data source to bind to.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -100,10 +208,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.Add(System.Object)" /> method refers the call to the underlying list's Add method.</para>
+          <para>The internal list must contain homogenous types. If the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property has not already been set, then the first object added to the list defines the type for the list.</para>
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an existing item to the internal list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index at which <paramref name="value" /> was added to the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. </para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to be added to the internal list.</param>
       </Docs>
     </Member>
     <Member MemberName="AddingNew">
@@ -116,8 +236,15 @@
         <ReturnType>System.ComponentModel.AddingNewEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event occurs before a new object is added to the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. This event is fired after the <see cref="M:System.Windows.Forms.BindingSource.AddNew" /> method is called, but before the new item is created and added to the underlying list. By handling this event, the programmer can provide custom item creation and insertion behavior without being forced to derive from the <see cref="T:System.Windows.Forms.BindingSource" /> class. This is accomplished in the event handler by setting the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property of the <see cref="T:System.ComponentModel.AddingNewEventArgs" /> parameter to the new item. The new object created in the <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event must be of the same type as the type contained in the list or an exception will occur. You cannot set the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property when bound to a <see cref="T:System.Data.DataView" /> or <see cref="T:System.Data.DataTable" /> because you cannot add a new <see cref="T:System.Data.DataRowView" /> to the list.</para>
+          <para>For more information about supplying custom new item functionality, see the <see cref="M:System.Windows.Forms.BindingSource.AddNew" /> method. For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before an item is added to the underlying list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddNew">
@@ -131,9 +258,31 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.AddNew" /> method adds a new item to the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. This method sets up the following series of actions:</para>
+          <list type="ordered">
+            <item>
+              <para>The <see cref="M:System.Windows.Forms.BindingSource.EndEdit" /> method is automatically called to commit any pending edit operations.</para>
+            </item>
+            <item>
+              <para>The <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event is automatically raised. This event can be programmatically handled to construct the new item. This is accomplished in the event handler by setting the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property of the <see cref="T:System.ComponentModel.AddingNewEventArgs" /> parameter to the new item. The new object created in the <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event must be of the same type as the type contained in the list or an exception will occur.</para>
+              <para>If the <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event is not handled, and the underlying list is an <see cref="T:System.ComponentModel.IBindingList" />, then the request is passed to the list's <see cref="M:System.ComponentModel.IBindingList.AddNew" /> method. If the underlying list is not an <see cref="T:System.ComponentModel.IBindingList" />, the item is automatically created through its public default constructor. In either case, the new item is added to the end of the list.</para>
+            </item>
+            <item>
+              <para>The new item is added immediately to the internal list unless the data source implements the <see cref="T:System.ComponentModel.IEditableObject" /> interface. In this case, the new item is not committed until an explicit call to <see cref="M:System.Windows.Forms.BindingSource.System#ComponentModel#ICancelAddNew#EndNew(System.Int32)" /> is made or until a new list operation is initiated. Before it is committed, the new item can be rolled back by calling <see cref="M:System.Windows.Forms.BindingSource.CancelEdit" />, in which case the new item is discarded.</para>
+            </item>
+          </list>
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new item to the underlying list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that was created and added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllowEdit">
@@ -151,9 +300,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.BindingSource.AllowEdit" /> property is typically used by other components to determine if editing of items in the list is allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether items in the underlying list can be edited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowNew">
@@ -166,9 +321,31 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="P:System.Windows.Forms.BindingSource.AllowNew" /> property depends on the underlying data source type. If the underlying list implements the <see cref="T:System.ComponentModel.IBindingList" /> interface, this property will delegate to the underlying list. Otherwise, this property will return false if the underlying list has any of the following characteristics:</para>
+          <list type="bullet">
+            <item>
+              <para>It has a fixed size, as determined by the <see cref="P:System.Collections.IList.IsFixedSize" /> property. </para>
+            </item>
+            <item>
+              <para>It is read-only, as determined by the <see cref="P:System.Collections.IList.IsReadOnly" /> property. </para>
+            </item>
+            <item>
+              <para>The item's type does not have a default constructor. </para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Once the value of this property is set, the getter no longer refers the call to the underlying list. Instead, it simply returns the value that was previously set until the <see cref="M:System.Windows.Forms.BindingSource.ResetAllowNew" /> method is called.</para>
+          </block>
+          <para>Setting this property raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event with <see cref="P:System.ComponentModel.ListChangedEventArgs.ListChangedType" /> set to <see cref="F:System.ComponentModel.ListChangedType.Reset" />.</para>
+          <para>If you set the <see cref="P:System.Windows.Forms.BindingSource.AllowNew" /> property to true and the underlying list type does not have a default constructor, you must handle the <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event and create the appropriate type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="M:System.Windows.Forms.BindingSource.AddNew" /> method can be used to add items to the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowRemove">
@@ -186,9 +363,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.BindingSource.AllowRemove" /> property is typically used by other components to determine if editing of items in the list is allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether items can be removed from the underlying list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplySort">
@@ -209,9 +392,17 @@
         <Parameter Name="sorts" Type="System.ComponentModel.ListSortDescriptionCollection" />
       </Parameters>
       <Docs>
-        <param name="sorts">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ComponentModel.IBindingListView" /> implements multi-column sorting as a set of property descriptor-direction pairs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the data source with the specified sort descriptions.</para>
+        </summary>
+        <param name="sorts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListSortDescriptionCollection" /> containing the sort descriptions to apply to the data source.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplySort">
@@ -233,10 +424,18 @@
         <Parameter Name="sort" Type="System.ComponentModel.ListSortDirection" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <param name="sort">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.IBindingList" /> implements single column sorting using a <see cref="T:System.ComponentModel.PropertyDescriptor" /> to indicate a property to sort by and a <see cref="T:System.ComponentModel.ListSortDirection" /> indicating whether the property contents should be sorted in ascending or descending order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the data source using the specified property descriptor and sort direction.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that describes the property by which to sort the data source.</param>
+        <param name="sort">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListSortDirection" /> indicating how the list should be sorted.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingComplete">
@@ -249,8 +448,15 @@
         <ReturnType>System.Windows.Forms.BindingCompleteEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.BindingComplete" /> event occurs after all the clients, typically controls, have been bound to the current <see cref="T:System.Windows.Forms.BindingSource" />. The handler of this event can take the appropriate action based on the success, error, or exceptions in the binding process, by examining the <see cref="P:System.Windows.Forms.BindingCompleteEventArgs.BindingCompleteState" /> property of the <see cref="T:System.Windows.Forms.BindingCompleteEventArgs" /> parameter.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when all the clients have been bound to this <see cref="T:System.Windows.Forms.BindingSource" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CancelEdit">
@@ -264,8 +470,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method discards modifications to data since the last save or load operation if both of the following conditions are met:</para>
+          <list type="bullet">
+            <item>
+              <para>The data source implements the <see cref="T:System.ComponentModel.IEditableObject" /> interface. </para>
+            </item>
+            <item>
+              <para>The <see cref="M:System.Windows.Forms.BindingSource.EndEdit" /> method has not been called yet.</para>
+            </item>
+          </list>
+          <para>This method calls the <see cref="M:System.Windows.Forms.CurrencyManager.CancelCurrentEdit" /> method of the underlying <see cref="T:System.Windows.Forms.CurrencyManager" />, and is scoped to row-level changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels the current edit operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -279,8 +500,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.Clear" /> method removes all elements from the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property and sets the <see cref="P:System.Windows.Forms.BindingSource.Count" /> property to zero. </para>
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all elements from the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -296,10 +524,32 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the implementation is dependent on the underlying list's Contains method, typically the following characteristics apply:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Windows.Forms.BindingSource.List" /> is searched starting at the first element and ending at the last element.</para>
+            </item>
+            <item>
+              <para>The underlying method performs a linear search; therefore, the average execution time is proportional to the value of the <see cref="P:System.Windows.Forms.BindingSource.Count" /> property.</para>
+            </item>
+            <item>
+              <para>The underlying method determines equality by calling the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an object is an item in the list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is found in the <see cref="P:System.Windows.Forms.BindingSource.List" />; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. The value can be null. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -316,10 +566,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="arr">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to combine items from multiple sources into a single array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the contents of the <see cref="P:System.Windows.Forms.BindingSource.List" /> to the specified array, starting at the specified index value.</para>
+        </summary>
+        <param name="arr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination array.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in the destination array at which to start the copy operation.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -337,9 +595,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.BindingSource.Count" /> property gets the number of items in the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property as modified by the value of the <see cref="P:System.Windows.Forms.BindingSource.Filter" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of items in the underlying list, taking the current <see cref="P:System.Windows.Forms.BindingSource.Filter" /> value into consideration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrencyManager">
@@ -357,9 +621,15 @@
         <ReturnType>System.Windows.Forms.CurrencyManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to access the currency manager for another binding to the same data member use the <see cref="M:System.Windows.Forms.BindingSource.GetRelatedCurrencyManager(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currency manager associated with this <see cref="T:System.Windows.Forms.BindingSource" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Current">
@@ -377,9 +647,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.BindingSource.Current" /> property to access the current item, but use the <see cref="P:System.Windows.Forms.BindingSource.List" /> property to get the entire list. To determine the type of the current object, use the <see cref="M:System.Object.GetType" />, or <see cref="M:System.Object.ToString" /> methods.</para>
+          <para>To change the current item, set the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property to a new integral value, or use one of the navigation methods such as <see cref="M:System.Windows.Forms.BindingSource.MoveNext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current item in the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentChanged">
@@ -392,8 +669,32 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.CurrentChanged" /> event is raised whenever the <see cref="P:System.Windows.Forms.BindingSource.Current" /> property changes for any of the following reasons:</para>
+          <list type="bullet">
+            <item>
+              <para>The current position of the <see cref="P:System.Windows.Forms.BindingSource.List" /> changes.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> or <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> properties change.</para>
+            </item>
+            <item>
+              <para>The membership of the underlying <see cref="P:System.Windows.Forms.BindingSource.List" /> changes, which causes <see cref="P:System.Windows.Forms.BindingSource.Position" /> to refer to a different item. Examples include adding or deleting an item before the current item, deleting or moving the current item itself, or moving an item to the current position.</para>
+            </item>
+            <item>
+              <para>The underlying list is refreshed by a new sorting or filtering operation.</para>
+            </item>
+          </list>
+          <para>When this event is triggered, the <see cref="P:System.Windows.Forms.BindingSource.Current" /> property will already contain its new value.</para>
+          <para>
+            <see cref="E:System.Windows.Forms.BindingSource.CurrentChanged" /> is the default event for the <see cref="T:System.Windows.Forms.BindingSource" /> class.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the currently bound item changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentItemChanged">
@@ -406,8 +707,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.CurrentItemChanged" /> event is raised in response to all of the circumstances that raise the <see cref="E:System.Windows.Forms.BindingSource.CurrentChanged" /> event. Additionally, <see cref="E:System.Windows.Forms.BindingSource.CurrentItemChanged" /> is also fired whenever the value of one of the properties of <see cref="P:System.Windows.Forms.BindingSource.Current" /> is changed.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a property value of the <see cref="P:System.Windows.Forms.BindingSource.Current" /> property has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataError">
@@ -420,8 +728,15 @@
         <ReturnType>System.Windows.Forms.BindingManagerDataErrorEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is informational and reports CLS-compliant exceptions only. To determine what type of exception occurred, handle this event and check the <see cref="P:System.Windows.Forms.BindingManagerDataErrorEventArgs.Exception" /> property of the <see cref="T:System.Windows.Forms.BindingManagerDataErrorEventArgs" />.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a currency-related exception is silently handled by the <see cref="T:System.Windows.Forms.BindingSource" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataMember">
@@ -445,9 +760,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> contains multiple lists (or tables) of data, you should set the <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> property to the name of one of the sources.</para>
+          <para>Setting this property raises the <see cref="E:System.Windows.Forms.BindingSource.DataMemberChanged" /> event</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the specific list in the data source to which the connector currently binds to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataMemberChanged">
@@ -460,8 +782,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.DataMemberChanged" /> event occurs after the <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> property changes.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> property value has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSource">
@@ -485,9 +814,84 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property can be set to a number of data sources, including types, objects, and lists of types. The resulting data source will be exposed as a list. The following table shows some of the common data sources and the resulting list evaluation.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DataSource property</para>
+                </term>
+                <description>
+                  <para>List results</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>null</para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.ComponentModel.IBindingList" /> of objects. Adding an item sets the list to the type of the added item. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>null with <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> set</para>
+              </term>
+              <description>
+                <para>Not supported, raises <see cref="T:System.ArgumentException" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Non-list type or object of type "T"</para>
+              </term>
+              <description>
+                <para>Empty <see cref="T:System.ComponentModel.IBindingList" /> of type "T".</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Array instance</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.ComponentModel.IBindingList" /> containing the array elements.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.Collections.IEnumerable" /> instance</para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.ComponentModel.IBindingList" /> containing the <see cref="T:System.Collections.IEnumerable" /> items.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>List instance containing type "T"</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="T:System.ComponentModel.IBindingList" /> instance containing type "T".</para>
+              </description>
+            </item>
+          </list>
+          <para>In addition, <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> can be set to other list types such as <see cref="T:System.ComponentModel.IListSource" /> and <see cref="T:System.ComponentModel.ITypedList" /> and the <see cref="T:System.Windows.Forms.BindingSource" /> will handle them appropriately. In this case, the type contained in the list should have a default constructor.</para>
+          <para>When setting a data source, if the supplied reference contains more than one list or table, you must set the <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> property to a string that specifies the list to bind to. Setting this property raises the <see cref="E:System.Windows.Forms.BindingSource.DataSourceChanged" /> event.</para>
+          <block subset="none" type="note">
+            <para>If you make any changes to the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property value, you should do so on the user interface (UI) thread to ensure that the UI reflects the changes.</para>
+          </block>
+          <para>The <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property is the default property for the <see cref="T:System.Windows.Forms.BindingSource" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data source that the connector binds to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSourceChanged">
@@ -500,8 +904,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.DataSourceChanged" /> event occurs after the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property changes.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> property value has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -517,9 +928,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.BindingSource" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.BindingSource" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="EndEdit">
@@ -533,8 +952,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Windows.Forms.BindingSource.EndEdit" /> method is called, all pending changes are applied to the underlying data source.</para>
+          <para>This method has no effect unless the objects contained by the data source implement the <see cref="T:System.ComponentModel.IEditableObject" /> interface. If the objects do not implement the <see cref="T:System.ComponentModel.IEditableObject" /> interface, changes to the data are copied to the underlying data source immediately after each change.</para>
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies pending changes to the underlying data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Filter">
@@ -552,9 +979,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically used in complex data-binding scenarios, the <see cref="P:System.Windows.Forms.BindingSource.Filter" /> property allows you to view a subset of the <see cref="P:System.Windows.Forms.BindingSource.DataSource" />. Only underlying lists that implement the <see cref="T:System.ComponentModel.IBindingListView" /> interface support filtering.</para>
+          <para>When <see cref="P:System.Windows.Forms.BindingSource.Filter" /> is not null, the <see cref="T:System.Windows.Forms.BindingSource" /> passes this property to the underlying list. If you set this property during object initialization, the call will be deferred until after initialization is complete.</para>
+          <para>To form a filter value, specify the name of a column followed by an operator and a value to filter on. The accepted filter syntax depends on the underlying data source. If the underlying data source is a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataTable" />, or <see cref="T:System.Data.DataView" />, you can specify Boolean expressions using the syntax documented for the <see cref="P:System.Data.DataColumn.Expression" /> property.</para>
+          <para>The value of the <see cref="P:System.Windows.Forms.BindingSource.Filter" /> property affects the value of the <see cref="P:System.Windows.Forms.BindingSource.Count" /> property. Additionally, the <see cref="P:System.Windows.Forms.BindingSource.Filter" /> value will persist when the data source changes. To stop filtering the <see cref="P:System.Windows.Forms.BindingSource.DataSource" />, call the <see cref="M:System.Windows.Forms.BindingSource.RemoveFilter" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression used to filter which rows are viewed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -571,11 +1007,23 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is typically used in complex data-binding cases to locate the first row where the value of the field specified by the <paramref name="prop" /> parameter equals the value of the <paramref name="key" /> parameter</para>
+          <para>This method simply refers the request to the underlying list's <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method. For example, if the underlying data source is a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataTable" />, or <see cref="T:System.Data.DataView" />, this method calls the <see cref="M:System.Data.DataView.System#ComponentModel#IBindingList#Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method. The behavior of <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />, such as the value returned if no matching item is found, depends on the implementation of the method in the underlying list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the index of the item that has the given property descriptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item that has the given value for <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to search for. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of <paramref name="prop" /> to match. </param>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -592,11 +1040,23 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.Find(System.String,System.Object)" /> method can only be used when the underlying list is an <see cref="T:System.ComponentModel.IBindingList" /> with searching implemented. This method simply refers the request to the underlying list's <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method. For example, if the underlying data source is a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataTable" />, or <see cref="T:System.Data.DataView" />, this method converts <paramref name="propertyName" /> to a <see cref="T:System.ComponentModel.PropertyDescriptor" /> and calls the <see cref="M:System.Data.DataView.System#ComponentModel#IBindingList#Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method. The behavior of <see cref="M:System.Windows.Forms.BindingSource.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />, such as the value returned if no matching item is found, depends on the implementation of the method in the underlying list.</para>
+          <para>The property name comparison is case-insensitive. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of the item in the list with the specified property name and value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item with the specified property name and value. </para>
+        </returns>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to search for.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the item with the specified <paramref name="propertyName" /> to find.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -610,9 +1070,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an enumerator for the <see cref="P:System.Windows.Forms.BindingSource.List" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="P:System.Windows.Forms.BindingSource.List" />. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetItemProperties">
@@ -628,10 +1094,17 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects representing the bindable properties of the data source list type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects that represents the properties on this list type used to bind data.</para>
+        </returns>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to find in the list as bindable.</param>
       </Docs>
     </Member>
     <Member MemberName="GetListName">
@@ -647,10 +1120,17 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <param name="listAccessors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the list supplying data for the binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the list supplying the data for binding.</para>
+        </returns>
+        <param name="listAccessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to find in the list as bindable.</param>
       </Docs>
     </Member>
     <Member MemberName="GetRelatedCurrencyManager">
@@ -666,10 +1146,20 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="dataMember">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="dataMember" /> is null or an empty string (""), <see cref="M:System.Windows.Forms.BindingSource.GetRelatedCurrencyManager(System.String)" /> returns the main currency manager; otherwise, it checks for another <see cref="T:System.Windows.Forms.BindingSource" /> bound to the specified data member and returns its currency manager.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the related currency manager for the specified data member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The related <see cref="T:System.Windows.Forms.CurrencyManager" /> for the specified data member.</para>
+        </returns>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of column or list, within the data source to retrieve the currency manager for.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -685,10 +1175,31 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the implementation is dependent on the underlying list's IndexOf method, typically the following characteristics apply:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.Windows.Forms.BindingSource.List" /> is searched starting at the first element and ending at the last element.</para>
+            </item>
+            <item>
+              <para>The underlying method performs a linear search; therefore, the average execution time is proportional to the value of the <see cref="P:System.Windows.Forms.BindingSource.Count" /> property.</para>
+            </item>
+            <item>
+              <para>The underlying method determines equality by calling the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified object and returns the index of the first occurrence within the entire list.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of the <paramref name="value" /> parameter; otherwise, -1 if <paramref name="value" /> is not in the list.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. The value can be null. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -705,10 +1216,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an item into the list at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which <paramref name="value" /> should be inserted. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to insert. The value can be null. </param>
       </Docs>
     </Member>
     <Member MemberName="IsBindingSuspended">
@@ -726,9 +1245,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list binding is suspended.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsFixedSize">
@@ -746,9 +1268,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the list has a fixed size, it does not allow the addition or removal of elements after the list has been created, but you can modify existing elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the underlying list has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -766,9 +1294,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list that is read-only does not allow the addition, removal, or modification of any list items after the list is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the underlying list is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSorted">
@@ -786,9 +1320,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.BindingSource.IsSorted" /> always returns false if the list is not an <see cref="T:System.ComponentModel.IBindingList" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the items in the underlying list are sorted. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -806,9 +1347,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -850,9 +1394,136 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.BindingSource" /> class uniformly handles different data sources. Ideally the <see cref="P:System.Windows.Forms.BindingSource.List" /> property should be set to a general <see cref="T:System.Collections.IList" />. However, sometimes it may be necessary to cast this property to a more specific type. The following table shows the underlying list type, which depends on the type or value of the data source.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Data source type</para>
+                </term>
+                <description>
+                  <para>Underlying list description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> and <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> are null</para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.Collections.ArrayList" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> is null, but <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> is not null</para>
+              </term>
+              <description>
+                <para>None; an attempt to get the <see cref="P:System.Windows.Forms.BindingSource.List" /> will throw an <see cref="T:System.ArgumentException" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.Array" /> instance</para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.Array" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.ComponentModel.IListSource" /> instance</para>
+              </term>
+              <description>
+                <para>The return value from a call to the <see cref="M:System.ComponentModel.IListSource.GetList" /> method of this <see cref="T:System.ComponentModel.IListSource" /> instance.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.ComponentModel.IBindingList" /> instance</para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.ComponentModel.IBindingList" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.Collections.IList" /> instance</para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.Collections.IList" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A non-<see cref="T:System.Collections.IList" /> instance of type "T"</para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.ComponentModel.BindingList`1" /> with one element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> instance</para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.Collections.ArrayList" /> with one element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.Collections.IEnumerable" /></para>
+              </term>
+              <description>
+                <para>An <see cref="T:System.Collections.ArrayList" /> with the elements copied over.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The <see cref="T:System.Array" /> type with <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> of item type "T"</para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.ComponentModel.BindingList`1" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A <see cref="T:System.Type" /> that represents an <see cref="T:System.ComponentModel.IListSource" /> or <see cref="T:System.ComponentModel.ITypedList" /></para>
+              </term>
+              <description>
+                <para>An instance created by a call to the <see cref="M:System.Activator.CreateInstance(System.Type)" /> method of the <see cref="T:System.Activator" /> class. A <see cref="T:System.NotSupportedException" /> may be thrown.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The <see cref="T:System.Collections.IList" /> type with <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> of item type "T"</para>
+                <para>-or-</para>
+                <para>A non-<see cref="T:System.Collections.IList" /> type</para>
+              </term>
+              <description>
+                <para>A <see cref="T:System.ComponentModel.BindingList`1" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> type</para>
+              </term>
+              <description>
+                <para>None; an attempt to get the <see cref="P:System.Windows.Forms.BindingSource.List" /> will throw an <see cref="T:System.NotSupportedException" />.</para>
+              </description>
+            </item>
+          </list>
+          <para>If the type retrieved is the <see cref="T:System.Collections.IList" /> interface, the underlying collection may be more complex, such as an <see cref="T:System.Collections.ArrayList" /> or <see cref="T:System.Data.DataView" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list that the connector is bound to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListChanged">
@@ -865,8 +1536,15 @@
         <ReturnType>System.ComponentModel.ListChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event occurs when there is a change to the membership or metadata of the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. For example, this event is raised when items are added, removed, or moved, or the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> or <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> properties change. The values of the <see cref="P:System.Windows.Forms.BindingSource.Sort" /> and <see cref="P:System.Windows.Forms.BindingSource.Filter" /> properties will persist when this event occurs.</para>
+          <para>This event can be completely suppressed by setting the <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" /> property to false. For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the underlying list changes or an item in the list changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveFirst">
@@ -880,8 +1558,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the current value of the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property to 0, the first item in the underlying data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the first item in the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveLast">
@@ -895,8 +1579,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the current value of the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property to the index of the last item in the underlying data source, which is equal to the value of the <see cref="P:System.Windows.Forms.BindingSource.Count" /> property minus 1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the last item in the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -910,8 +1600,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changes the current value of the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property to the next item in the underlying data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the next item in the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MovePrevious">
@@ -925,8 +1621,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method changes the current value of the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property to the previous item in the underlying data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves to the previous item in the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAddingNew">
@@ -942,9 +1644,17 @@
         <Parameter Name="e" Type="System.ComponentModel.AddingNewEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnAddingNew(System.ComponentModel.AddingNewEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.AddingNew" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnBindingComplete">
@@ -960,9 +1670,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.BindingCompleteEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnBindingComplete(System.Windows.Forms.BindingCompleteEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.BindingComplete" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BindingCompleteEventArgs" />  that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnCurrentChanged">
@@ -978,9 +1696,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnCurrentChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.CurrentChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnCurrentItemChanged">
@@ -996,9 +1723,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnCurrentItemChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.CurrentItemChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnDataError">
@@ -1014,9 +1749,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.BindingManagerDataErrorEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnDataError(System.Windows.Forms.BindingManagerDataErrorEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.DataError" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BindingManagerDataErrorEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnDataMemberChanged">
@@ -1032,9 +1775,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnDataMemberChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.DataMemberChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnDataSourceChanged">
@@ -1050,9 +1801,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnDataSourceChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.DataSourceChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnListChanged">
@@ -1068,9 +1827,17 @@
         <Parameter Name="e" Type="System.ComponentModel.ListChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnListChanged(System.ComponentModel.ListChangedEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPositionChanged">
@@ -1086,9 +1853,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.OnPositionChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.BindingSource.PositionChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ListChangedEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="Position">
@@ -1109,9 +1884,24 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When setting the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property, out-of-range values are treated in the following manner:</para>
+          <list type="bullet">
+            <item>
+              <para>Negative values are treated as 0.</para>
+            </item>
+            <item>
+              <para>Values greater than or equal to <see cref="P:System.Windows.Forms.BindingSource.Count" /> are treated as <see cref="P:System.Windows.Forms.BindingSource.Count" /> minus 1.</para>
+            </item>
+          </list>
+          <para>Changing the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property will adjust the <see cref="P:System.Windows.Forms.BindingSource.Current" /> property likewise.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the current item in the underlying list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PositionChanged">
@@ -1124,8 +1914,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.BindingSource.PositionChanged" /> event occurs after the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property has changed.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the value of the <see cref="P:System.Windows.Forms.BindingSource.Position" /> property has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RaiseListChangedEvents">
@@ -1146,9 +1943,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" /> property is false, it suspends the raising of <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events. This event indicates that the bound list has been modified in some way, including adding, deleting, inserting, or modifying items. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events should be raised.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -1164,9 +1967,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.Remove(System.Object)" /> method causes the list to be searched for the <paramref name="value" /> parameter. If found, this method will attempt to remove the item from the <see cref="P:System.Windows.Forms.BindingSource.List" />. This attempt will fail if the list has a fixed size or is read-only. These two conditions can be tested with the <see cref="P:System.Windows.Forms.BindingSource.IsFixedSize" /> and <see cref="P:System.Windows.Forms.BindingSource.IsReadOnly" /> properties, respectively.</para>
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified item from the list.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to remove from the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -1182,9 +1993,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>These two conditions can be tested with the <see cref="P:System.Windows.Forms.BindingSource.IsFixedSize" /> and <see cref="P:System.Windows.Forms.BindingSource.IsReadOnly" /> properties, respectively.</para>
+          <para>This method raises the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the item at the specified index in the list.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item to remove. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveCurrent">
@@ -1198,8 +2017,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.RemoveCurrent" /> method is equivalent to the <see cref="M:System.Windows.Forms.BindingSource.RemoveAt(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the current item from the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveFilter">
@@ -1213,8 +2038,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.RemoveFilter" /> method refers the request to the underlying list's <see cref="M:System.ComponentModel.IBindingListView.RemoveFilter" /> method. Only lists that implement <see cref="T:System.ComponentModel.IBindingListView" /> support filtering.</para>
+          <para>By default, a call to this method is equivalent to setting the <see cref="P:System.Windows.Forms.BindingSource.Filter" /> property to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the filter associated with the <see cref="T:System.Windows.Forms.BindingSource" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveSort">
@@ -1228,8 +2060,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.RemoveSort" /> method refers the request to the underlying list's <see cref="M:System.ComponentModel.IBindingList.RemoveSort" /> method. Only lists that implement <see cref="T:System.ComponentModel.IBindingList" /> support sorting.</para>
+          <para>By default, a call to this method is equivalent to setting the <see cref="P:System.Windows.Forms.BindingSource.Sort" /> property to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the sort associated with the <see cref="T:System.Windows.Forms.BindingSource" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetAllowNew">
@@ -1248,8 +2087,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.ResetAllowNew" /> method reinitializes the <see cref="P:System.Windows.Forms.BindingSource.AllowNew" /> property to reflect the value of the corresponding <see cref="P:System.Windows.Forms.BindingSource.AllowNew" /> property in the underlying list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes the <see cref="P:System.Windows.Forms.BindingSource.AllowNew" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetBindings">
@@ -1265,9 +2110,27 @@
         <Parameter Name="metadataChanged" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="metadataChanged">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.ResetBindings(System.Boolean)" /> method informs all controls bound to the <see cref="T:System.Windows.Forms.BindingSource" /> to refresh their values. The method does this by raising the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event at least once; the <paramref name="metaDataChanged" /> parameter indicates the nature of the underlying change.</para>
+          <list type="bullet">
+            <item>
+              <para>A <paramref name="metaDataChanged" /> value of true indicates that the data schema of <see cref="T:System.Windows.Forms.BindingSource" /> has changed. A <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event is raised with <see cref="P:System.ComponentModel.ListChangedEventArgs.ListChangedType" /> set to <see cref="F:System.ComponentModel.ListChangedType.PropertyDescriptorChanged" />.</para>
+            </item>
+            <item>
+              <para>A <paramref name="metaDataChanged" /> value of false indicates that only the values of one or more items have changed. </para>
+            </item>
+          </list>
+          <para>Regardless of the value of <paramref name="metaDataChanged" />, a <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event is raised with <see cref="P:System.ComponentModel.ListChangedEventArgs.ListChangedType" /> set to <see cref="F:System.ComponentModel.ListChangedType.Reset" />. As a consequence, calling <see cref="M:System.Windows.Forms.BindingSource.ResetBindings(System.Boolean)" /> with a parameter of true will raise two <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.BindingSource.ResetBindings(System.Boolean)" /> is automatically called whenever another member makes major changes to the data-binding, such as setting the <see cref="P:System.Windows.Forms.BindingSource.DataSource" /> or <see cref="P:System.Windows.Forms.BindingSource.DataMember" /> properties. However, the programmer can also call this method explicitly. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a control bound to the <see cref="T:System.Windows.Forms.BindingSource" /> to reread all the items in the list and refresh their displayed values. </para>
+        </summary>
+        <param name="metadataChanged">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the data schema has changed; false if only values have changed.</param>
       </Docs>
     </Member>
     <Member MemberName="ResetCurrentItem">
@@ -1281,8 +2144,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling this method will cause the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event to occur, specifying the item changed at the current position.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a control bound to the <see cref="T:System.Windows.Forms.BindingSource" /> to reread the currently selected item and refresh its displayed value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetItem">
@@ -1298,9 +2167,18 @@
         <Parameter Name="itemIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="itemIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.ResetItem(System.Int32)" /> method notifies all controls bound to the item at the specified <see cref="P:System.Windows.Forms.BindingSource.Position" /> to refresh their values. The method does this by raising the <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> event with <see cref="P:System.ComponentModel.ListChangedEventArgs.ListChangedType" /> set to <see cref="F:System.ComponentModel.ListChangedType.ItemChanged" />.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.BindingSource.ResetItem(System.Int32)" /> is automatically called whenever changes are made to the value of an individual item. However, the programmer can also call this method explicitly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes a control bound to the <see cref="T:System.Windows.Forms.BindingSource" /> to reread the item at the specified index, and refresh its displayed value. </para>
+        </summary>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the item that has changed.</param>
       </Docs>
     </Member>
     <Member MemberName="ResumeBinding">
@@ -1314,8 +2192,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> and <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> are two methods that allow the temporary suspension and resumption of data binding in a simple-binding scenario. You would typically suspend data binding if the user must be allowed to make several edits to data fields before validation occurs. For example, if one field must be changed in accordance with a second, but where validating the first field would cause the second field to be in error.</para>
+          <block subset="none" type="note">
+            <para>Using <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> prevents changes from being pushed into the data source until <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> is called, but does not actually prevent any events from occurring. Controls that use complex data binding, such as the <see cref="T:System.Windows.Forms.DataGridView" /> control, update their values based on change events such as the <see cref="E:System.Windows.Forms.CurrencyManager.ListChanged" /> event, so calling <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> will not prevent them from receiving changes to the data source. For this reason, this <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> and <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> are designed for use with simple-bound controls, such as the <see cref="T:System.Windows.Forms.TextBox" /> control. Alternatively you can use these methods in a complex binding scenario if you suppress <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events by setting the <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" /> property to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resumes data binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Sort">
@@ -1333,9 +2221,26 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.BindingSource.Sort" /> property is a case-sensitive string that specifies the column names used to sort the rows, along with the sort direction. Columns are sorted ascending by default. Multiple columns can be separated by commas, such as "State, ZipCode DESC".</para>
+          <para>To support sorting, the underlying list must implement the <see cref="T:System.ComponentModel.IBindingList" /> or <see cref="T:System.ComponentModel.IBindingListView" /> interfaces. This capability can be queried through the <see cref="P:System.Windows.Forms.BindingSource.SupportsSorting" /> property. Multicolumn sorting is available when the <see cref="P:System.Windows.Forms.BindingSource.SupportsAdvancedSorting" /> property is true.</para>
+          <para>Setting the <see cref="P:System.Windows.Forms.BindingSource.Sort" /> property will change the internal list depending on its type:</para>
+          <list type="bullet">
+            <item>
+              <para>If the list is of type <see cref="T:System.ComponentModel.IBindingList" />, the <see cref="P:System.ComponentModel.IBindingList.SortProperty" /> and <see cref="P:System.ComponentModel.IBindingList.SortDirection" /> properties are set in the internal list.</para>
+            </item>
+            <item>
+              <para>If the list is of type <see cref="T:System.ComponentModel.IBindingListView" />, the <see cref="P:System.ComponentModel.IBindingListView.SortDescriptions" /> property is set.</para>
+            </item>
+          </list>
+          <para>The internal list's sort properties are only changed when the sort string is not null. The get accessor for this property will not retrieve the sort value of the internal list; instead, it will return the set accessor value. The value of the <see cref="P:System.Windows.Forms.BindingSource.Sort" /> property will persist when the data source changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the column names used for sorting, and the sort order for viewing the rows in the data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SortDescriptions">
@@ -1356,9 +2261,16 @@
         <ReturnType>System.ComponentModel.ListSortDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the list is not an <see cref="T:System.ComponentModel.IBindingListView" />, the <see cref="P:System.Windows.Forms.BindingSource.SortDescriptions" /> always returns null.</para>
+          <para>The <see cref="T:System.ComponentModel.ListSortDescriptionCollection" /> is a read-only collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of sort descriptions applied to the data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SortDirection">
@@ -1379,9 +2291,15 @@
         <ReturnType>System.ComponentModel.ListSortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the underlying list is not an <see cref="T:System.ComponentModel.IBindingList" />, the <see cref="P:System.Windows.Forms.BindingSource.SortDirection" /> property will always return <see cref="F:System.ComponentModel.ListSortDirection.Ascending" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the direction the items in the list are sorted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SortProperty">
@@ -1402,9 +2320,15 @@
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the list is not an <see cref="T:System.ComponentModel.IBindingList" />, <see cref="P:System.Windows.Forms.BindingSource.SortProperty" /> always returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.PropertyDescriptor" /> that is being used for sorting the list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsAdvancedSorting">
@@ -1422,9 +2346,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the list is not an <see cref="T:System.ComponentModel.IBindingListView" />, <see cref="P:System.Windows.Forms.BindingSource.SupportsAdvancedSorting" /> always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data source supports multi-column sorting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsChangeNotification">
@@ -1442,9 +2372,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data source supports change notification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsFiltering">
@@ -1462,9 +2395,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the list is not an <see cref="T:System.ComponentModel.IBindingListView" />, <see cref="P:System.Windows.Forms.BindingSource.SupportsFiltering" /> always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data source supports filtering.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsSearching">
@@ -1482,9 +2421,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the data source is not an <see cref="T:System.ComponentModel.IBindingList" />, <see cref="P:System.Windows.Forms.BindingSource.SupportsSearching" /> always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data source supports searching with the <see cref="M:System.Windows.Forms.BindingSource.Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsSorting">
@@ -1502,9 +2447,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the data source is not an <see cref="T:System.ComponentModel.IBindingList" />, the <see cref="P:System.Windows.Forms.BindingSource.SupportsSorting" /> property always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data source supports sorting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuspendBinding">
@@ -1518,8 +2469,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> and <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> are two methods that allow the temporary suspension and resumption of data binding in a simple-binding scenario. You would typically suspend data binding if the user must be allowed to make several edits to data fields before validation occurs. For example, if one field must be changed in accordance with a second, but where validating the first field would cause the second field to be in error.</para>
+          <block subset="none" type="note">
+            <para>Using <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> and prevents changes from being pushed into the data source until <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> is called, but does not actually prevent any events from occurring. Controls that use complex data binding, such as the <see cref="T:System.Windows.Forms.DataGridView" /> control, update their values based on change events such as the <see cref="E:System.Windows.Forms.CurrencyManager.ListChanged" /> event, so calling <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> will not prevent them from receiving changes to the data source. For this reason, this <see cref="M:System.Windows.Forms.BindingSource.SuspendBinding" /> and <see cref="M:System.Windows.Forms.BindingSource.ResumeBinding" /> are designed for use with simple-bound controls, such as the <see cref="T:System.Windows.Forms.TextBox" /> control. Alternatively you can use these methods in a complex binding scenario if you suppress <see cref="E:System.Windows.Forms.BindingSource.ListChanged" /> events by setting the <see cref="P:System.Windows.Forms.BindingSource.RaiseListChangedEvents" /> property to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspends data binding to prevent changes from updating the bound data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SyncRoot">
@@ -1537,9 +2498,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the underlying list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AddIndex">
@@ -1555,9 +2519,16 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the underlying list is an <see cref="T:System.ComponentModel.IBindingList" /> type, this method will add the <see cref="T:System.ComponentModel.PropertyDescriptor" /> to the indexes; otherwise, calling this method will throw a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the <see cref="T:System.ComponentModel.PropertyDescriptor" /> to the indexes used for searching.</para>
+        </summary>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to add to the indexes used for searching. </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.RemoveIndex">
@@ -1573,9 +2544,16 @@
         <Parameter Name="prop" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the underlying list is not a <see cref="T:System.ComponentModel.IBindingList" />, this method will always throw a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.ComponentModel.PropertyDescriptor" /> from the indexes used for searching.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to remove from the indexes used for searching.  </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICancelAddNew.CancelNew">
@@ -1591,9 +2569,16 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.System#ComponentModel#ICancelAddNew#CancelNew(System.Int32)" /> method rolls back a pending addition of an item previously added to the collection at the index specified by <paramref name="position" />. The <paramref name="position" /> parameter is necessary because several new items can be simultaneously pending. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards a pending new item from the collection.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item that was added to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICancelAddNew.EndNew">
@@ -1609,9 +2594,16 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="position">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.BindingSource.System#ComponentModel#ICancelAddNew#EndNew(System.Int32)" /> method commits a pending addition of an item previously added to the collection at the index specified by <paramref name="position" />. The <paramref name="position" /> parameter is necessary because several new items can be simultaneously pending. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits a pending new item to the collection.</para>
+        </summary>
+        <param name="position">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item that was added to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ISupportInitialize.BeginInit">
@@ -1625,8 +2617,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals the <see cref="T:System.Windows.Forms.BindingSource" /> that initialization is starting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ISupportInitialize.EndInit">
@@ -1640,8 +2635,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals the <see cref="T:System.Windows.Forms.BindingSource" /> that initialization is complete. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ISupportInitializeNotification.IsInitialized">
@@ -1654,9 +2652,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.BindingSource" /> instance is cast to an <see cref="T:System.ComponentModel.ISupportInitializeNotification" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.BindingSource" /> is initialized.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

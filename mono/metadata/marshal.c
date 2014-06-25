@@ -35,6 +35,7 @@
 #include "mono/metadata/attrdefs.h"
 #include "mono/metadata/gc-internal.h"
 #include "mono/metadata/cominterop.h"
+#include "mono/metadata/reflection-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -461,9 +462,15 @@ parse_unmanaged_function_pointer_attr (MonoClass *klass, MonoMethodPInvoke *piin
 		 */
 		cinfo = mono_custom_attrs_from_class (klass);
 		if (cinfo && !mono_runtime_get_no_exec ()) {
-			attr = (MonoReflectionUnmanagedFunctionPointerAttribute*)mono_custom_attrs_get_attr (cinfo, UnmanagedFunctionPointerAttribute);
+			MonoError error;
+			attr = (MonoReflectionUnmanagedFunctionPointerAttribute*)mono_custom_attrs_get_attr_checked (cinfo, UnmanagedFunctionPointerAttribute, &error);
 			if (attr) {
 				piinfo->piflags = (attr->call_conv << 8) | (attr->charset ? (attr->charset - 1) * 2 : 1) | attr->set_last_error;
+			} else {
+				if (!mono_error_ok (&error)) {
+					g_warning ("Could not load UnmanagedFunctionPointerAttribute due to %s", mono_error_get_message (&error));
+					mono_error_cleanup (&error);
+				}
 			}
 			if (!cinfo->cached)
 				mono_custom_attrs_free (cinfo);
@@ -2475,12 +2482,15 @@ mono_marshal_find_in_cache (GHashTable *cache, gpointer key)
 }
 
 /* Create the method from the builder and place it in the cache */
-MonoMethod*
-mono_mb_create_and_cache (GHashTable *cache, gpointer key,
+static MonoMethod*
+mono_mb_create_and_cache_full (GHashTable *cache, gpointer key,
 							   MonoMethodBuilder *mb, MonoMethodSignature *sig,
-							   int max_stack)
+							   int max_stack, gboolean *out_found)
 {
 	MonoMethod *res;
+
+	if (out_found)
+		*out_found = FALSE;
 
 	mono_marshal_lock ();
 	res = g_hash_table_lookup (cache, key);
@@ -2496,6 +2506,8 @@ mono_mb_create_and_cache (GHashTable *cache, gpointer key,
 			mono_marshal_set_wrapper_info (res, key);
 			mono_marshal_unlock ();
 		} else {
+			if (out_found)
+				*out_found = TRUE;
 			mono_marshal_unlock ();
 			mono_free_method (newm);
 		}
@@ -2504,6 +2516,13 @@ mono_mb_create_and_cache (GHashTable *cache, gpointer key,
 	return res;
 }		
 
+MonoMethod*
+mono_mb_create_and_cache (GHashTable *cache, gpointer key,
+							   MonoMethodBuilder *mb, MonoMethodSignature *sig,
+							   int max_stack)
+{
+	return mono_mb_create_and_cache_full (cache, key, mb, sig, max_stack, NULL);
+}
 
 static inline MonoMethod*
 mono_marshal_remoting_find_in_cache (MonoMethod *method, int wrapper_type)
@@ -4171,40 +4190,41 @@ free_signature_method_pair (SignatureMethodPair *pair)
 	g_free (pair);
 }
 
-/*
- * the returned method invokes all methods in a multicast delegate.
- */
-MonoMethod *
-mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
+static MonoMethod *
+mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method)
 {
 	MonoMethodSignature *sig, *static_sig, *invoke_sig;
 	int i;
 	MonoMethodBuilder *mb;
-	MonoMethod *res, *newm;
+	MonoMethod *res;
 	GHashTable *cache;
+	gpointer cache_key = NULL;
 	SignatureMethodPair key;
 	SignatureMethodPair *new_key;
 	int local_prev, local_target;
 	int pos0;
 	char *name;
-	MonoMethod *target_method = NULL;
 	MonoClass *target_class = NULL;
-	gboolean callvirt = FALSE;
 	gboolean closed_over_null = FALSE;
-	gboolean static_method_with_first_arg_bound = FALSE;
 	MonoGenericContext *ctx = NULL;
 	MonoGenericContainer *container = NULL;
 	MonoMethod *orig_method = NULL;
 	WrapperInfo *info;
+	WrapperSubtype subtype = WRAPPER_SUBTYPE_NONE;
+	gboolean found;
+
+	g_assert (method && method->klass->parent == mono_defaults.multicastdelegate_class &&
+		  !strcmp (method->name, "Invoke"));
+
+	invoke_sig = sig = mono_signature_no_pinvoke (method);
 
 	/*
 	 * If the delegate target is null, and the target method is not static, a virtual 
 	 * call is made to that method with the first delegate argument as this. This is 
 	 * a non-documented .NET feature.
 	 */
-	if (del && !del->target && del->method && mono_method_signature (del->method)->hasthis) {
-		callvirt = TRUE;
-		target_method = del->method;
+	if (callvirt) {
+		subtype = WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL;
 		if (target_method->is_inflated) {
 			MonoType *target_type;
 
@@ -4213,29 +4233,22 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 				mono_method_get_context (method));
 			target_class = mono_class_from_mono_type (target_type);
 		} else {
-			target_class = del->method->klass;
+			target_class = target_method->klass;
 		}
+
+		closed_over_null = sig->param_count == mono_method_signature (target_method)->param_count;
 	}
 
-	g_assert (method && method->klass->parent == mono_defaults.multicastdelegate_class &&
-		  !strcmp (method->name, "Invoke"));
-		
-	invoke_sig = sig = mono_signature_no_pinvoke (method);
-
-	if (callvirt)
-		closed_over_null = sig->param_count == mono_method_signature (del->method)->param_count;
-
-	if (del && del->method && mono_method_signature (del->method)->param_count == sig->param_count + 1 && (del->method->flags & METHOD_ATTRIBUTE_STATIC)) {
+	if (static_method_with_first_arg_bound) {
+		subtype = WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND;
 		g_assert (!callvirt);
-		invoke_sig = mono_method_signature (del->method);
-		target_method = NULL;
-		static_method_with_first_arg_bound = TRUE;
+		invoke_sig = mono_method_signature (target_method);
 	}
 
 	/*
-	 * For generic delegates, create a generic wrapper, and returns an instance to help AOT.
+	 * For generic delegates, create a generic wrapper, and return an instance to help AOT.
 	 */
-	if (method->is_inflated && !callvirt && !static_method_with_first_arg_bound) {
+	if (method->is_inflated && subtype == WRAPPER_SUBTYPE_NONE) {
 		orig_method = method;
 		ctx = &((MonoMethodInflated*)method)->context;
 		method = ((MonoMethodInflated*)method)->declaring;
@@ -4256,6 +4269,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 		res = check_generic_delegate_wrapper_cache (cache, orig_method, method, ctx);
 		if (res)
 			return res;
+		cache_key = method->klass;
 	} else if (static_method_with_first_arg_bound) {
 		cache = get_cache (&method->klass->image->delegate_bound_static_invoke_cache,
 						   (GHashFunc)mono_signature_hash, 
@@ -4266,6 +4280,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 		res = mono_marshal_find_in_cache (cache, invoke_sig);
 		if (res)
 			return res;
+		cache_key = invoke_sig;
 	} else if (callvirt) {
 		GHashTable **cache_ptr;
 
@@ -4289,6 +4304,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 		res = mono_marshal_find_in_cache (cache, sig);
 		if (res)
 			return res;
+		cache_key = sig;
 	}
 
 	static_sig = signature_dup (method->klass->image, sig);
@@ -4303,7 +4319,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 	else if (callvirt)
 		name = mono_signature_to_name (invoke_sig, "invoke_callvirt");
 	else
-		name = mono_signature_to_name (sig, "invoke");
+		name = mono_signature_to_name (invoke_sig, "invoke");
 	if (ctx)
 		mb = mono_mb_new (method->klass, name, MONO_WRAPPER_DELEGATE_INVOKE);
 	else
@@ -4421,45 +4437,52 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 	if (ctx) {
 		MonoMethod *def;
 
-		def = mono_mb_create_and_cache (cache, method->klass, mb, sig, sig->param_count + 16);
+		def = mono_mb_create_and_cache (cache, cache_key, mb, sig, sig->param_count + 16);
 		res = cache_generic_delegate_wrapper (cache, orig_method, def, ctx);
-	} else if (static_method_with_first_arg_bound) {
-		res = mono_mb_create_and_cache (cache, invoke_sig, mb, sig, sig->param_count + 16);
-
-		info = mono_wrapper_info_create (res, WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND);
-		mono_marshal_set_wrapper_info (res, info);
 	} else if (callvirt) {
-		// From mono_mb_create_and_cache
-		newm = mono_mb_create_method (mb, sig, sig->param_count + 16);
-		/*We perform double checked locking, so must fence before publishing*/
-		mono_memory_barrier ();
-		mono_marshal_lock ();
-		res = g_hash_table_lookup (cache, &key);
-		if (!res) {
-			res = newm;
-			new_key = g_new0 (SignatureMethodPair, 1);
-			*new_key = key;
-			if (static_method_with_first_arg_bound)
-				new_key->sig = signature_dup (del->method->klass->image, key.sig);
-			g_hash_table_insert (cache, new_key, res);
+		new_key = g_new0 (SignatureMethodPair, 1);
+		*new_key = key;
 
-			info = mono_wrapper_info_create (res, WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL);
-			mono_marshal_set_wrapper_info (res, info);
-
-			mono_marshal_unlock ();
-		} else {
-			mono_marshal_unlock ();
-			mono_free_method (newm);
-		}
+		res = mono_mb_create_and_cache_full (cache, new_key, mb, sig, sig->param_count + 16, &found);
+		if (found)
+			g_free (new_key);
+		info = mono_wrapper_info_create (res, subtype);
+		mono_marshal_set_wrapper_info (res, info);
 	} else {
-		res = mono_mb_create_and_cache (cache, sig, mb, sig, sig->param_count + 16);
+		res = mono_mb_create_and_cache (cache, cache_key, mb, sig, sig->param_count + 16);
 
-		info = mono_wrapper_info_create (res, WRAPPER_SUBTYPE_NONE);
+		info = mono_wrapper_info_create (res, subtype);
 		mono_marshal_set_wrapper_info (res, info);
 	}
 	mono_mb_free (mb);
 
 	return res;	
+}
+
+/*
+ * the returned method invokes all methods in a multicast delegate.
+ */
+MonoMethod *
+mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
+{
+	gboolean callvirt = FALSE;
+	gboolean static_method_with_first_arg_bound = FALSE;
+	MonoMethod *target_method = NULL;
+	MonoMethodSignature *sig;
+
+	sig = mono_signature_no_pinvoke (method);
+
+	if (del && !del->target && del->method && mono_method_signature (del->method)->hasthis) {
+		callvirt = TRUE;
+		target_method = del->method;
+	}
+
+	if (del && del->method && mono_method_signature (del->method)->param_count == sig->param_count + 1 && (del->method->flags & METHOD_ATTRIBUTE_STATIC)) {
+		static_method_with_first_arg_bound = TRUE;
+		target_method = del->method;
+	}
+
+	return mono_marshal_get_delegate_invoke_internal (method, callvirt, static_method_with_first_arg_bound, target_method);
 }
 
 /*
@@ -5897,7 +5920,10 @@ emit_marshal_custom (EmitMarshalContext *m, int argnum, MonoType *t,
 		g_assert (marshal_native_to_managed);
 	}
 
-	mtype = mono_reflection_type_from_name (spec->data.custom_data.custom_name, m->image);
+	if (spec->data.custom_data.image)
+		mtype = mono_reflection_type_from_name (spec->data.custom_data.custom_name, spec->data.custom_data.image);
+	else
+		mtype = mono_reflection_type_from_name (spec->data.custom_data.custom_name, m->image);
 	g_assert (mtype != NULL);
 	mklass = mono_class_from_mono_type (mtype);
 	g_assert (mklass != NULL);
@@ -12955,6 +12981,9 @@ mono_marshal_free_dynamic_wrappers (MonoMethod *method)
 		g_hash_table_remove (image->runtime_invoke_direct_cache, method);
 	if (image->delegate_abstract_invoke_cache)
 		g_hash_table_foreach_remove (image->delegate_abstract_invoke_cache, signature_method_pair_matches_method, method);
+	// FIXME: Need to clear the caches in other images as well
+	if (image->delegate_bound_static_invoke_cache)
+		g_hash_table_remove (image->delegate_bound_static_invoke_cache, mono_method_signature (method));
 
 	if (marshal_mutex_initialized)
 		mono_marshal_unlock ();

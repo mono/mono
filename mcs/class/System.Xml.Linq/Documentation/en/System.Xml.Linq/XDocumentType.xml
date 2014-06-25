@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XDocumentType" FullName="System.Xml.Linq.XDocumentType">
   <TypeSignature Language="C#" Value="public class XDocumentType : System.Xml.Linq.XNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XDocumentType extends System.Xml.Linq.XNode" />
@@ -10,8 +11,33 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Data Type Definitions (DTD) in XML are a way to do the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Validate XML trees to a limited extent.</para>
+        </item>
+        <item>
+          <para>Expand entities, which is a form of text replacement.</para>
+        </item>
+        <item>
+          <para>Supply default attributes.</para>
+        </item>
+      </list>
+      <para>This class represents the XML concept of a DTD.</para>
+      <para>DTD support in sqltecxlinq is limited. </para>
+      <para>sqltecxlinq will expand internal entities by default, but it will not resolve external entity references unless an <see cref="T:System.Xml.XmlReader" /> with an associated <see cref="T:System.Xml.XmlResolver" /> is used to load the XML tree. </para>
+      <para>sqltecxlinq will not validate a document against a DTD, but you can use a validating <see cref="T:System.Xml.XmlReader" /> to perform DTD validation if necessary.</para>
+      <para>To validate an sqltecxlinq tree against an XML schema, use the <see cref="Overload:System.Xml.Schema.Extensions.Validate" /> method.</para>
+      <para>When a document contains entity references that are defined in a DTD, the references are expanded upon creation of the XML tree. However, when you serialize or save the XML tree, the content of the expanded entities is preserved; the entity references are not.</para>
+      <para>Default attributes from the DTD will be materialized as regular attributes in the XML tree. After a default attribute from the DTD is materialized, there is no way to determine that the attribute was a default attribute from the DTD.</para>
+      <para>You can populate an XML tree with an XML document that contains an internal DTD. The XML tree will then contain a <see cref="P:System.Xml.Linq.XDocument.DocumentType" /> node. When you serialize or save the tree, the internal DTD will also be saved as part of the document.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML Document Type Definition (DTD). </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +51,16 @@
         <Parameter Name="other" Type="System.Xml.Linq.XDocumentType" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is primarily used internally when making a deep copy of an XML tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Xml.Linq.XDocumentType" /> class from another <see cref="T:System.Xml.Linq.XDocumentType" /> object.</para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XDocumentType" /> object to copy from.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -44,12 +77,19 @@
         <Parameter Name="internalSubset" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="publicId">To be added.</param>
-        <param name="systemId">To be added.</param>
-        <param name="internalSubset">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Xml.Linq.XDocumentType" /> class. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the qualified name of the DTD, which is the same as the qualified name of the root element of the XML document.</param>
+        <param name="publicId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the public identifier of an external public DTD.</param>
+        <param name="systemId">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the system identifier of an external private DTD.</param>
+        <param name="internalSubset">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the internal subset for an internal DTD.</param>
       </Docs>
     </Member>
     <Member MemberName="InternalSubset">
@@ -63,9 +103,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the internal subset for this Document Type Definition (DTD).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -79,9 +122,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name for this Document Type Definition (DTD).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -95,9 +141,15 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of concrete subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each node in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PublicId">
@@ -111,9 +163,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an XML document uses an external public DTD, this property will contain the public identifier of the external DTD.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the public identifier for this Document Type Definition (DTD).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SystemId">
@@ -127,9 +185,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an XML document uses an external private DTD, this property will contain the private identifier of the external DTD.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the system identifier for this Document Type Definition (DTD).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -146,9 +210,16 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is primarily used internally by the methods that write an XML tree to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write this <see cref="T:System.Xml.Linq.XDocumentType" /> to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> into which this method will write.</param>
       </Docs>
     </Member>
   </Members>

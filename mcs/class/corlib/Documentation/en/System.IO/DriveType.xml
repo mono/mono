@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DriveType" FullName="System.IO.DriveType">
   <TypeSignature Language="C#" Value="public enum DriveType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed DriveType extends System.Enum" />
@@ -15,9 +16,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.IO.DriveType" /> is used by the <see cref="T:System.IO.DriveInfo" /> class to indicate drive type. It can be used with the <see cref="T:System.IO.DriveType" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines constants for drive types, including CDRom, Fixed, Network, NoRootDirectory, Ram, Removable, and Unknown.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CDRom">
@@ -32,8 +40,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is an optical disc device, such as a CD or DVD-ROM.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Fixed">
@@ -48,8 +59,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a fixed disk.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Network">
@@ -64,8 +78,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a network drive.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoRootDirectory">
@@ -80,8 +97,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive does not have a root directory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ram">
@@ -96,8 +116,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a RAM disk.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Removable">
@@ -112,8 +135,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drive is a removable storage device, such as a floppy disk drive or a USB flash drive.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -128,8 +154,11 @@
         <ReturnType>System.IO.DriveType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of drive is unknown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentRenameEventArgs" FullName="System.ComponentModel.Design.ComponentRenameEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ComponentRenameEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ComponentRenameEventArgs extends System.EventArgs" />
@@ -20,8 +21,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.ComponentModel.Design.ComponentRenameEventArgs" /> provides data about a <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRename" /> event.</para>
+      <para>A <see cref="T:System.ComponentModel.Design.ComponentRenameEventArgs" /> object provides the following information: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="P:System.ComponentModel.Design.ComponentRenameEventArgs.Component" /> property that references the component being renamed.</para>
+        </item>
+        <item>
+          <para>An <see cref="P:System.ComponentModel.Design.ComponentRenameEventArgs.OldName" /> property that indicates the old name of the component.</para>
+        </item>
+        <item>
+          <para>A <see cref="P:System.ComponentModel.Design.ComponentRenameEventArgs.NewName" /> property that indicates the new name of the component.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.ComponentModel.Design.IComponentChangeService.ComponentRename" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,11 +59,17 @@
         <Parameter Name="newName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="oldName">To be added: an object of type 'string'</param>
-        <param name="newName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.ComponentRenameEventArgs" /> class.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to be renamed. </param>
+        <param name="oldName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old name of the component. </param>
+        <param name="newName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new name of the component. </param>
       </Docs>
     </Member>
     <Member MemberName="Component">
@@ -60,9 +85,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component that is being renamed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NewName">
@@ -78,9 +106,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the component after the rename event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OldName">
@@ -96,9 +127,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the component before the rename event.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

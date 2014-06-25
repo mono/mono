@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPInterfaceProperties" FullName="System.Net.NetworkInformation.IPInterfaceProperties">
   <TypeSignature Language="C#" Value="public abstract class IPInterfaceProperties" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit IPInterfaceProperties extends System.Object" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides access to configuration and address information for network interfaces that support IPv4 or IPv6. You do not create instances of this class; they are returned by the <see cref="M:System.Net.NetworkInformation.NetworkInterface.GetIPProperties" /> method.</para>
+      <para>To access IPv4-specific properties, use the object returned by the <see cref="M:System.Net.NetworkInformation.IPInterfaceProperties.GetIPv4Properties" /> method. To access IPv6-specific properties, use the object returned by the <see cref="M:System.Net.NetworkInformation.IPInterfaceProperties.GetIPv6Properties" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about network interfaces that support Internet Protocol version 4 (IPv4) or Internet Protocol version 6 (IPv6).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +34,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be called only from classes that derive from <see cref="T:System.Net.NetworkInformation.IPInterfaceProperties" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.IPInterfaceProperties" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AnycastAddresses">
@@ -43,10 +57,16 @@
         <ReturnType>System.Net.NetworkInformation.IPAddressInformationCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An anycast address identifies multiple computers. Packets sent to an anycast address are sent to one of the computers identified by the address. Anycast addressing is an IPv6 feature used to update router tables for a group of hosts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the anycast IP addresses assigned to this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DhcpServerAddresses">
@@ -61,10 +81,16 @@
         <ReturnType>System.Net.NetworkInformation.IPAddressCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dynamic Host Configuration Protocol (DHCP) allows a computer to obtain a network address from a DHCP server, as opposed to using a static (fixed) network address. A DHCP server does not permanently assign addresses; instead, it temporarily uses one of a number of available addresses to the computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the addresses of Dynamic Host Configuration Protocol (DHCP) servers for this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DnsAddresses">
@@ -79,10 +105,16 @@
         <ReturnType>System.Net.NetworkInformation.IPAddressCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DNS is a hierarchical naming system used to map host names to IP addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the addresses of Domain Name System (DNS) servers for this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DnsSuffix">
@@ -97,10 +129,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DNS suffix identifies the domain name (for example, "contoso.com") that is appended to an unqualified host name to obtain a fully qualified domain name (FQDN) suitable for a DNS name query. For example, if the local machine has "contoso.com" as its <see cref="P:System.Net.NetworkInformation.IPInterfaceProperties.DnsSuffix" />, and must resolve the unqualified host name "www", the FQDN to query is "www.contoso.com".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Domain Name System (DNS) suffix associated with this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GatewayAddresses">
@@ -115,10 +153,16 @@
         <ReturnType>System.Net.NetworkInformation.GatewayIPAddressInformationCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gateways that implement the Internet Protocol Version 4 (IPv4) to forward packets between networks are returned by this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the IPv4 network gateway addresses for this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetIPv4Properties">
@@ -134,10 +178,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns null for <see cref="F:System.Net.NetworkInformation.NetworkInterfaceType.Loopback" /> interfaces.</para>
+          <para>For a detailed description of the information available for an interface that supports IPv4, see the <see cref="T:System.Net.NetworkInformation.IPv4InterfaceProperties" /> class documentation. Note that the object returned by the <see cref="M:System.Net.NetworkInformation.IPInterfaceProperties.GetIPv4Properties" /> method reflects the configuration as of the time the object is created. This information is not updated dynamically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides Internet Protocol version 4 (IPv4) configuration data for this network interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPv4InterfaceProperties" /> object that contains IPv4 configuration data, or null if no data is available for the interface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIPv6Properties">
@@ -153,10 +207,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a detailed description of the information available for an interface that supports IPv6, see the <see cref="T:System.Net.NetworkInformation.IPv6InterfaceProperties" /> documentation. Note that the object returned by the <see cref="M:System.Net.NetworkInformation.IPInterfaceProperties.GetIPv6Properties" /> method reflects the configuration as of the time the object is created. This information is not updated dynamically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides Internet Protocol version 6 (IPv6) configuration data for this network interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPv6InterfaceProperties" /> object that contains IPv6 configuration data.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDnsEnabled">
@@ -171,10 +234,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DNS is a hierarchical naming system used to map host names to IP addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether NetBt is configured to use DNS name resolution on this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsDynamicDnsEnabled">
@@ -189,10 +258,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dynamic DNS enables a client to inform the DNS servers that its dynamic IP address is mapped to its static host name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether this interface is configured to automatically register its IP address information with the Domain Name System (DNS).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MulticastAddresses">
@@ -207,10 +282,16 @@
         <ReturnType>System.Net.NetworkInformation.MulticastIPAddressInformationCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A multicast address identifies multiple computers. Packets sent to a multicast address are sent to all computers identified by the address. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the multicast addresses assigned to this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnicastAddresses">
@@ -225,10 +306,16 @@
         <ReturnType>System.Net.NetworkInformation.UnicastIPAddressInformationCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unicast address identifies a single computer. Packets sent to a unicast address are sent to the computer identified by the address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unicast addresses assigned to this interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WinsServersAddresses">
@@ -243,10 +330,16 @@
         <ReturnType>System.Net.NetworkInformation.IPAddressCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>WINS provides a distributed database for registering and querying dynamic NetBIOS names to IP address mappings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the addresses of Windows Internet Name Service (WINS) servers.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

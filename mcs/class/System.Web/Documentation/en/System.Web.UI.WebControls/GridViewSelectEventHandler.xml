@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewSelectEventHandler" FullName="System.Web.UI.WebControls.GridViewSelectEventHandler">
   <TypeSignature Language="C#" Value="public delegate void GridViewSelectEventHandler(object sender, GridViewSelectEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.GridView.SelectedIndexChanging" /> event is raised when a Select button (a button with its CommandName property set to "Select") is clicked, but before the <see cref="T:System.Web.UI.WebControls.GridView" /> control handles the select operation. This allows you to provide an event-handling method that performs a custom routine, such as canceling the selection operation, whenever this event occurs.</para>
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.GridViewSelectEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.Web.UI.WebControls.GridView.SelectedIndexChanging" /> event of a <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+    </summary>
   </Docs>
 </Type>

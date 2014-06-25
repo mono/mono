@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InternalRemotingServices" FullName="System.Runtime.Remoting.InternalRemotingServices">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class InternalRemotingServices" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit InternalRemotingServices extends System.Object" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines utility methods for use by the .NET Framework remoting infrastructure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.InternalRemotingServices" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DebugOutChnl">
@@ -60,9 +70,16 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends a message concerning a remoting channel to an unmanaged debugger. </para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to place in the message.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCachedSoapAttribute">
@@ -81,10 +98,22 @@
         <Parameter Name="reflectionObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="reflectionObject">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Metadata.SoapAttribute'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class. </para>
+          <para>A "_LOGGING" preprocessing symbol is applied to the method by means of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+          <para>The <see cref="T:System.Runtime.Remoting.Metadata.SoapAttribute" /> class is the base class for various SOAP-related attribute classes in the <see cref="N:System.Runtime.Remoting.Metadata" /> namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an appropriate SOAP-related attribute for the specified class member or method parameter. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAP-related attribute for the specified class member or method parameter.</para>
+        </returns>
+        <param name="reflectionObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A class member or method parameter.</param>
       </Docs>
     </Member>
     <Member MemberName="RemotingAssert">
@@ -109,10 +138,19 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added: an object of type 'bool'</param>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+          <para>A "_DEBUG" preprocessing symbol is applied to the method by means of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs an internal debugger to check for a condition and display a message if the condition is false. </para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to prevent a message from being displayed; otherwise, false.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display if <paramref name="condition" /> is false.</param>
       </Docs>
     </Member>
     <Member MemberName="RemotingTrace">
@@ -142,9 +180,17 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="messages">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+          <para>A "_LOGGING" preprocessing symbol is applied to the method by means of the <see cref="T:System.Diagnostics.ConditionalAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends any number of messages concerning remoting channels to an internal debugger. </para>
+        </summary>
+        <param name="messages">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Object" /> that contains any number of messages.</param>
       </Docs>
     </Member>
     <Member MemberName="SetServerIdentity">
@@ -169,10 +215,18 @@
         <Parameter Name="srvID" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="m">To be added: an object of type 'Messaging.MethodCall'</param>
-        <param name="srvID">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the static methods of the <see cref="T:System.Runtime.Remoting.InternalRemotingServices" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets internal identifying information for a remoted server object for each method call from client to server.</para>
+        </summary>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Remoting.Messaging.MethodCall" /> that represents a method call on a remote object.</param>
+        <param name="srvID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal identifying information for a remoted server object.</param>
       </Docs>
     </Member>
   </Members>

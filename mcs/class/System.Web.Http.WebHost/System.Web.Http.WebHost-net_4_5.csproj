@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{73DBB6D8-132F-4E3B-B437-2F65CBDEF5DE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
+    
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>System.Web.Http.WebHost</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+    <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;ASPNETMVC</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;ASPNETMVC</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\..\external\aspnetwebstack\src\Common\CommonWebApiResources.Designer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\Common\DictionaryExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\Common\Error.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\Common\HttpMethodHelper.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpers.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpersExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\GlobalConfiguration.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\HttpControllerHandler.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\HttpControllerRouteHandler.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\HttpControllerTypeCacheSerializer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\PreApplicationStartCode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Properties\SRResources.Designer.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\RouteCollectionExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HostedHttpRoute.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HostedHttpRouteCollection.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HostedHttpRouteData.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HostedHttpVirtualPathData.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HttpContextBaseExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HttpRouteDataExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HttpRouteExtensions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\Routing\HttpWebRoute.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\SuppressFormsAuthRedirectModule.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\TaskWrapperAsyncResult.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\WebHostAssembliesResolver.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\WebHostHttpControllerTypeResolver.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../corlib/corlib-net_4_5.csproj">
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
+      <Name>corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
+      <Name>System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Configuration/System.Configuration-net_4_5.csproj">
+      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
+      <Name>System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Net.Http/System.Net.Http-net_4_5.csproj">
+      <Project>{E36C154B-A0AC-4721-B06A-AFE31D357CE5}</Project>
+      <Name>System.Net.Http-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Runtime.Serialization/System.Runtime.Serialization-net_4_5.csproj">
+      <Project>{08FF4C26-9C12-433D-AE90-43370046387A}</Project>
+      <Name>System.Runtime.Serialization-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.ServiceModel/System.ServiceModel-net_4_5.csproj">
+      <Project>{F2156C09-C377-4945-A690-39CFBF3319B3}</Project>
+      <Name>System.ServiceModel-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.IdentityModel/System.IdentityModel-net_4_5.csproj">
+      <Project>{F056C062-E467-4989-9366-440E8CD23C0C}</Project>
+      <Name>System.IdentityModel-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Web.Http/System.Web.Http-net_4_5.csproj">
+      <Project>{2EFF8684-99DB-4DD6-B3BC-7E7AA42A15FC}</Project>
+      <Name>System.Web.Http-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Net.Http.Formatting/System.Net.Http.Formatting-net_4_5.csproj">
+      <Project>{BFBE5444-4F21-45CF-929E-C8FBEF302F5E}</Project>
+      <Name>System.Net.Http.Formatting-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Web.Routing/System.Web.Routing-net_4_5.csproj">
+      <Project>{A28F2A14-901C-452C-82B6-75ECE5C7E714}</Project>
+      <Name>System.Web.Routing-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
+      <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
+      <Name>System.Web-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../Microsoft.Web.Infrastructure/Microsoft.Web.Infrastructure-net_4_5.csproj">
+      <Project>{50DC9191-2D18-4EDB-A929-4ECAB7981A1C}</Project>
+      <Name>Microsoft.Web.Infrastructure-net_4_5</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>
+

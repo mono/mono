@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UserControl" FullName="System.Windows.Forms.UserControl">
   <TypeSignature Language="C#" Value="public class UserControl : System.Windows.Forms.ContainerControl" />
   <AssemblyInfo>
@@ -30,8 +31,23 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By extending <see cref="T:System.Windows.Forms.ContainerControl" />, <see cref="T:System.Windows.Forms.UserControl" /> inherits all the standard positioning and mnemonic-handling code that is necessary in a user control.</para>
+      <para>The <see cref="T:System.Windows.Forms.UserControl" /> gives you the ability to create controls that can be used in multiple places within an application or organization. You can include all the code needed for validation of common data you ask the user to input; some examples of this are e-mail addresses (see Example section), telephone numbers, and postal codes. Another efficient use of the user control is to simply preload a <see cref="T:System.Windows.Forms.ComboBox" /> or <see cref="T:System.Windows.Forms.ListBox" /> with static items you commonly use in almost every application; some examples of this are countries/regions, cities, states, and office locations. For more information about authoring custom controls, see <format type="text/html"><a href="236cebc0-bd71-4f18-9fd6-5d0e592375df">Developing Windows Forms Controls with the .NET Framework</a></format>.</para>
+      <block subset="none" type="note">
+        <para>You might consider creating a namespace that contains several classes of user controls and compiling it into one DLL. This DLL can be referenced and distributed with the application or all applications within an organization. This gives you the ability to reference the user control in many applications and save time laying out and coding the contained elements of the user control. A user control also gives you consistency within or across applications; for example, all address information input blocks will all have the same appearance and behavior. Consistency gives your application a more polished and professional appearance.</para>
+        <para>You can host Windows Forms <see cref="T:System.Windows.Forms.UserControl" /> derived classes inside of a form, on another <see cref="T:System.Windows.Forms.UserControl" />, inside of Internet Explorer on a Web page, or inside a <see cref="T:System.Windows.Forms.WebBrowser" /> control hosted on a form.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>When hosting a <see cref="T:System.Windows.Forms.UserControl" /> inside of the <see cref="T:System.Windows.Forms.WebBrowser" /> control, you cannot turn off Visual Styles using the META tag value MSThemeCompatible. For more information about Visual Styles, see <format type="text/html"><a href="a5b178ba-610e-46c4-a6c0-509c0886a744">Rendering Controls with Visual Styles</a></format>.</para>
+      </block>
+      <para>Note that for Smartphone applications, this control requires Windows Mobile Version 5.0 software for Smartphones.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an empty control that can be used to create other controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +55,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not typically create an instance of <see cref="T:System.Windows.Forms.UserControl" />. To create your own user control class, inherit from the <see cref="T:System.Windows.Forms.UserControl" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.UserControl" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,8 +113,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.UserControl.AutoSize" /> property changes. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoSizeMode">
@@ -116,9 +141,15 @@
         <ReturnType>System.Windows.Forms.AutoSizeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls that do not recognize the <see cref="P:System.Windows.Forms.UserControl.AutoSizeMode" /> property will function as though <see cref="P:System.Windows.Forms.UserControl.AutoSizeMode" /> was set to <see cref="F:System.Windows.Forms.AutoSizeMode.GrowAndShrink" />. All controls that recognize the <see cref="P:System.Windows.Forms.UserControl.AutoSizeMode" /> property will, by default, grow to fit available space, but will not shrink below the value specified by the <see cref="P:System.Windows.Forms.Control.Size" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how the control will resize itself. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoValidate">
@@ -139,9 +170,12 @@
         <ReturnType>System.Windows.Forms.AutoValidate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how the control performs validation when the user changes focus to another control. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AutoValidateChanged">
@@ -162,8 +196,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If your custom control performs any of its own validation, you will need to know when a developer using your control has changed the <see cref="P:System.Windows.Forms.UserControl.AutoValidate" /> property so that you can change your control's validation behavior accordingly. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Windows.Forms.UserControl.AutoValidate" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BorderStyle">
@@ -187,9 +227,15 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.UserControl.BorderStyle" /> property is set to <see cref="F:System.Windows.Forms.BorderStyle.Fixed3D" />, the control has a sunken, three-dimensional appearance. To display a flat, thin border, set the <see cref="T:System.Windows.Forms.BorderStyle" /> property to <see cref="F:System.Windows.Forms.BorderStyle.FixedSingle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the user control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateParams">
@@ -231,8 +277,21 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this event to perform tasks such as allocating resources used by the control.</para>
+          <block subset="none" type="note">
+            <para>If the <see cref="T:System.Windows.Forms.UserControl" /> is part of an MDI child form, the <see cref="E:System.Windows.Forms.UserControl.Load" /> event will occur each time the child form is shown. In this case, you should put any one-time initialization code in the <see cref="M:System.Windows.Forms.UserControl.#ctor" /> instead of a <see cref="E:System.Windows.Forms.UserControl.Load" /> event handler.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Windows.Forms.UserControl.Load" /> event occurs when the handle for the <see cref="T:System.Windows.Forms.UserControl" /> is created. In some circumstances, this can cause the <see cref="E:System.Windows.Forms.UserControl.Load" /> event to occur more than one time. For example, the <see cref="E:System.Windows.Forms.UserControl.Load" /> event occurs when the <see cref="T:System.Windows.Forms.UserControl" /> is loaded, and again if the handle is recreated. (One way that a handle is recreated is by calling the <see cref="M:System.Windows.Forms.Control.RecreateHandle" /> method.) To account for the <see cref="E:System.Windows.Forms.UserControl.Load" /> event occurring more than one time, you should put any one time initialization code in the <see cref="M:System.Windows.Forms.UserControl.#ctor" /> constructor instead of a <see cref="E:System.Windows.Forms.UserControl.Load" /> event handler. In addition, you should not add data bindings to the <see cref="T:System.Windows.Forms.UserControl" /> in a <see cref="E:System.Windows.Forms.UserControl.Load" /> event handler.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the control becomes visible for the first time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,8 +306,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.UserControl.OnCreateControl" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the CreateControl event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -270,9 +336,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.UserControl.Load" /> event occurs after the control is created, but before the control becomes visible for the first time.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.UserControl.OnLoad(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.UserControl.Load" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -372,8 +447,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.TextChanged" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

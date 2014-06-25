@@ -9,12 +9,6 @@
 
 #include <config.h>
 
-#if _WIN32_WINNT < 0x0501
-/* Required for Vectored Exception Handling. */
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501
-#endif /* _WIN32_WINNT < 0x0501 */
-
 #include <glib.h>
 #include <signal.h>
 #include <string.h>
@@ -47,7 +41,6 @@ static MonoW32ExceptionHandler segv_handler;
 
 LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
 gpointer mono_win_vectored_exception_handle;
-extern gboolean mono_win_chained_exception_needs_run;
 extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 
 #ifndef PROCESS_CALLBACK_FILTER_ENABLED
@@ -196,8 +189,13 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	CONTEXT* ctx;
 	struct sigcontext* sctx;
 	LONG res;
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 
-	mono_win_chained_exception_needs_run = FALSE;
+	/* If the thread is not managed by the runtime return early */
+	if (!jit_tls)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+	jit_tls->mono_win_chained_exception_needs_run = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -234,10 +232,11 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		W32_SEH_HANDLE_EX(fpe);
 		break;
 	default:
+		jit_tls->mono_win_chained_exception_needs_run = TRUE;
 		break;
 	}
 
-	if (mono_win_chained_exception_needs_run) {
+	if (jit_tls->mono_win_chained_exception_needs_run) {
 		/* Don't copy context back if we chained exception
 		* as the handler may have modfied the EXCEPTION_POINTERS
 		* directly. We don't pass sigcontext to chained handlers.
@@ -849,6 +848,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 				*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
 		}
 
+#ifndef MONO_X86_NO_PUSHES
 		/* Pop arguments off the stack */
 		if (ji->has_arch_eh_info) {
 			int stack_size;
@@ -868,6 +868,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 #endif
 			}
 		}
+#endif
 
 		return TRUE;
 	} else if (*lmf) {

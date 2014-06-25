@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MessageEncodingBindingElementImporter" FullName="System.ServiceModel.Channels.MessageEncodingBindingElementImporter">
   <TypeSignature Language="C#" Value="public class MessageEncodingBindingElementImporter : System.ServiceModel.Description.IPolicyImportExtension, System.ServiceModel.Description.IWsdlImportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageEncodingBindingElementImporter extends System.Object implements class System.ServiceModel.Description.IPolicyImportExtension, class System.ServiceModel.Description.IWsdlImportExtension" />
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Override this class to extend the standard mapping between WSDL and a message encoding binding element. Then attach your custom object to a WsdlImporter either programmatically or by using an application configuration file. You can also attach your custom object to the internal WsdlImporter used by the <format type="text/html"><a href="9027efd3-df8d-47ed-8bcd-f53d55ed803c">Service Model Metadata Utility Tool (Svcutil.exe)</a></format> using an application configuration file.</para>
+      <para>Use the <see cref="M:System.ServiceModel.Channels.MessageEncodingBindingElementImporter.System.ServiceModel.Description.IWsdlImportExtension.BeforeImport(System.Web.Services.Description.ServiceDescriptionCollection,System.Xml.Schema.XmlSchemaSet,System.Collections.Generic.ICollection{System.Xml.XmlElement})" /> method to directly modify the metadata that is then imported into message encoding binding elements.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts WSDL-based policies and contracts about message encoding into descriptions of the binding elements that can implement these policies for the service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElementImporter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy">
@@ -49,10 +60,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
       </Parameters>
       <Docs>
-        <param name="importer">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a method that can import custom policy assertions for message encoding and that adds the binding elements that implement the policy.</para>
+        </summary>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataImporter" /> that imports the metadata information.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> object that contains the policy assertions that can be imported and the collections of binding elements to which custom binding elements that implement the encoding policy can be added.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IWsdlImportExtension.BeforeImport">
@@ -71,11 +87,20 @@
         <Parameter Name="policy" Type="System.Collections.Generic.ICollection&lt;System.Xml.XmlElement&gt;" />
       </Parameters>
       <Docs>
-        <param name="wsdlDocuments">To be added.</param>
-        <param name="xmlSchemas">To be added.</param>
-        <param name="policy">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used to inspect, modify and interpret the policy and WSDL before the <see cref="T:System.ServiceModel.Channels.MessageEncodingBindingElementImporter" /> does the import.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called prior to importing the metadata documents associated with the encoding.</para>
+        </summary>
+        <param name="wsdlDocuments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" />  that describes the services.</param>
+        <param name="xmlSchemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that contains the schema for the <paramref name="wsdlDocuments" />.</param>
+        <param name="policy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.ICollection`1" /> of type <see cref="T:System.Xml.XmlElement" /> that contains the policy elements.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IWsdlImportExtension.ImportContract">
@@ -93,10 +118,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.WsdlContractConversionContext" />
       </Parameters>
       <Docs>
-        <param name="importer">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when importing a contract.</para>
+        </summary>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract importer.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import context.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IWsdlImportExtension.ImportEndpoint">
@@ -114,10 +144,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.WsdlEndpointConversionContext" />
       </Parameters>
       <Docs>
-        <param name="importer">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps the custom WSDL extensions for encoding messages to the service description.</para>
+        </summary>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.WsdlImporter" /> that imports the WSDL extensions.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.WsdlEndpointConversionContext" /> that provides the context for the mapping.</param>
       </Docs>
     </Member>
   </Members>

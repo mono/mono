@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConstructionCall" FullName="System.Runtime.Remoting.Messaging.ConstructionCall">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ConstructionCall : System.Runtime.Remoting.Messaging.MethodCall, System.Runtime.Remoting.Activation.IConstructionCallMessage" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ConstructionCall extends System.Runtime.Remoting.Messaging.MethodCall implements class System.Runtime.Remoting.Activation.IConstructionCallMessage, class System.Runtime.Remoting.Messaging.IMessage, class System.Runtime.Remoting.Messaging.IMethodCallMessage, class System.Runtime.Remoting.Messaging.IMethodMessage" />
@@ -26,8 +27,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class is used by the remoting infrastructure of the .NET Framework. You do not need to create an instance of the <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class directly; instead, use the <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" /> interface.</para>
+      <para>A remoting client sends a <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> message to a server when attempting to create an instance of a client-activated remote class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" /> interface to create a request message that constitutes a constructor call on a remote object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,9 +52,16 @@
         <Parameter Name="headers" Type="System.Runtime.Remoting.Messaging.Header[]" />
       </Parameters>
       <Docs>
-        <param name="headers">To be added: an object of type 'Header []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class is used by the remoting infrastructure of the .NET Framework. You do not need to create an instance of the <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class directly; instead, use the <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class from an array of remoting headers. </para>
+        </summary>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of remoting headers that contain key-value pairs. This array is used to initialize <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> fields for those headers that belong to the namespace "http://schemas.microsoft.com/clr/soap/messageProperties".</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -63,9 +78,16 @@
         <Parameter Name="m" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <param name="m">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class is used by the remoting infrastructure of the .NET Framework. You do not need to create an instance of the <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class directly; instead, use the <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.ConstructionCall" /> class by copying an existing message. </para>
+        </summary>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />A remoting message.</param>
       </Docs>
     </Member>
     <Member MemberName="ActivationType">
@@ -81,9 +103,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the remote object to activate. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActivationTypeName">
@@ -99,9 +124,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full type name of the remote object to activate. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Activator">
@@ -117,9 +145,12 @@
         <ReturnType>System.Runtime.Remoting.Activation.IActivator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the activator that activates the remote object. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CallSiteActivationAttributes">
@@ -135,9 +166,12 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the call site activation attributes for the remote object. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContextProperties">
@@ -153,9 +187,12 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IList'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of properties that define the context in which the remote object is to be created. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -194,9 +231,15 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Remoting.Messaging.ConstructionCall.Properties" /> property returns the value of the inherited <see cref="F:System.Runtime.Remoting.Messaging.MethodCall.ExternalProperties" /> field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.IDictionary" /> interface that represents a collection of the remoting message's properties. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

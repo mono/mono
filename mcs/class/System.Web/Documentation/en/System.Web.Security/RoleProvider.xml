@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RoleProvider" FullName="System.Web.Security.RoleProvider">
   <TypeSignature Language="C#" Value="public abstract class RoleProvider : System.Configuration.Provider.ProviderBase" />
   <AssemblyInfo>
@@ -9,9 +10,25 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET role management is designed to enable you to easily use a number of different role providers for your ASP.NET applications. You can use the supplied role providers that are included with the .NET Framework, or you can implement your own provider.</para>
+      <para>When implementing a custom role provider, you are required to inherit the <see cref="T:System.Web.Security.RoleProvider" /> abstract class.</para>
+      <para>There are two primary reasons for creating a custom role provider.</para>
+      <list type="bullet">
+        <item>
+          <para>You need to store role information in a data source that is not supported by the role providers included with the .NET Framework, such as a FoxPro database, an Oracle database, or other data sources.</para>
+        </item>
+        <item>
+          <para>You need to manage role information using a database schema that is different from the database schema used by the providers that ship with the .NET Framework. A common example of this would be role data that already exists in a SQL Server database for a company or Web site.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract that ASP.NET implements to provide role-management services using custom role providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +36,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You are not required to implement a constructor for a class that inherits the <see cref="T:System.Web.Security.RoleProvider" /> abstract class. Initialization values for a <see cref="T:System.Web.Security.RoleProvider" /> implementation are passed to the <see cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" /> method implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.RoleProvider" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,11 +61,24 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.AddUsersToRoles(System.String[],System.String[])" /> is called by the <see cref="T:System.Web.Security.Roles" /> class to associate the specified users with the specified roles at the data source. Roles are added to the configured <see cref="P:System.Web.Security.RoleProvider.ApplicationName" />.</para>
+          <para>If any of the specified role names are not found for the configured applicationName, we recommend that your provider throw a <see cref="T:System.Configuration.Provider.ProviderException" />.</para>
+          <para>If any of the specified user names are not associated with any of the specified role names for the configured applicationName, we recommend that your provider throw a <see cref="T:System.Configuration.Provider.ProviderException" />.</para>
+          <para>If any of the specified user names is null or is an empty string, we recommend that your provider throw an exception.</para>
+          <para>If any of the specified role names is null or is an empty string, we recommend that your provider throw an exception.</para>
+          <para>If your data source supports transactions, we recommend that you include each add operation in a transaction and that you roll back the transaction and throw an exception if any add operation fails.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified user names to the specified roles for the configured applicationName.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to be added to the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +91,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RoleProvider.ApplicationName" /> is used by the <see cref="T:System.Web.Security.Roles" /> class to associate users and roles with different applications. This enables multiple applications to use the same database to store user and role information without running into conflicts between duplicate user names or role names. Multiple ASP.NET applications can use the same database by specifying the same value in the <see cref="P:System.Web.Security.Roles.ApplicationName" /> property. The <see cref="P:System.Web.Security.Roles.ApplicationName" /> property can be set programmatically, or it can be set declaratively in the configuration file for the Web application using the applicationName attribute.</para>
+          <para>If no <see cref="P:System.Web.Security.RoleProvider.ApplicationName" /> property is specified, we recommend that the <see cref="P:System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath" /> property value be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the application to store and retrieve role information for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,9 +118,19 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.CreateRole(System.String)" /> is called by the <see cref="M:System.Web.Security.Roles.CreateRole(System.String)" /> method of the <see cref="T:System.Web.Security.Roles" /> class to add the specified role to the data source for the configured <see cref="P:System.Web.Security.RoleProvider.ApplicationName" />.</para>
+          <para>If the specified role name already exists for the configured applicationName, is null, or is an empty string, we recommend that your provider throw an exception.</para>
+          <para>If the specified role name contains a comma, we recommend that your provider throw an exception.</para>
+          <para>If your data source restricts the length of the role name, for example, through a fixed-length column of a table in a database, we recommend that you throw an exception if the role name exceeds the maximum length allowed by the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new role to the data source for the configured applicationName.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,11 +148,25 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <param name="throwOnPopulatedRole">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.DeleteRole(System.String,System.Boolean)" /> is called by the <see cref="M:System.Web.Security.Roles.DeleteRole(System.String)" /> and the <see cref="M:System.Web.Security.Roles.DeleteRole(System.String,System.Boolean)" /> methods of the <see cref="T:System.Web.Security.Roles" /> class to delete the specified role from the data source for the configured <see cref="P:System.Web.Security.RoleProvider.ApplicationName" />.</para>
+          <para>When you delete a role from the data source, ensure that you also delete any associations between a user name and the deleted role for the configured applicationName.</para>
+          <para>If <paramref name="throwOnPopulatedRole" /> is true, and the role identified by the <paramref name="roleName" /> parameter has one or more members, throw a <see cref="T:System.Configuration.Provider.ProviderException" /> and do not delete the role. If <paramref name="throwOnPopulatedRole" /> is false, then delete the role whether it is empty or not.</para>
+          <para>If the specified role name does not exist, is null, or is an empty string, we recommend that your provider throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a role from the data source for the configured applicationName.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the role was successfully deleted; otherwise, false.</para>
+        </returns>
+        <param name="throwOnPopulatedRole">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, throw an exception if <paramref name="roleName" /> has one or more members and do not delete <paramref name="roleName" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,12 +183,24 @@
         <Parameter Name="usernameToMatch" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="roleName">To be added.</param>
-        <param name="usernameToMatch">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.RoleProvider.FindUsersInRole(System.String,System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class and returns a list of users in a role where the user name contains a match of the supplied <paramref name="usernameToMatch" /> for the configured applicationName. Wildcard support is included based on the data source. Users are returned in alphabetical order by user name.</para>
+          <para>We recommend that you throw a <see cref="T:System.Configuration.Provider.ProviderException" /> if <paramref name="roleName" /> does not exist in the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of user names in a role where the user name contains the specified user name to match.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users where the user name matches <paramref name="usernameToMatch" /> and the user is a member of the specified role.</para>
+        </returns>
+        <param name="roleName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The role to search in.</param>
+        <param name="usernameToMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to search for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +214,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.GetAllRoles" /> is called by the <see cref="M:System.Web.Security.Roles.GetAllRoles" /> method of the <see cref="T:System.Web.Security.Roles" /> class to retrieve a list of role names from the data source. Only the roles for the specified <see cref="P:System.Web.Security.RoleProvider.ApplicationName" /> are retrieved.</para>
+          <para>If no roles exist for the configured applicationName, we recommend that your provider return a string array with no elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all the roles for the configured applicationName.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles stored in the data source for the configured applicationName.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -154,11 +244,24 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.GetRolesForUser(System.String)" /> is called by the <see cref="M:System.Web.Security.Roles.GetRolesForUser" /> method of the <see cref="T:System.Web.Security.Roles" /> class to retrieve the role names that the specified user is associated with from the data source. Only the roles for the configured <see cref="P:System.Web.Security.RoleProvider.ApplicationName" /> are retrieved.</para>
+          <para>If no roles exist for the specified user for the configured applicationName, we recommend that your provider return a string array with no elements.</para>
+          <para>If the specified user name is null or is an empty string, we recommend that your provider throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the roles that a specified user is in for the configured applicationName.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles that the specified user is in for the configured applicationName.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user to return a list of roles for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -175,10 +278,22 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.GetUsersInRole(System.String)" /> is called by the <see cref="M:System.Web.Security.Roles.GetUsersInRole(System.String)" /> method of the <see cref="T:System.Web.Security.Roles" /> class to retrieve the user names associated with a role from the data source. Only the roles for the configured <see cref="P:System.Web.Security.RoleProvider.ApplicationName" /> are retrieved.</para>
+          <para>If the specified role name does not exist for the configured applicationName or if it is null or an empty string, we recommend that your provider throw an exception.</para>
+          <para>If no users are associated with the specified role for the configured applicationName, we recommend that your provider return a string array with no elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of users in the specified role for the configured applicationName.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users who are members of the specified role for the configured applicationName.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -195,12 +310,24 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.RoleProvider.IsUserInRole(System.String,System.String)" /> method is called by the <see cref="Overload:System.Web.Security.Roles.IsUserInRole" /> method of the <see cref="T:System.Web.Security.Roles" /> class to determine whether the current logged-on user is associated with a role from the data source for the configured <see cref="P:System.Web.Security.Roles.ApplicationName" />.</para>
+          <para>If the specified user name is null or is an empty string, we recommend that your provider throw an exception.</para>
+          <para>If the specified role name is null or is an empty string, we recommend that your provider throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified user is in the specified role for the configured applicationName.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified user is in the specified role for the configured applicationName; otherwise, false.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to search for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -217,11 +344,24 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.RemoveUsersFromRoles(System.String[],System.String[])" /> is called by <see cref="M:System.Web.Security.Roles.RemoveUserFromRole(System.String,System.String)" /> , <see cref="M:System.Web.Security.Roles.RemoveUsersFromRole(System.String[],System.String)" /> , <see cref="M:System.Web.Security.Roles.RemoveUserFromRoles(System.String,System.String[])" /> , and <see cref="M:System.Web.Security.Roles.RemoveUsersFromRoles(System.String[],System.String[])" /> methods of the <see cref="T:System.Web.Security.Roles" /> class to remove the specified users from the specified roles at the data source. Only roles for the configured <see cref="P:System.Web.Security.RoleProvider.ApplicationName" /> are modified.</para>
+          <para>If any of the specified role names are not found for the configured applicationName, we recommend that your provider throw a <see cref="T:System.Configuration.Provider.ProviderException" />.</para>
+          <para>If any of the specified user names are not associated with any of the specified role names for the configured applicationName, we recommend that your provider throw a <see cref="T:System.Configuration.Provider.ProviderException" />.</para>
+          <para>If any of the specified user names is null or is an empty string, we recommend that your provider throw an exception.</para>
+          <para>If any of the specified role names is null or is an empty string, we recommend that your provider throw an exception.</para>
+          <para>If your data source supports transactions, we recommend that you include each remove operation in a transaction and that you roll back the transaction and throw an exception if any remove operation fails.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified user names from the specified roles for the configured applicationName.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to be removed from the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,10 +378,21 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RoleProvider.RoleExists(System.String)" /> is called by the <see cref="M:System.Web.Security.Roles.RoleExists(System.String)" /> method of the <see cref="T:System.Web.Security.Roles" /> class to determine whether a role name exists in the data source for the configured <see cref="P:System.Web.Security.Roles.ApplicationName" />.</para>
+          <para>If the specified role name is null or is an empty string, we recommend that your provider throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified role name already exists in the role data source for the configured applicationName.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the role name already exists in the data source for the configured applicationName; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

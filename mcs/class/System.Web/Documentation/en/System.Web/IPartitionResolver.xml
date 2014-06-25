@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPartitionResolver" FullName="System.Web.IPartitionResolver">
   <TypeSignature Language="C#" Value="public interface IPartitionResolver" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.Web.IPartitionResolver" /> interface and the <see cref="M:System.Web.IPartitionResolver.Initialize" /> and <see cref="M:System.Web.IPartitionResolver.ResolvePartition(System.Object)" /> methods, if you are providing custom partition resolution for session-state data across multiple backend nodes when in SQL or state-server mode.</para>
+      <para>The session-state management information can be configured in the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">sessionState Element (ASP.NET Settings Schema)</a></format> of the configuration file with the partitionResolverType attribute. If a value is specified for the partitionResolverType attribute, the sqlConnectionString and stateConnectionString attributes are ignored.</para>
+      <para>The partition resolution configuration can also be set programmatically using the <see cref="P:System.Web.Configuration.SessionStateSection.PartitionResolverType" /> property. If the <see cref="P:System.Web.Configuration.SessionStateSection.PartitionResolverType" /> property is specified, the <see cref="P:System.Web.Configuration.SessionStateSection.SqlConnectionString" /> and <see cref="P:System.Web.Configuration.SessionStateSection.StateConnectionString" /> properties are ignored.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods that must be implemented for custom session-state partition resolution.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Initialize">
@@ -29,8 +38,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.IPartitionResolver.Initialize" /> method to provide any initialization code that is needed for your custom partition resolution. The <see cref="T:System.Web.SessionState.SessionStateModule" /> creates the type implementing the <see cref="T:System.Web.IPartitionResolver" /> interface, calls the <see cref="M:System.Web.IPartitionResolver.Initialize" /> method to initialize it (once per instance), and then indicates to the ASP.NET state service or SQL Server provider that partitioning is being used and passes a resolver instance to the provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the custom partition resolver. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResolvePartition">
@@ -46,10 +61,20 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="key" /> parameter of the <see cref="M:System.Web.IPartitionResolver.ResolvePartition(System.Object)" /> method is the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property. The <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> property uniquely identifies a browser with session data on the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves the partition based on a key parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string with connection information.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />An identifier used to determine which partition to use for the current session state.</param>
       </Docs>
     </Member>
   </Members>

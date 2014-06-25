@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessModelComImpersonationLevel" FullName="System.Web.Configuration.ProcessModelComImpersonationLevel">
   <TypeSignature Language="C#" Value="public enum ProcessModelComImpersonationLevel" />
   <AssemblyInfo>
@@ -8,9 +9,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.ProcessModelComImpersonationLevel" /> class enumerates the values to use when you set the <see cref="P:System.Web.Configuration.ProcessModelSection.ComImpersonationLevel" /> property.</para>
+      <para>The default value is <see cref="F:System.Web.Configuration.ProcessModelComImpersonationLevel.Impersonate" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the authentication level for COM security.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Anonymous">
@@ -20,8 +28,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server can impersonate the client, but the impersonation token will not contain any information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the client is anonymous to the server. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +49,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DCOM determines the impersonation level, using its normal security-negotiation algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM determines the impersonation level. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +70,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server process can make outgoing calls to other servers while acting on behalf of the client, using cloaking. The server can use the client's security context on other computers to access local and remote resources as the client. When the process is impersonating the client at this level, the impersonation token can be passed across any number of computer boundaries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the server process can impersonate the client's security context while acting on behalf of the client. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +91,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server can impersonate the client for access control list (ACL) checking, but it cannot access system objects as the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the server can obtain the client's identity. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +112,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComImpersonationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This level of impersonation can be used to access local resources such as files. When the process is impersonating the client at this level, the impersonation token can be passed across only one computer boundary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the server process can impersonate the client's security context while acting on behalf of the client. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

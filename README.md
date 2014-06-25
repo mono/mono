@@ -4,8 +4,9 @@ Mono is an open source implementation of Microsoft's .NET Framework based on the
 1. [Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
 3. [Directory Roadmap](#directory-roadmap)
-4. [Git submodules maintenance](#git-submodules-maintenance)
-5. [Reporting bugs](#reporting-bugs)
+4. [Contributing to Mono] (#contributing-to-mono) 
+5. [Git submodules maintenance](#git-submodules-maintenance)
+6. [Reporting bugs](#reporting-bugs)
 
 Compilation and Installation
 ============================
@@ -32,6 +33,10 @@ a. Build Requirements
 
   * libzlib - This library and the development headers are required for compression
 file support in the 2.0 profile.
+
+ 4. Mono is required to build Mono. Use a system package or monolite (explained further below)
+ 
+ 5. If you have a system Mono (not monolite), you will need to read this: http://mono-project.com/Parallel_Mono_Environments#Setting_up_a_Build_Environment
 
 b. Building the Software
 ------------------------
@@ -83,10 +88,13 @@ For people with non-standard installations of the auto* utils and of
 pkg-config (common on misconfigured OSX and windows boxes), you could get
 an error like this:
 
-`./configure: line 19176: syntax error near unexpected token 'PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...`
+	./configure: line 19176: syntax error near unexpected token 'PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...
 
 This means that you need to set the ACLOCAL_FLAGS environment variable
-when invoking autogen.sh, like this: `ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/local`
+when invoking autogen.sh, like this: 
+
+        ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/local
+
 where $acprefix is the prefix where aclocal has been installed.
 This will automatically go into the mcs/ tree and build the
 binaries there.
@@ -97,7 +105,7 @@ runtime called 'mono'.  You can use two make variables
 EXTERNAL_MCS and EXTERNAL_RUNTIME to override these.  e.g., you
 can say:
 
-`make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono`
+	make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono
 
 If you don't have a working Mono installation
 ---------------------------------------------
@@ -136,7 +144,7 @@ class libraries, you need to re-run 'configure' with the
 Expect to find a few test suite failures. As a sanity check, you
 can compare the failures you got with
 
-`https://wrench.mono-project.com/Wrench/`
+    https://wrench.mono-project.com/Wrench/
 
 You can now install mono with: `make install`
 
@@ -153,10 +161,9 @@ building Mono might want to use:
 * `--with-sgen=yes,no` - Generational GC support: Used to enable or disable the
 compilation of a Mono runtime with the SGen garbage collector.
 
-  * On platforms that support it, after building Mono, you
-will have both a mono binary and a mono-sgen binary.
-Mono uses Boehm, while mono-sgen uses the Simple
-Generational GC.
+  * On platforms that support it, after building Mono, you will have
+both a mono binary and a mono-sgen binary.  Mono uses Boehm, while
+mono-sgen uses the Simple Generational GC.
 
 * `--with-gc=[boehm, included, sgen, none]` - Selects the default Boehm garbage
 collector engine to use.
@@ -513,6 +520,10 @@ mono/ and mcs/ build systems.
 independent checkout) from the Mono module, that
 directory is automatically configured to share the
 same prefix than this module gets.
+
+Contributing to Mono
+====================
+Before submitting changes to Mono, please review the contribution guidelines at http://mono-project.com/Contributing. Please pay particular attention to the [Important Rules](http://mono-project.com/Contributing#Important_Rules) section.
 
 
 Git submodules maintenance

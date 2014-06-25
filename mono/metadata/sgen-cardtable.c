@@ -238,7 +238,7 @@ sgen_card_table_get_card_data (guint8 *data_dest, mword address, mword cards)
 #endif
 	}
 
-	return mask;
+	return mask != 0;
 }
 
 void*
@@ -287,9 +287,8 @@ sgen_card_table_find_address_with_cards (char *cards_start, guint8 *cards, char 
 }
 
 static void
-update_mod_union (guint8 *dest, gboolean init, guint8 *start_card, guint8 *end_card)
+update_mod_union (guint8 *dest, gboolean init, guint8 *start_card, size_t num_cards)
 {
-	size_t num_cards = end_card - start_card;
 	if (init) {
 		memcpy (dest, start_card, num_cards);
 	} else {
@@ -306,36 +305,50 @@ alloc_mod_union (size_t num_cards)
 }
 
 guint8*
+sgen_card_table_update_mod_union_from_cards (guint8 *dest, guint8 *start_card, size_t num_cards)
+{
+	gboolean init = dest == NULL;
+
+	if (init)
+		dest = alloc_mod_union (num_cards);
+
+	update_mod_union (dest, init, start_card, num_cards);
+
+	return dest;
+}
+
+guint8*
 sgen_card_table_update_mod_union (guint8 *dest, char *obj, mword obj_size, size_t *out_num_cards)
 {
-	guint8 *result = dest;
 	guint8 *start_card = sgen_card_table_get_card_address ((mword)obj);
+#ifndef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 *end_card = sgen_card_table_get_card_address ((mword)obj + obj_size - 1) + 1;
-	gboolean init = dest == NULL;
+#endif
 	size_t num_cards;
+	guint8 *result = NULL;
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 	size_t rest;
 
 	rest = num_cards = cards_in_range ((mword) obj, obj_size);
 
-	if (init)
-		result = dest = alloc_mod_union (num_cards);
-
 	while (start_card + rest > SGEN_CARDTABLE_END) {
 		size_t count = SGEN_CARDTABLE_END - start_card;
-		update_mod_union (dest, init, start_card, SGEN_CARDTABLE_END);
+		dest = sgen_card_table_update_mod_union_from_cards (dest, start_card, count);
+		if (!result)
+			result = dest;
 		dest += count;
 		rest -= count;
 		start_card = sgen_cardtable;
 	}
+	num_cards = rest;
 #else
 	num_cards = end_card - start_card;
-	if (init)
-		result = dest = alloc_mod_union (num_cards);
 #endif
 
-	update_mod_union (dest, init, start_card, end_card);
+	dest = sgen_card_table_update_mod_union_from_cards (dest, start_card, num_cards);
+	if (!result)
+		result = dest;
 
 	if (out_num_cards)
 		*out_num_cards = num_cards;
@@ -572,7 +585,7 @@ sgen_cardtable_scan_object (char *obj, mword block_obj_size, guint8 *cards, gboo
 		mword obj_size = sgen_par_object_get_size (vt, (MonoObject*)obj);
 		char *obj_end = obj + obj_size;
 		size_t card_count;
-		int extra_idx = 0;
+		size_t extra_idx = 0;
 
 		MonoArray *arr = (MonoArray*)obj;
 		mword desc = (mword)klass->element_class->gc_descr;
@@ -611,8 +624,8 @@ LOOP_HEAD:
 
 		card_data = find_next_card (card_data, card_data_end);
 		for (; card_data < card_data_end; card_data = find_next_card (card_data + 1, card_data_end)) {
-			int index;
-			int idx = (card_data - card_base) + extra_idx;
+			size_t index;
+			size_t idx = (card_data - card_base) + extra_idx;
 			char *start = (char*)(obj_start + idx * CARD_SIZE_IN_BYTES);
 			char *card_end = start + CARD_SIZE_IN_BYTES;
 			char *first_elem, *elem;
@@ -735,7 +748,7 @@ sgen_card_tables_collect_stats (gboolean begin)
 		printf ("cards major (t %d m %d g %d r %d)  los (t %d m %d g %d r %d) major_scan %.2fms los_scan %.2fms\n", 
 			major_stats.total, major_stats.marked, major_stats.gc_marked, major_stats.remarked,
 			los_stats.total, los_stats.marked, los_stats.gc_marked, los_stats.remarked,
-			last_major_scan_time / 1000.0, last_los_scan_time / 1000.0);
+			last_major_scan_time / 10000.0f, last_los_scan_time / 10000.0f);
 	}
 #endif
 }
@@ -761,8 +774,8 @@ sgen_card_table_init (SgenRemeberedSet *remset)
 	mono_counters_register ("cardtable large objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &large_objects);
 	mono_counters_register ("cardtable bloby objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &bloby_objects);
 #endif
-	mono_counters_register ("cardtable major scan time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &major_card_scan_time);
-	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &los_card_scan_time);
+	mono_counters_register ("cardtable major scan time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &major_card_scan_time);
+	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &los_card_scan_time);
 
 
 	remset->wbarrier_set_field = sgen_card_table_wbarrier_set_field;

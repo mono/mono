@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PagerMode" FullName="System.Web.UI.WebControls.PagerMode">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum PagerMode" />
   <AssemblyInfo>
@@ -12,8 +13,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.PagerMode" /> enumeration represents the different display modes for the pager of a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. <see cref="F:System.Web.UI.WebControls.PagerMode.NextPrev" /> displays the pager controls using Next and Previous buttons; <see cref="F:System.Web.UI.WebControls.PagerMode.NumericPages" /> displays numeric buttons representing the individual page numbers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the mode of the pager for accessing various pages within the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="NextPrev">
@@ -25,8 +32,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pager with Previous and Next buttons to access the next and previous pages.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +52,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pager with numbered buttons to access pages directly.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

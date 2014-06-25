@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConfigurationSystem" FullName="System.Configuration.IConfigurationSystem">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IConfigurationSystem" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IConfigurationSystem" />
@@ -17,8 +18,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides standard configuration methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetConfig">
@@ -37,10 +41,17 @@
         <Parameter Name="configKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="configKey">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the specified configuration.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object representing the configuration.</para>
+        </returns>
+        <param name="configKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration key.</param>
       </Docs>
     </Member>
     <Member MemberName="Init">
@@ -57,8 +68,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used for initialization.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

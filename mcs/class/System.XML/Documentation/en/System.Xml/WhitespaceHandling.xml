@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WhitespaceHandling" FullName="System.Xml.WhitespaceHandling" FullNameSP="System_Xml_WhitespaceHandling" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable WhitespaceHandling extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum WhitespaceHandling" />
@@ -14,16 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies the type of white space returned by instances of 
-      the <see cref="T:System.Xml.XmlTextReader" /> class.
-      </para>
-    </summary>
     <remarks>
       <para>Significant white space is white space between markup in 
       a mixed content model, or white space within an element that has the <c>xml:space="preserve"</c> attribute. Insignificant
       white space is any other white space between markup.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how white space is handled.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -42,10 +42,11 @@
       <Parameters />
       <MemberValue>All</MemberValue>
       <Docs>
-        <summary>
-          <para>Return both significant and insignificant white space. This is the default. </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return Whitespace and SignificantWhitespace nodes. This is the default.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -65,11 +66,11 @@
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>Return neither significant nor insignificant white
-      space.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return no Whitespace and no SignificantWhitespace nodes.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -89,11 +90,11 @@
       <Parameters />
       <MemberValue>Significant</MemberValue>
       <Docs>
-        <summary>
-          <para> Return significant white space only.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return SignificantWhitespace nodes only.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

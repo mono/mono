@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataSourceViewSchema" FullName="System.Web.UI.Design.IDataSourceViewSchema">
   <TypeSignature Language="C#" Value="public interface IDataSourceViewSchema" />
   <AssemblyInfo>
@@ -6,8 +7,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Classes that implement the <see cref="T:System.Web.UI.Design.IDataSourceSchema" /> class are used by custom control designer components to provide lists of views in a data source for data-bound controls at design time. In a class that is derived from the <see cref="T:System.Web.UI.Design.IDataSourceSchema" />, use the <see cref="M:System.Web.UI.Design.IDataSourceSchema.GetViews" /> method to get an array of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a set of methods and properties used to examine a data source.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetChildren">
@@ -21,9 +28,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.Design.XmlDocumentSchema" /> class implements the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> interface. It uses its implementation of the <see cref="M:System.Web.UI.Design.IDataSourceViewSchema.GetChildren" /> method to create an array of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array representing the child views contained in the current view.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> objects that represent the child views contained in the current view.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFields">
@@ -37,9 +53,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.Design.DataSetSchema" /> class implements the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> interface; its implementation of the <see cref="M:System.Web.UI.Design.DataSetViewSchema.GetFields" /> method returns an array of <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> objects, each of which derives from the <see cref="T:System.Web.UI.Design.IDataSourceFieldSchema" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array containing information about each field in the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.Design.IDataSourceFieldSchema" /> objects representing each of the fields in the data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -52,9 +77,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a <see cref="T:System.Data.DataTable" /> object, this property corresponds to the <see cref="P:System.Data.DataTable.TableName" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the view.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

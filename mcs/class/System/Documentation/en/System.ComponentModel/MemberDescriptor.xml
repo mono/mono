@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberDescriptor" FullName="System.ComponentModel.MemberDescriptor">
   <TypeSignature Language="C#" Value="public abstract class MemberDescriptor" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MemberDescriptor extends System.Object" />
@@ -20,8 +21,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.MemberDescriptor" /> is the base class for the <see cref="T:System.ComponentModel.EventDescriptor" /> and the <see cref="T:System.ComponentModel.PropertyDescriptor" /> classes. The <see cref="T:System.ComponentModel.EventDescriptor" /> class provides a description of an event, and the <see cref="T:System.ComponentModel.PropertyDescriptor" /> class provides a description of a property.</para>
+      <para>This class defines properties and methods to access its stored attributes. The <see cref="P:System.ComponentModel.MemberDescriptor.Attributes" /> property gets the collection of attributes. The <see cref="P:System.ComponentModel.MemberDescriptor.Category" />, <see cref="P:System.ComponentModel.MemberDescriptor.IsBrowsable" />, <see cref="P:System.ComponentModel.MemberDescriptor.Description" />, and <see cref="P:System.ComponentModel.MemberDescriptor.DesignTimeOnly" /> properties retrieve the values of those specific attributes. The <see cref="P:System.ComponentModel.MemberDescriptor.Name" /> and <see cref="P:System.ComponentModel.MemberDescriptor.DisplayName" /> properties provide the name of the member.</para>
+      <para>The <see cref="T:System.ComponentModel.MemberDescriptor" /> also defines an <see cref="M:System.ComponentModel.MemberDescriptor.Equals(System.Object)" /> method to compare this <see cref="T:System.ComponentModel.MemberDescriptor" /> to another.</para>
+      <block subset="none" type="note">
+        <para>Typically, you inherit from the <see cref="T:System.ComponentModel.EventDescriptor" /> and <see cref="T:System.ComponentModel.PropertyDescriptor" /> classes, and not from this class.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a class member, such as a property or event. This is an abstract base class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +52,11 @@
       </Parameters>
       <Docs>
         <param name="reference">To be added: an object of type 'MemberDescriptor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.MemberDescriptor" /> class with the specified <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +73,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.MemberDescriptor" /> class with the specified name of the member.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -79,8 +99,14 @@
       <Docs>
         <param name="reference">To be added.</param>
         <param name="attrs">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor appends the attributes in the <see cref="T:System.Attribute" /> array to the attributes in the old <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.MemberDescriptor" /> class with the name in the specified <see cref="T:System.ComponentModel.MemberDescriptor" /> and the attributes in both the old <see cref="T:System.ComponentModel.MemberDescriptor" /> and the <see cref="T:System.Attribute" /> array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -98,10 +124,14 @@
         <Parameter Name="attrs" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
         <param name="attrs">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.MemberDescriptor" /> class with the specified name of the member and an array of attributes.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member. </param>
       </Docs>
     </Member>
     <Member MemberName="AttributeArray">
@@ -117,9 +147,15 @@
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Attribute []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Accessing this member allows derived classes to modify the default set of attributes that are used in the <see cref="M:System.ComponentModel.MemberDescriptor.CreateAttributeCollection" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array of attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -135,9 +171,15 @@
         <ReturnType>System.ComponentModel.AttributeCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'AttributeCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no <see cref="T:System.ComponentModel.AttributeCollection" /> for this member, this property calls the <see cref="M:System.ComponentModel.MemberDescriptor.CreateAttributeCollection" /> method to create a new <see cref="T:System.ComponentModel.AttributeCollection" /> using the array of <see cref="T:System.Attribute" /> objects passed to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of attributes for this member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Category">
@@ -153,9 +195,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual designer can use this property value to display members in categories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the category to which the member belongs, as specified in the <see cref="T:System.ComponentModel.CategoryAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateAttributeCollection">
@@ -172,9 +220,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called from the <see cref="P:System.ComponentModel.MemberDescriptor.Attributes" /> property when there is no <see cref="T:System.ComponentModel.AttributeCollection" /> for this member. If there are no attributes in the <see cref="P:System.ComponentModel.MemberDescriptor.AttributeArray" />, this will return an empty <see cref="T:System.ComponentModel.AttributeCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a collection of attributes using the array of attributes passed to the constructor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.AttributeCollection" /> that contains the <see cref="P:System.ComponentModel.MemberDescriptor.AttributeArray" /> attributes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Description">
@@ -190,9 +247,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual designer can use this description to display information about this member.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the member, as specified in the <see cref="T:System.ComponentModel.DescriptionAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignTimeOnly">
@@ -208,9 +271,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no <see cref="T:System.ComponentModel.DesignOnlyAttribute" />, the return value is the default, which is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether this member should be set only at design time, as specified in the <see cref="T:System.ComponentModel.DesignOnlyAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisplayName">
@@ -226,9 +295,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name that can be displayed in a window, such as a Properties window.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -247,10 +319,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this instance to the given object to see if they are equivalent.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if equivalent; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current instance. </param>
       </Docs>
     </Member>
     <Member MemberName="FillAttributes">
@@ -269,9 +348,17 @@
         <Parameter Name="attributeList" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <param name="attributeList">To be added: an object of type 'Collections.IList'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For duplicate attributes, the last one added to the list is kept.</para>
+          <para>The <see cref="T:System.Collections.IList" /> with the attributes is created once. If there are duplicate attributes in the list, only the first instance is saved; all subsequent duplicate attributes are removed from the list.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, adds the attributes of the inheriting class to the specified list of attributes in the parent class.</para>
+        </summary>
+        <param name="attributeList">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IList" /> that lists the attributes in the parent class. Initially, this is empty. </param>
       </Docs>
     </Member>
     <Member MemberName="FindMethod">
@@ -293,13 +380,23 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="componentClass">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="args">To be added: an object of type 'Type []'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the given method through reflection, searching only for public methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> that represents the method, or null if the method is not found.</para>
+        </returns>
+        <param name="componentClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that contains the method. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method to find. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of parameters for the method, used to choose between overloaded methods. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to return for the method. </param>
       </Docs>
     </Member>
     <Member MemberName="FindMethod">
@@ -322,14 +419,25 @@
         <Parameter Name="publicOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="componentClass">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="args">To be added: an object of type 'Type []'</param>
-        <param name="returnType">To be added: an object of type 'Type'</param>
-        <param name="publicOnly">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds the given method through reflection, with an option to search only public methods.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> that represents the method, or null if the method is not found.</para>
+        </returns>
+        <param name="componentClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that contains the method. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method to find. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of parameters for the method, used to choose between overloaded methods. </param>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to return for the method. </param>
+        <param name="publicOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />Whether to restrict search to public methods. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -346,9 +454,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInvocationTarget">
@@ -367,11 +481,22 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Normally, the return value will be the same as the <paramref name="instance" /> parameter. If another object has been associated with this instance, or if the instance is a custom type descriptor, the <see cref="M:System.ComponentModel.MemberDescriptor.GetInvocationTarget(System.Type,System.Object)" /> method may return a different value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the object that should be used during invocation of members.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object to be used during member invocations.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the invocation target.</param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The potential invocation target.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInvokee">
@@ -396,11 +521,19 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="componentClass">To be added: an object of type 'Type'</param>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component on which to invoke a method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the component to invoke. This method returns a visual designer when the property is attached to a visual designer.</para>
+        </returns>
+        <param name="componentClass">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of component this <see cref="T:System.ComponentModel.MemberDescriptor" /> is bound to. For example, if this <see cref="T:System.ComponentModel.MemberDescriptor" /> describes a property, this parameter should be the class that the property is declared on. </param>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the object to call. </param>
       </Docs>
     </Member>
     <Member MemberName="GetSite">
@@ -419,10 +552,17 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISite'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a component site for the given component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The site of the component, or null if a site does not exist.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component for which you want to find a site. </param>
       </Docs>
     </Member>
     <Member MemberName="IsBrowsable">
@@ -438,9 +578,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual designer typically displays the members that are browsable in the Properties window.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the member is browsable, as specified in the <see cref="T:System.ComponentModel.BrowsableAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -456,9 +602,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NameHashCode">
@@ -474,9 +623,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code for the name of the member, as specified in <see cref="M:System.String.GetHashCode" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InstallContext" FullName="System.Configuration.Install.InstallContext">
   <TypeSignature Language="C#" Value="public class InstallContext" />
   <AssemblyInfo>
@@ -10,8 +11,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, an <see cref="T:System.Configuration.Install.InstallContext" /> is created by an installation executable, such as InstallUtil.exe, that installs assemblies. The installation program invokes the <see cref="T:System.Configuration.Install.InstallContext" /> constructor, passing it the default log-file path and command-line parameters.</para>
+      <para>Prior to calling its <see cref="M:System.Configuration.Install.Installer.Install(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Commit(System.Collections.IDictionary)" />, <see cref="M:System.Configuration.Install.Installer.Rollback(System.Collections.IDictionary)" />, or <see cref="M:System.Configuration.Install.Installer.Uninstall(System.Collections.IDictionary)" /> methods, the installation program sets the <see cref="P:System.Configuration.Install.Installer.Context" /> property of an <see cref="T:System.Configuration.Install.Installer" /> to the instance of <see cref="T:System.Configuration.Install.InstallContext" />. Before calling these methods, an <see cref="T:System.Configuration.Install.Installer" /> that contains an installer collection in the <see cref="P:System.Configuration.Install.Installer.Installers" /> property sets the <see cref="P:System.Configuration.Install.Installer.Context" /> property of each contained installer.</para>
+      <para>The <see cref="P:System.Configuration.Install.InstallContext.Parameters" /> property contains a parsed version of the command line that is entered to run the installation executable. The property contains information such as the path to a log file, whether to display log information on the console, and whether to show a user interface during the installation. Call the <see cref="M:System.Configuration.Install.InstallContext.IsParameterTrue(System.String)" /> method to find out whether a command-line parameter is true.</para>
+      <para>Use the <see cref="M:System.Configuration.Install.InstallContext.LogMessage(System.String)" /> method to write status messages to the installation log file and the console.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about the current installation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +29,14 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload does not create a log file for the installation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallContext" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -35,10 +51,18 @@
         <Parameter Name="commandLine" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="logFilePath">To be added.</param>
-        <param name="commandLine">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the installation uses <format type="text/html"><a href="3F9D0533-F895-4897-B4EA-528284E0241D">[&lt;topic://cpconInstallerUtilityInstallutilexe&gt;]</a></format>, this constructor creates a log file at the specified path and parses the array of command-line parameters into the <see cref="P:System.Configuration.Install.InstallContext.Parameters" /> property. If a log-file path is specified in the command-line parameters, it is used to create the file. If the log file argument is not specified in the command line, the value of the <paramref name="logFilePath" /> parameter is used. To suppress the creation of a log file, pass the "/logfile= " command-line parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallContext" /> class, and creates a log file for the installation.</para>
+        </summary>
+        <param name="logFilePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the log file for this installation, or null if no log file should be created. </param>
+        <param name="commandLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The command-line parameters entered when running the installation program, or null if none were entered. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -55,10 +79,20 @@
         <Parameter Name="paramName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="paramName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method accesses the <see cref="P:System.Configuration.Install.InstallContext.Parameters" /> property, which contains a parsed version of the command-line parameters, to determine whether the specified parameter is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified command-line parameter is true.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified parameter is set to "yes", "true", "1", or an empty string (""); otherwise, false.</para>
+        </returns>
+        <param name="paramName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the command-line parameter to check. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +109,16 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An installer can call this method to write progress or other status information to the log file. If the command-line parameters specify that a user interface should be displayed, the installer should show message boxes or make queries in addition to calling the <see cref="M:System.Configuration.Install.InstallContext.LogMessage(System.String)" /> method. Text written to the log file will not be seen by the user unless InstallUtil.exe is used to run the installation and "/LogToConsole= true" is specified in the command line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to the console and to the log file for the installation.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,9 +132,15 @@
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a new <see cref="T:System.Configuration.Install.InstallContext" /> is created, the command-line parameters are parsed into the <see cref="P:System.Configuration.Install.InstallContext.Parameters" /> property. Both the keys and the values of the parameters are strings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command-line parameters that were entered when InstallUtil.exe was run.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,10 +157,17 @@
         <Parameter Name="args" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the command-line parameters into a string dictionary.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.StringDictionary" /> containing the parsed command-line parameters.</para>
+        </returns>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array containing the command-line parameters. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

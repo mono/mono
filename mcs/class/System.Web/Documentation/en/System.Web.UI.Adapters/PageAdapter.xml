@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PageAdapter" FullName="System.Web.UI.Adapters.PageAdapter">
   <TypeSignature Language="C#" Value="public abstract class PageAdapter : System.Web.UI.Adapters.ControlAdapter" />
   <AssemblyInfo>
@@ -9,9 +10,46 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Adapters.PageAdapter" /> class is an abstract class that adapts a Web page for a specific class of browsers, defined by the markup language that the browser uses (for example, HTML or XHTML). Much of the adaptability in rendering behavior can be encapsulated in the specialized text writer classes that derive from the <see cref="T:System.Web.UI.HtmlTextWriter" /> class, so it is not always necessary to provide a page adapter.</para>
+      <para>Most members of derived page adapters are called from the <see cref="T:System.Web.UI.Page" /> class or from control adapters. First, the <see cref="T:System.Web.UI.Page" /> class or control adapters detect the presence of the derived page adapter, and then call the member, or provide the functionality if the page adapter is not present.</para>
+      <para>The members of the <see cref="T:System.Web.UI.Adapters.PageAdapter" /> class provide the following functionality:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.Web.UI.Adapters.PageAdapter.CacheVaryByHeaders" /> and <see cref="P:System.Web.UI.Adapters.PageAdapter.CacheVaryByParams" /> properties define additional HTTP headers and HTTP GET and POST parameters that can be used to vary caching. They are called during cache initialization from the <see cref="T:System.Web.UI.Page" /> class.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.GetStatePersister" /> method returns an object that can be used to persist the combined view and control states of the page. It is referenced from the <see cref="P:System.Web.UI.Page.PageStatePersister" /> property if a derived page adapter is present.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.GetPostBackFormReference(System.String)" /> method provides a DHTML code fragment that can be used to reference forms in scripts.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.DeterminePostBackMode" /> method returns a collection of the postback variables if the page is in postback. It is called by the .NET Framework instead of the <see cref="M:System.Web.UI.Page.DeterminePostBackMode" /> method if a derived page adapter is present. </para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.Web.UI.Adapters.PageAdapter.RenderBeginHyperlink" /> and <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderEndHyperlink(System.Web.UI.HtmlTextWriter)" /> methods are used by control adapters to render hyperlinks if a derived page adapter is present. </para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.Web.UI.Adapters.PageAdapter.RenderPostBackEvent" /> method renders a hyperlink or postback client tag that can submit the form. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RegisterRadioButton(System.Web.UI.WebControls.RadioButton)" /> and <see cref="M:System.Web.UI.Adapters.PageAdapter.GetRadioButtonsByGroup(System.String)" /> methods are used by radio button control adapters to reference the other <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls in a radio button group.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.Adapters.PageAdapter.ClientState" /> property provides access to the combined control and view states of the <see cref="T:System.Web.UI.Page" /> object through the internal ClientState property of the <see cref="T:System.Web.UI.Page" /> class. </para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.TransformText(System.String)" /> method is used by control adapters to perform device-specific text transformation.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Adapts a Web page for a specific browser and provides the base class from which all page adapters inherit, directly or indirectly. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +57,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework constructs this adapter internally when it creates the corresponding <see cref="T:System.Web.UI.Page" /> class or derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Adapters.PageAdapter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +78,18 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Entities on the Web that cache Web pages cache multiple versions, based on the HTTP headers and other factors. For example, a version for each language in which a page is generated is typically cached, based on the Accept-Language HTTP header.</para>
+          <para>For specific browsers, it might be necessary to vary caching by HTTP headers in addition to the headers that control target-independent caching. For example, it might be necessary to cache different versions of a page for different screen sizes.</para>
+          <para>The header names returned by the <see cref="P:System.Web.UI.Adapters.PageAdapter.CacheVaryByHeaders" /> property are added to the list of headers on the Vary HTTP header sent to the client browser.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of additional HTTP headers by which caching is varied for the Web page to which this derived page adapter is attached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +102,17 @@
         <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Entities on the Web that cache Web pages cache multiple versions based on, among other factors, the request parameters. For example, a version for each store location within a retail chain for which a page might be generated would typically be cached based on the parameter name (for example, StoreID).</para>
+          <para>For specific browsers, it might be necessary to vary caching by GET or POST parameters in addition to the parameters that control target-independent caching. For example, it might be necessary to cache different versions of a page for different mobile phone service providers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of additional parameters from HTTP GET and POST requests by which caching is varied for the Web page to which this derived page adapter is attached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +125,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Adapters.PageAdapter.ClientState" /> property provides access to the internal ClientState property of the <see cref="T:System.Web.UI.Page" /> class.</para>
+          <para>View state data stored by the <see cref="T:System.Web.UI.PageStatePersister" /> object in the internal ClientState property of <see cref="T:System.Web.UI.Page" /> will always be saved in the hidden field on the Web page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an encoded string that contains the view and control states data of the Web page to which this derived page adapter is attached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -83,10 +149,27 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.DeterminePostBackMode" /> method returns one of the following collections: </para>
+          <list type="bullet">
+            <item>
+              <para>Form variables if the HTTP data transfer method is POST.</para>
+            </item>
+            <item>
+              <para>Query string variables if the HTTP method is GET.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the Web page is in postback and returns a name/value collection of the postback variables.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.NameValueCollection" /> of the postback variables, if any; otherwise null. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,9 +189,19 @@
       </Parameters>
       <Docs>
         <param name="formID">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.GetPostBackFormReference(System.String)" /> method provides a DHTML reference to the postback form. The code fragment has the following format: </para>
+          <para>document.forms['<paramref name="formID" />']</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a DHTML code fragment that the client browser can use to reference the form on the page that was posted.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> with a reference to the form on the page that was posted.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRadioButtonsByGroup">
@@ -121,11 +214,21 @@
         <Parameter Name="groupName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="groupName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Radio button control adapters use the <see cref="M:System.Web.UI.Adapters.PageAdapter.GetRadioButtonsByGroup(System.String)" /> and <see cref="M:System.Web.UI.Adapters.PageAdapter.RegisterRadioButton(System.Web.UI.WebControls.RadioButton)" /> methods to reference the other <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls in the group.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of radio button controls specified by <paramref name="groupName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls that make up <paramref name="groupName" />.</para>
+        </returns>
+        <param name="groupName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is the name of the <see cref="T:System.Web.UI.WebControls.RadioButton" /> group to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -139,10 +242,71 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.PageStatePersister" /> property uses the <see cref="M:System.Web.UI.Adapters.PageAdapter.GetStatePersister" /> method to return the object, derived from the <see cref="T:System.Web.UI.PageStatePersister" /> class, that forms and extracts the combined control and view states for the page. If there is no derived page adapter attached to the page, a <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> object is used to maintain the state in a hidden field on the page.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Link type</para>
+                </term>
+                <description>
+                  <para>Resulting link</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Code Entity Reference,cer</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Char.ToString(System.Char)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Code Entity Reference Qualified, cerq</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Char.ToString(System.Char)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Code Entity Reference Specific,cers</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Char.ToString(System.Char)" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Code Entity Reference Qualified Specific, cerqs</para>
+              </term>
+              <description>
+                <para>
+                  <see cref="M:System.Char.ToString(System.Char)" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that is used by the Web page to maintain the control and view states.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object derived from <see cref="T:System.Web.UI.PageStatePersister" /> that supports creating and extracting the combined control and view states for the <see cref="T:System.Web.UI.Page" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -158,10 +322,18 @@
         <Parameter Name="radioButton" Type="System.Web.UI.WebControls.RadioButton" />
       </Parameters>
       <Docs>
-        <param name="radioButton">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.Adapters.PageAdapter" /> class uses a <see cref="T:System.Collections.Specialized.ListDictionary" /> object to maintain a list of radio button groups. Each element in <see cref="T:System.Collections.Specialized.ListDictionary" /> is a collection of the <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls in a radio button group. The <see cref="M:System.Web.UI.Adapters.PageAdapter.RegisterRadioButton(System.Web.UI.WebControls.RadioButton)" /> method adds a <see cref="T:System.Web.UI.WebControls.RadioButton" /> control to the appropriate collection, creating the collection if it does not already exist, and creating <see cref="T:System.Collections.Specialized.ListDictionary" /> if there are no previously registered <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls.</para>
+          <para>Radio button control adapters use the <see cref="M:System.Web.UI.Adapters.PageAdapter.RegisterRadioButton(System.Web.UI.WebControls.RadioButton)" /> and <see cref="M:System.Web.UI.Adapters.PageAdapter.GetRadioButtonsByGroup(System.String)" /> methods to reference the other <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls in a radio button group.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a radio button control to the collection for a specified radio button group.</para>
+        </summary>
+        <param name="radioButton">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.RadioButton" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -181,12 +353,21 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <param name="targetUrl">To be added.</param>
-        <param name="encodeUrl">To be added.</param>
         <param name="softKeyLabel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderBeginHyperlink(System.Web.UI.HtmlTextWriter,System.String,System.Boolean,System.String)" /> method writes an opening hyperlink tag. When <paramref name="writer" /> is <see cref="T:System.Web.UI.HtmlTextWriter" />, this tag has the following format: </para>
+          <para>&lt;a href="<paramref name="targetUrl" />"&gt; </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders an opening hyperlink tag that includes the target URL to the response stream.</para>
+        </summary>
+        <param name="targetUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the target URL of the link. </param>
+        <param name="encodeUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String)" /> to encode the stream output; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -207,13 +388,23 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <param name="targetUrl">To be added.</param>
-        <param name="encodeUrl">To be added.</param>
         <param name="softKeyLabel">To be added.</param>
-        <param name="accessKey">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderBeginHyperlink(System.Web.UI.HtmlTextWriter,System.String,System.Boolean,System.String,System.String)" /> method writes an opening hyperlink tag. When <paramref name="writer" /> is an <see cref="T:System.Web.UI.HtmlTextWriter" /> object, this tag has the following format: </para>
+          <para>&lt;a href="<paramref name="targetUrl" />" accessKey="<paramref name="accessKey" />"&gt; </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders an opening hyperlink tag that includes the target URL and an access key to the response stream.</para>
+        </summary>
+        <param name="targetUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the target URL of the link. </param>
+        <param name="encodeUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String)" /> to encode the stream output; otherwise, false. </param>
+        <param name="accessKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value to assign to the accessKey attribute of the link to create. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,9 +421,16 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderEndHyperlink(System.Web.UI.HtmlTextWriter)" /> method writes a closing hyperlink tag. When the text writer is an <see cref="T:System.Web.UI.HtmlTextWriter" /> object, this tag has the following format: </para>
+          <para>&lt;/a&gt;</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders a closing hyperlink tag to the response stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -253,13 +451,22 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <param name="target">To be added.</param>
-        <param name="argument">To be added.</param>
         <param name="softKeyLabel">To be added.</param>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderPostBackEvent(System.Web.UI.HtmlTextWriter,System.String,System.String,System.String,System.String)" /> method writes a postback event as a scriptless hyperlink.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders a postback event into the response stream as a hyperlink, including the encoded and possibly encrypted view state, and event target and argument.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the postback event target name. </param>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the argument to pass to the postback target event. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value of the text to display as the link. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -282,15 +489,27 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <param name="target">To be added.</param>
-        <param name="argument">To be added.</param>
         <param name="softKeyLabel">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="postUrl">To be added.</param>
-        <param name="accessKey">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderPostBackEvent(System.Web.UI.HtmlTextWriter,System.String,System.String,System.String,System.String,System.String,System.String)" /> method writes a postback event as a scriptless hyperlink, including the possibly chunked <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> view state, __EVENTTARGET<paramref name="=target" />, __EVENTARGUMENT<paramref name="=argument" />, __PREVIOUSPAGE=<paramref name="currentFilePath" /> parameters, and an accessKey="<paramref name="accessKey" />" attribute.</para>
+          <para>View state is encrypted if the enableViewStateMac attribute of the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">&lt;pages&gt;</a></format> configuration element is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders a postback event into the response stream as a hyperlink, including the encoded and possibly encrypted view state, an event target and argument, a previous-page parameter, and an access key.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the postback event target name. </param>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the argument to pass to the postback target event. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value of the text to display as the link. </param>
+        <param name="postUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the URL target page of the postback. </param>
+        <param name="accessKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value used to assign to the accessKey attribute of the created link. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -314,16 +533,28 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <param name="target">To be added.</param>
-        <param name="argument">To be added.</param>
         <param name="softKeyLabel">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="postUrl">To be added.</param>
-        <param name="accessKey">To be added.</param>
-        <param name="encode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.RenderPostBackEvent(System.Web.UI.HtmlTextWriter,System.String,System.String,System.String,System.String,System.String,System.String)" /> method writes a postback event as a scriptless hyperlink, including the possibly chunked <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> view state, __EVENTTARGET=<paramref name="target" />, __EVENTARGUMENT=<paramref name="argument" />, __PREVIOUSPAGE=<paramref name="currentFilePath" /> parameters, and an accessKey="<paramref name="accessKey" />" attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders a postback event into the response stream as a hyperlink, including the encoded view state, an event target and argument, a previous-page parameter, and an access key.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the postback event target name. </param>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the argument to pass to the postback target event. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value of the text to display as the link. </param>
+        <param name="postUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value holding the URL target page of the postback. </param>
+        <param name="accessKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value to assign to the accessKey attribute of the created link. </param>
+        <param name="encode">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use &amp;amp; as the URL parameter separator; false to use &amp;. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -339,11 +570,22 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.TransformText(System.String)" /> method can be used, for example, to transform tab characters (\t) into line breaks (\n).</para>
+          <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.TransformText(System.String)" /> base method returns <paramref name="text" /> unchanged.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transforms text for the target browser.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the transformed text.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is the text to transform.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

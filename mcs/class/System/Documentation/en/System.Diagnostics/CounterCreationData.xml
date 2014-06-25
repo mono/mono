@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CounterCreationData" FullName="System.Diagnostics.CounterCreationData">
   <TypeSignature Language="C#" Value="public class CounterCreationData" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CounterCreationData extends System.Object" />
@@ -20,8 +21,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the counter type, name, and Help string for a custom counter.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +40,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterCreationData" /> class, to a counter of type NumberOfItems32, and with empty name and help strings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -56,11 +63,17 @@
         <Parameter Name="counterType" Type="System.Diagnostics.PerformanceCounterType" />
       </Parameters>
       <Docs>
-        <param name="counterName">To be added: an object of type 'string'</param>
-        <param name="counterHelp">To be added: an object of type 'string'</param>
-        <param name="counterType">To be added: an object of type 'PerformanceCounterType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterCreationData" /> class, to a counter of the specified type, using the specified counter name and Help strings.</para>
+        </summary>
+        <param name="counterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the counter, which must be unique within its category. </param>
+        <param name="counterHelp">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text that describes the counter's behavior. </param>
+        <param name="counterType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.PerformanceCounterType" /> that identifies the counter's behavior. </param>
       </Docs>
     </Member>
     <Member MemberName="CounterHelp">
@@ -86,9 +99,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom counter's description.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CounterName">
@@ -117,9 +133,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the custom counter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CounterType">
@@ -145,9 +164,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PerformanceCounterType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the performance counter type of the custom counter.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

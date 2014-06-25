@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMethodMessage" FullName="System.Runtime.Remoting.Messaging.IMethodMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMethodMessage : System.Runtime.Remoting.Messaging.IMessage" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMethodMessage implements class System.Runtime.Remoting.Messaging.IMessage" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A method message is used to send information to and from remote methods. For example, messages used for remote method calls implement the <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method message interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ArgCount">
@@ -37,9 +44,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of arguments passed to the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Args">
@@ -55,9 +65,15 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the <see cref="P:System.Runtime.Remoting.Messaging.IMethodMessage.Args" /> property is redundant since the same functionality can be achieved through the <see cref="P:System.Runtime.Remoting.Messaging.IMethodMessage.ArgCount" /> and <see cref="M:System.Runtime.Remoting.Messaging.IMethodMessage.GetArg(System.Int32)" />, there might be performance optimization available if the implementer understands when all the arguments will be retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of arguments passed to the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetArg">
@@ -76,10 +92,17 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="argNum">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a specific argument as an <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The argument passed to the method.</para>
+        </returns>
+        <param name="argNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested argument. </param>
       </Docs>
     </Member>
     <Member MemberName="GetArgName">
@@ -98,10 +121,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the argument passed to the method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified argument passed to the method, or null if the current method is not implemented.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested argument. </param>
       </Docs>
     </Member>
     <Member MemberName="HasVarArgs">
@@ -117,9 +147,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the message has variable arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LogicalCallContext">
@@ -135,9 +168,12 @@
         <ReturnType>System.Runtime.Remoting.Messaging.LogicalCallContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'LogicalCallContext'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" /> for the current method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodBase">
@@ -153,9 +189,15 @@
         <ReturnType>System.Reflection.MethodBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Reflection.MethodBase'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This information is not transmitted to a remote location, but is used to cache the method base after it has been looked up once.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Reflection.MethodBase" /> of the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodName">
@@ -171,9 +213,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the invoked method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodSignature">
@@ -189,9 +234,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the current implementations of <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> return an array of <see cref="T:System.Type" /> objects containing the parameter types of the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object containing the method signature.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeName">
@@ -207,9 +258,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full <see cref="T:System.Type" /> name of the specific object that the call is destined for.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Uri">
@@ -225,9 +279,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI of the specific object that the call is destined for.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

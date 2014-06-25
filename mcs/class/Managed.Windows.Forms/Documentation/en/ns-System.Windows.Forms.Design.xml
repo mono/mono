@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Windows.Forms.Design">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms.Design" /> namespace contains classes that support design-time configuration and behavior for Windows Forms components. These classes consist of designer classes that provide support for Windows Forms components, a set of design-time services; UITypeEditor classes for configuring certain types of properties, and classes for importing ActiveX controls.</para>
+    </summary>
   </Docs>
 </Namespace>

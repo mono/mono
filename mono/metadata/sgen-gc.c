@@ -207,7 +207,6 @@
 #include "metadata/method-builder.h"
 #include "metadata/profiler-private.h"
 #include "metadata/monitor.h"
-#include "metadata/threadpool-internals.h"
 #include "metadata/mempool-internals.h"
 #include "metadata/marshal.h"
 #include "metadata/runtime.h"
@@ -354,6 +353,8 @@ static long long time_major_fragment_creation = 0;
 int gc_debug_level = 0;
 FILE* gc_debug_file;
 
+static MonoGCFinalizerCallbacks fin_callbacks;
+
 /*
 void
 mono_gc_flush_info (void)
@@ -366,6 +367,8 @@ mono_gc_flush_info (void)
 #define TV_GETTIME SGEN_TV_GETTIME
 #define TV_ELAPSED SGEN_TV_ELAPSED
 #define TV_ELAPSED_MS SGEN_TV_ELAPSED_MS
+
+SGEN_TV_DECLARE (sgen_init_timestamp);
 
 #define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
@@ -406,7 +409,7 @@ gboolean sgen_try_free_some_memory;
 #define SCAN_START_SIZE	SGEN_SCAN_START_SIZE
 
 static mword pagesize = 4096;
-int degraded_mode = 0;
+size_t degraded_mode = 0;
 
 static mword bytes_pinned_from_failed_allocation = 0;
 
@@ -609,141 +612,6 @@ gray_queue_redirect (SgenGrayQueue *queue)
 	}
 }
 
-static gboolean
-is_xdomain_ref_allowed (gpointer *ptr, char *obj, MonoDomain *domain)
-{
-	MonoObject *o = (MonoObject*)(obj);
-	MonoObject *ref = (MonoObject*)*(ptr);
-	int offset = (char*)(ptr) - (char*)o;
-
-	if (o->vtable->klass == mono_defaults.thread_class && offset == G_STRUCT_OFFSET (MonoThread, internal_thread))
-		return TRUE;
-	if (o->vtable->klass == mono_defaults.internal_thread_class && offset == G_STRUCT_OFFSET (MonoInternalThread, current_appcontext))
-		return TRUE;
-
-#ifndef DISABLE_REMOTING
-	if (mono_defaults.real_proxy_class->supertypes && mono_class_has_parent_fast (o->vtable->klass, mono_defaults.real_proxy_class) &&
-			offset == G_STRUCT_OFFSET (MonoRealProxy, unwrapped_server))
-		return TRUE;
-#endif
-	/* Thread.cached_culture_info */
-	if (!strcmp (ref->vtable->klass->name_space, "System.Globalization") &&
-			!strcmp (ref->vtable->klass->name, "CultureInfo") &&
-			!strcmp(o->vtable->klass->name_space, "System") &&
-			!strcmp(o->vtable->klass->name, "Object[]"))
-		return TRUE;
-	/*
-	 *  at System.IO.MemoryStream.InternalConstructor (byte[],int,int,bool,bool) [0x0004d] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.IO/MemoryStream.cs:121
-	 * at System.IO.MemoryStream..ctor (byte[]) [0x00017] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.IO/MemoryStream.cs:81
-	 * at (wrapper remoting-invoke-with-check) System.IO.MemoryStream..ctor (byte[]) <IL 0x00020, 0xffffffff>
-	 * at System.Runtime.Remoting.Messaging.CADMethodCallMessage.GetArguments () [0x0000d] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Messaging/CADMessages.cs:327
-	 * at System.Runtime.Remoting.Messaging.MethodCall..ctor (System.Runtime.Remoting.Messaging.CADMethodCallMessage) [0x00017] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Messaging/MethodCall.cs:87
-	 * at System.AppDomain.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage,byte[]&,System.Runtime.Remoting.Messaging.CADMethodReturnMessage&) [0x00018] in /home/schani/Work/novell/trunk/mcs/class/corlib/System/AppDomain.cs:1213
-	 * at (wrapper remoting-invoke-with-check) System.AppDomain.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage,byte[]&,System.Runtime.Remoting.Messaging.CADMethodReturnMessage&) <IL 0x0003d, 0xffffffff>
-	 * at System.Runtime.Remoting.Channels.CrossAppDomainSink.ProcessMessageInDomain (byte[],System.Runtime.Remoting.Messaging.CADMethodCallMessage) [0x00008] in /home/schani/Work/novell/trunk/mcs/class/corlib/System.Runtime.Remoting.Channels/CrossAppDomainChannel.cs:198
-	 * at (wrapper runtime-invoke) object.runtime_invoke_CrossAppDomainSink/ProcessMessageRes_object_object (object,intptr,intptr,intptr) <IL 0x0004c, 0xffffffff>
-	 */
-	if (!strcmp (ref->vtable->klass->name_space, "System") &&
-			!strcmp (ref->vtable->klass->name, "Byte[]") &&
-			!strcmp (o->vtable->klass->name_space, "System.IO") &&
-			!strcmp (o->vtable->klass->name, "MemoryStream"))
-		return TRUE;
-	/* append_job() in threadpool.c */
-	if (!strcmp (ref->vtable->klass->name_space, "System.Runtime.Remoting.Messaging") &&
-			!strcmp (ref->vtable->klass->name, "AsyncResult") &&
-			!strcmp (o->vtable->klass->name_space, "System") &&
-			!strcmp (o->vtable->klass->name, "Object[]") &&
-			mono_thread_pool_is_queue_array ((MonoArray*) o))
-		return TRUE;
-	return FALSE;
-}
-
-static void
-check_reference_for_xdomain (gpointer *ptr, char *obj, MonoDomain *domain)
-{
-	MonoObject *o = (MonoObject*)(obj);
-	MonoObject *ref = (MonoObject*)*(ptr);
-	int offset = (char*)(ptr) - (char*)o;
-	MonoClass *class;
-	MonoClassField *field;
-	char *str;
-
-	if (!ref || ref->vtable->domain == domain)
-		return;
-	if (is_xdomain_ref_allowed (ptr, obj, domain))
-		return;
-
-	field = NULL;
-	for (class = o->vtable->klass; class; class = class->parent) {
-		int i;
-
-		for (i = 0; i < class->field.count; ++i) {
-			if (class->fields[i].offset == offset) {
-				field = &class->fields[i];
-				break;
-			}
-		}
-		if (field)
-			break;
-	}
-
-	if (ref->vtable->klass == mono_defaults.string_class)
-		str = mono_string_to_utf8 ((MonoString*)ref);
-	else
-		str = NULL;
-	g_print ("xdomain reference in %p (%s.%s) at offset %d (%s) to %p (%s.%s) (%s)  -  pointed to by:\n",
-			o, o->vtable->klass->name_space, o->vtable->klass->name,
-			offset, field ? field->name : "",
-			ref, ref->vtable->klass->name_space, ref->vtable->klass->name, str ? str : "");
-	mono_gc_scan_for_specific_ref (o, TRUE);
-	if (str)
-		g_free (str);
-}
-
-#undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj)	check_reference_for_xdomain ((ptr), (obj), domain)
-
-static void
-scan_object_for_xdomain_refs (char *start, mword size, void *data)
-{
-	MonoDomain *domain = ((MonoObject*)start)->vtable->domain;
-
-	#include "sgen-scan-object.h"
-}
-
-static gboolean scan_object_for_specific_ref_precise = TRUE;
-
-#undef HANDLE_PTR
-#define HANDLE_PTR(ptr,obj) do {		\
-	if ((MonoObject*)*(ptr) == key) {	\
-	g_print ("found ref to %p in object %p (%s) at offset %td\n",	\
-			key, (obj), safe_name ((obj)), ((char*)(ptr) - (char*)(obj))); \
-	}								\
-	} while (0)
-
-static void
-scan_object_for_specific_ref (char *start, MonoObject *key)
-{
-	char *forwarded;
-
-	if ((forwarded = SGEN_OBJECT_IS_FORWARDED (start)))
-		start = forwarded;
-
-	if (scan_object_for_specific_ref_precise) {
-		#include "sgen-scan-object.h"
-	} else {
-		mword *words = (mword*)start;
-		size_t size = safe_object_get_size ((MonoObject*)start);
-		int i;
-		for (i = 0; i < size / sizeof (mword); ++i) {
-			if (words [i] == (mword)key) {
-				g_print ("found possible ref to %p in object %p (%s) at offset %td\n",
-						key, start, safe_name (start), i * sizeof (mword));
-			}
-		}
-	}
-}
-
 void
 sgen_scan_area_with_callback (char *start, char *end, IterateObjectCallbackFunc callback, void *data, gboolean allow_flags)
 {
@@ -770,111 +638,6 @@ sgen_scan_area_with_callback (char *start, char *end, IterateObjectCallbackFunc 
 
 		start += size;
 	}
-}
-
-static void
-scan_object_for_specific_ref_callback (char *obj, size_t size, MonoObject *key)
-{
-	scan_object_for_specific_ref (obj, key);
-}
-
-static void
-check_root_obj_specific_ref (RootRecord *root, MonoObject *key, MonoObject *obj)
-{
-	if (key != obj)
-		return;
-	g_print ("found ref to %p in root record %p\n", key, root);
-}
-
-static MonoObject *check_key = NULL;
-static RootRecord *check_root = NULL;
-
-static void
-check_root_obj_specific_ref_from_marker (void **obj)
-{
-	check_root_obj_specific_ref (check_root, check_key, *obj);
-}
-
-static void
-scan_roots_for_specific_ref (MonoObject *key, int root_type)
-{
-	void **start_root;
-	RootRecord *root;
-	check_key = key;
-
-	SGEN_HASH_TABLE_FOREACH (&roots_hash [root_type], start_root, root) {
-		mword desc = root->root_desc;
-
-		check_root = root;
-
-		switch (desc & ROOT_DESC_TYPE_MASK) {
-		case ROOT_DESC_BITMAP:
-			desc >>= ROOT_DESC_TYPE_SHIFT;
-			while (desc) {
-				if (desc & 1)
-					check_root_obj_specific_ref (root, key, *start_root);
-				desc >>= 1;
-				start_root++;
-			}
-			return;
-		case ROOT_DESC_COMPLEX: {
-			gsize *bitmap_data = sgen_get_complex_descriptor_bitmap (desc);
-			int bwords = (*bitmap_data) - 1;
-			void **start_run = start_root;
-			bitmap_data++;
-			while (bwords-- > 0) {
-				gsize bmap = *bitmap_data++;
-				void **objptr = start_run;
-				while (bmap) {
-					if (bmap & 1)
-						check_root_obj_specific_ref (root, key, *objptr);
-					bmap >>= 1;
-					++objptr;
-				}
-				start_run += GC_BITS_PER_WORD;
-			}
-			break;
-		}
-		case ROOT_DESC_USER: {
-			MonoGCRootMarkFunc marker = sgen_get_user_descriptor_func (desc);
-			marker (start_root, check_root_obj_specific_ref_from_marker);
-			break;
-		}
-		case ROOT_DESC_RUN_LEN:
-			g_assert_not_reached ();
-		default:
-			g_assert_not_reached ();
-		}
-	} SGEN_HASH_TABLE_FOREACH_END;
-
-	check_key = NULL;
-	check_root = NULL;
-}
-
-void
-mono_gc_scan_for_specific_ref (MonoObject *key, gboolean precise)
-{
-	void **ptr;
-	RootRecord *root;
-
-	scan_object_for_specific_ref_precise = precise;
-
-	sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data,
-			(IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key, TRUE);
-
-	major_collector.iterate_objects (TRUE, TRUE, (IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key);
-
-	sgen_los_iterate_objects ((IterateObjectCallbackFunc)scan_object_for_specific_ref_callback, key);
-
-	scan_roots_for_specific_ref (key, ROOT_TYPE_NORMAL);
-	scan_roots_for_specific_ref (key, ROOT_TYPE_WBARRIER);
-
-	SGEN_HASH_TABLE_FOREACH (&roots_hash [ROOT_TYPE_PINNED], ptr, root) {
-		while (ptr < (void**)root->end_root) {
-			check_root_obj_specific_ref (root, *ptr, key);
-			++ptr;
-		}
-	} SGEN_HASH_TABLE_FOREACH_END;
 }
 
 static gboolean
@@ -908,85 +671,6 @@ process_object_for_domain_clearing (char *start, MonoDomain *domain)
 		}
 	}
 #endif
-}
-
-static MonoDomain *check_domain = NULL;
-
-static void
-check_obj_not_in_domain (void **o)
-{
-	g_assert (((MonoObject*)(*o))->vtable->domain != check_domain);
-}
-
-static void
-scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type)
-{
-	void **start_root;
-	RootRecord *root;
-	check_domain = domain;
-	SGEN_HASH_TABLE_FOREACH (&roots_hash [root_type], start_root, root) {
-		mword desc = root->root_desc;
-
-		/* The MonoDomain struct is allowed to hold
-		   references to objects in its own domain. */
-		if (start_root == (void**)domain)
-			continue;
-
-		switch (desc & ROOT_DESC_TYPE_MASK) {
-		case ROOT_DESC_BITMAP:
-			desc >>= ROOT_DESC_TYPE_SHIFT;
-			while (desc) {
-				if ((desc & 1) && *start_root)
-					check_obj_not_in_domain (*start_root);
-				desc >>= 1;
-				start_root++;
-			}
-			break;
-		case ROOT_DESC_COMPLEX: {
-			gsize *bitmap_data = sgen_get_complex_descriptor_bitmap (desc);
-			int bwords = (*bitmap_data) - 1;
-			void **start_run = start_root;
-			bitmap_data++;
-			while (bwords-- > 0) {
-				gsize bmap = *bitmap_data++;
-				void **objptr = start_run;
-				while (bmap) {
-					if ((bmap & 1) && *objptr)
-						check_obj_not_in_domain (*objptr);
-					bmap >>= 1;
-					++objptr;
-				}
-				start_run += GC_BITS_PER_WORD;
-			}
-			break;
-		}
-		case ROOT_DESC_USER: {
-			MonoGCRootMarkFunc marker = sgen_get_user_descriptor_func (desc);
-			marker (start_root, check_obj_not_in_domain);
-			break;
-		}
-		case ROOT_DESC_RUN_LEN:
-			g_assert_not_reached ();
-		default:
-			g_assert_not_reached ();
-		}
-	} SGEN_HASH_TABLE_FOREACH_END;
-
-	check_domain = NULL;
-}
-
-static void
-check_for_xdomain_refs (void)
-{
-	LOSObject *bigobj;
-
-	sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data,
-			(IterateObjectCallbackFunc)scan_object_for_xdomain_refs, NULL, FALSE);
-
-	major_collector.iterate_objects (TRUE, TRUE, (IterateObjectCallbackFunc)scan_object_for_xdomain_refs, NULL);
-
-	for (bigobj = los_object_list; bigobj; bigobj = bigobj->next)
-		scan_object_for_xdomain_refs (bigobj->data, sgen_los_object_size (bigobj), NULL);
 }
 
 static gboolean
@@ -1064,9 +748,9 @@ mono_gc_clear_domain (MonoDomain * domain)
 	sgen_clear_nursery_fragments ();
 
 	if (xdomain_checks && domain != mono_get_root_domain ()) {
-		scan_for_registered_roots_in_domain (domain, ROOT_TYPE_NORMAL);
-		scan_for_registered_roots_in_domain (domain, ROOT_TYPE_WBARRIER);
-		check_for_xdomain_refs ();
+		sgen_scan_for_registered_roots_in_domain (domain, ROOT_TYPE_NORMAL);
+		sgen_scan_for_registered_roots_in_domain (domain, ROOT_TYPE_WBARRIER);
+		sgen_check_for_xdomain_refs ();
 	}
 
 	/*Ephemerons and dislinks must be processed before LOS since they might end up pointing
@@ -1089,7 +773,7 @@ mono_gc_clear_domain (MonoDomain * domain)
 	   objects with major-mark&sweep), but we might need to
 	   dereference a pointer from an object to another object if
 	   the first object is a proxy. */
-	major_collector.iterate_objects (TRUE, TRUE, (IterateObjectCallbackFunc)clear_domain_process_major_object_callback, domain);
+	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, (IterateObjectCallbackFunc)clear_domain_process_major_object_callback, domain);
 	for (bigobj = los_object_list; bigobj; bigobj = bigobj->next)
 		clear_domain_process_object (bigobj->data, domain);
 
@@ -1109,8 +793,8 @@ mono_gc_clear_domain (MonoDomain * domain)
 		prev = bigobj;
 		bigobj = bigobj->next;
 	}
-	major_collector.iterate_objects (TRUE, FALSE, (IterateObjectCallbackFunc)clear_domain_free_major_non_pinned_object_callback, domain);
-	major_collector.iterate_objects (FALSE, TRUE, (IterateObjectCallbackFunc)clear_domain_free_major_pinned_object_callback, domain);
+	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_NON_PINNED, (IterateObjectCallbackFunc)clear_domain_free_major_non_pinned_object_callback, domain);
+	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_PINNED, (IterateObjectCallbackFunc)clear_domain_free_major_pinned_object_callback, domain);
 
 	if (domain == mono_get_root_domain ()) {
 		if (G_UNLIKELY (do_pin_stats))
@@ -1225,7 +909,7 @@ pin_objects_from_addresses (GCMemSection *section, void **start, void **end, voi
 	void *last_obj = NULL;
 	size_t last_obj_size = 0;
 	void *addr;
-	int idx;
+	size_t idx;
 	void **definitely_pinned = start;
 	ScanObjectFunc scan_func = ctx.scan_func;
 	SgenGrayQueue *queue = ctx.queue;
@@ -1336,10 +1020,10 @@ pin_objects_from_addresses (GCMemSection *section, void **start, void **end, voi
 void
 sgen_pin_objects_in_section (GCMemSection *section, ScanCopyContext ctx)
 {
-	int num_entries = section->pin_queue_num_entries;
+	size_t num_entries = section->pin_queue_num_entries;
 	if (num_entries) {
 		void **start = section->pin_queue_start;
-		int reduced_to;
+		size_t reduced_to;
 		reduced_to = pin_objects_from_addresses (section, start, start + num_entries,
 				section->data, section->next_data, ctx);
 		section->pin_queue_num_entries = reduced_to;
@@ -1413,15 +1097,15 @@ sgen_parallel_pin_or_update (void **ptr, void *obj, MonoVTable *vt, SgenGrayQueu
  * Done using a by-the book heap sort. Which has decent and stable performance, is pretty cache efficient.
  */
 void
-sgen_sort_addresses (void **array, int size)
+sgen_sort_addresses (void **array, size_t size)
 {
-	int i;
+	size_t i;
 	void *tmp;
 
 	for (i = 1; i < size; ++i) {
-		int child = i;
+		size_t child = i;
 		while (child > 0) {
-			int parent = (child - 1) / 2;
+			size_t parent = (child - 1) / 2;
 
 			if (array [parent] >= array [child])
 				break;
@@ -1435,7 +1119,7 @@ sgen_sort_addresses (void **array, int size)
 	}
 
 	for (i = size - 1; i > 0; --i) {
-		int end, root;
+		size_t end, root;
 		tmp = array [i];
 		array [i] = array [0];
 		array [0] = tmp;
@@ -1444,7 +1128,7 @@ sgen_sort_addresses (void **array, int size)
 		root = 0;
 
 		while (root * 2 + 1 <= end) {
-			int child = root * 2 + 1;
+			size_t child = root * 2 + 1;
 
 			if (child < end && array [child] < array [child + 1])
 				++child;
@@ -1606,7 +1290,7 @@ precisely_scan_objects_from (void** start_root, void** end_root, char* n_start, 
 		return;
 	case ROOT_DESC_COMPLEX: {
 		gsize *bitmap_data = sgen_get_complex_descriptor_bitmap (desc);
-		int bwords = (*bitmap_data) - 1;
+		gsize bwords = (*bitmap_data) - 1;
 		void **start_run = start_root;
 		bitmap_data++;
 		while (bwords-- > 0) {
@@ -1674,12 +1358,12 @@ alloc_nursery (void)
 {
 	GCMemSection *section;
 	char *data;
-	int scan_starts;
-	int alloc_size;
+	size_t scan_starts;
+	size_t alloc_size;
 
 	if (nursery_section)
 		return;
-	SGEN_LOG (2, "Allocating nursery size: %lu", (unsigned long)sgen_nursery_size);
+	SGEN_LOG (2, "Allocating nursery size: %lu", (size_t)sgen_nursery_size);
 	/* later we will alloc a larger area for the nursery but only activate
 	 * what we need. The rest will be used as expansion if we have too many pinned
 	 * objects in the existing nursery.
@@ -1794,7 +1478,7 @@ precisely_report_roots_from (GCRootReport *report, void** start_root, void** end
 		return;
 	case ROOT_DESC_COMPLEX: {
 		gsize *bitmap_data = sgen_get_complex_descriptor_bitmap (desc);
-		int bwords = (*bitmap_data) - 1;
+		gsize bwords = (*bitmap_data) - 1;
 		void **start_run = start_root;
 		bitmap_data++;
 		while (bwords-- > 0) {
@@ -2034,10 +1718,10 @@ finish_gray_stack (int generation, GrayQueue *queue)
 void
 sgen_check_section_scan_starts (GCMemSection *section)
 {
-	int i;
+	size_t i;
 	for (i = 0; i < section->num_scan_start; ++i) {
 		if (section->scan_starts [i]) {
-			guint size = safe_object_get_size ((MonoObject*) section->scan_starts [i]);
+			mword size = safe_object_get_size ((MonoObject*) section->scan_starts [i]);
 			g_assert (size >= sizeof (MonoObject) && size <= MAX_SMALL_OBJ_SIZE);
 		}
 	}
@@ -2139,7 +1823,7 @@ dump_object (MonoObject *obj, gboolean dump_location)
 	g_assert (j < sizeof (class_name));
 	class_name [j] = 0;
 
-	fprintf (heap_dump_file, "<object class=\"%s.%s\" size=\"%d\"",
+	fprintf (heap_dump_file, "<object class=\"%s.%s\" size=\"%zd\"",
 			class->name_space, class_name,
 			safe_object_get_size (obj));
 	if (dump_location) {
@@ -2212,28 +1896,28 @@ init_stats (void)
 	if (inited)
 		return;
 
-	mono_counters_register ("Minor fragment clear", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_pre_collection_fragment_clear);
-	mono_counters_register ("Minor pinning", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_pinning);
-	mono_counters_register ("Minor scan remembered set", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_scan_remsets);
-	mono_counters_register ("Minor scan pinned", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_scan_pinned);
-	mono_counters_register ("Minor scan registered roots", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_scan_registered_roots);
-	mono_counters_register ("Minor scan thread data", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_scan_thread_data);
-	mono_counters_register ("Minor finish gray stack", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_finish_gray_stack);
-	mono_counters_register ("Minor fragment creation", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_fragment_creation);
+	mono_counters_register ("Minor fragment clear", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_pre_collection_fragment_clear);
+	mono_counters_register ("Minor pinning", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_pinning);
+	mono_counters_register ("Minor scan remembered set", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_scan_remsets);
+	mono_counters_register ("Minor scan pinned", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_scan_pinned);
+	mono_counters_register ("Minor scan registered roots", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_scan_registered_roots);
+	mono_counters_register ("Minor scan thread data", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_scan_thread_data);
+	mono_counters_register ("Minor finish gray stack", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_finish_gray_stack);
+	mono_counters_register ("Minor fragment creation", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_minor_fragment_creation);
 
-	mono_counters_register ("Major fragment clear", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_pre_collection_fragment_clear);
-	mono_counters_register ("Major pinning", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_pinning);
-	mono_counters_register ("Major scan pinned", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_scan_pinned);
-	mono_counters_register ("Major scan registered roots", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_scan_registered_roots);
-	mono_counters_register ("Major scan thread data", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_scan_thread_data);
-	mono_counters_register ("Major scan alloc_pinned", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_scan_alloc_pinned);
-	mono_counters_register ("Major scan finalized", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_scan_finalized);
-	mono_counters_register ("Major scan big objects", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_scan_big_objects);
-	mono_counters_register ("Major finish gray stack", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_finish_gray_stack);
-	mono_counters_register ("Major free big objects", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_free_bigobjs);
-	mono_counters_register ("Major LOS sweep", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_los_sweep);
-	mono_counters_register ("Major sweep", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_sweep);
-	mono_counters_register ("Major fragment creation", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_major_fragment_creation);
+	mono_counters_register ("Major fragment clear", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_pre_collection_fragment_clear);
+	mono_counters_register ("Major pinning", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_pinning);
+	mono_counters_register ("Major scan pinned", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_scan_pinned);
+	mono_counters_register ("Major scan registered roots", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_scan_registered_roots);
+	mono_counters_register ("Major scan thread data", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_scan_thread_data);
+	mono_counters_register ("Major scan alloc_pinned", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_scan_alloc_pinned);
+	mono_counters_register ("Major scan finalized", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_scan_finalized);
+	mono_counters_register ("Major scan big objects", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_scan_big_objects);
+	mono_counters_register ("Major finish gray stack", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_finish_gray_stack);
+	mono_counters_register ("Major free big objects", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_free_bigobjs);
+	mono_counters_register ("Major LOS sweep", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_los_sweep);
+	mono_counters_register ("Major sweep", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_sweep);
+	mono_counters_register ("Major fragment creation", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_major_fragment_creation);
 
 	mono_counters_register ("Number of pinned objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_pinned_objects);
 
@@ -2401,12 +2085,12 @@ job_scan_los_mod_union_cardtable (WorkerData *worker_data, void *job_data_untype
 static void
 verify_scan_starts (char *start, char *end)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < nursery_section->num_scan_start; ++i) {
 		char *addr = nursery_section->scan_starts [i];
 		if (addr > start && addr < end)
-			SGEN_LOG (1, "NFC-BAD SCAN START [%d] %p for obj [%p %p]", i, addr, start, end);
+			SGEN_LOG (1, "NFC-BAD SCAN START [%ld] %p for obj [%p %p]", i, addr, start, end);
 	}
 }
 
@@ -2566,7 +2250,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 
 	if (xdomain_checks) {
 		sgen_clear_nursery_fragments ();
-		check_for_xdomain_refs ();
+		sgen_check_for_xdomain_refs ();
 	}
 
 	nursery_section->next_data = nursery_next;
@@ -2604,8 +2288,8 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 
 	TV_GETTIME (atv);
 	time_minor_pinning += TV_ELAPSED (btv, atv);
-	SGEN_LOG (2, "Finding pinned pointers: %d in %d usecs", sgen_get_pinned_count (), TV_ELAPSED (btv, atv));
-	SGEN_LOG (4, "Start scan with %d pinned objects", sgen_get_pinned_count ());
+	SGEN_LOG (2, "Finding pinned pointers: %zd in %d usecs", sgen_get_pinned_count (), TV_ELAPSED (btv, atv));
+	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 
 	MONO_GC_CHECKPOINT_3 (GENERATION_NURSERY);
 
@@ -2795,7 +2479,7 @@ scan_nursery_objects (ScanCopyContext ctx)
 }
 
 static void
-major_copy_or_mark_from_roots (int *old_next_pin_slot, gboolean finish_up_concurrent_mark, gboolean scan_mod_union)
+major_copy_or_mark_from_roots (size_t *old_next_pin_slot, gboolean finish_up_concurrent_mark, gboolean scan_mod_union)
 {
 	LOSObject *bigobj;
 	TV_DECLARE (atv);
@@ -2847,7 +2531,7 @@ major_copy_or_mark_from_roots (int *old_next_pin_slot, gboolean finish_up_concur
 
 	if (xdomain_checks) {
 		sgen_clear_nursery_fragments ();
-		check_for_xdomain_refs ();
+		sgen_check_for_xdomain_refs ();
 	}
 
 	if (!concurrent_collection_in_progress) {
@@ -2911,7 +2595,7 @@ major_copy_or_mark_from_roots (int *old_next_pin_slot, gboolean finish_up_concur
 	/* identify possible pointers to the insize of large objects */
 	SGEN_LOG (6, "Pinning from large objects");
 	for (bigobj = los_object_list; bigobj; bigobj = bigobj->next) {
-		int dummy;
+		size_t dummy;
 		if (sgen_find_optimized_pin_queue_area (bigobj->data, (char*)bigobj->data + sgen_los_object_size (bigobj), &dummy)) {
 			binary_protocol_pin (bigobj->data, (gpointer)LOAD_VTABLE (bigobj->data), safe_object_get_size (((MonoObject*)(bigobj->data))));
 
@@ -2978,8 +2662,8 @@ major_copy_or_mark_from_roots (int *old_next_pin_slot, gboolean finish_up_concur
 
 	TV_GETTIME (btv);
 	time_major_pinning += TV_ELAPSED (atv, btv);
-	SGEN_LOG (2, "Finding pinned pointers: %d in %d usecs", sgen_get_pinned_count (), TV_ELAPSED (atv, btv));
-	SGEN_LOG (4, "Start scan with %d pinned objects", sgen_get_pinned_count ());
+	SGEN_LOG (2, "Finding pinned pointers: %zd in %d usecs", sgen_get_pinned_count (), TV_ELAPSED (atv, btv));
+	SGEN_LOG (4, "Start scan with %zd pinned objects", sgen_get_pinned_count ());
 
 	major_collector.init_to_space ();
 
@@ -3068,7 +2752,7 @@ major_copy_or_mark_from_roots (int *old_next_pin_slot, gboolean finish_up_concur
 }
 
 static void
-major_start_collection (gboolean concurrent, int *old_next_pin_slot)
+major_start_collection (gboolean concurrent, size_t *old_next_pin_slot)
 {
 	MONO_GC_BEGIN (GENERATION_OLD);
 	binary_protocol_collection_begin (stat_major_gcs, GENERATION_OLD);
@@ -3134,7 +2818,7 @@ join_workers (void)
 }
 
 static void
-major_finish_collection (const char *reason, int old_next_pin_slot, gboolean scan_mod_union)
+major_finish_collection (const char *reason, size_t old_next_pin_slot, gboolean scan_mod_union)
 {
 	LOSObject *bigobj, *prevbo;
 	TV_DECLARE (atv);
@@ -3295,7 +2979,7 @@ major_do_collection (const char *reason)
 {
 	TV_DECLARE (all_atv);
 	TV_DECLARE (all_btv);
-	int old_next_pin_slot;
+	size_t old_next_pin_slot;
 
 	if (disable_major_collections)
 		return FALSE;
@@ -3333,6 +3017,7 @@ major_start_concurrent_collection (const char *reason)
 	g_assert (num_objects_marked == 0);
 
 	MONO_GC_CONCURRENT_START_BEGIN (GENERATION_OLD);
+	binary_protocol_concurrent_start ();
 
 	// FIXME: store reason and pass it when finishing
 	major_start_collection (TRUE, NULL);
@@ -3353,6 +3038,7 @@ major_update_or_finish_concurrent_collection (gboolean force_finish)
 	memset (&unpin_queue, 0, sizeof (unpin_queue));
 
 	MONO_GC_CONCURRENT_UPDATE_FINISH_BEGIN (GENERATION_OLD, major_collector.get_and_reset_num_major_objects_marked ());
+	binary_protocol_concurrent_update_finish ();
 
 	g_assert (sgen_gray_object_queue_is_empty (&gray_queue));
 
@@ -3540,7 +3226,7 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	/* this also sets the proper pointers for the next allocation */
 	if (generation_to_collect == GENERATION_NURSERY && !sgen_can_alloc_size (requested_size)) {
 		/* TypeBuilder and MonoMethod are killing mcs with fragmentation */
-		SGEN_LOG (1, "nursery collection didn't find enough room for %zd alloc (%d pinned)", requested_size, sgen_get_pinned_count ());
+		SGEN_LOG (1, "nursery collection didn't find enough room for %zd alloc (%zd pinned)", requested_size, sgen_get_pinned_count ());
 		sgen_dump_pin_queue ();
 		degraded_mode = 1;
 	}
@@ -3668,6 +3354,13 @@ has_critical_finalizer (MonoObject *obj)
 	return mono_class_has_parent_fast (class, mono_defaults.critical_finalizer_object);
 }
 
+static gboolean
+is_finalization_aware (MonoObject *obj)
+{
+	MonoVTable *vt = ((MonoVTable*)LOAD_VTABLE (obj));
+	return (vt->gc_bits & SGEN_GC_BIT_FINALIZER_AWARE) == SGEN_GC_BIT_FINALIZER_AWARE;
+}
+
 void
 sgen_queue_finalization_entry (MonoObject *obj)
 {
@@ -3681,6 +3374,9 @@ sgen_queue_finalization_entry (MonoObject *obj)
 		entry->next = fin_ready_list;
 		fin_ready_list = entry;
 	}
+
+	if (fin_callbacks.object_queued_for_finalization && is_finalization_aware (obj))
+		fin_callbacks.object_queued_for_finalization (obj);
 
 #ifdef ENABLE_DTRACE
 	if (G_UNLIKELY (MONO_GC_FINALIZE_ENQUEUE_ENABLED ())) {
@@ -4050,7 +3746,7 @@ scan_thread_data (void *start_nursery, void *end_nursery, gboolean precise, Gray
 			SGEN_LOG (3, "Skipping non-running thread %p, range: %p-%p, size: %td (state %d)", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start, mono_thread_info_run_state (info));
 			continue;
 		}
-		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %td, pinned=%d", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start, sgen_get_pinned_count ());
+		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %td, pinned=%zd", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start, sgen_get_pinned_count ());
 		if (gc_callbacks.thread_mark_func && !conservative_stack_mark) {
 			UserCopyOrMarkData data = { NULL, queue };
 			set_user_copy_or_mark_data (&data);
@@ -4155,7 +3851,7 @@ sgen_thread_detach (SgenThreadInfo *p)
 	 * the thread
 	 */
 	if (mono_domain_get ())
-		mono_thread_detach (mono_thread_current ());
+		mono_thread_detach_internal (mono_thread_internal_current ());
 }
 
 static void
@@ -4167,7 +3863,8 @@ sgen_thread_unregister (SgenThreadInfo *p)
 	binary_protocol_thread_unregister ((gpointer)tid);
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)tid);
 
-	mono_threads_add_joinable_thread ((gpointer)tid);
+	if (p->info.runtime_thread)
+		mono_threads_add_joinable_thread ((gpointer)tid);
 
 	if (gc_callbacks.thread_detach_func) {
 		gc_callbacks.thread_detach_func (p->runtime_data);
@@ -4239,6 +3936,7 @@ mono_gc_pthread_exit (void *retval)
 {
 	mono_thread_info_detach ();
 	pthread_exit (retval);
+	g_assert_not_reached ();
 }
 
 #endif /* USE_PTHREAD_INTERCEPT */
@@ -4295,8 +3993,8 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 		return;
 	}
 
-#ifdef SGEN_BINARY_PROTOCOL
-	{
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+	if (binary_protocol_is_heavy_enabled ()) {
 		int i;
 		for (i = 0; i < count; ++i) {
 			gpointer dest = (gpointer*)dest_ptr + i;
@@ -4346,7 +4044,7 @@ find_object_for_ptr (char *ptr)
 	 * be called from gdb, so we don't care.
 	 */
 	found_obj = NULL;
-	major_collector.iterate_objects (TRUE, TRUE, find_object_for_ptr_callback, ptr);
+	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, find_object_for_ptr_callback, ptr);
 	return found_obj;
 }
 
@@ -4441,7 +4139,7 @@ void mono_gc_wbarrier_value_copy_bitmap (gpointer _dest, gpointer _src, int size
 	}
 }
 
-#ifdef SGEN_BINARY_PROTOCOL
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj) do {					\
 		gpointer o = *(gpointer*)(ptr);				\
@@ -4474,8 +4172,8 @@ mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *
 		return;
 	}
 
-#ifdef SGEN_BINARY_PROTOCOL
-	{
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+	if (binary_protocol_is_heavy_enabled ()) {
 		size_t element_size = mono_class_value_size (klass, NULL);
 		int i;
 		for (i = 0; i < count; ++i) {
@@ -4508,8 +4206,9 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 		return;	
 	}
 
-#ifdef SGEN_BINARY_PROTOCOL
-	scan_object_for_binary_protocol_copy_wbarrier (obj, (char*)src, (mword) src->vtable->gc_descr);
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
+	if (binary_protocol_is_heavy_enabled ())
+		scan_object_for_binary_protocol_copy_wbarrier (obj, (char*)src, (mword) src->vtable->gc_descr);
 #endif
 
 	remset.wbarrier_object_copy (obj, src);
@@ -4594,7 +4293,7 @@ mono_gc_walk_heap (int flags, MonoGCReferences callback, void *data)
 	sgen_clear_nursery_fragments ();
 	sgen_scan_area_with_callback (nursery_section->data, nursery_section->end_data, walk_references, &hwi, FALSE);
 
-	major_collector.iterate_objects (TRUE, TRUE, walk_references, &hwi);
+	major_collector.iterate_objects (ITERATE_OBJECTS_SWEEP_ALL, walk_references, &hwi);
 	sgen_los_iterate_objects (walk_references, &hwi);
 
 	return 0;
@@ -4822,8 +4521,8 @@ mono_gc_base_init (void)
 	char **opts, **ptr;
 	char *major_collector_opt = NULL;
 	char *minor_collector_opt = NULL;
-	glong max_heap = 0;
-	glong soft_limit = 0;
+	size_t max_heap = 0;
+	size_t soft_limit = 0;
 	int num_workers;
 	int result;
 	int dummy;
@@ -4849,6 +4548,8 @@ mono_gc_base_init (void)
 			g_assert_not_reached ();
 		}
 	} while (result != 0);
+
+	SGEN_TV_GETTIME (sgen_init_timestamp);
 
 	LOCK_INIT (gc_mutex);
 
@@ -4892,6 +4593,8 @@ mono_gc_base_init (void)
 	sgen_init_internal_allocator ();
 	sgen_init_nursery_allocator ();
 	sgen_init_fin_weak_hash ();
+	sgen_init_stw ();
+	sgen_init_hash_table ();
 
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_SECTION, SGEN_SIZEOF_GC_MEM_SECTION);
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_FINALIZE_READY_ENTRY, sizeof (FinalizeReadyEntry));
@@ -4983,10 +4686,10 @@ mono_gc_base_init (void)
 			if (g_str_has_prefix (opt, "minor="))
 				continue;
 			if (g_str_has_prefix (opt, "max-heap-size=")) {
-				glong max_heap_candidate = 0;
+				size_t max_heap_candidate = 0;
 				opt = strchr (opt, '=') + 1;
 				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &max_heap_candidate)) {
-					max_heap = (max_heap_candidate + mono_pagesize () - 1) & ~(glong)(mono_pagesize () - 1);
+					max_heap = (max_heap_candidate + mono_pagesize () - 1) & ~(size_t)(mono_pagesize () - 1);
 					if (max_heap != max_heap_candidate)
 						sgen_env_var_error (MONO_GC_PARAMS_NAME, "Rounding up.", "`max-heap-size` size must be a multiple of %d.", mono_pagesize ());
 				} else {
@@ -5038,9 +4741,9 @@ mono_gc_base_init (void)
 				}
 				continue;
 			}
-			if (g_str_has_prefix (opt, "bridge=")) {
+			if (g_str_has_prefix (opt, "bridge-implementation=")) {
 				opt = strchr (opt, '=') + 1;
-				sgen_register_test_bridge_callbacks (g_strdup (opt));
+				sgen_set_bridge_implementation (opt);
 				continue;
 			}
 			if (g_str_has_prefix (opt, "toggleref-test")) {
@@ -5050,7 +4753,7 @@ mono_gc_base_init (void)
 
 #ifdef USER_CONFIG
 			if (g_str_has_prefix (opt, "nursery-size=")) {
-				long val;
+				size_t val;
 				opt = strchr (opt, '=') + 1;
 				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &val)) {
 #ifdef SGEN_ALIGN_NURSERY
@@ -5061,13 +4764,13 @@ mono_gc_base_init (void)
 
 					if (val < SGEN_MAX_NURSERY_WASTE) {
 						sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using default value.",
-								"`nursery-size` must be at least %d bytes.\n", SGEN_MAX_NURSERY_WASTE);
+								"`nursery-size` must be at least %d bytes.", SGEN_MAX_NURSERY_WASTE);
 						continue;
 					}
 
 					sgen_nursery_size = val;
 					sgen_nursery_bits = 0;
-					while (1 << (++ sgen_nursery_bits) != sgen_nursery_size)
+					while (ONE_P << (++ sgen_nursery_bits) != sgen_nursery_size)
 						;
 #else
 					sgen_nursery_size = val;
@@ -5270,12 +4973,10 @@ mono_gc_base_init (void)
 					fprintf (heap_dump_file, "<sgen-dump>\n");
 					do_pin_stats = TRUE;
 				}
-#ifdef SGEN_BINARY_PROTOCOL
 			} else if (g_str_has_prefix (opt, "binary-protocol=")) {
 				char *filename = strchr (opt, '=') + 1;
 				binary_protocol_init (filename);
-#endif
-			} else {
+			} else if (!sgen_bridge_handle_gc_debug (opt)) {
 				sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring.", "Unknown option `%s`.", opt);
 
 				if (usage_printed)
@@ -5302,9 +5003,8 @@ mono_gc_base_init (void)
 				fprintf (stderr, "  print-allowance\n");
 				fprintf (stderr, "  print-pinning\n");
 				fprintf (stderr, "  heap-dump=<filename>\n");
-#ifdef SGEN_BINARY_PROTOCOL
 				fprintf (stderr, "  binary-protocol=<filename>\n");
-#endif
+				sgen_bridge_print_gc_debug_usage ();
 				fprintf (stderr, "\n");
 
 				usage_printed = TRUE;
@@ -5372,7 +5072,7 @@ emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels)
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_icon (mb, DEFAULT_NURSERY_BITS);
 	mono_mb_emit_byte (mb, CEE_SHR_UN);
-	mono_mb_emit_icon (mb, (mword)sgen_get_nursery_start () >> DEFAULT_NURSERY_BITS);
+	mono_mb_emit_ptr (mb, (gpointer)((mword)sgen_get_nursery_start () >> DEFAULT_NURSERY_BITS));
 	nursery_check_return_labels [0] = mono_mb_emit_branch (mb, CEE_BEQ);
 
 	if (!major_collector.is_concurrent) {
@@ -5381,7 +5081,7 @@ emit_nursery_check (MonoMethodBuilder *mb, int *nursery_check_return_labels)
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		mono_mb_emit_icon (mb, DEFAULT_NURSERY_BITS);
 		mono_mb_emit_byte (mb, CEE_SHR_UN);
-		mono_mb_emit_icon (mb, (mword)sgen_get_nursery_start () >> DEFAULT_NURSERY_BITS);
+		mono_mb_emit_ptr (mb, (gpointer)((mword)sgen_get_nursery_start () >> DEFAULT_NURSERY_BITS));
 		nursery_check_return_labels [1] = mono_mb_emit_branch (mb, CEE_BNE_UN);
 	}
 #else
@@ -5634,15 +5334,24 @@ sgen_get_remset (void)
 guint
 mono_gc_get_vtable_bits (MonoClass *class)
 {
+	guint res = 0;
 	/* FIXME move this to the bridge code */
-	if (!sgen_need_bridge_processing ())
-		return 0;
-	switch (sgen_bridge_class_kind (class)) {
-	case GC_BRIDGE_TRANSPARENT_BRIDGE_CLASS:
-	case GC_BRIDGE_OPAQUE_BRIDGE_CLASS:
-		return SGEN_GC_BIT_BRIDGE_OBJECT;
+	if (sgen_need_bridge_processing ()) {
+		switch (sgen_bridge_class_kind (class)) {
+		case GC_BRIDGE_TRANSPARENT_BRIDGE_CLASS:
+		case GC_BRIDGE_OPAQUE_BRIDGE_CLASS:
+			res = SGEN_GC_BIT_BRIDGE_OBJECT;
+			break;
+		case GC_BRIDGE_OPAQUE_CLASS:
+			res = SGEN_GC_BIT_BRIDGE_OPAQUE_OBJECT;
+			break;
+		}
 	}
-	return 0;
+	if (fin_callbacks.is_class_finalization_aware) {
+		if (fin_callbacks.is_class_finalization_aware (class))
+			res |= SGEN_GC_BIT_FINALIZER_AWARE;
+	}
+	return res;
 }
 
 void
@@ -5668,6 +5377,23 @@ sgen_gc_event_moves (void)
 		mono_profiler_gc_moves (moved_objects, moved_objects_idx);
 		moved_objects_idx = 0;
 	}
+}
+
+gint64
+sgen_timestamp (void)
+{
+	SGEN_TV_DECLARE (timestamp);
+	SGEN_TV_GETTIME (timestamp);
+	return SGEN_TV_ELAPSED (sgen_init_timestamp, timestamp);
+}
+
+void
+mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
+{
+	if (callbacks->version != MONO_GC_FINALIZER_EXTENSION_VERSION)
+		g_error ("Invalid finalizer callback version. Expected %d but got %d\n", MONO_GC_FINALIZER_EXTENSION_VERSION, callbacks->version);
+
+	fin_callbacks = *callbacks;
 }
 
 #endif /* HAVE_SGEN_GC */

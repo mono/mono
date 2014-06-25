@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlCachePolicy" FullName="System.Web.UI.ControlCachePolicy">
   <TypeSignature Language="C#" Value="public sealed class ControlCachePolicy" />
   <AssemblyInfo>
@@ -9,9 +10,27 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.ControlCachePolicy" /> class is used by developers in programmatic user control scenarios to specify output caching settings for user controls (.ascx files). ASP.NET embeds user controls within a <see cref="T:System.Web.UI.BasePartialCachingControl" /> instance. The <see cref="T:System.Web.UI.BasePartialCachingControl" /> class represents a user control that has output caching enabled. When you access the <see cref="P:System.Web.UI.BasePartialCachingControl.CachePolicy" /> property of a <see cref="T:System.Web.UI.PartialCachingControl" /> control, you will always receive a valid <see cref="T:System.Web.UI.ControlCachePolicy" /> object. However, if you access the <see cref="P:System.Web.UI.UserControl.CachePolicy" /> property of a <see cref="T:System.Web.UI.UserControl" /> control, you receive a valid <see cref="T:System.Web.UI.ControlCachePolicy" /> object only if the user control is already wrapped by a <see cref="T:System.Web.UI.BasePartialCachingControl" /> control. If it is not wrapped, the <see cref="T:System.Web.UI.ControlCachePolicy" /> object returned by the property will throw exceptions when you attempt to manipulate it because it does not have an associated <see cref="T:System.Web.UI.BasePartialCachingControl" />. To determine whether a <see cref="T:System.Web.UI.UserControl" /> instance supports caching without generating exceptions, inspect the <see cref="P:System.Web.UI.ControlCachePolicy.SupportsCaching" /> property.</para>
+      <para>Using the <see cref="T:System.Web.UI.ControlCachePolicy" /> class is one of several ways you can enable output caching. The following list describes methods you can use to enable output caching:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive to enable output caching in declarative scenarios.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="T:System.Web.UI.PartialCachingAttribute" /> attribute to enable caching for a user control in a code-behind file.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="T:System.Web.UI.ControlCachePolicy" /> class to specify cache settings in programmatic scenarios in which you are working with <see cref="T:System.Web.UI.BasePartialCachingControl" /> instances that have been cache-enabled using one of the previous methods and dynamically loaded using the <see cref="Overload:System.Web.UI.TemplateControl.LoadControl" /> method. A <see cref="T:System.Web.UI.ControlCachePolicy" /> instance can be successfully manipulated only between the Init and PreRender stages of the control life cycle. If you modify a <see cref="T:System.Web.UI.ControlCachePolicy" /> object after the PreRender phase, ASP.NET throws an exception, because any changes made after the control is rendered cannot actually affect cache settings (a control is cached during the Render stage). Finally, a user control instance (and therefore its <see cref="T:System.Web.UI.ControlCachePolicy" /> object) is only available for programmatic manipulation when it is actually rendered. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides programmatic access to an ASP.NET user control's output cache settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Cached">
@@ -21,10 +40,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether fragment caching is enabled for the user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +59,16 @@
         <ReturnType>System.Web.Caching.CacheDependency</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.ControlCachePolicy.Dependency" /> property delegates to the <see cref="P:System.Web.UI.BasePartialCachingControl.Dependency" /> property of the <see cref="T:System.Web.UI.BasePartialCachingControl" /> control that wraps the user control. When the <see cref="T:System.Web.Caching.CacheDependency" /> instance is invalidated, the user control is removed from the cache.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class associated with the cached user control output.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +81,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If an absolute expiration policy is set using the <see cref="M:System.Web.UI.ControlCachePolicy.SetSlidingExpiration(System.Boolean)" /> method, the <see cref="P:System.Web.UI.ControlCachePolicy.Duration" /> property returns the amount of time remaining until cache entry expiration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time that cached items are to remain in the output cache.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +106,17 @@
         <Parameter Name="expirationTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="expirationTime">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.ControlCachePolicy.SetExpires(System.DateTime)" /> and <see cref="M:System.Web.UI.ControlCachePolicy.SetSlidingExpiration(System.Boolean)" /> methods (passing true) to instruct the <see cref="T:System.Web.UI.BasePartialCachingControl" /> control that wraps the user control to use a sliding expiration caching policy instead of an absolute expiration policy. Use the <see cref="M:System.Web.UI.ControlCachePolicy.SetExpires(System.DateTime)" /> method and the <see cref="M:System.Web.UI.ControlCachePolicy.SetSlidingExpiration(System.Boolean)" /> method (passing false) to specify an absolute expiration policy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.UI.BasePartialCachingControl" /> control that wraps the user control to expire the cache entry at the specified date and time.</para>
+        </summary>
+        <param name="expirationTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> after which the cached entry expires.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +132,17 @@
         <Parameter Name="useSlidingExpiration" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="useSlidingExpiration">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.ControlCachePolicy.SetExpires(System.DateTime)" /> and <see cref="M:System.Web.UI.ControlCachePolicy.SetSlidingExpiration(System.Boolean)" /> methods (passing true) to instruct the <see cref="T:System.Web.UI.BasePartialCachingControl" /> control that wraps the user control to use a sliding expiration caching policy instead of an absolute expiration policy. Use the <see cref="M:System.Web.UI.ControlCachePolicy.SetExpires(System.DateTime)" /> method and the <see cref="M:System.Web.UI.ControlCachePolicy.SetSlidingExpiration(System.Boolean)" /> method (passing false) to specify an absolute expiration policy.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the <see cref="T:System.Web.UI.BasePartialCachingControl" /> control that wraps the user control to set the user control's cache entry to use sliding or absolute expiration. </para>
+        </summary>
+        <param name="useSlidingExpiration">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use sliding cache expiration instead of absolute expiration; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -110,10 +158,17 @@
         <Parameter Name="varyByCustom" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="varyByCustom">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you pass "browser" as the <paramref name="varyByCustom" /> parameter, the user control will be varied by browser type and major version number. If another custom string is entered, you must override the <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> method in your application's Global.asax file. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a list of custom strings that the output cache will use to vary the user control.</para>
+        </summary>
+        <param name="varyByCustom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of custom strings.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,10 +181,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A user control supports caching if it is associated with a <see cref="T:System.Web.UI.BasePartialCachingControl" /> instance, which signals that either an <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive was parsed by the ASP.NET parser or the user control was decorated with a <see cref="T:System.Web.UI.PartialCachingAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user control supports caching.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +203,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a list of control identifiers to vary the cached output by.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -158,10 +222,16 @@
         <ReturnType>System.Web.HttpCacheVaryByParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, these strings correspond to a query string value sent with the GET method or to a parameter sent using the POST method. When the <see cref="P:System.Web.UI.ControlCachePolicy.VaryByParams" /> property is set to multiple parameters, the output cache contains a different version of the requested document for each specified parameter. Possible values include "none", "*", and any valid query string or POST parameter name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a list of GET or POST parameter names to vary the cached output by. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

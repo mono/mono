@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlUrlResolver" FullName="System.Xml.XmlUrlResolver" FullNameSP="System_Xml_XmlUrlResolver" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public XmlUrlResolver extends System.Xml.XmlResolver" />
   <TypeSignature Language="C#" Value="public class XmlUrlResolver : System.Xml.XmlResolver" />
@@ -16,17 +17,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Resolves external XML resources
-      named by a URI.</para>
-    </summary>
     <remarks>
-      <para>This class is used to resolve external XML resources such as entities, document type definitions 
-      (DTDs), or schemas. It is also used to process include and import elements found in
-      Extensible StyleSheet Language (XSL) stylesheets or XML Schema Definition
-      language (XSD) schemas.</para>
-      <para>This class implements the <see cref="T:System.Xml.XmlResolver" /> class.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XmlUrlResolver is used to resolve external XML resources such as entities, document type definitions (DTDs) or schemas. It is also used to process include and import elements found in Extensible StyleSheet Language (XSL) style sheets or XML Schema definition language (XSD) schemas.</para>
+      <para>XmlUrlResolver is the default resolver for all classes in the <see cref="N:System.Xml" /> namespace. It supports the file:// and http:// protocols and requests from the <see cref="T:System.Net.WebRequest" /> class.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Xml.XmlUrlResolver" /> objects can contain sensitive information such as user credentials. You should be careful when you cache <see cref="T:System.Xml.XmlUrlResolver" /> objects and should not pass <see cref="T:System.Xml.XmlUrlResolver" /> objects to an untrusted component.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Resolves external XML resources named by a Uniform Resource Identifier (URI).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,12 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>
-          <para> Constructs and initializes a new instance of 
-      the <see cref="T:System.Xml.XmlUrlResolver" /> class.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlUrlResolver" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -62,9 +64,12 @@
         <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cache policy for the underlying <see cref="T:System.Net.WebRequest" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Credentials">
@@ -82,25 +87,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Sets the credentials used to authenticate Web
-      requests.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.Net.ICredentials" /> instance containing the credentials.</para>
         </value>
-        <remarks>
-          <para>This property is write-only.</para>
-          <para> If the virtual directory is configured to allow
-      anonymous access, credentials are not needed and this property does not need to
-      be set. If credentials are needed but not supplied, the <see cref="T:System.Xml.XmlUrlResolver" /> class
-      uses default credentials (<see cref="P:System.Net.CredentialCache.DefaultCredentials" qualify="true" />).
-      
-   </para>
-          <block subset="none" type="note">
-            <para>This property overrides <see cref="P:System.Xml.XmlResolver.Credentials" qualify="true" />.</para>
-          </block>
-        </remarks>
         <example>
           <para>The following example sets credentials for the virtual directory "http://localhost/bookstore/inventory.xml". There
       is no
@@ -164,6 +153,22 @@ public class App {
 }
    </code>
         </example>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the virtual directory does not require authentication, this property does not need to be set. Otherwise, the credentials of the user must be supplied.</para>
+          <para>Different credentials can be associated with different URIs and added to a credential cache. The credentials can then be used to check authentication for different URIs, regardless of the original source of the XML.</para>
+          <para>The following C# code shows how to set the <see cref="P:System.Xml.XmlUrlResolver.Credentials" /> property to a credential cache.</para>
+          <code>NetworkCredential myCred = new NetworkCredential(UserName,SecurelyStoredPassword,Domain); 
+CredentialCache myCache = new CredentialCache(); 
+myCache.Add(new Uri("http://www.contoso.com/"), "Basic", myCred); 
+myCache.Add(new Uri("http://app.contoso.com/"), "Basic", myCred);
+XmlUrlResolver resolver = new XmlUrlResolver();
+resolver.Credentials = myCache;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets credentials used to authenticate Web requests.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -186,30 +191,34 @@ public class App {
         <Parameter Name="ofObjectToReturn" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="absoluteUri">The <see cref="T:System.Uri" qualify="true" /> returned from <see cref="M:System.Xml.XmlUrlResolver.ResolveUri(System.Uri,System.String)" />.</param>
-        <param name="role">This parameter is not used.</param>
-        <param name="ofObjectToReturn">
-          <see langword="null" /> or <see langword="typeof" />(<see cref="T:System.IO.Stream" qualify="true" />).</param>
-        <summary>
-          <para>Maps a URI to an object
-      containing the actual resource that the URI represents.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" qualify="true" /> containing the
-   resource, or <see langword="null" />
-   if <paramref name="ofObjectToReturn" /> is <see langword="null" />.</para>
-        </returns>
-        <remarks>
-          <block subset="none" type="note">
-            <para>This method overrides <see cref="M:System.Xml.XmlResolver.GetEntity(System.Uri,System.String,System.Type)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="absoluteUri" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="ofObjectToReturn" /> is not <see langword="null" /> or <see langword="typeof" />(<see cref="T:System.IO.Stream" qualify="true" />).</exception>
         <exception cref="T:System.NullReferenceException">
           <paramref name="absoluteUri" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used when the caller wants to map a given URI into an object containing the actual resource that the URI represents.</para>
+          <para>For the asynchronous version of this method, see <see cref="M:System.Xml.XmlUrlResolver.GetEntityAsync(System.Uri,System.String,System.Type)" />.</para>
+          <block subset="none" type="note">
+            <para>Your application can mitigate memory Denial of Service threats to the <see cref="M:System.Xml.XmlUrlResolver.GetEntity(System.Uri,System.String,System.Type)" /> method by implementing IStream to limit the number of bytes read. This helps to guard against situations where malicious code attempts to pass an infinite stream of bytes to the <see cref="M:System.Xml.XmlUrlResolver.GetEntity(System.Uri,System.String,System.Type)" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps a URI to an object containing the actual resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object or null if a type other than stream is specified.</para>
+        </returns>
+        <param name="absoluteUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI returned from <see cref="M:System.Xml.XmlResolver.ResolveUri(System.Uri,System.String)" />.</param>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current implementation does not use this parameter when resolving URIs. This is provided for future extensibility purposes. For example, this can be mapped to the xlink: role and used as an implementation specific argument in other scenarios.</param>
+        <param name="ofObjectToReturn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to return. The current implementation only returns <see cref="T:System.IO.Stream" /> objects.</param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -237,12 +246,21 @@ public class App {
         <Parameter Name="ofObjectToReturn" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="absoluteUri">To be added.</param>
-        <param name="role">To be added.</param>
-        <param name="ofObjectToReturn">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously maps a URI to an object containing the actual resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object or null if a type other than stream is specified.</para>
+        </returns>
+        <param name="absoluteUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI returned from <see cref="M:System.Xml.XmlResolver.ResolveUri(System.Uri,System.String)" />.</param>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current implementation does not use this parameter when resolving URIs. This is provided for future extensibility purposes. For example, this can be mapped to the xlink: role and used as an implementation specific argument in other scenarios.</param>
+        <param name="ofObjectToReturn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of object to return. The current implementation only returns <see cref="T:System.IO.Stream" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName="Proxy">
@@ -256,9 +274,12 @@ public class App {
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the network proxy for the underlying <see cref="T:System.Net.WebRequest" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResolveUri">
@@ -277,27 +298,25 @@ public class App {
         <Parameter Name="relativeUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="baseUri">The <see cref="T:System.Uri" qualify="true" /> specifying the base URI used to resolve <paramref name="relativeURI" />.</param>
-        <param name="relativeUri">
-          <para>A <see cref="T:System.String" qualify="true" /> specifying the URI to resolve. The URI can be absolute or relative.</para>
-        </param>
-        <summary>
-          <para>Resolves the absolute URI from the base and relative URIs.</para>
-        </summary>
-        <returns>
-          <para> A <see cref="T:System.Uri" qualify="true" /> containing the absolute URI, or <see langword="null" /> if <paramref name="relativeUri" /> can not be resolved.</para>
-        </returns>
-        <remarks>
-          <para>If <paramref name="relativeURI" /> is <see langword="null" />, it is set to <see cref="F:System.String.Empty" />.</para>
-          <block subset="none" type="note">
-            <para>The absolute URI can be used as the base URI for any subsequent requests for
-      entities that are relative to this URI.</para>
-            <para>This method overrides <see cref="M:System.Xml.XmlResolver.ResolveUri(System.Uri,System.String)" qualify="true" />.</para>
-          </block>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentException">
           <paramref name="relativeUri" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute URI can be used as the base URI for any subsequent requests for entities that are relative to this URI.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves the absolute URI from the base and relative URIs.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Uri" /> representing the absolute URI, or null if the relative URI cannot be resolved.</para>
+        </returns>
+        <param name="baseUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI used to resolve the relative URI.</param>
+        <param name="relativeUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI to resolve. The URI can be absolute or relative. If absolute, this value effectively replaces the <paramref name="baseUri" /> value. If relative, it combines with the <paramref name="baseUri" /> to make an absolute URI.</param>
       </Docs>
     </Member>
   </Members>

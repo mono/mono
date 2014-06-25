@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceContractGenerator" FullName="System.ServiceModel.Description.ServiceContractGenerator">
   <TypeSignature Language="C#" Value="public class ServiceContractGenerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceContractGenerator extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> to create tools or to modify the default contract generation process using an <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> type generates service contract code and binding configurations from <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> description objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> class with a new <see cref="T:System.CodeDom.CodeCompileUnit" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,8 +49,11 @@
       </Parameters>
       <Docs>
         <param name="ccu">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> class with the specified <see cref="T:System.CodeDom.CodeCompileUnit" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,8 +68,11 @@
       </Parameters>
       <Docs>
         <param name="config">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> class with the specified <see cref="T:System.Configuration.Configuration" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -73,8 +89,11 @@
       <Docs>
         <param name="ccu">To be added.</param>
         <param name="config">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" /> class with the specified <see cref="T:System.CodeDom.CodeCompileUnit" /> instance and the specified <see cref="T:System.Configuration.Configuration" /> instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Configuration">
@@ -88,9 +107,12 @@
         <ReturnType>System.Configuration.Configuration</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Configuration.Configuration" /> instance that contains the generated binding configurations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Errors">
@@ -104,9 +126,15 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.MetadataConversionError&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>These error and warning messages can be used by tools to display debugging information to users.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.ServiceModel.Description.MetadataConversionError" /> objects generated when generating service contract code and endpoint configurations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateBinding">
@@ -146,10 +174,20 @@
         <Parameter Name="contractDescription" Type="System.ServiceModel.Description.ContractDescription" />
       </Parameters>
       <Docs>
-        <param name="contractDescription">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Other code artifacts may also get generated as specified by using the <see cref="P:System.ServiceModel.Description.ServiceContractGenerator.Options" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a service contract type from the specified <see cref="T:System.ServiceModel.Description.ContractDescription" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeTypeReference" /> instance for the generated contract type.</para>
+        </returns>
+        <param name="contractDescription">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ContractDescription" /> to use to generate the contract type.</param>
       </Docs>
     </Member>
     <Member MemberName="GenerateServiceEndpoint">
@@ -185,9 +223,17 @@
         <ReturnType>System.Collections.Generic.Dictionary&lt;System.String,System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to associated a contract description namespace with a managed namespace that is used when generating code.  </para>
+          <para>You can use the wildcard character "*" as the dictionary key to specify a managed namespace to use for any description namespaces that are not explicitly mapped to a managed namespace.</para>
+          <para>The default managed namespace is used when no namespace mapping is specified for a particular description namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a mapping from contract description namespaces to managed namespaces that is used when generating code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Options">
@@ -201,9 +247,15 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify various options for code generation. This enumeration has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets options for generating service contract code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReferencedTypes">
@@ -217,9 +269,15 @@
         <ReturnType>System.Collections.Generic.Dictionary&lt;System.ServiceModel.Description.ContractDescription,System.Type&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Code is not generated for referenced contract types. Instead the referenced type is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a mapping from contract descriptions to referenced contract types.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TargetCompileUnit">
@@ -233,9 +291,12 @@
         <ReturnType>System.CodeDom.CodeCompileUnit</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the target <see cref="T:System.CodeDom.CodeCompileUnit" /> object for generating service contract code.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

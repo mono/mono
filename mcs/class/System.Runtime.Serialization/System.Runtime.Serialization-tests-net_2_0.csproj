@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{27F5B712-0010-4A46-8C55-4CACA30F4E78}</ProjectGuid>
+    <ProjectGuid>{2F43A5EC-AB47-4075-831F-D0681E7CA07B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,168,169,219,414</NoWarn>
     <OutputPath>bin\Debug\System.Runtime.Serialization-tests-net_2_0</OutputPath>
@@ -53,6 +53,7 @@
     <Compile Include="Test\System.Runtime.Serialization\Bug695203Test.cs" />
     <Compile Include="Test\System.Runtime.Serialization\CollectionSerialization.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractResolverTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_DuplicateQName.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_InvalidCharacters.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
@@ -86,38 +87,41 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_2_0.csproj">
-      <Project>{FBE202BB-4389-49E8-A81F-155E92BF1B0B}</Project>
+      <Project>{01BE23DB-E426-45E7-B56C-CA1175232AA7}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
+      <Project>{FBEC45AD-4493-41EA-9BCC-F3F29A08EB9E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
+      <Project>{69458D09-40A2-48AD-8C0F-0E437CF5FE6D}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
+      <Project>{2695A2F2-2271-423D-8E0D-553DAB84E917}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
     <Reference Include="System.ServiceModel.dll">
@@ -126,7 +130,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_2_0.csproj">
-      <Project>{71444193-6B64-4C1B-A87D-580CCB548952}</Project>
+      <Project>{DA9F2EEC-4127-4B98-852E-78A0ED7A4A60}</Project>
       <Name>System.Web.Services\System.Web.Services-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -145,3 +149,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AesCryptoServiceProvider" FullName="System.Security.Cryptography.AesCryptoServiceProvider">
   <TypeSignature Language="C#" Value="public sealed class AesCryptoServiceProvider : System.Security.Cryptography.Aes" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AesCryptoServiceProvider extends System.Security.Cryptography.Aes" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Performs symmetric encryption and decryption using the Cryptographic Application Programming Interfaces (CAPI) implementation of the Advanced Encryption Standard (AES) algorithm. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.AesCryptoServiceProvider" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateDecryptor">
@@ -39,9 +46,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric AES decryptor object using the current key and initialization vector (IV).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES decryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDecryptor">
@@ -61,9 +74,15 @@
       <Docs>
         <param name="rgbKey">To be added.</param>
         <param name="rgbIV">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric AES decryptor object using the specified key and initialization vector (IV).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES decryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateEncryptor">
@@ -78,9 +97,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric AES encryptor object using the current key and initialization vector (IV).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES encryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateEncryptor">
@@ -100,9 +125,18 @@
       <Docs>
         <param name="rgbKey">To be added.</param>
         <param name="rgbIV">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the code examples in the <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.LegalKeySizes" /> and <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.LegalBlockSizes" /> properties to determine the size of the <paramref name="key" /> and <paramref name="iv" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a symmetric encryptor object using the specified key and initialization vector (IV).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES encryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -152,8 +186,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random initialization vector (IV) to use for the algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateKey">
@@ -168,8 +205,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a random key to use for the algorithm. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IV">
@@ -199,9 +239,12 @@
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the symmetric key that is used for encryption and decryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeySize">
@@ -215,9 +258,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum size of the key is 128 bits, and the maximum size is 256 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size, in bits, of the secret key. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mode">

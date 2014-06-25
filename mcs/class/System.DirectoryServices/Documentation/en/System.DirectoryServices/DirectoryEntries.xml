@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryEntries" FullName="System.DirectoryServices.DirectoryEntries">
   <TypeSignature Language="C#" Value="public class DirectoryEntries : System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -81,9 +82,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> Returns an enumerator that iterates through the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -97,11 +104,22 @@
         <Parameter Name="schemaClassName" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="name">To be added.</param>
-        <param name="schemaClassName">To be added.</param>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.DirectoryServices.DirectoryEntry.CommitChanges" /> method on the new entry to make the creation permanent. When you call this method, you can then set mandatory property values on the new entry. The providers each have different requirements for properties that need to be set before a call to the <see cref="M:System.DirectoryServices.DirectoryEntry.CommitChanges" /> method is made. If those requirements are not met, the provider might throw an exception. Check with your provider to determine which properties must be set before committing changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new entry in the container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that represents the new entry.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" /> The name of the new entry.</param>
+        <param name="schemaClassName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the schema that is used for the new entry.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -114,9 +132,16 @@
         <Parameter Name="entry" Type="System.DirectoryServices.DirectoryEntry" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="entry">To be added.</param>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the entry to be removed is a container, the container must be empty. To delete a container and all its children, use the <see cref="M:System.DirectoryServices.DirectoryEntry.DeleteTree" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes a member of this collection.</para>
+        </summary>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.DirectoryServices.DirectoryEntry" /> object to delete.</param>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -129,10 +154,23 @@
         <Parameter Name="filter" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="filter">To be added.</param>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If child objects of different types have the same name, the first matching child object is returned.</para>
+          <block subset="none" type="note">
+            <para>The Internet Information Services (IIS) provider does not support this method. Use the overloaded <see cref="M:System.DirectoryServices.DirectoryEntries.Find(System.String,System.String)" /> method and specify an empty string ("") for the <paramref name="schemaClassName" /> parameter.</para>
+            <para>If no matching result is found, a <see cref="T:System.DirectoryServices.DirectoryServicesCOMException" /> with error code 0x2030 is thrown.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the member of this collection with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> that represents the child object that was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -146,11 +184,20 @@
         <Parameter Name="otype" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="filter">To be added.</param>
         <param name="otype">To be added.</param>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no matching result is found, a <see cref="T:System.DirectoryServices.DirectoryServicesCOMException" /> with error code 0x2030 is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the member of this collection with the specified name and of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that represents the child object that was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SchemaFilter">
@@ -160,14 +207,23 @@
         <ReturnType>System.DirectoryServices.SchemaNameCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.DirectoryServices.DirectoryEntries.SchemaFilter" /> property is empty, child objects of all types are visible in the collection; otherwise, only those of the specified types are visible.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the schemas that specify which child objects are contained in the collection.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of <see cref="T:System.DirectoryServices.DirectoryEntry" /> objects.</para>
+    </summary>
   </Docs>
 </Type>

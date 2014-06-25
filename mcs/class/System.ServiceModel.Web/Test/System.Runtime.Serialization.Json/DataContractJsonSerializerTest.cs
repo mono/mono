@@ -4,6 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //	Ankit Jain <JAnkit@novell.com>
+//	Antoine Cailliau <antoinecailliau@gmail.com>
 //
 // Copyright (C) 2005-2007 Novell, Inc.  http://www.novell.com
 
@@ -1452,7 +1453,24 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.AreEqual (1, dict.Count, "#2");
 			Assert.AreEqual ("value", dict ["key"], "#3");
 		}
-		
+
+		[Test]
+		public void ExplicitCustomDictionarySerialization ()
+		{
+			var dict = new MyExplicitDictionary<string,string> ();
+			dict.Add ("key", "value");
+			var serializer = new DataContractJsonSerializer (dict.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, dict);
+			stream.Position = 0;
+
+			Assert.AreEqual ("[{\"Key\":\"key\",\"Value\":\"value\"}]", new StreamReader (stream).ReadToEnd (), "#1");
+			stream.Position = 0;
+			dict = (MyExplicitDictionary<string,string>) serializer.ReadObject (stream);
+			Assert.AreEqual (1, dict.Count, "#2");
+			Assert.AreEqual ("value", dict ["key"], "#3");
+		}
+
 		[Test]
 		public void Bug13485 ()
 		{
@@ -1486,6 +1504,322 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 			Assert.AreEqual ("foo/bar/members", entity.MembersRelativeLink.ToString ());
 		}
+		
+		#region Test methods for collection serialization
+		
+		[Test]
+		public void TestArrayListSerialization ()
+		{
+			var collection = new ArrayListContainer ();
+			var expectedOutput = "{\"Items\":[\"banana\",\"apple\"]}";
+			var expectedItemsCount = 4;
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+
+			stream.Position = 0;
+			collection = (ArrayListContainer) serializer.ReadObject (stream);
+			
+			Assert.AreEqual (expectedItemsCount, collection.Items.Count, "#2");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestBitArraySerialization ()
+		{
+			var collection = new BitArrayContainer ();
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+		
+		[Test]
+		public void TestHashtableSerialization ()
+		{
+			var collection = new HashtableContainer ();
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestHashtableDeserialization ()
+		{
+			var collection = new HashtableContainer ();
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			serializer.ReadObject (stream);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestQueueSerialization ()
+		{
+			var collection = new QueueContainer ();
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+		
+		[Test]
+		public void TestSortedListSerialization ()
+		{
+			var collection = new SortedListContainer ();
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestSortedListDeserialization ()
+		{
+			var collection = new SortedListContainer ();
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			serializer.ReadObject (stream);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestStackSerialization ()
+		{
+			var collection = new StackContainer ();
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+		
+		[Test]
+		public void TestEnumerableWithAddSerialization ()
+		{
+			var collection = new EnumerableWithAddContainer ();
+			var expectedOutput = "{\"Items\":[\"banana\",\"apple\"]}";
+			var expectedItemsCount = 4;
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+
+			stream.Position = 0;
+			collection = (EnumerableWithAddContainer) serializer.ReadObject (stream);
+			
+			Assert.AreEqual (expectedItemsCount, collection.Items.Count, "#2");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestEnumerableWithSpecialAddSerialization ()
+		{
+			var collection = new EnumerableWithSpecialAddContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+	
+		[Test]
+		public void TestHashSetSerialization ()
+		{
+			var collection = new GenericHashSetContainer ();
+			var expectedOutput = "{\"Items\":[\"banana\",\"apple\"]}";
+			var expectedItemsCount = 2;
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+
+			stream.Position = 0;
+			collection = (GenericHashSetContainer) serializer.ReadObject (stream);
+			
+			Assert.AreEqual (expectedItemsCount, collection.Items.Count, "#2");
+		}
+		
+		[Test]
+		public void TestLinkedListSerialization ()
+		{
+			var collection = new GenericLinkedListContainer ();
+			var expectedOutput = "{\"Items\":[\"banana\",\"apple\"]}";
+			var expectedItemsCount = 4;
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+
+			stream.Position = 0;
+			collection = (GenericLinkedListContainer) serializer.ReadObject (stream);
+			
+			Assert.AreEqual (expectedItemsCount, collection.Items.Count, "#2");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestGenericQueueSerialization ()
+		{
+			var collection = new GenericQueueContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestGenericStackSerialization ()
+		{
+			var collection = new GenericStackContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+		
+		[Test]
+		public void TestGenericDictionarySerialization ()
+		{
+			var collection = new GenericDictionaryContainer ();			
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestGenericDictionaryDeserialization ()
+		{
+			var collection = new GenericDictionaryContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			serializer.ReadObject (stream);
+		}
+		
+		[Test]
+		public void TestGenericSortedListSerialization ()
+		{
+			var collection = new GenericSortedListContainer ();			
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestGenericSortedListDeserialization ()
+		{
+			var collection = new GenericSortedListContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			serializer.ReadObject (stream);
+		}
+		
+		[Test]
+		public void TestGenericSortedDictionarySerialization ()
+		{
+			var collection = new GenericSortedDictionaryContainer ();			
+			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestGenericSortedDictionaryDeserialization ()
+		{
+			var collection = new GenericSortedDictionaryContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+			
+			stream.Position = 0;
+			serializer.ReadObject (stream);
+		}
+		
+		[Test]
+		public void TestGenericEnumerableWithAddSerialization ()
+		{
+			var collection = new GenericEnumerableWithAddContainer ();
+			var expectedOutput = "{\"Items\":[\"banana\",\"apple\"]}";
+			var expectedItemsCount = 4;
+			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+
+			stream.Position = 0;
+			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+
+			stream.Position = 0;
+			collection = (GenericEnumerableWithAddContainer) serializer.ReadObject (stream);
+			
+			Assert.AreEqual (expectedItemsCount, collection.Items.Count, "#2");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestGenericEnumerableWithSpecialAddSerialization ()
+		{
+			var collection = new GenericEnumerableWithSpecialAddContainer ();			
+			var serializer = new DataContractJsonSerializer (collection.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, collection);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void TestNonCollectionGetOnlyProperty ()
+		{
+			var o = new NonCollectionGetOnlyContainer ();			
+			var serializer = new DataContractJsonSerializer (o.GetType ());
+			var stream = new MemoryStream ();
+			serializer.WriteObject (stream, o);
+		}
+		
+		#endregion
 	}
 	
 	public class CharTest
@@ -1796,6 +2130,91 @@ public class MyDictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
 	}
 }
 
+public class MyExplicitDictionary<K, V> : IDictionary<K, V> {
+
+	Dictionary<K,V> dic = new Dictionary<K,V> ();
+
+	public void Add (K key, V value)
+	{
+		dic.Add (key,  value);
+	}
+
+	public bool ContainsKey (K key)
+	{
+		return dic.ContainsKey (key);
+	}
+
+	ICollection<K> IDictionary<K, V>.Keys {
+		get { return dic.Keys; }
+	}
+
+	public bool Remove (K key)
+	{
+		return dic.Remove (key);
+	}
+
+	public bool TryGetValue (K key, out V value)
+	{
+		return dic.TryGetValue (key, out value);
+	}
+
+	ICollection<V> IDictionary<K, V>.Values {
+		get { return dic.Values; }
+	}
+
+	public V this [K key] {
+		get { return dic [key]; }
+		set { dic [key] = value; }
+	}
+
+	IEnumerator IEnumerable.GetEnumerator ()
+	{
+		return dic.GetEnumerator ();
+	}
+
+	ICollection<KeyValuePair<K,V>> Coll {
+		get { return (ICollection<KeyValuePair<K,V>>) dic; }
+	}
+
+	public void Add (KeyValuePair<K, V> item)
+	{
+		Coll.Add (item);
+	}
+
+	public void Clear ()
+	{
+		dic.Clear ();
+	}
+
+	public bool Contains (KeyValuePair<K, V> item)
+	{
+		return Coll.Contains (item);
+	}
+
+	public void CopyTo (KeyValuePair<K, V> [] array, int arrayIndex)
+	{
+		Coll.CopyTo (array, arrayIndex);
+	}
+
+	public int Count {
+		get { return dic.Count; }
+	}
+
+	public bool IsReadOnly {
+		get { return Coll.IsReadOnly; }
+	}
+
+	public bool Remove (KeyValuePair<K, V> item)
+	{
+		return Coll.Remove (item);
+	}
+
+	public IEnumerator<KeyValuePair<K, V>> GetEnumerator ()
+	{
+		return Coll.GetEnumerator ();
+	}
+}
+
 [DataContract]
 public class Bug13485Type
 {
@@ -1808,4 +2227,351 @@ public class Bug13485Type
 	public string GetValue { get { return this.Value; } }
 }
 
+#region Test classes for Collection serialization
 
+[DataContract]
+	public abstract class CollectionContainer <V>
+	{
+		V items;
+
+		[DataMember]
+		public V Items
+		{
+			get {
+				if (items == null) items = Init ();
+				return items;
+			}
+		}
+		
+		public CollectionContainer ()
+		{
+			Init ();
+		}
+	
+		protected abstract V Init ();
+	}
+	
+	[DataContract]
+	public class ArrayListContainer : CollectionContainer<ArrayList> {
+		protected override ArrayList Init ()
+		{
+			return new ArrayList { "banana", "apple" };
+		}
+	}
+	
+	[DataContract]
+	public class BitArrayContainer : CollectionContainer<BitArray> {
+		protected override BitArray Init ()
+		{
+			return new BitArray (new [] { false, true });
+		}
+	}
+	
+	[DataContract]
+	public class HashtableContainer : CollectionContainer<Hashtable> {
+		protected override Hashtable Init ()
+		{
+			var ht = new Hashtable ();
+			ht.Add ("key1", "banana");
+			ht.Add ("key2", "apple");
+			return ht;
+		}
+	}
+	
+	[DataContract]
+	public class QueueContainer : CollectionContainer<Queue> {
+		protected override Queue Init ()
+		{
+			var q = new Queue ();
+			q.Enqueue ("banana");
+			q.Enqueue ("apple");
+			return q;
+		}
+	}
+	
+	[DataContract]
+	public class SortedListContainer : CollectionContainer<SortedList> {
+		protected override SortedList Init ()
+		{
+			var l = new SortedList ();
+			l.Add ("key1", "banana");
+			l.Add ("key2", "apple");
+			return l;
+		}
+	}
+	
+	[DataContract]
+	public class StackContainer : CollectionContainer<Stack> {
+		protected override Stack Init ()
+		{
+			var s = new Stack ();
+			s.Push ("banana");
+			s.Push ("apple");
+			return s;
+		}
+	}
+
+	public class EnumerableWithAdd : IEnumerable
+	{
+		private ArrayList items;
+
+		public EnumerableWithAdd()
+		{
+			items = new ArrayList();
+		}
+
+		public IEnumerator GetEnumerator()
+		{
+			return items.GetEnumerator();
+		}
+
+		public void Add(object value)
+		{
+			items.Add(value);
+		}
+
+		public int Count
+		{
+			get {
+				return items.Count;
+			}
+		}
+	}
+
+	public class EnumerableWithSpecialAdd : IEnumerable
+	{
+		private ArrayList items;
+
+		public EnumerableWithSpecialAdd()
+		{
+			items = new ArrayList();
+		}
+
+		public IEnumerator GetEnumerator()
+		{
+			return items.GetEnumerator();
+		}
+
+		public void Add(object value, int index)
+		{
+			items.Add(value);
+		}
+
+		public int Count
+		{
+			get
+			{
+				return items.Count;
+			}
+		}
+	}
+
+	[DataContract]
+	public class EnumerableWithAddContainer : CollectionContainer<EnumerableWithAdd>
+	{
+		protected override EnumerableWithAdd Init()
+		{
+			var s = new EnumerableWithAdd();
+			s.Add ("banana");
+			s.Add ("apple");
+			return s;
+		}
+	}
+
+	[DataContract]
+	public class EnumerableWithSpecialAddContainer : CollectionContainer<EnumerableWithSpecialAdd>
+	{
+		protected override EnumerableWithSpecialAdd Init()
+		{
+			var s = new EnumerableWithSpecialAdd();
+			s.Add("banana", 0);
+			s.Add("apple", 0);
+			return s;
+		}
+	}
+
+	[DataContract]
+	public class GenericDictionaryContainer : CollectionContainer<Dictionary<string, string>> {
+		protected override Dictionary<string, string> Init ()
+		{
+			var d = new Dictionary<string, string> ();
+			d.Add ("key1", "banana");
+			d.Add ("key2", "apple");
+			return d;
+		}
+	}
+
+	[DataContract]
+	public class GenericHashSetContainer : CollectionContainer<HashSet<string>> {
+		protected override HashSet<string> Init ()
+		{
+			return new HashSet<string> { "banana", "apple" };
+		}
+	}
+
+	[DataContract]
+	public class GenericLinkedListContainer : CollectionContainer<LinkedList<string>> {
+		protected override LinkedList<string> Init ()
+		{
+			var l = new LinkedList<string> ();
+			l.AddFirst ("apple");
+			l.AddFirst ("banana");
+			return l;
+		}
+	}
+
+	[DataContract]
+	public class GenericListContainer : CollectionContainer<List<string>> {
+		protected override List<string> Init ()
+		{
+			return new List<string> { "banana", "apple" };
+		}
+	}
+
+	[DataContract]
+	public class GenericQueueContainer : CollectionContainer<Queue<string>> {
+		protected override Queue<string> Init ()
+		{
+			var q = new Queue<string> ();
+			q.Enqueue ("banana");
+			q.Enqueue ("apple" );
+			return q;
+		}
+	}
+
+	[DataContract]
+	public class GenericSortedDictionaryContainer : CollectionContainer<SortedDictionary<string, string>> {
+		protected override SortedDictionary<string, string> Init ()
+		{
+			var d = new SortedDictionary<string, string> ();
+			d.Add ("key1", "banana");
+			d.Add ("key2", "apple");
+			return d;
+		}
+	}
+
+	[DataContract]
+	public class GenericSortedListContainer : CollectionContainer<SortedList<string, string>> {
+		protected override SortedList<string, string> Init ()
+		{
+			var d = new SortedList<string, string> ();
+			d.Add ("key1", "banana");
+			d.Add ("key2", "apple");
+			return d;
+		}
+	}
+
+	[DataContract]
+	public class GenericStackContainer : CollectionContainer<Stack<string>> {
+		protected override Stack<string> Init ()
+		{
+			var s = new Stack<string> ();
+			s.Push ("banana");
+			s.Push ("apple" );
+			return s;
+		}
+	}
+
+	public class GenericEnumerableWithAdd : IEnumerable<string>
+	{
+		private List<string> items;
+
+		public GenericEnumerableWithAdd()
+		{
+			items = new List<string>();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return items.GetEnumerator ();
+		}
+
+		public IEnumerator<string> GetEnumerator()
+		{
+			return items.GetEnumerator ();
+		}
+
+		public void Add(string value)
+		{
+			items.Add(value);
+		}
+
+		public int Count
+		{
+			get {
+				return items.Count;
+			}
+		}
+	}
+
+	public class GenericEnumerableWithSpecialAdd : IEnumerable<string>
+	{
+		private List<string> items;
+
+		public GenericEnumerableWithSpecialAdd()
+		{
+			items = new List<string>();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return items.GetEnumerator ();
+		}
+
+		public IEnumerator<string> GetEnumerator()
+		{
+			return items.GetEnumerator ();
+		}
+
+		public void Add(string value, int index)
+		{
+			items.Add(value);
+		}
+
+		public int Count
+		{
+			get
+			{
+				return items.Count;
+			}
+		}
+	}
+
+	[DataContract]
+	public class GenericEnumerableWithAddContainer : CollectionContainer<GenericEnumerableWithAdd>
+	{
+		protected override GenericEnumerableWithAdd Init()
+		{
+			var s = new GenericEnumerableWithAdd();
+			s.Add ("banana");
+			s.Add ("apple");
+			return s;
+		}
+	}
+
+	[DataContract]
+	public class GenericEnumerableWithSpecialAddContainer : CollectionContainer<GenericEnumerableWithSpecialAdd>
+	{
+		protected override GenericEnumerableWithSpecialAdd Init()
+		{
+			var s = new GenericEnumerableWithSpecialAdd();
+			s.Add("banana", 0);
+			s.Add("apple", 0);
+			return s;
+		}
+	}	
+
+	[DataContract]
+	public class NonCollectionGetOnlyContainer
+	{
+		string _test = "my string";
+	
+		[DataMember]
+		public string MyString {
+			get {
+				return _test;
+			}
+		}
+	}	
+
+#endregion

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MessageProperties" FullName="System.ServiceModel.Channels.MessageProperties">
   <TypeSignature Language="C#" Value="public sealed class MessageProperties : IDisposable, System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;, System.Collections.Generic.IDictionary&lt;string,object&gt;, System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessageProperties extends System.Object implements class System.Collections.Generic.ICollection`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;string, object&gt;&gt;, class System.Collections.Generic.IDictionary`2&lt;string, object&gt;, class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;string, object&gt;&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
@@ -23,8 +24,19 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>As a message passes through the channel infrastructure, it passes through a number of logically separate processing entities. For instance, a message that is part of a reliable messaging stream can potentially pass through a <see cref="T:System.ServiceModel.Channels.MessageEncoder" />, a transport-level channel provider, the reliable-messaging channel provider, the streaming channel provider or any channel extensions. Sometimes these intermediaries annotate the message with the results of that processing by using the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> class. A <see cref="T:System.ServiceModel.Channels.MessageProperties" /> instance is an annotation on a message and is stored as a set of name-to-object mappings in the <see cref="P:System.ServiceModel.Channels.Message.Properties" /> property of a <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+      <block subset="none" type="note">
+        <para>The message properties should be cleared out when the user gets the following error:
+</para>
+        <para>The server committed a protocol violation. Section=ResponseBody Detail=Response chunk format is invalid</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of properties for a message. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +48,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -51,9 +66,13 @@
         <Parameter Name="properties" Type="System.ServiceModel.Channels.MessageProperties" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> class with preset properties.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageProperties" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -71,10 +90,15 @@
         <Parameter Name="property" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="property">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element with the specified name and property into the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element to add.</param>
+        <param name="property">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the element to add. </param>
       </Docs>
     </Member>
     <Member MemberName="AllowOutputBatching">
@@ -88,9 +112,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether to store this message before giving it to the transport. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -105,8 +132,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all elements from the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainsKey">
@@ -123,10 +153,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> contains a specific name, key, or identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> contains an element with the specified <paramref name="name" />; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name, key, or identifier to locate in the <see cref="T:System.ServiceModel.Channels.MessageProperties" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyProperties">
@@ -143,9 +180,13 @@
         <Parameter Name="properties" Type="System.ServiceModel.Channels.MessageProperties" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the content of the specified <see cref="T:System.ServiceModel.Channels.MessageProperties" /> to this instance.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageProperties" /> object in which to copy from.</param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -159,9 +200,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of properties in the <see cref="T:System.ServiceModel.Channels.MessageProperties" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -176,8 +220,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.ServiceModel.Channels.MessageProperties.Dispose" /> when you are finished using the <see cref="T:System.ServiceModel.Channels.MessageProperties" />. The <see cref="M:System.ServiceModel.Channels.MessageProperties.Dispose" /> method leaves the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> in an unusable state. After calling <see cref="M:System.ServiceModel.Channels.MessageProperties.Dispose" />, you must release all references to the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> occupied. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ServiceModel.Channels.MessageProperties.Dispose" /> before you release your last reference to the <see cref="T:System.ServiceModel.Channels.MessageProperties" />. Otherwise, the resources it is using are not freed until the garbage collector calls the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Encoder">
@@ -191,9 +244,15 @@
         <ReturnType>System.ServiceModel.Channels.MessageEncoder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies a message encoder that can be used to serialize or deserialize the message instance this <see cref="T:System.ServiceModel.Channels.MessageProperties" /> instance is attached to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the encoder that is used to write messages to a stream and to read messages from a stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsFixedSize">
@@ -207,9 +266,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> has a fixed size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -223,9 +285,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this set of properties is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -259,9 +324,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> that contains the keys in the <see cref="T:System.ServiceModel.Channels.MessageProperties" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -278,10 +346,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the element with the specified name from the <see cref="T:System.ServiceModel.Channels.MessageProperties" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.MessageProperties" /> contains an element with the specified <paramref name="name" /> and can be removed; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="Security">
@@ -295,9 +370,15 @@
         <ReturnType>System.ServiceModel.Security.SecurityMessageProperty</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTTP client authentication results are translated into an instance of <see cref="P:System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenTypes.SecurityContext" />, which is attached to the message using a <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />. This property can be used by higher layers to implement arbitrary authorization logic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the security-related property of a message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;System.String,System.Object&gt;&gt;.Add">
@@ -409,9 +490,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can iterate through a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryGetValue">
@@ -447,9 +534,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.Object&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.ICollection" /> that contains the values in the <see cref="T:System.ServiceModel.Channels.MessageProperties" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Via">
@@ -463,9 +553,15 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport channel owns the <see cref="P:System.ServiceModel.Channels.MessageProperties.Via" /> property and it overwrites whatever value you set for the message headers. You do have one opportunity to set the channel's Via, which is during the creation of the channel from the channel factory, for example, with <see cref="M:System.ServiceModel.ChannelFactory`1.CreateChannel(System.ServiceModel.EndpointAddress,System.Uri)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the transport address that is used to send messages.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

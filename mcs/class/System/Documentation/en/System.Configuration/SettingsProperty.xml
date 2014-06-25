@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsProperty" FullName="System.Configuration.SettingsProperty">
   <TypeSignature Language="C#" Value="public class SettingsProperty" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SettingsProperty extends System.Object" />
@@ -11,9 +12,38 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Configuration.SettingsProperty" /> is used to describe settings properties of a class derived from <see cref="T:System.Configuration.SettingsBase" />. The Settings API allows a collection of settings properties to be grouped into a common language runtime class. </para>
+      <para>When persisting settings, the <see cref="T:System.Configuration.SettingsBase" /> base class asks for a collection of <see cref="T:System.Configuration.SettingsProperty" /> objects, grouped in a collection of type <see cref="T:System.Configuration.SettingsPropertyCollection" />. It does this by calling its own Properties member. Inherited classes should return a collection of properties to persist.</para>
+      <para>Each <see cref="T:System.Configuration.SettingsProperty" /> object includes metadata about the property, including the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Name.</para>
+        </item>
+        <item>
+          <para>Default value.</para>
+        </item>
+        <item>
+          <para>Property type.</para>
+        </item>
+        <item>
+          <para>Serialization method.</para>
+        </item>
+        <item>
+          <para>Provider to use for persistence.</para>
+        </item>
+        <item>
+          <para>Other arbitrary attributes that are context and provider specific.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used internally as the class that represents metadata about an individual configuration property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +58,14 @@
         <Parameter Name="propertyToCopy" Type="System.Configuration.SettingsProperty" />
       </Parameters>
       <Docs>
-        <param name="propertyToCopy">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsProperty" /> class, based on the supplied parameter.</para>
+        </summary>
+        <param name="propertyToCopy">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies a copy of an existing <see cref="T:System.Configuration.SettingsProperty" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,10 +80,14 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsProperty" /> class. based on the supplied parameter.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the name of an existing <see cref="T:System.Configuration.SettingsProperty" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -72,18 +110,30 @@
         <Parameter Name="throwOnErrorSerializing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="provider">To be added.</param>
-        <param name="isReadOnly">To be added.</param>
-        <param name="defaultValue">To be added.</param>
-        <param name="serializeAs">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <param name="throwOnErrorDeserializing">To be added.</param>
-        <param name="throwOnErrorSerializing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Configuration.SettingsProperty" /> class based on the supplied parameters.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Configuration.SettingsProperty" /> object.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.Configuration.SettingsProperty" /> object.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsProvider" /> object to use for persistence.</param>
+        <param name="isReadOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> value specifying whether the <see cref="T:System.Configuration.SettingsProperty" /> object is read-only.</param>
+        <param name="defaultValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default value of the <see cref="T:System.Configuration.SettingsProperty" /> object.</param>
+        <param name="serializeAs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsSerializeAs" /> object. This object is an enumeration used to set the serialization scheme for storing application settings.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsAttributeDictionary" /> object.</param>
+        <param name="throwOnErrorDeserializing">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value specifying whether an error will be thrown when the property is unsuccessfully deserialized.</param>
+        <param name="throwOnErrorSerializing">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value specifying whether an error will be thrown when the property is unsuccessfully serialized.</param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -98,10 +148,16 @@
         <ReturnType>System.Configuration.SettingsAttributeDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of attributes used to describe a <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.SettingsAttributeDictionary" /> object containing the attributes of the <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultValue">
@@ -116,10 +172,13 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default value of the <see cref="T:System.Configuration.SettingsProperty" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -134,10 +193,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying whether a <see cref="T:System.Configuration.SettingsProperty" /> object is read-only. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -152,10 +217,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.SettingsProperty.Name" /> cannot be an empty string or null. If the <see cref="T:System.Configuration.SettingsProperty" /> does not exist in the data provider, nothing can be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Configuration.SettingsProperty" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyType">
@@ -170,10 +241,13 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type for the <see cref="T:System.Configuration.SettingsProperty" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Provider">
@@ -188,10 +262,13 @@
         <ReturnType>System.Configuration.SettingsProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the provider for the <see cref="T:System.Configuration.SettingsProperty" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SerializeAs">
@@ -206,10 +283,16 @@
         <ReturnType>System.Configuration.SettingsSerializeAs</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Configuration.SettingsSerializeAs" /> object is an enumeration used as the serialization scheme to store application settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Configuration.SettingsSerializeAs" /> object for the <see cref="T:System.Configuration.SettingsProperty" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ThrowOnErrorDeserializing">
@@ -224,10 +307,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying whether an error will be thrown when the property is unsuccessfully deserialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ThrowOnErrorSerializing">
@@ -242,10 +328,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying whether an error will be thrown when the property is unsuccessfully serialized.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

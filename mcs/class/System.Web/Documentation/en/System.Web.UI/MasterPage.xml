@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MasterPage" FullName="System.Web.UI.MasterPage">
   <TypeSignature Language="C#" Value="public class MasterPage : System.Web.UI.UserControl" />
   <AssemblyInfo>
@@ -17,9 +18,102 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A master page functions as a template container and merging page for content pages in your ASP.NET Web application. Master pages provide a convenient way to share structure and content across a set of content pages. You use content placeholders to define the sections of the master page to replace with content from the content pages.</para>
+      <para>When you use a master page and its related content pages, you add the required XHTML document tags (such as html, head, and body) only to the master page and no longer create your other .aspx files (ASP.NET pages) as stand-alone Web pages. The content pages define the content to insert into the placeholders in the master page.</para>
+      <para>When an HTTP request is made for a page at run time, the master page and content pages are combined into a single class with the same name as the content pages. The resulting compiled, merged class derives from the <see cref="T:System.Web.UI.Page" /> class.</para>
+      <para>A master page can contain direct markup and server controls, as well as container controls. Every element that is placed in the master page outside of a <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control is rendered on all pages that result from merging the master page and content pages. </para>
+      <para>Each content page that is related to the master page must reference the master page in a MasterPageFile attribute of its <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive. Content pages can contain only a @ Page directive and one or more <see cref="T:System.Web.UI.WebControls.Content" /> controls. All of your page text, markup, and server controls must be placed within <see cref="T:System.Web.UI.WebControls.Content" /> controls. You identify the <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control of a master page that a <see cref="T:System.Web.UI.WebControls.Content" /> control is associated with by setting the <see cref="P:System.Web.UI.WebControls.Content.ContentPlaceHolderID" /> property of the <see cref="T:System.Web.UI.WebControls.Content" /> control. </para>
+      <para>At run time, the dynamic content from each <see cref="T:System.Web.UI.WebControls.Content" /> control in the requested page is merged with the master page in the exact location of the related <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control. Any other markup and controls in the master page are unaffected. Event handlers can be defined in both the master class and on the content page. For more information, see <format type="text/html"><a href="b3ab2d01-9e37-4788-82d0-c6065e3ff5bd">Events in Master and Content Pages</a></format>.</para>
+      <para>The <see cref="T:System.Web.UI.MasterPage" /> class is associated with files that have a .master extension. These files are compiled at run time as <see cref="T:System.Web.UI.MasterPage" /> objects and are cached in server memory. </para>
+      <para>The master page is made available to the content page through the <see cref="P:System.Web.UI.Page.Master" /> property of the base <see cref="T:System.Web.UI.Page" /> class. The <see cref="P:System.Web.UI.Page.Master" /> property returns the instance of the master page; however, it is typed as the base <see cref="T:System.Web.UI.MasterPage" /> class. To access controls, properties, and functions of the master page, the <see cref="P:System.Web.UI.Page.Master" /> property can be cast to a <see cref="T:System.Web.UI.MasterPage" /> object. The class name of the master page is defined using the ClassName attribute of the <format type="text/html"><a href="3d263ecb-5169-4b28-8ad9-f5c82302ca99">@ Master</a></format> directive.</para>
+      <block subset="none" type="note">
+        <para>Files with .master extensions are not served to a browser.</para>
+      </block>
+      <para>The directives that are valid on a master page are the same as those that are available on a <see cref="T:System.Web.UI.UserControl" /> object. They can include the following attributes: </para>
+      <list type="bullet">
+        <item>
+          <para> AutoEventWireup
+              </para>
+        </item>
+        <item>
+          <para> ClassName
+              </para>
+        </item>
+        <item>
+          <para> CodeFile
+              </para>
+        </item>
+        <item>
+          <para> CompilerMode
+              </para>
+        </item>
+        <item>
+          <para> CompilerOptions
+              </para>
+        </item>
+        <item>
+          <para> Debug
+              </para>
+        </item>
+        <item>
+          <para> Description
+              </para>
+        </item>
+        <item>
+          <para> EnableTheming
+              </para>
+        </item>
+        <item>
+          <para> EnableViewState
+              </para>
+        </item>
+        <item>
+          <para> Explicit
+              </para>
+        </item>
+        <item>
+          <para> Inherits
+              </para>
+        </item>
+        <item>
+          <para> Language
+              </para>
+        </item>
+        <item>
+          <para> LinePragmas
+              </para>
+        </item>
+        <item>
+          <para> MasterPageFile
+              </para>
+        </item>
+        <item>
+          <para> Src
+              </para>
+        </item>
+        <item>
+          <para> Strict
+              </para>
+        </item>
+        <item>
+          <para> WarningLevel
+              </para>
+        </item>
+      </list>
+      <para>Master page directives do not override the directives on individual content pages.</para>
+      <para>Master pages are most often created declaratively. If you want to create a master page programmatically, derive directly from the <see cref="T:System.Web.UI.MasterPage" /> class. In addition to extending the <see cref="T:System.Web.UI.MasterPage" /> class, you must create the .master file to visually display the user interface (UI) that is associated with the classes that you have invoked in your source file. </para>
+      <block subset="none" type="note">
+        <para>When you create a master page by creating your own class first, you must include all namespaces that are required for the classes that are used by the page.</para>
+      </block>
+      <para>For more information about master pages, see <format type="text/html"><a href="4e53eedf-8304-4e7a-aed1-691a2623b28b">ASP.NET Master Pages Overview</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Acts as a template and merging container for pages that are composed only of <see cref="T:System.Web.UI.WebControls.Content" /> controls and their respective child controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +121,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.MasterPage" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +151,18 @@
         <Parameter Name="template" Type="System.Web.UI.ITemplate" />
       </Parameters>
       <Docs>
-        <param name="templateName">To be added.</param>
-        <param name="template">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived master page classes can add <see cref="T:System.Web.UI.WebControls.Content" /> controls to the <see cref="P:System.Web.UI.MasterPage.ContentTemplates" /> dictionary using the <see cref="M:System.Web.UI.MasterPage.AddContentTemplate(System.String,System.Web.UI.ITemplate)" /> method. Derived types do not typically override the <see cref="M:System.Web.UI.MasterPage.AddContentTemplate(System.String,System.Web.UI.ITemplate)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Web.UI.WebControls.Content" /> control to the <see cref="P:System.Web.UI.MasterPage.ContentTemplates" /> dictionary.</para>
+        </summary>
+        <param name="templateName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique name for the <see cref="T:System.Web.UI.WebControls.Content" />.</param>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Content" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ContentPlaceHolders">
@@ -78,9 +183,15 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived master page classes access the <see cref="P:System.Web.UI.MasterPage.ContentPlaceHolders" /> property to list the current <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> controls that are contained by the master. Derived types do not typically override the <see cref="P:System.Web.UI.MasterPage.ContentPlaceHolders" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> controls that the master page uses to define different content regions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentTemplates">
@@ -101,9 +212,15 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived master page classes access the <see cref="P:System.Web.UI.MasterPage.ContentTemplates" /> property to retrieve the current <see cref="T:System.Web.UI.WebControls.Content" /> controls, as defined by associated content pages. Derived types do not typically override the <see cref="P:System.Web.UI.MasterPage.ContentTemplates" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of content controls that are associated with the master page. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Master">
@@ -121,10 +238,16 @@
         <ReturnType>System.Web.UI.MasterPage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.MasterPage.Master" /> property is read-only, because master page hierarchies cannot be built at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent master page of the current master in nested master pages scenarios.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +265,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the master page that contains the current content.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

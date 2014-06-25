@@ -39,30 +39,14 @@ namespace Microsoft.Build.Internal.Expressions
 {
 	class ExpressionEvaluator
 	{
-		public ExpressionEvaluator (Project project, string replacementForMissingPropertyAndItem)
+		public ExpressionEvaluator (Project project)
 		{
-			ReplacementForMissingPropertyAndItem = replacementForMissingPropertyAndItem;
 			Project = project;
-			/*
-			GetItems = (name) => project.GetItems (name).Select (i => new KeyValuePair<string,string> (i.ItemType, i.EvaluatedInclude));
-			GetProperty = (name) => {
-				var prop = project.GetProperty (name);
-				return new KeyValuePair<string,string> (prop != null ? prop.Name : null, prop != null ? prop.EvaluatedValue : null);
-				};
-			*/
 		}
 		
-		public ExpressionEvaluator (ProjectInstance project, string replacementForMissingPropertyAndItem)
+		public ExpressionEvaluator (ProjectInstance project)
 		{
-			ReplacementForMissingPropertyAndItem = replacementForMissingPropertyAndItem;
 			ProjectInstance = project;
-			/*
-			GetItems = (name) => project.GetItems (name).Select (i => new KeyValuePair<string,string> (i.ItemType, i.EvaluatedInclude));
-			GetProperty = (name) => {
-				var prop = project.GetProperty (name);
-				return new KeyValuePair<string,string> (prop != null ? prop.Name : null, prop != null ? prop.EvaluatedValue : null);
-				};
-			*/
 		}
 		
 		EvaluationContext CreateContext (string source)
@@ -72,16 +56,13 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public Project Project { get; private set; }
 		public ProjectInstance ProjectInstance { get; set; }
-		//public Func<string,IEnumerable<KeyValuePair<string,string>>> GetItems { get; private set; }
-		//public Func<string,KeyValuePair<string,string>> GetProperty { get; private set; }
-		
-		public string ReplacementForMissingPropertyAndItem { get; set; }
-		
-		// it is to prevent sequential property value expansion in boolean expression
-		public string Wrapper {
-			get { return ReplacementForMissingPropertyAndItem != null ? "'" : null; }
+
+		List<ITaskItem> evaluated_task_items = new List<ITaskItem> ();
+
+		public IList<ITaskItem> EvaluatedTaskItems {
+			get { return evaluated_task_items; }
 		}
-		
+
 		public string Evaluate (string source)
 		{
 			return Evaluate (source, new ExpressionParserManual (source ?? string.Empty, ExpressionValidationType.LaxString).Parse ());
@@ -122,7 +103,7 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		Stack<object> evaluating_items = new Stack<object> ();
 		Stack<object> evaluating_props = new Stack<object> ();
-		
+
 		public IEnumerable<object> GetItems (string name)
 		{
 			if (Evaluator.Project != null)
@@ -148,8 +129,12 @@ namespace Microsoft.Build.Internal.Expressions
 				var eval = item as ProjectItem;
 				if (eval != null)
 					return Evaluator.Evaluate (eval.EvaluatedInclude);
-				else
-					return Evaluator.Evaluate (((ProjectItemInstance) item).EvaluatedInclude);
+				else {
+					var inst = (ProjectItemInstance) item;
+					if (!Evaluator.EvaluatedTaskItems.Contains (inst))
+						Evaluator.EvaluatedTaskItems.Add (inst);
+					return Evaluator.Evaluate (inst.EvaluatedInclude);
+				}
 			} finally {
 				evaluating_items.Pop ();
 			}
@@ -186,10 +171,11 @@ namespace Microsoft.Build.Internal.Expressions
 	
 	abstract partial class Expression
 	{
+		public abstract string ExpressionString { get; }
 		public abstract string EvaluateAsString (EvaluationContext context);
 		public abstract bool EvaluateAsBoolean (EvaluationContext context);
 		public abstract object EvaluateAsObject (EvaluationContext context);
-		
+
 		public bool EvaluateStringAsBoolean (EvaluationContext context, string ret)
 		{
 			if (ret != null) {
@@ -198,7 +184,7 @@ namespace Microsoft.Build.Internal.Expressions
 				else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
 					return false;
 			}
-			throw new InvalidProjectFileException (this.Location, string.Format ("Condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
+			throw new InvalidProjectFileException (this.Location, string.Format ("Part of condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
 		}
 	}
 	
@@ -319,8 +305,7 @@ namespace Microsoft.Build.Internal.Expressions
 		public override string EvaluateAsString (EvaluationContext context)
 		{
 			var ret = EvaluateAsObject (context);
-			// FIXME: this "wrapper" is kind of hack, to prevent sequential property references such as $(X)$(Y).
-			return ret == null ? context.Evaluator.ReplacementForMissingPropertyAndItem : context.Evaluator.Wrapper + ret.ToString () + context.Evaluator.Wrapper;
+			return ret == null ? null : ret.ToString ();
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
@@ -361,12 +346,12 @@ namespace Microsoft.Build.Internal.Expressions
 						var args = Access.Arguments.Select (e => e.EvaluateAsObject (context)).ToArray ();
 						var method = FindMethod (type, Access.Name.Name, args);
 						if (method == null)
-							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static method '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static method '{0}' of '{1}' at {2}", Access.Name.Name, type, Location));
 						return method.Invoke (null, AdjustArgsForCall (method, args));
 					} else {
 						var prop = type.GetProperty (Access.Name.Name);
 						if (prop == null)
-							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static property '{0}' of '{1}' at {2}", Access.Name.Name, type, Location));
 						return prop.GetValue (null, null);
 					}
 				}
@@ -418,18 +403,25 @@ namespace Microsoft.Build.Internal.Expressions
 			string itemType = Application.Name.Name;
 			var items = context.GetItems (itemType);
 			if (!items.Any ())
-				return context.Evaluator.ReplacementForMissingPropertyAndItem;
+				return null;
 			if (Application.Expressions == null)
-				return string.Join (";", items.Select (item => context.EvaluateItem (itemType, item)));
+				return string.Join (";", items.Select (item => Unwrap (context.EvaluateItem (itemType, item))));
 			else
 				return string.Join (";", items.Select (item => {
 					context.ContextItem = item;
-					var ret = string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context)));
+					var ret = Unwrap (string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context))));
 					context.ContextItem = null;
 					return ret;
-					}));
+				}));
 		}
-		
+
+		static string Unwrap (string ret)
+		{
+			if (ret.Length < 2 || ret [0] != ret [ret.Length - 1] || ret [0] != '"' && ret [0] != '\'')
+				return ret;
+			return ret.Substring (1, ret.Length - 2);
+		}
+
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
 			return EvaluateAsString (context);
@@ -458,7 +450,7 @@ namespace Microsoft.Build.Internal.Expressions
 			var values = items.Select (i => (i is ProjectItem) ? ((ProjectItem) i).GetMetadataValue (metadataName) : ((ProjectItemInstance) i).GetMetadataValue (metadataName)).Where (s => !string.IsNullOrEmpty (s));
 			return string.Join (";", values);
 		}
-		
+
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
 			return EvaluateAsString (context);
@@ -497,6 +489,30 @@ namespace Microsoft.Build.Internal.Expressions
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
 			return EvaluateAsString (context);
+		}
+	}
+
+	partial class QuotedExpression : Expression
+	{
+		public override string EvaluateAsString (EvaluationContext context)
+		{
+			return QuoteChar + EvaluateAsStringWithoutQuote (context) + QuoteChar;
+		}
+
+		public string EvaluateAsStringWithoutQuote (EvaluationContext context)
+		{
+			return string.Concat (Contents.Select (e => e.EvaluateAsString (context)));
+		}
+
+		public override bool EvaluateAsBoolean (EvaluationContext context)
+		{
+			var ret = EvaluateAsStringWithoutQuote (context);
+			return EvaluateStringAsBoolean (context, ret);
+		}
+
+		public override object EvaluateAsObject (EvaluationContext context)
+		{
+			return EvaluateAsStringWithoutQuote (context);
 		}
 	}
 	

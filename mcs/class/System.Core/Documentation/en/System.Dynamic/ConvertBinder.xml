@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConvertBinder" FullName="System.Dynamic.ConvertBinder">
   <TypeSignature Language="C#" Value="public abstract class ConvertBinder : System.Dynamic.DynamicMetaObjectBinder" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ConvertBinder extends System.Dynamic.DynamicMetaObjectBinder" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the convert dynamic operation at the call site, providing the binding semantic and the details about the operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +30,15 @@
         <Parameter Name="explicit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="explicit">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Dynamic.ConvertBinder" />.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert to.</param>
+        <param name="explicit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Is true if the conversion should consider explicit conversions; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="Bind">
@@ -47,11 +56,19 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the binding of the dynamic convert operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic convert operation.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments of the dynamic convert operation.</param>
       </Docs>
     </Member>
     <Member MemberName="Explicit">
@@ -65,9 +82,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value indicating if the conversion should consider explicit conversions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FallbackConvert">
@@ -84,10 +104,17 @@
         <Parameter Name="target" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the binding of the dynamic convert operation if the target dynamic object cannot bind.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic convert operation.</param>
       </Docs>
     </Member>
     <Member MemberName="FallbackConvert">
@@ -105,11 +132,19 @@
         <Parameter Name="errorSuggestion" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="errorSuggestion">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in the derived class, performs the binding of the dynamic convert operation if the target dynamic object cannot bind.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic convert operation.</param>
+        <param name="errorSuggestion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding result to use if binding fails, or null.</param>
       </Docs>
     </Member>
     <Member MemberName="ReturnType">
@@ -123,9 +158,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result type of the operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -139,9 +177,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type to convert to.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

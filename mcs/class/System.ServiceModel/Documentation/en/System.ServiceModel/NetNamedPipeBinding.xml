@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetNamedPipeBinding" FullName="System.ServiceModel.NetNamedPipeBinding">
   <TypeSignature Language="C#" Value="public class NetNamedPipeBinding : System.ServiceModel.Channels.Binding, System.ServiceModel.Channels.IBindingRuntimePreferences" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NetNamedPipeBinding extends System.ServiceModel.Channels.Binding implements class System.ServiceModel.Channels.IBindingRuntimePreferences" />
@@ -14,8 +15,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.NetNamedPipeBinding" /> generates a run-time communication stack by default, which uses transport security, named pipes for message delivery, and a binary message encoding. This binding is an appropriate indigo1 system-provided choice for on-machine communication. It also supports transactions.</para>
+      <para>The default configuration for the <see cref="T:System.ServiceModel.NetNamedPipeBinding" /> is similar to the configuration provided by the <see cref="T:System.ServiceModel.NetTcpBinding" />, but it is simpler because the indigo2 implementation is only meant for on-machine use and consequently there are fewer exposed features. The most notable difference is that the <see cref="T:System.ServiceModel.SecurityMode" /> setting only offers the <see cref="F:System.ServiceModel.SecurityMode.None" /> and <see cref="F:System.ServiceModel.SecurityMode.Transport" /> options. SOAP security support is not an included option. The security behavior is configurable using the optional <paramref name="securityMode" /> parameter in <see cref="M:System.ServiceModel.NetNamedPipeBinding.#ctor(System.ServiceModel.NetNamedPipeSecurityMode)" /> the constructor. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a secure and reliable binding that is optimized for on-machine communication.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default security mode used is <see cref="F:System.ServiceModel.NetNamedPipeSecurityMode.Transport" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.NetNamedPipeBinding" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +56,16 @@
         <Parameter Name="securityMode" Type="System.ServiceModel.NetNamedPipeSecurityMode" />
       </Parameters>
       <Docs>
-        <param name="securityMode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor when you want to configure the security explicitly. The default is <see cref="F:System.ServiceModel.NetNamedPipeSecurityMode.Transport" /> when using the default constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.NetNamedPipeBinding" /> class with a specified security mode.</para>
+        </summary>
+        <param name="securityMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.NetNamedPipeSecurityMode" /> value that specifies whether Windows security is used with named pipes.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,9 +79,16 @@
         <Parameter Name="configurationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="configurationName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor when you want to initialize the binding settings from configuration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.NetNamedPipeBinding" /> class with a specified configuration name.</para>
+        </summary>
+        <param name="configurationName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding configuration name for the <format type="text/html"><a href="00a8580b-face-47a4-838d-b9fed48e72df">netNamedPipeBinding Element</a></format>.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateBindingElements">
@@ -75,9 +103,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a collection with the binding elements for the binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Generic.ICollection`1" /> of type <see cref="T:System.ServiceModel.Channels.BindingElement" /> that makes up the binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnvelopeVersion">
@@ -91,9 +125,15 @@
         <ReturnType>System.ServiceModel.EnvelopeVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP 1.2 must be used with this binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of SOAP that is used for messages processed by this binding. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostNameComparisonMode">
@@ -107,9 +147,12 @@
         <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the hostname is used to reach the service when matching the URI.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsPnrpAvailable">
@@ -139,9 +182,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you receive more data than you can buffer, the data that exceeds the buffer size remains on the underlying socket until your buffer has room for the rest of the data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of bytes that are used to buffer incoming messages in memory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxBufferSize">
@@ -155,9 +204,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you receive more data than you can buffer, the data that exceeds the buffer size remains on the underlying socket until your buffer has room for the rest of the data.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of bytes used to buffer incoming messages in memory.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxConnections">
@@ -171,9 +226,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of inbound and the maximum number of outbound connections are set to the same value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of connections, both inbound and outbound, that are allowed to endpoints configured with the named pipe binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxReceivedMessageSize">
@@ -187,9 +248,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size, in bytes, for a received message that is processed by the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReaderQuotas">
@@ -203,9 +267,37 @@
         <ReturnType>System.Xml.XmlDictionaryReaderQuotas</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complexity constraints protect against a class of denial of service (DOS) attacks that attempt to use message complexity to tie up endpoint processing resources. The properties that express these constraints and their default values are as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxDepth" /> = 32</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxStringContentLength" /> = 8192</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxArrayLength" /> = 16384</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxBytesPerRead" /> = 4096</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.Xml.XmlDictionaryReaderQuotas.MaxNameTableCharCount" /> = 16384</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets constraints on the complexity of SOAP messages that can be processed by endpoints configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scheme">
@@ -219,9 +311,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URI transport scheme for the channels and listeners that are configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Security">
@@ -235,9 +330,15 @@
         <ReturnType>System.ServiceModel.NetNamedPipeSecurity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.NetNamedPipeSecurity" /> provides the types of security and settings available to the <see cref="T:System.ServiceModel.NetNamedPipeBinding" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that specifies the type of security used with services configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously">
@@ -251,9 +352,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether incoming requests are handled synchronously or asynchronously.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionFlow">
@@ -267,9 +371,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ServiceModel.NetNamedPipeBinding.TransactionFlow" /> property enables you to specify whether this binding should support flowing transactions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether transactions should be flowed to the service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionProtocol">
@@ -283,9 +393,15 @@
         <ReturnType>System.ServiceModel.TransactionProtocol</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The WS-Atomic Transaction protocol can also be used by setting the <see cref="P:System.ServiceModel.TransactionProtocol.WSAtomicTransactionOctober2004" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the transactions protocol used by the service to flow transactions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransferMode">
@@ -299,9 +415,15 @@
         <ReturnType>System.ServiceModel.TransferMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is possible to stream only the incoming or the outgoing messages by specifying, respectively, <see cref="F:System.ServiceModel.TransferMode.StreamedRequest" /> or <see cref="F:System.ServiceModel.TransferMode.StreamedResponse" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the service configured with the binding uses streamed (in one or both directions) or buffered modes of message transfer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

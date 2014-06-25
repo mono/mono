@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SnapLine" FullName="System.Windows.Forms.Design.Behavior.SnapLine">
   <TypeSignature Language="C#" Value="public sealed class SnapLine" />
   <AssemblyInfo>
@@ -9,8 +10,119 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table lists the common modes that visual design tools support to assist you with positioning and sizing controls on a design surface.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Mode</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Freeform</para>
+          </term>
+          <description>
+            <para>Enables you to freely lay out controls.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Grid</para>
+          </term>
+          <description>
+            <para>Displays a static overlaid grid that assists you in laying out controls.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Snapline</para>
+          </term>
+          <description>
+            <para>Displays guide lines that assist you in laying out the container's controls relative to each other. Snaplines originate from controls and their container.</para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class and related types help support the Snapline mode. </para>
+      <para>Snaplines are generated dynamically and automatically as a control edge moves near another control or near the boundaries of its container. This can occur when a control is added from the toolbox, or moved or resized by mouse operations or keyboard commands. Controls typically have both horizontal and vertical snaplines defined; for rectangular controls, these typically extend from all four edges. </para>
+      <para>The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class uses only a few properties to describe each snapline, as shown in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.SnapLineType" />
+            </para>
+          </term>
+          <description>
+            <para>Specifies the location and direction of the line with respect to its associated control. Typically, only snaplines of similar types will auto-align to each other.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Offset" /> </para>
+          </term>
+          <description>
+            <para>Specifies the distance in pixels from the origin, which is the upper-left corner of the control, to where the snapline starts.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Priority" /> </para>
+          </term>
+          <description>
+            <para>Specifies the relative importance of the snapline. During any given layout decision point, only the snaplines that are active and have the highest priority are displayed. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Filter" /> </para>
+          </term>
+          <description>
+            <para>Defines custom categories of snaplines. This is an optional string.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.IsHorizontal" /> and <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.IsVertical" /> </para>
+          </term>
+          <description>
+            <para>Indicates whether a snapline has horizontal or vertical orientation, respectively.</para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Windows.Forms.Design.ControlDesigner" /> class stores snaplines for its corresponding control type in the <see cref="P:System.Windows.Forms.Design.ControlDesigner.SnapLines" /> property. This base class handling of snaplines will suffice for the majority of controls, as it defines the <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Left" />, <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Right" />, <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Top" />, and <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Bottom" /> snaplines, which are aligned along the edges of the control. When you are developing a custom control, if this default organization does not suffice, override the <see cref="P:System.Windows.Forms.Design.ControlDesigner.SnapLines" /> property of the class derived from <see cref="T:System.Windows.Forms.Design.ControlDesigner" />. For example, you may want to align the horizontal snaplines of text-based controls, such as labels, with the top and base lines of the text (instead of the top and bottom edges of the control).</para>
+      <para>The <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.SnapLineType" /> class cannot be derived from.</para>
+      <para>There is extensive support for this feature in Visual Studio.</para>
+      <para>
+        <dynamicLink>
+          <keyword>dl_WalkthroughArrangingControlsWindowsFormsUsingSnaplines</keyword>
+        </dynamicLink>
+      </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the horizontal and vertical line segments that are dynamically created in the user interface (UI) to assist in the design-time layout of controls in a container. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +136,18 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="offset">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Filter" /> property to null and the <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Priority" /> property to <see cref="F:System.Windows.Forms.Design.Behavior.SnapLinePriority.Low" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class using the specified snapline type and offset.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLineType" /> to create. Describes the relative position and orientation of the snapline.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the snapline, in pixels, relative to the upper-left origin of the owning control.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,11 +162,20 @@
         <Parameter Name="filter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Priority" /> property to <see cref="F:System.Windows.Forms.Design.Behavior.SnapLinePriority.Low" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class using the specified snapline type, offset, and filter name. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLineType" /> to create. Describes the relative position and orientation of the snapline.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the snapline, in pixels, relative to the upper-left origin of the owning control.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> used to specify a programmer-defined category of snaplines.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,11 +190,20 @@
         <Parameter Name="priority" Type="System.Windows.Forms.Design.Behavior.SnapLinePriority" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="priority">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Filter" /> property to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class using the specified snapline type, offset, and priority. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLineType" /> to create. Describes the relative position and orientation of the snapline.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the snapline, in pixels, relative to the upper-left origin of the owning control.</param>
+        <param name="priority">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLinePriority" /> of the snapline.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -81,12 +219,22 @@
         <Parameter Name="priority" Type="System.Windows.Forms.Design.Behavior.SnapLinePriority" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="filter">To be added.</param>
-        <param name="priority">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets all of the properties of a snapline to programmer-supplied values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class using the specified snapline type, offset, filter name, and priority. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLineType" /> to create. Describes the relative position and orientation of the snapline.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the snapline, in pixels, relative to the upper-left origin of the owning control.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> used to specify a programmer-defined category of snaplines.</param>
+        <param name="priority">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLinePriority" /> of the snapline.</param>
       </Docs>
     </Member>
     <Member MemberName="AdjustOffset">
@@ -102,9 +250,16 @@
         <Parameter Name="adjustment" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="adjustment">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The offset of a snapline is the distance, in pixels, that the snapline is located from the associated control's upper-left origin. Although the offset can be set to any integer value, typically the snaplines retain the spatial relationships implied by their <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.SnapLineType" /> property value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adjusts the <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Offset" /> property of the snapline.</para>
+        </summary>
+        <param name="adjustment">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of pixels to change the snapline offset by.</param>
       </Docs>
     </Member>
     <Member MemberName="Filter">
@@ -117,9 +272,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Filter" /> property is used to define custom categories of snaplines. Only snaplines with the same filter name are able to snap to each other. This property can be used in custom control designers to expose different categories of snaplines depending upon the state of the control or the type of operation being performed. For example, round controls could offer a custom snapline with the filter value of "Center".</para>
+          <para>This property is initialized during construction and cannot be changed thereafter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the programmer-defined filter category associated with this snapline.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsHorizontal">
@@ -132,9 +294,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following snapline types are horizontal: <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Top" />, <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Bottom" />, <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Horizontal" />, and <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Baseline" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the snapline has a horizontal orientation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsVertical">
@@ -147,9 +315,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following snapline types are vertical: <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Left" />, <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Right" />, and <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Vertical" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the snapline has a vertical orientation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Offset">
@@ -162,9 +336,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The origin of a control is the upper-left point of the control. A single offset can describe the position of a snapline, because vertical snaplines may have only a nonzero x-axis offset, whereas horizontal snaplines may only have a nonzero y-axis offset.</para>
+          <para>The <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Offset" /> property is initialized at construction time, but it can be changed thereafter with the <see cref="M:System.Windows.Forms.Design.Behavior.SnapLine.AdjustOffset(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of pixels that the snapline is offset from the origin of the associated control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Priority">
@@ -177,9 +358,17 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLinePriority</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.Priority" /> property establishes categories of importance for the snaplines associated with a control. </para>
+          <para>The Windows Forms Designer uses this property to determine which snaplines to display during a control addition, resize, or move operation. For more information, see the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLinePriority" /> enumeration.</para>
+          <para>This property is initialized during construction and cannot be changed thereafter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the relative importance of the snapline.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShouldSnap">
@@ -196,11 +385,19 @@
         <Parameter Name="line2" Type="System.Windows.Forms.Design.Behavior.SnapLine" />
       </Parameters>
       <Docs>
-        <param name="line1">To be added.</param>
-        <param name="line2">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> should snap to another <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="line1" /> should snap to <paramref name="line2" />; otherwise, false.</para>
+        </returns>
+        <param name="line1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" />.</param>
+        <param name="line2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> to which the specified <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> is expected to snap.</param>
       </Docs>
     </Member>
     <Member MemberName="SnapLineType">
@@ -213,9 +410,16 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLineType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visual designers use the <see cref="P:System.Windows.Forms.Design.Behavior.SnapLine.SnapLineType" /> property to direct snap alignment operations. Typically only snaplines that are similarly oriented can snap to each other. For example, two snaplines of type <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Horizontal" /> can snap together, but a <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Horizontal" /> and a <see cref="F:System.Windows.Forms.Design.Behavior.SnapLineType.Vertical" /> snapline cannot.</para>
+          <para>This property is initialized during construction and cannot be changed thereafter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of a snapline, which indicates the general location and orientation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -229,9 +433,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a string that contains details about the type, offset, priority, and filter values of the snapline.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the current snapline.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the current <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

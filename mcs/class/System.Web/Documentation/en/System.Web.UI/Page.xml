@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Page" FullName="System.Web.UI.Page">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Page : System.Web.UI.TemplateControl, System.Web.IHttpHandler" />
   <AssemblyInfo>
@@ -31,8 +32,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Page" /> class is associated with files that have an .aspx extension. These files are compiled at run time as <see cref="T:System.Web.UI.Page" /> objects and cached in server memory.</para>
+      <para>If you want to create a Web Forms page using the code-behind technique, derive from this class. Rapid application development (RAD) designers, such as Microsoft Visual Studio, automatically use this model to create Web Forms pages.</para>
+      <para>The <see cref="T:System.Web.UI.Page" /> object serves as the naming container for all server controls in a page, except those that implement the <see cref="T:System.Web.UI.INamingContainer" /> interface or are child controls of controls that implement this interface.</para>
+      <para>The <see cref="T:System.Web.UI.Page" /> class is a control that acts as the user interface for your Web application, and as such should be scrutinized to make sure best practices for writing secure code and securing applications are followed. For general information on these topics, see <format type="text/html"><a href="88d61678-f84e-4622-ae80-53128821855a">Overview of Web Application Security Threats</a></format>, <format type="text/html"><a href="d49bc4d5-efb7-4caa-a2fe-e4d3cec63c05">Security Policy Best Practices</a></format>, and <format type="text/html"><a href="3cfced4f-ea02-4e66-ae98-d69286363e98">Key Security Concepts</a></format>. For more specific information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f70ac33-6e11-4e98-ab7d-bae9c0e7eefa">How to: Display Safe Error Messages</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="3c0e7514-cff2-4bed-936d-ee3f7b740190">Introduction to the Validation Controls</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an .aspx file, also known as a Web Forms page, requested from a server that hosts an ASP.NET Web application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +51,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes all fields to their default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Page" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,10 +84,15 @@
         <Parameter Name="template" Type="System.Web.UI.ITemplate" />
       </Parameters>
       <Docs>
-        <param name="templateName">To be added.</param>
-        <param name="template">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called during page initialization to create a collection of content (from content controls) that is handed to a master page, if the current page or master page refers to a master page. </para>
+        </summary>
+        <param name="templateName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the content template to add.</param>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The content template</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPreRenderCompleteAsync">
@@ -88,10 +109,22 @@
         <Parameter Name="endHandler" Type="System.Web.EndEventHandler" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Page.AddOnPreRenderCompleteAsync(System.Web.BeginEventHandler,System.Web.EndEventHandler)" /> method to add handlers to an asynchronous Web page. </para>
+          <para>You can register multiple asynchronous handlers; however, only one handler runs at a time. If you want to process multiple asynchronous methods simultaneously, you should use a single <see cref="T:System.Web.BeginEventHandler" /> method and launch multiple asynchronous operations from that handler.</para>
+          <para>The asynchronous handlers are called between the <see cref="E:System.Web.UI.Control.PreRender" /> and <see cref="E:System.Web.UI.Page.PreRenderComplete" /> events. </para>
+          <para>First, all <see cref="T:System.Web.UI.Page" /> events (through the <see cref="E:System.Web.UI.Control.PreRender" /> event) are run, and then each registered <see cref="T:System.Web.BeginEventHandler" /> method is called. When the handler completes, the corresponding <see cref="T:System.Web.EndEventHandler" /> method is called. If there are multiple asynchronous handlers, the next handler is called. </para>
+          <para>After the registered asynchronous event handlers have been called, the rest of the page events are called, beginning with the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers beginning and ending event handler delegates that do not require state information for an asynchronous page.</para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate for the <see cref="T:System.Web.BeginEventHandler" /> method.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate for the <see cref="T:System.Web.EndEventHandler" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="AddOnPreRenderCompleteAsync">
@@ -109,11 +142,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="beginHandler">To be added.</param>
-        <param name="endHandler">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Page.AddOnPreRenderCompleteAsync(System.Web.BeginEventHandler,System.Web.EndEventHandler,System.Object)" /> method to add handlers that require state information to an asynchronous Web page. The object passed in the <paramref name="state" /> parameter can be any object that your application requires to transfer information between event handler delegates specified in the <paramref name="beginHandler" /> and the <paramref name="endHandler" /> parameters.</para>
+          <para>You can register multiple asynchronous handlers; however, only one handler runs at a time. If you want to process multiple asynchronous methods simultaneously, you should use a single <see cref="T:System.Web.BeginEventHandler" /> method and launch multiple asynchronous operations from that handler.</para>
+          <para>The asynchronous handlers are called between the <see cref="E:System.Web.UI.Control.PreRender" /> and <see cref="E:System.Web.UI.Page.PreRenderComplete" /> events. </para>
+          <para>First, all <see cref="T:System.Web.UI.Page" /> events (through the <see cref="E:System.Web.UI.Control.PreRender" /> event) are run, and then each registered <see cref="T:System.Web.BeginEventHandler" /> method is called. When the handler completes, the corresponding <see cref="T:System.Web.EndEventHandler" /> method is called. If there are multiple asynchronous handlers, the next handler is called. </para>
+          <para>After the registered asynchronous event handlers have been called, the rest of the page events are called, beginning with the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers beginning and ending  event handler delegates for an asynchronous page.</para>
+        </summary>
+        <param name="beginHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate for the <see cref="T:System.Web.BeginEventHandler" /> method.</param>
+        <param name="endHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate for the <see cref="T:System.Web.EndEventHandler" /> method.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing state information for the event handlers.</param>
       </Docs>
     </Member>
     <Member MemberName="AddWrappedFileDependencies">
@@ -129,9 +175,16 @@
         <Parameter Name="virtualFileDependencies" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="virtualFileDependencies">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.AddWrappedFileDependencies(System.Object)" /> method adds a list of files, such as user control files, that make up the current page. If any of these pages is modified, the entire page is compiled the next time it is requested. This method supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a list of dependent files that make up the current page. This method is used internally by the ASP.NET page framework and is not intended to be used directly from your code.</para>
+        </summary>
+        <param name="virtualFileDependencies">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> containing the list of file names.</param>
       </Docs>
     </Member>
     <Member MemberName="Application">
@@ -142,9 +195,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpApplicationState" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpApplicationState" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -171,12 +227,24 @@
         <Parameter Name="extraData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">a <see cref="T:System.Web.HttpContext" /></param>
-        <param name="cb">a <see cref="T:System.AsyncCallback" /></param>
-        <param name="extraData">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.IAsyncResult" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not call this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates a request for Active Server Page (ASP) resources. This method is provided for compatibility with legacy ASP applications.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> with information about the current request. </param>
+        <param name="cb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The callback method. </param>
+        <param name="extraData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Any extra data needed to process the request in the same manner as an ASP request. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,9 +266,16 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added: an object of type 'IAsyncResult'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not call this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates a request for Active Server Page (ASP) resources. This method is provided for compatibility with legacy ASP applications.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ASP page generated by the request. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -219,9 +294,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When set to true, this property allows the page to be executed on a single-threaded apartment (STA) thread. This allows the page to call STA components, such as components developed with Visual Basic 6.0. Setting this property to true also allows the page to call COM+ components that require access to the unmanaged ASP built-in objects. These are accessible through the ASP ObjectContext object or the OnStartPage method.</para>
+          <para>In most circumstances, do not set this property in code. Set the aspcompat attribute to true using the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a value indicating whether the page can be executed on a single-threaded apartment (STA) thread.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -243,9 +325,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.AsyncMode" /> property is set by the <see cref="T:System.Web.UI.Page" /> parser when code for the page is generated. Use the Async attribute in <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive to set this value. </para>
+          <para>Asynchronous pages do not work when the AspCompat attribute is set to true or the Transaction attribute is set to a value other than Disabled in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a value indicating whether the page is processed synchronously or asynchronously.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AsyncPageBeginProcessRequest">
@@ -263,12 +352,21 @@
         <Parameter Name="extraData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="extraData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins processing an asynchronous page request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the request.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The callback method to notify when the process is complete.</param>
+        <param name="extraData">
+          <attribution license="cc4" from="Microsoft" modified="false" />State data for the asynchronous method.</param>
       </Docs>
     </Member>
     <Member MemberName="AsyncPageEndProcessRequest">
@@ -284,9 +382,13 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends processing an asynchronous page request.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> referencing a pending asynchronous request.</param>
       </Docs>
     </Member>
     <Member MemberName="AsyncTimeout">
@@ -299,9 +401,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous time-out of the page represents the amount of time that the page will wait to perform asynchronous tasks. In most circumstances, do not set this property in code. Set the page asynchronous time-out interval using the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages element</a></format> of the Web configuration file or in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive. Values set in the page configuration section are overwritten by the page directive.</para>
+          <para>Define your asynchronous task using the <see cref="T:System.Web.UI.PageAsyncTask" /> class and register a beginning, an ending, and a time-out handler. If the asynchronous task does not complete in the time interval specified, the time-out handler will be invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the time-out interval used when processing asynchronous tasks.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Buffer">
@@ -311,9 +420,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the <see cref="P:System.Web.UI.Page.Buffer" /> attribute to true using the <format type="text/html"><a href="F06CF9E5-22BB-461D-8B8F-549E53FF40A4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.Page.Buffer" /> property sets and gets the <see cref="P:System.Web.HttpResponse.BufferOutput" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a value indicating whether the page output is buffered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -339,9 +457,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.Caching.Cache" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An application's <see cref="T:System.Web.Caching.Cache" /> object allows you to store and retrieve arbitrary data on subsequent requests. The cache is not specifically associated with a page or user session. It is used primarily to enhance application performance. For more information, see <format type="text/html"><a href="206f977d-7860-4d20-bdd5-c3b3d8479f3d">Caching Application Data</a></format>. For more information on the difference between application caching and page output caching, see <format type="text/html"><a href="5ec28012-4972-4dc3-b3e8-9d20401fe11d">Introduction to Caching in ASP.NET</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Caching.Cache" /> object associated with the application in which the page resides.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -366,9 +490,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.ClientQueryString" /> property contains the query string portion of the URL requested by the browser. For example, if the requested URL is "http://www.contoso.com/default.aspx?id=100", the <see cref="P:System.Web.UI.Page.ClientQueryString" /> property will contain "id=100". The <see cref="P:System.Web.UI.Page.ClientQueryString" /> property is encoded; use the <see cref="M:System.Web.HttpServerUtility.UrlDecode(System.String)" /> method to decode the query string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the query string portion of the requested URL.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClientScript">
@@ -381,9 +511,16 @@
         <ReturnType>System.Web.UI.ClientScriptManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Page.ClientScript" /> property to get a <see cref="T:System.Web.UI.ClientScriptManager" /> object that can be used to manage, register, and add script to a Web page. For more information, see the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+          <para>The <see cref="T:System.Web.UI.ClientScriptManager" /> class is new in vstecasplong and replaces <see cref="T:System.Web.UI.Page" /> class methods for managing scripts that are now deprecated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ClientScriptManager" /> object used to manage, register, and add script to the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClientTarget">
@@ -394,9 +531,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not set the <see cref="P:System.Web.UI.Page.ClientTarget" /> property, the <see cref="T:System.Web.HttpBrowserCapabilities" /> object associated with the <see cref="P:System.Web.UI.Page.Request" /> property reflects the capabilities of the client browser. If you do set this property, client browser detection is disabled and the page will use browser capabilities associated with the value (alias) that you provide.</para>
+          <para>The root Web.config configuration file on the Web server computer defines the following default aliases that you can use as shorthand for common user-agent strings:</para>
+          <list type="bullet">
+            <item>
+              <para>uplevel, which specifies browser capabilities equivalent to Internet Explorer 6.0.</para>
+            </item>
+            <item>
+              <para>downlevel, which specifies browser capabilities equivalent to older browsers that do not support client script. You can use this alias to determine how Web pages would work in a browser that has client script disabled.</para>
+            </item>
+          </list>
+          <para>You can set the alias programmatically using this property, or you can set it declaratively using the ClientTarget attribute of the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive.</para>
+          <para>You can define additional aliases in the clientTarget section of the application-level Web.config file. For more information, see <format type="text/html"><a href="17a0fa6e-a065-49cc-b900-ef73eda6a922">clientTarget Element (ASP.NET Settings Schema)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that allows you to override automatic detection of browser capabilities and to specify how a page is rendered for particular browser clients.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -424,9 +578,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the CodePage attribute to the value you want using the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the code page identifier for the current <see cref="T:System.Web.UI.Page" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -451,9 +611,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the ContentType attribute using the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the HTTP MIME type for the <see cref="T:System.Web.HttpResponse" /> object associated with the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -479,9 +645,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpContext" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides programmatic access to the context the page runs in, including information about the request, response, session, and application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> object associated with the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,10 +670,20 @@
         <Parameter Name="tw" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="tw">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.HtmlTextWriter" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.CreateHtmlTextWriter(System.IO.TextWriter)" /> method creates a <see cref="T:System.IO.TextWriter" /> through the <see cref="P:System.Web.HttpRequest.Browser" /> property of the <see cref="P:System.Web.HttpContext.Request" /> object associated with the page request. You can add a reference to an <see cref="T:System.Web.UI.HtmlTextWriter" /> in the browserCaps configuration section. Override the <see cref="M:System.Web.UI.Page.CreateHtmlTextWriter(System.IO.TextWriter)" /> method to perform custom lookup.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Web.UI.HtmlTextWriter" /> object to render the page's content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.HtmlTextWriter" /> or <see cref="T:System.Web.UI.Html32TextWriter" />.</para>
+        </returns>
+        <param name="tw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> used to create the <see cref="T:System.Web.UI.HtmlTextWriter" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -527,11 +709,22 @@
         <Parameter Name="writerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="tw">To be added.</param>
-        <param name="writerType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used internally in page adapters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object to render the page's content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.HtmlTextWriter" /> that renders the content of the page.</para>
+        </returns>
+        <param name="tw">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> used to create the <see cref="T:System.Web.UI.HtmlTextWriter" />. </param>
+        <param name="writerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of text writer to create.</param>
       </Docs>
     </Member>
     <Member MemberName="Culture">
@@ -541,9 +734,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the Culture attribute in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the value of this property. In addition, you can also explicitly set the value of the <see cref="P:System.Web.UI.Page.Culture" /> property programmatically or in the <format type="text/html"><a href="e2dffc8e-ebd2-439b-a2fd-e3ac5e620da7">globalization</a></format> element of the Web.config file.</para>
+          <para>The <see cref="P:System.Web.UI.Page.Culture" /> property is used to help localize page content. You can set it to any valid culture ID. For example, the en-us culture ID sets the page to American English, while the fr culture ID sets the page to French. You can also set the value to auto which will perform automatic detection of the browser's preferred language and set it. The automatic language detection can be qualified with a default value such as auto:en-us.</para>
+          <para>For more information, see the <see cref="T:System.Globalization.CultureInfo" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the culture ID for the <see cref="T:System.Threading.Thread" /> object associated with the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -569,8 +770,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs any initialization of the instance of the <see cref="T:System.Web.UI.Page" /> class that is required by RAD designers. This method is used only at design time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -590,9 +794,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.DeterminePostBackMode" /> method returns a <see cref="T:System.Collections.Specialized.NameValueCollection" /> object that contains the data posted back to the page. The presence of the page hidden fields VIEWSTATE and EVENTTARGET is used to help determine whether a postback event has occurred. The <see cref="P:System.Web.UI.Page.IsPostBack" /> property is set when the <see cref="M:System.Web.UI.Page.DeterminePostBackMode" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Collections.Specialized.NameValueCollection" /> of data posted back to the page using either a POST or a GET command. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.NameValueCollection" /> object that contains the form data. If the postback used the POST command, the form information is returned from the <see cref="P:System.Web.UI.Page.Context" /> object. If the postback used the GET command, the query string information is returned. If the page is being requested for the first time, null is returned.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -614,9 +827,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.Page.EnableEventValidation" /> property is set to true, ASP.NET validates that a control event originated from the user interface that was rendered by that control. A control registers its events during rendering and then validates the events during postback or callback handling. For example, if a list control includes options numbered 1, 2, or 3 when the page is rendered, and if a postback request is received specifying option number 4, ASP.NET raises an exception. All event-driven controls in ASP.NET use this feature by default.</para>
+          <para>If you write client script that changes a control in the client at run time, you might have to use the <see cref="M:System.Web.UI.ClientScriptManager.RegisterForEventValidation(System.String)" /> method in order to avoid false event validation errors.</para>
+          <block subset="none" type="note">
+            <para>This feature reduces the risk of unauthorized or malicious postback requests and callbacks. It is strongly recommended that you do not disable event validation. </para>
+          </block>
+          <para>You set the <see cref="P:System.Web.UI.Page.EnableEventValidation" /> property by setting the enableEventValidation attribute of the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive or the enableEventValidation attribute of the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages</a></format> element in the Web.config file. If you set this property in code, you must set it before the page is initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the page validates postback and callback events.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableViewState">
@@ -627,9 +851,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Boolean" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For information about why you might want to disable view state, see <see cref="P:System.Web.UI.Control.EnableViewState" />. </para>
+          <para>Even if <see cref="P:System.Web.UI.Page.EnableViewState" /> is false, the page might contain a hidden view state field that is used by ASP.NET to detect a postback.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the page maintains its view state, and the view state of any server controls it contains, when the current page request ends.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -648,9 +879,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A view-state MAC is an encrypted version of the hidden variable that a page's view state is persisted to when the page is sent to the browser. When this property is set to true, the encrypted view state is checked to verify that it has not been tampered with on the client. </para>
+          <para>Do not set this property in code. Set the EnableViewStateMac attribute using the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+          <block subset="none" type="note">
+            <para>This attribute should never be set to false in a production Web site, even if the application or page does not use view state. The view state MAC helps ensure the security of other ASP.NET functions in addition to view state.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether ASP.NET should check message authentication codes (MAC) in the page's view state when the page is posted back from the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -676,9 +917,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error page to which the requesting browser is redirected in the event of an unhandled page exception.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -707,8 +951,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Define an asynchronous task using the <see cref="T:System.Web.UI.PageAsyncTask" /> class. After the task is defined, and is registered with the page using the <see cref="M:System.Web.UI.Page.RegisterAsyncTask(System.Web.UI.PageAsyncTask)" /> method, the <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method can be invoked to begin the asynchronous task.</para>
+          <para>The <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method is automatically called at the point in the page processing when any registered asynchronous tasks, if they exist, are invoked for a non-asynchronous page. This automatic call to <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> occurs just before the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event. Call the <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method for tasks you want to be invoked at times other than the automatic call to this method. Note, asynchronous tasks will be executed only once even though <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> may be called more than once. </para>
+          <para>The <see cref="P:System.Web.UI.Page.AsyncTimeout" /> property is reset on every call to the <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method. The last value of the <see cref="P:System.Web.UI.Page.AsyncTimeout" /> prior to invoking the <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method takes precedence. If an asynchronous task takes more than the <see cref="P:System.Web.UI.Page.AsyncTimeout" />, subsequent tasks invoked during that <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> call are timed out immediately.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the execution of an asynchronous task.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileDependencies">
@@ -718,9 +970,16 @@
         <ReturnType>System.Collections.ArrayList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ArrayList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property has been deprecated. Use the <see cref="Overload:System.Web.HttpResponse.AddFileDependencies" /> method or the <see cref="M:System.Web.HttpResponse.AddFileDependency(System.String)" /> method of the <see cref="T:System.Web.HttpResponse" /> class instead. </para>
+          <para>In most circumstances, do not set this property in code. Set the FileDependencies attribute to true using the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an array of files that the current <see cref="T:System.Web.HttpResponse" /> object is dependent upon.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -748,10 +1007,20 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.FindControl(System.String)" /> method can be used to access a control whose <see cref="P:System.Web.UI.Control.ID" /> is not available at design time. The method searches only the page's immediate, or top-level, container; it does not recursively search for controls in naming containers contained on the page. To access controls in a subordinate naming container, call the FindControl method of that container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the page naming container for a server control with the specified identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found. </param>
       </Docs>
     </Member>
     <Member MemberName="Form">
@@ -764,9 +1033,15 @@
         <ReturnType>System.Web.UI.HtmlControls.HtmlForm</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Page.Form" /> property to access the methods and properties of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> object that is the base of the control hierarchy on the page. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTML form for the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FrameworkInitialize">
@@ -781,8 +1056,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.FrameworkInitialize" /> method initializes the <see cref="T:System.Web.UI.Page" /> object and creates the control tree based on the declarative nature of the page. The <see cref="M:System.Web.UI.Page.FrameworkInitialize" /> method is overridden by the page parsing and code generation for the <see cref="T:System.Web.UI.Page" /> class for a declarative page. Ordinarily, you should not over need to override this method. If overriding, be sure to call the base class's <see cref="M:System.Web.UI.Page.FrameworkInitialize" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the control tree during page generation based on the declarative nature of the page. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDataItem">
@@ -796,9 +1077,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data item at the top of the data-binding context stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object at the top of the data binding context stack.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPostBackClientEvent">
@@ -812,11 +1099,22 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'Control'</param>
-        <param name="argument">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="T:System.Web.UI.ClientScriptManager" /> class for alternatives to this deprecated member.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference that can be used in a client event to post back to the server for the specified control and with the specified event arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that represents the client event.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server control that receives the client event postback. </param>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is passed to <see cref="M:System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -842,11 +1140,22 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'Control'</param>
-        <param name="argument">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="M:System.Web.UI.ClientScriptManager.GetPostBackClientHyperlink(System.Web.UI.Control,System.String)" /> method for an alternative to this deprecated member.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference, with javascript: appended to the beginning of it, that can be used in a client event to post back to the server for the specified control and with the specified event arguments.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing a JavaScript call to the postback function that includes the target control's ID and event arguments.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback. </param>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter passed to the server control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -871,10 +1180,20 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'Control'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.GetPostBackEventReference" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified <see cref="T:System.Web.UI.Control" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the postback.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback on the server. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -900,11 +1219,22 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'Control'</param>
-        <param name="argument">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.GetPostBackEventReference" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class instead. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified control that handles the postback and a string argument of additional event information. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the postback.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback. </param>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter passed to the server control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -927,9 +1257,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not override this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a hash code that is generated by <see cref="T:System.Web.UI.Page" /> objects that are generated at run time. This hash code is unique to the <see cref="T:System.Web.UI.Page" /> object's control hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code generated at run time. The default is 0.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -954,10 +1293,21 @@
         <Parameter Name="validationGroup" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="validationGroup">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.GetValidators(System.String)" /> method returns all the validation objects associated with a specific validation group. You can return the default validation group (all validation controls associated with controls without the ValidationGroup property set) by setting the <paramref name="validationGroup" /> parameter to null. </para>
+          <para>To validate the members of the validation group, you can enumerate over the collection and call the <see cref="M:System.Web.UI.IValidator.Validate" /> method of each validator returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of control validators for a specified validation group.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ValidatorCollection" /> that contains the control validators for the specified validation group.</para>
+        </returns>
+        <param name="validationGroup">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation group to return, or null to return the default validation group.</param>
       </Docs>
     </Member>
     <Member MemberName="GetWrappedFileDependencies">
@@ -974,9 +1324,18 @@
       </Parameters>
       <Docs>
         <param name="list">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.GetWrappedFileDependencies(System.String[])" /> method gets a list of files, such as user control files, that make up the current page. If any of these pages are modified, the entire page is compiled the next time it is requested. Do not override this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a list of physical file names that correspond to a list of virtual file locations.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing a list of physical file locations.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Header">
@@ -997,9 +1356,18 @@
         <ReturnType>System.Web.UI.HtmlControls.HtmlHead</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.Header" /> property gets a reference to an <see cref="T:System.Web.UI.HtmlControls.HtmlHead" /> object that you can use to set document header information for the page. The <see cref="T:System.Web.UI.HtmlControls.HtmlHead" /> allows you to add information such as style sheets, style rules, a title, and metadata to the head element.</para>
+          <block subset="none" type="note">
+            <para>Adding styles programmatically using the methods of the <see cref="T:System.Web.UI.IStyleSheet" /> interface during asynchronous postbacks is not supported. When you add AJAX capabilities to a Web page, asynchronous postbacks update regions of the page without updating the whole page. For more information, see <format type="text/html"><a href="be84d9b3-b7cd-47d7-8494-be4abfaad9cb">ASP.NET AJAX Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the document header for the page if the head element is defined with a runat=server in the page declaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ID">
@@ -1010,9 +1378,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an identifier for a particular instance of the <see cref="T:System.Web.UI.Page" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1037,9 +1408,12 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the character used to separate control identifiers when building a unique ID for a control on a page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitComplete">
@@ -1057,8 +1431,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Page.InitComplete" /> event is called at the end of the page's initialization stage. At this stage of the page's life cycle, all declared controls on the page are initialized, but the page's state is not yet populated. You can access server controls, but they will not yet contain information returned from the user. </para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when page initialization is complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeCulture">
@@ -1072,8 +1453,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.InitializeCulture" /> method contains no coding logic. Control developers extending the functionality of the <see cref="T:System.Web.UI.Page" /> class can override the <see cref="M:System.Web.UI.Page.InitializeCulture" /> method to initialize the <see cref="P:System.Web.UI.Page.Culture" /> and <see cref="P:System.Web.UI.Page.UICulture" /> information for the page. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="P:System.Web.UI.Page.Culture" /> and <see cref="P:System.Web.UI.Page.UICulture" /> for the current thread of the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitOutputCache">
@@ -1089,9 +1476,16 @@
         <Parameter Name="cacheSettings" Type="System.Web.UI.OutputCacheParameters" />
       </Parameters>
       <Docs>
-        <param name="cacheSettings">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not call this method. To enable and manipulate output caching for a page, use either the <format type="text/html"><a href="28A9E101-FB44-4198-9CB6-B8A52312FEC2">@ OutputCache</a></format> directive in the .aspx file, or the methods and properties of the <see cref="T:System.Web.HttpCachePolicy" /> class. The latter are accessible through Response.Cache syntax in the page's code declaration block or code-behind file. For more information, see <format type="text/html"><a href="E9666A1B-88DF-4931-AF0B-A754FC65660B">Caching ASP.NET Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the output cache for the current page request based on an <see cref="T:System.Web.UI.OutputCacheParameters" /> object.</para>
+        </summary>
+        <param name="cacheSettings">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.OutputCacheParameters" /> that contains the cache settings.</param>
       </Docs>
     </Member>
     <Member MemberName="InitOutputCache">
@@ -1108,13 +1502,24 @@
         <Parameter Name="varyByParam" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="duration">To be added: an object of type 'int'</param>
-        <param name="varyByHeader">To be added: an object of type 'string'</param>
-        <param name="varyByCustom">To be added: an object of type 'string'</param>
-        <param name="location">To be added: an object of type 'OutputCacheLocation'</param>
-        <param name="varyByParam">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not call this method. To enable and manipulate output caching for a page, use either the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive in the .aspx file, or the methods and properties of the <see cref="T:System.Web.HttpCachePolicy" /> class. The latter are accessible through Response.Cache syntax in the page's code. For more information, see <format type="text/html"><a href="e9666a1b-88df-4931-af0b-a754fc65660b">Caching ASP.NET Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the output cache for the current page request.</para>
+        </summary>
+        <param name="duration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time that objects stored in the output cache are valid. </param>
+        <param name="varyByHeader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of headers that content from the output cache will vary by. </param>
+        <param name="varyByCustom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Vary HTTP header. </param>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.OutputCacheLocation" /> values. </param>
+        <param name="varyByParam">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of parameters received by a GET or POST method that content from the output cache will vary by.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1144,14 +1549,26 @@
         <Parameter Name="varyByParam" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="duration">To be added.</param>
-        <param name="varyByContentEncoding">To be added.</param>
-        <param name="varyByHeader">To be added.</param>
-        <param name="varyByCustom">To be added.</param>
-        <param name="location">To be added.</param>
-        <param name="varyByParam">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not call this method. To enable and manipulate output caching for a page, use either the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive in the .aspx file, or methods and properties of the <see cref="T:System.Web.HttpCachePolicy" /> class. The latter are accessible through Response.Cache syntax in the page's code. For more information, see <format type="text/html"><a href="e9666a1b-88df-4931-af0b-a754fc65660b">Caching ASP.NET Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the output cache for the current page request.</para>
+        </summary>
+        <param name="duration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount of time that objects stored in the output cache are valid.</param>
+        <param name="varyByContentEncoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of character-sets (content encodings) that content from the output cache will vary by.</param>
+        <param name="varyByHeader">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of headers that content from the output cache will vary by.</param>
+        <param name="varyByCustom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Vary HTTP header.</param>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.OutputCacheLocation" /> values.</param>
+        <param name="varyByParam">
+          <attribution license="cc4" from="Microsoft" modified="false" />A semicolon-separated list of parameters received by a GET or POST method that content from the output cache will vary by.</param>
       </Docs>
     </Member>
     <Member MemberName="IsAsync">
@@ -1164,9 +1581,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Page.IsAsync" /> property to determine whether the Web page is running in asynchronous mode. This information is useful if controls or code on the page need to modify their behavior depending on whether the page is asynchronous. For more information about asynchronous programming, see <format type="text/html"><a href="e7d32c3c-bf78-4bfc-a357-c9e82e4a4b3c">Performing Asynchronous Operations</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the page is processed asynchronously.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCallback">
@@ -1187,9 +1610,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="dfaaa7d4-e1f2-4322-b2f5-796e0419f185">Implementing Client Callbacks Programmatically Without Postbacks in ASP.NET Web Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the page request is the result of a callback.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsClientScriptBlockRegistered">
@@ -1202,10 +1631,21 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method before calling <see cref="M:System.Web.UI.Page.RegisterClientScriptBlock(System.String,System.String)" /> to avoid unnecessarily assembling the client-side script. This is particularly important if the script requires a large amount of server resources to create.</para>
+          <para>The <see cref="M:System.Web.UI.Page.IsClientScriptBlockRegistered(System.String)" /> method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.IsClientScriptBlockRegistered" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the client script block with the specified key is registered with the page.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the script block is registered; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string key of the client script to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1235,9 +1675,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET provides two mechanisms for transferring control from one page to another. You can use the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method to transfer processing between pages, or you can make a cross-page request by assigning a page URL to the <see cref="P:System.Web.UI.WebControls.IButtonControl.PostBackUrl" /> property of a button control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface. </para>
+          <para>In either case, the <see cref="P:System.Web.UI.Page.PreviousPage" /> page property will contain an object that represents the previous or originator page. If, for example, Page A posts to Page B, Page A's <see cref="P:System.Web.UI.Page.IsCrossPagePostBack" /> property (accessible through the <see cref="P:System.Web.UI.Page.PreviousPage" /> property) will be true and Page B's <see cref="P:System.Web.UI.Page.PreviousPage" /> property will have the name of Page A.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the page is involved in a cross-page postback.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsPostBack">
@@ -1247,9 +1694,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For an explanation of the difference between postbacks and callbacks, see <format type="text/html"><a href="dfaaa7d4-e1f2-4322-b2f5-796e0419f185">Implementing Client Callbacks Programmatically Without Postbacks in ASP.NET Web Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the page is being rendered for the first time or is being loaded in response to a postback.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1271,9 +1724,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.Page" /> object can be reused.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1298,10 +1754,21 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method before calling <see cref="M:System.Web.UI.Page.RegisterStartupScript(System.String,System.String)" /> to avoid unnecessarily assembling the client-side script. This is particularly important if the script requires a large amount of server resources to create.</para>
+          <para>The <see cref="M:System.Web.UI.Page.IsStartupScriptRegistered(System.String)" /> method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.IsStartupScriptRegistered" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the client startup script is registered with the <see cref="T:System.Web.UI.Page" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the startup script is registered; otherwise, false.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string key of the startup script to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1320,9 +1787,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For this property to return true, all validation server controls in the current validation group must validate successfully. You should check this property only after you have called the <see cref="M:System.Web.UI.Page.Validate" /> method, or set the CausesValidation property to true in the OnServerClick event handler for an ASP.NET server control that initiates form processing. These server controls include the <see cref="T:System.Web.UI.WebControls.Button" />, <see cref="T:System.Web.UI.HtmlControls.HtmlButton" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputButton" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputImage" />, <see cref="T:System.Web.UI.WebControls.ImageButton" />, and <see cref="T:System.Web.UI.WebControls.LinkButton" /> classes.</para>
+          <para>If you force validation of a validation group using the <see cref="M:System.Web.UI.Page.Validate(System.String)" /> method, then all validation controls in the specified validation group must validate successfully as well.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether page validation succeeded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1347,9 +1821,16 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Page.Items" /> property to store objects with the same lifetime as the page request. This property is read-only; however, you can add objects to the <see cref="T:System.Collections.IDictionary" /> object it returns. </para>
+          <para>Objects added to the <see cref="P:System.Web.UI.Page.Items" /> property are available throughout the lifetime of the page, so you can add objects to the <see cref="P:System.Web.UI.Page.Items" /> property in events early in the page life cycle and access those objects in later events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of objects stored in the page context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LCID">
@@ -1359,9 +1840,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. The LCID attribute can be set in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive of the .aspx file, however, the preferred method of setting the locale identifier is through the use of the <see cref="P:System.Web.UI.Page.Culture" /> and <see cref="P:System.Web.UI.Page.UICulture" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the locale identifier for the <see cref="T:System.Threading.Thread" /> object associated with the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1394,8 +1881,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Page.LoadComplete" /> event occurs after all postback data and view-state data is loaded into the page and after the <see cref="M:System.Web.UI.Control.OnLoad(System.EventArgs)" /> method has been called for all controls on the page.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs at the end of the load stage of the page's life cycle.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadPageStateFromPersistenceMedium">
@@ -1406,9 +1900,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.LoadPageStateFromPersistenceMedium" /> method uses the <see cref="M:System.Web.UI.PageStatePersister.Load" /> method of the <see cref="T:System.Web.UI.PageStatePersister" /> object referenced by the <see cref="P:System.Web.UI.Page.PageStatePersister" /> property to load any saved view-state information for the <see cref="T:System.Web.UI.Page" /> object.</para>
+          <para>ASP.NET includes two descendents of the <see cref="T:System.Web.UI.PageStatePersister" /> class, the <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> class that saves state information in a hidden field included in the ASP.NET page, and the <see cref="T:System.Web.UI.SessionPageStatePersister" /> class that saves state in the <see cref="P:System.Web.UI.Page.Session" /> object associated with the request.</para>
+          <para>To save state in the location of your choice, you should create a new descendent of the <see cref="T:System.Web.UI.PageStatePersister" /> class that saves and loads state to the persistence medium of your choice. For an example of creating a new <see cref="T:System.Web.UI.PageStatePersister" /> object, see the <see cref="T:System.Web.UI.PageStatePersister" /> class.</para>
+          <para>If you are using the .NET Framework version 1.0 or 1.1, override this method if you want to load the <see cref="T:System.Web.UI.Page" /> state from anything other than a hidden field. If you choose to do so, you must also override the <see cref="M:System.Web.UI.Page.SavePageStateToPersistenceMedium(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads any saved view-state information to the <see cref="T:System.Web.UI.Page" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The saved view state.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1438,9 +1944,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When Web pages are posted back to the server, the user is returned to the top of the page. On long Web pages, this means that the user has to scroll the page back to the last position on the page.</para>
+          <para>When the <see cref="P:System.Web.UI.Page.MaintainScrollPositionOnPostback" /> property is set to true, the user is instead returned to the last position on the page.</para>
+          <para>You set the <see cref="P:System.Web.UI.Page.MaintainScrollPositionOnPostback" /> property in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to return the user to the same position in the client browser after postback. This property replaces the obsolete <see cref="P:System.Web.UI.Page.SmartNavigation" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MapPath">
@@ -1453,10 +1967,22 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Page.MapPath(System.String)" /> property can potentially contain sensitive information about the hosting environment. The return value should not be displayed to users.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the physical path that a virtual path, either absolute or relative, or an application-relative path maps to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path associated with the virtual path or application-relative path.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the virtual path. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1481,9 +2007,16 @@
         <ReturnType>System.Web.UI.MasterPage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.Master" /> property returns the <see cref="T:System.Web.UI.MasterPage" /> object associated with this page. This property is read-only; however, you can set properties on the <see cref="T:System.Web.UI.MasterPage" /> object it returns.</para>
+          <para>The <see cref="P:System.Web.UI.Page.Master" /> property is valid only on pages that reference a master page in the <see cref="P:System.Web.UI.Page.MasterPageFile" /> property. If you access the <see cref="P:System.Web.UI.Page.Master" /> property on a page that does not reference a master page, null is returned. The contents of a master page are not available until after the <see cref="E:System.Web.UI.Page.PreInit" /> event has been raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the master page that determines the overall look of the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MasterPageFile">
@@ -1501,9 +2034,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.MasterPageFile" /> property is a virtual path (from the root of the application) of the master page file associated with this page. The <see cref="P:System.Web.UI.Page.MasterPageFile" /> property can be set only in the <see cref="E:System.Web.UI.Page.PreInit" /> event; attempting to set the <see cref="P:System.Web.UI.Page.MasterPageFile" /> property after the <see cref="E:System.Web.UI.Page.PreInit" /> event will throw an <see cref="T:System.InvalidOperationException" /> exception. If the <see cref="P:System.Web.UI.Page.MasterPageFile" /> property is not valid, an exception of type <see cref="T:System.Web.HttpException" /> is thrown later in the page life cycle, but no exception is thrown when the property is set in the <see cref="E:System.Web.UI.Page.PreInit" /> event.</para>
+          <para>Pages that have the <see cref="P:System.Web.UI.Page.MasterPageFile" /> property set are content pages, and therefore can contain only top-level controls that are <see cref="T:System.Web.UI.WebControls.Content" /> controls. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the virtual path of the master page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxPageStateFieldLength">
@@ -1516,9 +2056,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.Page.MaxPageStateFieldLength" /> property is set to a positive number, the view state sent to the client browser is broken into multiple hidden fields, and each field's value is less than the size specified in the <see cref="P:System.Web.UI.Page.MaxPageStateFieldLength" /> property.</para>
+          <para>Setting the <see cref="P:System.Web.UI.Page.MaxPageStateFieldLength" /> property to a negative number (the default) indicates that the view-state field should not be separated into chunks. Setting the <see cref="P:System.Web.UI.Page.MaxPageStateFieldLength" /> to a small number may result in poor performance.</para>
+          <para>Set the value of the <see cref="P:System.Web.UI.Page.MaxPageStateFieldLength" /> property in the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages element</a></format> of the Web.config file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum length for the page's state field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnInit">
@@ -1534,9 +2082,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnInit(System.EventArgs)" /> method performs the initialization and setup steps required to create a <see cref="T:System.Web.UI.Page" /> instance. In this stage of the page's life cycle, declared server controls on the page are initialized to their default state; however, the view state of each control is not yet populated. A control on the page cannot access other server controls on the page during the Page_Init phase, regardless of whether the other controls are child or parent controls. Other server controls are not guaranteed to be created and ready for access.</para>
+          <para>The <see cref="M:System.Web.UI.Page.OnInit(System.EventArgs)" /> method is called after the <see cref="M:System.Web.UI.Page.OnPreInit(System.EventArgs)" /> method and before the <see cref="M:System.Web.UI.Page.OnInitComplete(System.EventArgs)" /> method.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.Page.OnInit(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event to initialize the page.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnInitComplete">
@@ -1552,9 +2110,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnInitComplete(System.EventArgs)" /> method is called after page initialization is complete. In this stage of the page's life cycle, all declared controls on the page are initialized, but the page's view state is not yet populated. You can access server controls, but they will not yet contain information returned from the user.</para>
+          <para>The <see cref="M:System.Web.UI.Page.OnInitComplete(System.EventArgs)" /> method occurs at the end of the <see cref="T:System.Web.UI.Page" /> initialization stage and before the load stage.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.Page.OnInitComplete(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Page.InitComplete" /> event after page initialization.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnLoadComplete">
@@ -1570,9 +2138,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnLoadComplete(System.EventArgs)" /> method is called at the end of the page load stage. At this point in the page life cycle, all postback data and view-state data is loaded into controls on the page. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.Page.OnLoadComplete(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Page.LoadComplete" /> event at the end of the page load stage.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPreInit">
@@ -1588,9 +2165,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnPreInit(System.EventArgs)" /> method is called at the beginning of the page initialization stage. </para>
+          <para>After the <see cref="M:System.Web.UI.Page.OnPreInit(System.EventArgs)" /> method is called, personalization information is loaded and the page theme, if any, is initialized. This is also the preferred stage to dynamically define a <see cref="T:System.Web.UI.PageTheme" /> or <see cref="T:System.Web.UI.MasterPage" /> for the Page.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.Page.OnPreInit(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Page.PreInit" /> event at the beginning of page initialization.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPreLoad">
@@ -1606,9 +2193,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnPreLoad(System.EventArgs)" /> method is called after all postback data returned from the user is loaded. At this stage in the page's life cycle, view-state information and postback data for declared controls and controls created during the initialization stage are loaded into the page's controls.</para>
+          <para>Controls created in the <see cref="M:System.Web.UI.Page.OnPreLoad(System.EventArgs)" /> method will also be loaded with view-state and postback data. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.Page.OnPreLoad(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Page.PreLoad" /> event after postback data is loaded into the page server controls but before the <see cref="M:System.Web.UI.Control.OnLoad(System.EventArgs)" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPreRenderComplete">
@@ -1624,9 +2221,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnPreRenderComplete(System.EventArgs)" /> method is called when the prerendering stage of the page life cycle is complete. At this stage of the page life cycle, all controls are created and the page is ready to render the output.</para>
+          <para>This is the last event called before the page's view state is saved.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.Page.OnPreRenderComplete(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event after the <see cref="M:System.Web.UI.Page.OnPreRenderComplete(System.EventArgs)" /> event and before the page is rendered.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnSaveStateComplete">
@@ -1642,9 +2249,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.OnSaveStateComplete(System.EventArgs)" /> method is called when the state information for the control has been written to the persistence medium for the page. State information is written to the persistence medium by calling the <see cref="M:System.Web.UI.Page.SavePageStateToPersistenceMedium(System.Object)" /> method. </para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+          <para>The <see cref="M:System.Web.UI.Page.OnSaveStateComplete(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Page.SaveStateComplete" /> event after the page state has been saved to the persistence medium.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> object containing the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="PageAdapter">
@@ -1657,9 +2273,16 @@
         <ReturnType>System.Web.UI.Adapters.PageAdapter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.PageAdapter" /> property returns the specific <see cref="T:System.Web.UI.Adapters.PageAdapter" /> object that modifies the behavior of the <see cref="T:System.Web.UI.Page" /> object for the requesting browser. </para>
+          <para>The specific <see cref="T:System.Web.UI.Adapters.PageAdapter" /> object is determined by examining characteristics of the incoming <see cref="P:System.Web.UI.Page.Request" /> object. When an adapter is chosen for the request, any life cycle events on the <see cref="T:System.Web.UI.Adapters.PageAdapter" /> object override the corresponding events on the <see cref="T:System.Web.UI.Page" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the adapter that renders the page for the specific requesting browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PageStatePersister">
@@ -1672,9 +2295,16 @@
         <ReturnType>System.Web.UI.PageStatePersister</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTTP requests and responses are inherently stateless. To maintain state between HTTP requests, ASP.NET server pages can store <see cref="T:System.Web.UI.Page" /> state. This state, called view state, consists of page and control settings and data that make the page and controls appear as if they are the same ones that the user saw and interacted with on their last round trip to the page. Several mechanisms exist to store view state between successive requests to the same page. The abstract <see cref="T:System.Web.UI.PageStatePersister" /> class represents the base class for these state storage mechanisms. </para>
+          <para>Page developers will typically not need to use the <see cref="P:System.Web.UI.Page.PageStatePersister" /> property. The <see cref="P:System.Web.UI.Page.PageStatePersister" /> property is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.Page" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.PageStatePersister" /> object associated with the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="postEventArgumentID">
@@ -1685,8 +2315,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that defines the EVENTARGUMENT hidden field in the rendered page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1706,8 +2339,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that defines the EVENTTARGET hidden field in the rendered page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1729,8 +2365,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event enables you to check conditions of the page request, such as whether the page is being loaded in response to a postback. You can also check the values of profile properties.</para>
+          <para>The event enables you to set values that are used later in the page life cycle. You can dynamically set a master page or a theme for the requested page, and create dynamic controls.</para>
+          <para>For more information about how the <see cref="E:System.Web.UI.Page.PreInit" /> event fits into the ASP.NET life cycle, see <format type="text/html"><a href="7949d756-1a79-464e-891f-904b1cfc7991">Introduction to the ASP.NET Page Life Cycle</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before page initialization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreLoad">
@@ -1748,8 +2392,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Page.PreLoad" /> event is raised after all postback data processing and before the <see cref="E:System.Web.UI.Control.Load" /> event. There is a second attempt to load postback data before the <see cref="M:System.Web.UI.Page.OnLoadComplete(System.EventArgs)" /> event. For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the page <see cref="E:System.Web.UI.Control.Load" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreRenderComplete">
@@ -1767,8 +2417,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event is raised when the pre-render stage of the page life cycle is complete. At this stage of the page life cycle, all controls are created, any pagination required is completed, and the page is ready to render to the output.</para>
+          <para>This is the last event raised before the page's view state is saved.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the page content is rendered.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreviousPage">
@@ -1789,9 +2447,16 @@
         <ReturnType>System.Web.UI.Page</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you use the <see cref="M:System.Web.HttpServerUtility.Transfer(System.String)" /> method or use cross-page posting to transfer processing from one ASP.NET page to another, the originating page contains request information that might be required for the destination page. You can use the <see cref="P:System.Web.UI.Page.PreviousPage" /> property to access that information.</para>
+          <para>If the current page is being rendered as a result of a direct request (not a transfer or cross-post from another page), the <see cref="P:System.Web.UI.Page.PreviousPage" /> property contains null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the page that transferred control to the current page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessRequest">
@@ -1804,9 +2469,16 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">a <see cref="T:System.Web.HttpContext" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not call this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the intrinsic server objects of the <see cref="T:System.Web.UI.Page" /> object, such as the <see cref="P:System.Web.UI.Page.Context" />, <see cref="P:System.Web.UI.Page.Request" />, <see cref="P:System.Web.UI.Page.Response" />, and <see cref="P:System.Web.UI.Page.Application" /> properties.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> object that provides references to the intrinsic server objects (for example, <see cref="P:System.Web.HttpContext.Request" />, <see cref="P:System.Web.HttpContext.Response" />, and <see cref="P:System.Web.HttpContext.Session" />) used to service HTTP requests. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1829,10 +2501,18 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sourceControl">To be added: an object of type 'IPostBackEventHandler'</param>
-        <param name="eventArgument">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.Page" /> object calls the <see cref="M:System.Web.UI.Page.RaisePostBackEvent(System.Web.UI.IPostBackEventHandler,System.String)" /> method when a postback occurs. This call occurs in the page life cycle after loading and change notification are complete but before prerendering occurs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the server control that caused the postback that it should handle an incoming postback event.</para>
+        </summary>
+        <param name="sourceControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ASP.NET server control that caused the postback. This control must implement the <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface. </param>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The postback argument. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1855,10 +2535,19 @@
         <Parameter Name="arrayValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="arrayName">To be added: an object of type 'string'</param>
-        <param name="arrayValue">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used by script-based controls to declare themselves within an array so that a client script library can work with all the controls of the same type.</para>
+          <para>The <see cref="M:System.Web.UI.Page.RegisterArrayDeclaration(System.String,System.String)" /> method has been deprecated. Use the <see cref="M:System.Web.UI.ClientScriptManager.RegisterArrayDeclaration(System.String,System.String)" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Declares a value that is declared as an ECMAScript array declaration when the page is rendered.</para>
+        </summary>
+        <param name="arrayName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the array in which to declare the value. </param>
+        <param name="arrayValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to place in the array. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1886,9 +2575,17 @@
         <Parameter Name="task" Type="System.Web.UI.PageAsyncTask" />
       </Parameters>
       <Docs>
-        <param name="task">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Define an asynchronous task using the <see cref="T:System.Web.UI.PageAsyncTask" /> class. When the task is defined, use the <see cref="M:System.Web.UI.Page.RegisterAsyncTask(System.Web.UI.PageAsyncTask)" /> method to register the task with the page. After registering the task, invoke the <see cref="M:System.Web.UI.Page.ExecuteRegisteredAsyncTasks" /> method to begin the asynchronous task.</para>
+          <para>The <see cref="M:System.Web.UI.Page.RegisterAsyncTask(System.Web.UI.PageAsyncTask)" /> method can be used with both synchronous and asynchronous pages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a new asynchronous task with the page.</para>
+        </summary>
+        <param name="task">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.PageAsyncTask" /> that defines the asynchronous task.</param>
       </Docs>
     </Member>
     <Member MemberName="RegisterClientScriptBlock">
@@ -1902,10 +2599,24 @@
         <Parameter Name="script" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <param name="script">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The client-side script is emitted just after the opening tag of the <see cref="T:System.Web.UI.Page" /> object's &lt;form runat= server&gt; element. Be sure to include opening and closing &lt;script&gt; elements around the script block string specified in the <paramref name="script" /> parameter.</para>
+          <para>Because this method uses a key to identify the script block, the script block does not have to be emitted to the output stream each time it is requested by a different server control instance. Using a key also decreases the likelihood of different controls' script blocks interfering with each other.</para>
+          <para>Any script blocks with the same <paramref name="key" /> parameter values are considered duplicates.</para>
+          <block subset="none" type="note">
+            <para>Remember to include HTML comment tags around your script so that it will not be rendered if the requesting browser does not support scripts.</para>
+          </block>
+          <para>The <see cref="M:System.Web.UI.Page.RegisterClientScriptBlock(System.String,System.String)" /> method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.RegisterClientScriptBlock" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits client-side script blocks to the response.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />Unique key that identifies a script block. </param>
+        <param name="script">
+          <attribution license="cc4" from="Microsoft" modified="false" />Content of script that is sent to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1931,10 +2642,18 @@
         <Parameter Name="hiddenFieldInitialValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="hiddenFieldName">To be added: an object of type 'string'</param>
-        <param name="hiddenFieldInitialValue">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.RegisterHiddenField(System.String,System.String)" /> method has been deprecated. Use the <see cref="M:System.Web.UI.ClientScriptManager.RegisterHiddenField(System.String,System.String)" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows server controls to automatically register a hidden field on the form. The field will be sent to the <see cref="T:System.Web.UI.Page" /> object when the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> server control is rendered.</para>
+        </summary>
+        <param name="hiddenFieldName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique name of the hidden field to be rendered. </param>
+        <param name="hiddenFieldInitialValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be emitted in the hidden form. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1960,10 +2679,18 @@
         <Parameter Name="script" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <param name="script">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.RegisterOnSubmitStatement(System.String,System.String)" /> method has been deprecated. Use the <see cref="M:System.Web.UI.ClientScriptManager.RegisterOnSubmitStatement(System.Type,System.String,System.String)" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows a page to access the client OnSubmit event. The script should be a function call to client code registered elsewhere.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />Unique key that identifies a script block. </param>
+        <param name="script">
+          <attribution license="cc4" from="Microsoft" modified="false" />The client-side script to be sent to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1996,9 +2723,16 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom server controls that use control state must call the <see cref="M:System.Web.UI.Page.RegisterRequiresControlState(System.Web.UI.Control)" /> method on each request because registration for control state is not carried over from request to request during a postback event. It is recommended that registration occur in the <see cref="E:System.Web.UI.Control.Init" /> event. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a control as one whose control state must be persisted.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to register.</param>
       </Docs>
     </Member>
     <Member MemberName="RegisterRequiresPostBack">
@@ -2011,9 +2745,17 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'Control'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control to be registered must implement the <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface or an <see cref="T:System.Web.HttpException" /> is raised. When implemented by a control, the <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface enables handling of post back data and raising of any post back data changed events. For more information on the server control event model, see <format type="text/html"><a href="6304bff7-1b0e-4641-8acb-6d3b0badc4a3">ASP.NET Server Control Event Model</a></format>. </para>
+          <para>Register controls with the page at or before the Page_PreRender event of the page life cycle. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a control as one that requires postback handling when the page is posted back to the server. </para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to be registered. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2035,9 +2777,16 @@
         <Parameter Name="control" Type="System.Web.UI.IPostBackEventHandler" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'IPostBackEventHandler'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only one server control can be registered per page request. The <see cref="M:System.Web.UI.Page.RegisterRequiresRaiseEvent(System.Web.UI.IPostBackEventHandler)" /> must be used when the control does not include its control ID in the form post data. Also, the control that is registered must implement the <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers an ASP.NET server control as one requiring an event to be raised when the control is processed on the <see cref="T:System.Web.UI.Page" /> object.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to register. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2060,8 +2809,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you are developing a custom control that deals with potentially sensitive information, call the <see cref="M:System.Web.UI.Page.RegisterRequiresViewStateEncryption" /> method to register the control with the page and ensure view state for the control is encrypted.</para>
+          <para>The entire page state will be encrypted if the <see cref="P:System.Web.UI.Page.ViewStateEncryptionMode" /> is set to <see cref="F:System.Web.UI.ViewStateEncryptionMode.Auto" /> or <see cref="F:System.Web.UI.ViewStateEncryptionMode.Always" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a control with the page as one requiring view-state encryption. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RegisterStartupScript">
@@ -2075,10 +2831,24 @@
         <Parameter Name="script" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <param name="script">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Similar to the <see cref="M:System.Web.UI.Page.RegisterClientScriptBlock(System.String,System.String)" /> method, the <see cref="M:System.Web.UI.Page.RegisterStartupScript(System.String,System.String)" /> method emits the script just before the closing tag of the <see cref="T:System.Web.UI.Page" /> object's &lt;form runat= server&gt; element. Be sure to include opening and closing &lt;script&gt; elements around the script block string specified in the <paramref name="script" /> parameter.</para>
+          <para>Because this method uses a key to identify the script block, the script block does not have to be emitted to the output stream each time it is requested by a different server control instance  </para>
+          <para>Any script blocks with the same <paramref name="key" /> parameter values are considered duplicates.</para>
+          <block subset="none" type="note">
+            <para>Remember to include HTML comment tags around your script so that it will not be rendered if the requesting browser does not support scripts.</para>
+          </block>
+          <para>The <see cref="M:System.Web.UI.Page.RegisterStartupScript(System.String,System.String)" /> method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.RegisterStartupScript" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Emits a client-side script block in the page response. </para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />Unique key that identifies a script block. </param>
+        <param name="script">
+          <attribution license="cc4" from="Microsoft" modified="false" />Content of script that will be sent to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2101,8 +2871,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.RegisterViewStateHandler" /> method is automatically called through the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> server control. If this method is not invoked, the page view state will not be persisted.</para>
+          <block subset="none" type="note">
+            <para>Typically, only the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> server control for the page calls this method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes page view state to be persisted, if called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2127,9 +2906,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.Render(System.Web.UI.HtmlTextWriter)" /> method is responsible for creating the text and markup that is sent to the client browser. The default <see cref="M:System.Web.UI.Page.Render(System.Web.UI.HtmlTextWriter)" /> method calls <see cref="M:System.Web.UI.Control.RenderChildren(System.Web.UI.HtmlTextWriter)" /> to write the text and markup for the controls contained on the page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.UI.HtmlTextWriter" /> object and calls on the child controls of the <see cref="T:System.Web.UI.Page" /> to render.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that receives the page content.</param>
       </Docs>
     </Member>
     <Member MemberName="Request">
@@ -2140,9 +2926,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpRequest" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpRequest" /> object contains information about the current HTTP request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpRequest" /> object for the requested page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2170,10 +2962,21 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Control state is an object composed of critical view-state data that Web server controls need to function; it is contained in a separate object from normal view state. </para>
+          <para>Custom controls using control state must call the <see cref="M:System.Web.UI.Page.RegisterRequiresControlState(System.Web.UI.Control)" /> method before saving control state. Use the <see cref="M:System.Web.UI.Page.RequiresControlState(System.Web.UI.Control)" /> method to check for controls that are registered with the page as requiring control state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Web.UI.Control" /> object is registered to participate in control state management.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Web.UI.Control" /> requires control state; otherwise, false</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to check for a control state requirement.</param>
       </Docs>
     </Member>
     <Member MemberName="Response">
@@ -2184,9 +2987,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpResponse" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpResponse" /> object associated with the <see cref="T:System.Web.UI.Page" /> object. This object allows you to send HTTP response data to a client and contains information about that response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2208,9 +3014,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the ResponseEncoding attribute to the value you want using the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the encoding language for the current <see cref="T:System.Web.HttpResponse" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2239,8 +3051,17 @@
       </Parameters>
       <Docs>
         <param name="viewState">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Page.SavePageStateToPersistenceMedium(System.Object)" /> method uses the <see cref="M:System.Web.UI.PageStatePersister.Save" /> method of the <see cref="T:System.Web.UI.PageStatePersister" /> object referenced by the <see cref="P:System.Web.UI.Page.PageStatePersister" /> property to store view-state and control-state information for the page.</para>
+          <para>ASP.NET includes two descendents of the <see cref="T:System.Web.UI.PageStatePersister" /> class, the <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> class that saves state information in a hidden field included in the ASP.NET page, and the <see cref="T:System.Web.UI.SessionPageStatePersister" /> class that saves state in the <see cref="P:System.Web.UI.Page.Session" /> object associated with the request. Note that when using the <see cref="T:System.Web.UI.SessionPageStatePersister" /> class the hidden VIEWSTATE field is still rendered as this is used to determine post back.</para>
+          <para>To save state in the location of your choice, you should create a new descendent of the <see cref="T:System.Web.UI.PageStatePersister" /> class that saves and loads state to the persistence medium of your choice. For an example of creating a new <see cref="T:System.Web.UI.PageStatePersister" /> object, see the <see cref="T:System.Web.UI.PageStatePersister" /> class.</para>
+          <para>If you are using the .NET Framework version 1.0 or 1.1, override this method if you want to save the <see cref="T:System.Web.UI.Page" /> state in anything other than a hidden field. If you choose to do so, you must also override the <see cref="M:System.Web.UI.Page.LoadPageStateFromPersistenceMedium" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves any view-state and control-state information for the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2267,8 +3088,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>State information for controls on the Web page is saved after the <see cref="E:System.Web.UI.Page.PreRenderComplete" /> event. The <see cref="E:System.Web.UI.Page.SaveStateComplete" /> event is raised after the view state and control state of the page and controls on the page are saved to the persistence medium. </para>
+          <para>This is the last event raised before the page is rendered to the requesting browser.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the page has completed saving all view state and control state information for the page and controls on the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Server">
@@ -2279,9 +3108,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpServerUtility" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides access to the frequently used <see cref="M:System.Web.HttpServerUtility.HtmlEncode(System.String)" /> and <see cref="M:System.Web.HttpServerUtility.MapPath(System.String)" /> methods, among others.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Server object, which is an instance of the <see cref="T:System.Web.HttpServerUtility" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2304,9 +3139,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.SessionState.HttpSessionState" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides information about the current request's session. A Session object is maintained for each user that requests a page or document from an ASP.NET application. Variables stored in the Session object are not discarded when the user moves from page to page in the application; instead, these variables persist as long as the user is accessing pages in your application. For more information about session state, see <format type="text/html"><a href="6d60d381-6521-4e1d-9089-da6464f2a9bc">ASP.NET Session State Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current Session object provided by ASP.NET.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2334,9 +3175,19 @@
         <Parameter Name="clientID" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="clientID">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Page.SetFocus(System.String)" /> method to make the control with the specified ID string the active control in the Web page displayed by the browser. The <see cref="M:System.Web.UI.Page.SetFocus(System.String)" /> method must be called before the page is prepared for rendering to the client in the <see cref="E:System.Web.UI.Control.PreRender" /> event.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Page.SetFocus(System.String)" /> method will work only on browsers supporting ECMAScript version 1.3 or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the browser focus to the control with the specified identifier. </para>
+        </summary>
+        <param name="clientID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the control to set focus to.</param>
       </Docs>
     </Member>
     <Member MemberName="SetFocus">
@@ -2352,9 +3203,19 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Page.SetFocus(System.Web.UI.Control)" /> method to make the specified control the active control on the Web page displayed by the browser. The <see cref="M:System.Web.UI.Page.SetFocus(System.Web.UI.Control)" /> method must be called before the page is prepared for rendering to the client in the <see cref="E:System.Web.UI.Control.PreRender" /> event. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.Page.SetFocus(System.Web.UI.Control)" /> method will work only on browsers supporting ECMAScript version 1.3 or later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the browser focus to the specified control. </para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to receive focus.</param>
       </Docs>
     </Member>
     <Member MemberName="SmartNavigation">
@@ -2365,9 +3226,34 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the SmartNavigation attribute to true in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets this property.</para>
+          <block subset="none" type="note">
+            <para>In ASP.NET version 2.0, the <see cref="P:System.Web.UI.Page.SmartNavigation" /> property is deprecated. Use the <see cref="Overload:System.Web.UI.Page.SetFocus" /> method and the <see cref="P:System.Web.UI.Page.MaintainScrollPositionOnPostback" /> property instead.</para>
+          </block>
+          <para>When a page is requested by Microsoft Internet Explorer 5.5 browser, or later, smart navigation enhances the user's experience of the page by performing the following: </para>
+          <list type="bullet">
+            <item>
+              <para>Eliminating the flash caused by navigation.</para>
+            </item>
+            <item>
+              <para>Persisting the scroll position when moving from page to page.</para>
+            </item>
+            <item>
+              <para>Persisting element focus between navigations.</para>
+            </item>
+            <item>
+              <para>Retaining only the last page state in the browser's history.</para>
+            </item>
+          </list>
+          <para>Smart navigation is best used with ASP.NET pages that require frequent postbacks but with visual content that does not change dramatically on return. Consider this carefully when deciding whether to set this property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether smart navigation is enabled. This property is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2406,9 +3292,32 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property does not refer directly to a cascading style sheet (CSS). The property contains the name of an ASP.NET theme, which can  include CSS files within it. </para>
+          <para>The <see cref="P:System.Web.UI.Page.StyleSheetTheme" /> property specifies the name of a theme that is applied to a page early in the page life cycle, whereas the <see cref="P:System.Web.UI.Page.Theme" /> property specifies the name of a theme that is applied to a page later in the page life cycle. This means that settings on the page take precedence over settings in the style sheet theme. For more information, see <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes and Skins Overview</a></format>.</para>
+          <para>You typically set a value for this property in the page directive or by overriding the property. For information, see the following topics:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="f9d72364-4d77-4b73-84be-7630dc63e0fe">How to: Apply ASP.NET Themes</a>
+                </format>
+              </para>
+            </item>
+            <item>
+              <para>
+                <format type="text/html">
+                  <a href="02eed7c3-01e8-4e20-8358-df47dbd4f148">How to: Apply ASP.NET Themes Programmatically</a>
+                </format>)</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the theme that is applied to the page early in the page life cycle.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Theme">
@@ -2429,9 +3338,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.Theme" /> property sets the name of the theme used for the page. If you want the settings on the page to take precedence over the settings in the theme, use the <see cref="P:System.Web.UI.Page.StyleSheetTheme" /> property. For more information, see <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes and Skins Overview</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.Page.Theme" /> property must be set prior to the <see cref="E:System.Web.UI.Page.PreInit" /> event; setting the <see cref="P:System.Web.UI.Page.Theme" /> property after the <see cref="E:System.Web.UI.Page.PreInit" /> event will cause an <see cref="T:System.InvalidOperationException" /> exception.</para>
+          <para>The specified theme must exist as either an application or a global theme. If the theme does not exist, an <see cref="T:System.Web.HttpException" /> exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the page theme.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Title">
@@ -2455,9 +3372,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.Page.Title" /> property to set the page title in the HTML header sent to the requesting browser.</para>
+          <block subset="none" type="note">
+            <para>The page must contain a head element that has the attribute runat="server", otherwise the title will not render.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the title for the page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Trace">
@@ -2468,9 +3394,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.TraceContext" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tracing tracks and presents the execution details about a Web request. For trace data to be visible in a rendered page, you must enable tracing at the page or application level.</para>
+          <para>Tracing on a page is disabled by default. To enable tracing for a page, use the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive &lt;% @ Page trace="true" %&gt;. To enable tracing for an entire application, you must enable it in the application's configuration file, Web.config, which resides in the root directory of the application. For more information, see <format type="text/html"><a href="1552561d-887c-4002-8770-f92662cdf416">ASP.NET Tracing Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.TraceContext" /> object for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2492,9 +3425,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the Trace attribute to true in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a value indicating whether tracing is enabled for the <see cref="T:System.Web.UI.Page" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2519,9 +3458,15 @@
         <ReturnType>System.Web.TraceMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.TraceMode" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the TraceMode attribute in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the mode in which trace statements are displayed on the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2546,9 +3491,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In most circumstances, do not set this property in code. Set the Transaction attribute in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the level of transaction support for the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2567,9 +3518,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a shortcut for the <see cref="P:System.Threading.Thread.CurrentThread" /> property. The culture is a property of the executing thread </para>
+          <para>Set the UICulture attribute in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive in the .aspx file. When the page is requested, the dynamically generated class sets the value of this property. In addition, you can also explicitly set the value of the <see cref="P:System.Web.UI.Page.UICulture" /> property in the <format type="text/html"><a href="e2dffc8e-ebd2-439b-a2fd-e3ac5e620da7">globalization element</a></format> of the Web.config file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the user interface (UI) ID for the <see cref="T:System.Threading.Thread" /> object associated with the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2597,9 +3555,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.UniqueFilePathSuffix" /> property returns a string that is appended to the end of a file path when required for caching browsers. The string is used to identify the file path associated with a specific request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique suffix to append to the file path for caching browsers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnregisterRequiresControlState">
@@ -2620,9 +3584,17 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom server controls that use control state must call the <see cref="M:System.Web.UI.Page.RegisterRequiresControlState(System.Web.UI.Control)" /> on each request during before the state is persisted. Registration for control state is not carried over from request to request during a postback. Use the <see cref="M:System.Web.UI.Page.UnregisterRequiresControlState(System.Web.UI.Control)" /> method to ensure that control state is not persisted for controls that no longer need to be persisted for postback.</para>
+          <para>Internally, the <see cref="M:System.Web.UI.Page.UnregisterRequiresControlState(System.Web.UI.Control)" /> method is invoked when using the <see cref="M:System.Web.UI.Control.RemovedControl(System.Web.UI.Control)" /> method to remove a control from a controls collection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops persistence of control state for the specified control.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> for which to stop persistence of control state.</param>
       </Docs>
     </Member>
     <Member MemberName="User">
@@ -2633,9 +3605,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Principal.IPrincipal" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Principal.IPrincipal" /> object represents the security context of the user on whose behalf the code is running, including that user's identity and any roles to which they belong.</para>
+          <para>This property uses the <see cref="T:System.Web.HttpContext" /> object's <see cref="P:System.Web.HttpContext.User" /> property to determine where the request originates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information about the user making the page request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2658,8 +3637,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is invoked when a user clicks any ASP.NET server control that has the CausesValidation property set to true, which is the default. These include the <see cref="T:System.Web.UI.WebControls.Button" />, <see cref="T:System.Web.UI.WebControls.ImageButton" />, and <see cref="T:System.Web.UI.WebControls.LinkButton" /> Web server controls, the <see cref="T:System.Web.UI.HtmlControls.HtmlInputButton" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputImage" />, and <see cref="T:System.Web.UI.HtmlControls.HtmlButton" /> HTML server controls, and controls that can automatically post back to the server such as the <see cref="T:System.Web.UI.WebControls.TextBox" />, <see cref="T:System.Web.UI.WebControls.CheckBox" />, <see cref="T:System.Web.UI.WebControls.ListControl" />, and <see cref="T:System.Web.UI.WebControls.BulletedList" /> controls.</para>
+          <para>To disable validation for any button control on the page, set the button control's CausesValidation property to false.</para>
+          <para>When this method is invoked, it iterates through the validation controls contained in the <see cref="T:System.Web.UI.ValidatorCollection" /> object associated with the <see cref="P:System.Web.UI.Page.Validators" /> property and invokes the validation logic for each validation control in the current validation group. The validation group is determined by the control that posted the page to the server. If no validation group is specified, then no validation group is used.</para>
+          <block subset="none" type="note">
+            <para>The behavior of page validation has changed. In vstecasplong, controls no longer call the <see cref="M:System.Web.UI.Page.Validate" /> method; they use the <see cref="M:System.Web.UI.Page.Validate(System.String)" /> method instead. If you use the <see cref="M:System.Web.UI.Page.Validate" /> method on an vstecasplong page, validation groups are ignored and all controls are validated.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs any validation controls included on the page to validate their assigned information.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2679,9 +3669,18 @@
         <Parameter Name="validationGroup" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="validationGroup">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is invoked when a user clicks any ASP.NET server control that has the CausesValidation property set to true, which is the default. These include the <see cref="T:System.Web.UI.WebControls.Button" />, <see cref="T:System.Web.UI.WebControls.ImageButton" />, and <see cref="T:System.Web.UI.WebControls.LinkButton" /> Web server controls, the <see cref="T:System.Web.UI.HtmlControls.HtmlInputButton" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputImage" />, and <see cref="T:System.Web.UI.HtmlControls.HtmlButton" /> HTML server controls, and controls that can automatically post back to the server such as the <see cref="T:System.Web.UI.WebControls.TextBox" />, <see cref="T:System.Web.UI.WebControls.CheckBox" />, <see cref="T:System.Web.UI.WebControls.ListControl" />, and <see cref="T:System.Web.UI.WebControls.BulletedList" /> controls.</para>
+          <para>To disable validation for any button control on the page, set the button control's CausesValidation property to false.</para>
+          <para>The <see cref="M:System.Web.UI.Page.Validate(System.String)" /> method validates the specified validation group. After calling the <see cref="M:System.Web.UI.Page.Validate(System.String)" /> method on a validation group, the <see cref="P:System.Web.UI.Page.IsValid" /> method will return true only if both the specified validation group and the validation group of the control that caused the page to be posted to the server are valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instructs the validation controls in the specified validation group to validate their assigned information.</para>
+        </summary>
+        <param name="validationGroup">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation group name of the controls to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="Validators">
@@ -2691,9 +3690,17 @@
         <ReturnType>System.Web.UI.ValidatorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ValidatorCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to manipulate the methods and properties of the <see cref="T:System.Web.UI.ValidatorCollection" /> object associated with the current <see cref="T:System.Web.UI.Page" /> instance. This collection contains all the validation server controls that are contained in a page.</para>
+          <para>Calling the <see cref="M:System.Web.UI.Page.Validate" /> method causes validation logic to be executed for each validation server control in the current validation group. If any of these controls do not pass, the <see cref="P:System.Web.UI.Page.IsValid" /> property returns false.</para>
+          <para>For more information on validation controls, see <format type="text/html"><a href="fa2aa14d-a461-492e-9a79-c990904613ef">Validation ASP.NET Controls</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all validation controls contained on the requested page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2718,9 +3725,18 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added: an object of type 'Control'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls that are required to be inside &lt;form runat=server&gt; tags can call this method before they render so that an error message is shown if they are placed outside the tags. Controls that post back or depend on registered script blocks should call this method in an override of the <see cref="M:System.Web.UI.Control.Render(System.Web.UI.HtmlTextWriter)" /> method. Pages that have a different way of rendering the server form element can override this method to throw an exception under different conditions.</para>
+          <para>Server controls that post back or use client-side script will not work if they are not enclosed in the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> server control (&lt;form runat="server"&gt;) tags. These controls can call this method when they render to provide a clear error message when they are not enclosed in the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+          <para>When you develop a custom server control, it is common to call this method when you override the Render method for any kind of input tag. This is particularly important if the input control calls <see cref="M:System.Web.UI.Page.GetPostBackEventReference(System.Web.UI.Control)" />, or if it emits client script. A composite server control does not need to make this call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Confirms that an <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control is rendered for the specified ASP.NET server control at run time.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ASP.NET server control that is required in the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2742,9 +3758,28 @@
         <ReturnType>System.Web.UI.ViewStateEncryptionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Page.ViewStateEncryptionMode" /> property cannot be set in code. It can only be set in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive or in the &lt;<format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages&gt;</a></format> element of the configuration file. Values set in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive override any values set in the configuration file.</para>
+          <para>The syntax for setting this property in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive is as follows:</para>
+          <code>&lt;%@ Page Language="VB" ViewStateEncryptionMode="Always" %&gt;
+</code>
+          <code>&lt;%@ Page Language="C#" ViewStateEncryptionMode="Always" %&gt;</code>
+          <para>The syntax for setting this property in the configuration file is as follows:</para>
+          <code>&lt;system.web&gt;
+  &lt;pages viewStateEncryptionMode="Always" /&gt;
+&lt;/system.web&gt;
+</code>
+          <code>&lt;system.web&gt;
+  &lt;pages viewStateEncryptionMode="Always" /&gt;
+&lt;/system.web&gt;</code>
+          <para>Custom control developers may wish to check the value of this property in code before saving potentially sensitive data to view state in their control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encryption mode of the view state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewStateUserKey">
@@ -2759,9 +3794,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the <see cref="P:System.Web.UI.Page.ViewStateUserKey" /> property can help you prevent attacks on your application from malicious users. It does this by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. For more information about Web attacks and about what you can do to help prevent them, see <see cref="http://go.microsoft.com/fwlink/?LinkId=163557">Take Advantage of ASP.NET Built-in Features to Fend Off Web Attacks</see>.</para>
+          <para>You can set this property to any string value, such as the user's authenticated name or the <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" /> value.</para>
+          <block subset="none" type="note">
+            <para>You must set this property during the Page_Init phase of page processing. Setting this property during the Page_Load phase throws an exception.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns an identifier to an individual user in the view-state variable associated with the current page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2776,9 +3821,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Boolean" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.UI.Page" /> object is rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

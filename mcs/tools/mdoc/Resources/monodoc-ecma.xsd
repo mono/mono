@@ -12,6 +12,10 @@ add masterdoc support?
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- define attributes -->
+  <xs:attribute name="preserve-mono" type="xs:string" />
+  <xs:attribute name="license" type="xs:string" />
+  <xs:attribute name="from" type="xs:string" />
+  <xs:attribute name="modified" type="xs:boolean" />
   <xs:attribute name="argnames" type="xs:string" />
   <xs:attribute name="cref" type="xs:string" />
   <xs:attribute name="Deprecated" type="xs:boolean" />
@@ -564,7 +568,9 @@ add masterdoc support?
         <xs:element ref="SPAN" />
         <xs:element ref="typeparamref" />
         <xs:element ref="whitespace" />
+        <xs:element ref="attribution" />
       </xs:choice>
+      <xs:attribute ref="preserve-mono" />
       <xs:attribute ref="name" use="required" />
     </xs:complexType>
   </xs:element>
@@ -633,7 +639,17 @@ add masterdoc support?
         <xs:element ref="list" />
         <xs:element ref="SPAN" />
         <xs:element ref="typeparamref" />
+        <xs:element ref="attribution" />
       </xs:choice>
+      <xs:attribute ref="preserve-mono" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="attribution">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="license" />
+      <xs:attribute ref="from" />
+      <xs:attribute ref="modified" />
     </xs:complexType>
   </xs:element>
 
@@ -653,7 +669,9 @@ add masterdoc support?
         <xs:element ref="typeparamref" />
         <xs:element ref="ul" />
         <xs:element ref="whitespace" />
+        <xs:element ref="attribution" />
       </xs:choice>
+      <xs:attribute ref="preserve-mono" />
     </xs:complexType>
   </xs:element>
 
@@ -738,7 +756,9 @@ add masterdoc support?
         <xs:element ref="typeparamref" />
         <xs:element ref="ul" />
         <xs:element ref="list" />
+        <xs:element ref="attribution" />
       </xs:choice>
+      <xs:attribute ref="preserve-mono" />
     </xs:complexType>
   </xs:element>
 

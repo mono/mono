@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplateModeChangedEventArgs" FullName="System.Web.UI.Design.TemplateModeChangedEventArgs">
   <TypeSignature Language="C#" Value="public class TemplateModeChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is raised by a designer host, such as vsprvslong, for certain actions on a control on the design surface. For example, an event is raised when you enter or exit template editing mode for a control.</para>
+      <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default delegate to handle the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event. When you exit or enter template editing mode, the designer host initializes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for a <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> event type, and then sets the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property with a <see cref="T:System.Web.UI.Design.TemplateModeChangedEventArgs" /> object.</para>
+      <para>When the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object indicates that the template mode has changed, the default delegate in the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class updates the value for the <see cref="P:System.Web.UI.Design.ControlDesigner.InTemplateMode" /> property.</para>
+      <para>Custom designers that are derived from the <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> class can override the <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method to perform additional processing when the template editing mode changes for a control on the design surface.</para>
+      <para>For more information about events and delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for a <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event that is raised when the template mode changes for a control on the design surface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +34,17 @@
         <Parameter Name="newTemplateGroup" Type="System.Web.UI.Design.TemplateGroup" />
       </Parameters>
       <Docs>
-        <param name="newTemplateGroup">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> delegate method uses the <see cref="M:System.Web.UI.Design.TemplateModeChangedEventArgs.#ctor(System.Web.UI.Design.TemplateGroup)" /> constructor to initialize a <see cref="T:System.Web.UI.Design.TemplateModeChangedEventArgs" /> object for use with a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object.</para>
+          <para>When you exit or enter template editing mode, the designer host initializes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for a <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> event type, and then sets the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property with a <see cref="T:System.Web.UI.Design.TemplateModeChangedEventArgs" /> object. The <paramref name="newTemplateGroup" /> parameter specifies a new template group when you enter template editing mode. The <paramref name="newTemplateGroup" /> parameter is typically null for exiting template editing mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplateModeChangedEventArgs" /> class with the specified template group.</para>
+        </summary>
+        <param name="newTemplateGroup">
+          <attribution license="cc4" from="Microsoft" modified="false" />A new template group that is used to initialize the <see cref="P:System.Web.UI.Design.TemplateModeChangedEventArgs.NewTemplateGroup" />.</param>
       </Docs>
     </Member>
     <Member MemberName="NewTemplateGroup">
@@ -38,9 +57,15 @@
         <ReturnType>System.Web.UI.Design.TemplateGroup</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.TemplateModeChangedEventArgs.NewTemplateGroup" /> property specifies a new template group when you enter template editing mode. <see cref="P:System.Web.UI.Design.TemplateModeChangedEventArgs.NewTemplateGroup" /> is nullfor events that are raised when you exit template editing mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the template group that was created when you entered template editing mode.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

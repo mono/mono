@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapExtension" FullName="System.Web.Services.Protocols.SoapExtension">
   <TypeSignature Language="C#" Value="public abstract class SoapExtension" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET allows a SOAP-related infrastructure to be built by means of an extensibility mechanism. The ASP.NET SOAP extension architecture revolves around an extension that can inspect or modify a message at specific stages in message processing on either the client or the server.</para>
+      <para>ASP.NET SOAP extensions derive from the <see cref="T:System.Web.Services.Protocols.SoapExtension" /> class. The <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> and <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> methods provide alternative mechanisms for initializing the SOAP extension to enhance performance. <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" /> is the heart of most SOAP extensions, as the method is called at each stage defined in <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />, allowing the SOAP extension to perform the desired behavior of that specific SOAP extension. For SOAP extensions that need to modify the SOAP request or SOAP response, <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" /> provides an opportunity to receive the proposed data to be sent across the wire.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The base class for SOAP extensions for XML Web services created using ASP.NET.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapExtension" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +52,22 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.IO.Stream" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" /> ensures that SOAP extensions with the highest priority can modify the actual data closest to the SOAP message sent or returned over the wire. </para>
+          <para>SOAP extensions should save references of the <see cref="T:System.IO.Stream" /> passed into <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" /> and the <see cref="T:System.IO.Stream" /> returned from <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" />. If the SOAP extension is configured to run with a XML Web service method, the <see cref="T:System.IO.Stream" /> passed into <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" /> contains the serialized SOAP request at the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.BeforeDeserialize" /> <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />. Similarily, the <see cref="T:System.IO.Stream" /> reference returned from <see cref="M:System.Web.Services.Protocols.SoapExtension.ChainStream(System.IO.Stream)" /> is written into when the serialization occurs and thus contains the serialized SOAP response in the <see cref="F:System.Web.Services.Protocols.SoapMessageStage.AfterSerialize" /> <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, allows a SOAP extension access to the memory buffer containing the SOAP request or response.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> representing a new memory buffer that this SOAP extension can modify.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A memory buffer containing the SOAP request or response. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,10 +84,30 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="serviceType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The overload of <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> that gets called by ASP.NET depends on how the SOAP extension was specified. There are two methods for specifying a SOAP extension: </para>
+          <list type="bullet">
+            <item>
+              <para>Apply a custom attribute, deriving from <see cref="T:System.Web.Services.Protocols.SoapExtensionAttribute" />, to the individual XML Web service method.</para>
+            </item>
+            <item>
+              <para>Add a reference in either the web.config or app.config configuration files.</para>
+            </item>
+          </list>
+          <para>If you add a reference to one of the configuration files, the SOAP extension runs for all XML Web services within the scope of that configuration file. When specifying, a SOAP extension by referencing a configuration file, ASP.NET invokes the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> overload that passes in a <see cref="T:System.Type" />. When specifying an extension by applying a custom attribute, ASP.NET invokes the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> that passes in a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> and a <see cref="T:System.Web.Services.Protocols.SoapExtensionAttribute" />.</para>
+          <para>For details on adding SOAP extensions to a configuration file, see <format type="text/html"><a href="1F0D71BC-8FAA-4730-B500-2A6C7B5D4F6B">[&lt;topic://cpconconfigurationoptionsforaspnetwebservices&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, allows a SOAP extension to initialize data specific to a class implementing an XML Web service at a one time performance cost.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that the SOAP extension initializes for caching.</para>
+        </returns>
+        <param name="serviceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the class implementing the XML Web service to which the SOAP extension is applied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,11 +125,36 @@
         <Parameter Name="attribute" Type="System.Web.Services.Protocols.SoapExtensionAttribute" />
       </Parameters>
       <Docs>
-        <param name="methodInfo">To be added: an object of type 'LogicalMethodInfo'</param>
-        <param name="attribute">To be added: an object of type 'SoapExtensionAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the SOAP extension is configured using a configuration file see the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> overload that accepts a <see cref="T:System.Type" />.</para>
+          <para>A SOAP extension has three opportunities to initialize data and they all have different purposes: </para>
+          <list type="bullet">
+            <item>
+              <para>Class constructor - The class constructor is called every time a SOAP extension is instantiated and is typically used to initialize member variables.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> - <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" />, however, is called just once, the first time a SOAP request is made to an XML Web services method. If a custom attribute is applied to the XML Web service method, the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> method is invoked. This allows the SOAP extension to interrogate the <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> of an XML Web service method for prototype information or to access extension-specific data passed by a class deriving from <see cref="T:System.Web.Services.Protocols.SoapExtensionAttribute" />. The return value is cached by ASP.NET and passed into subsequent <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> methods. Therefore, initialization done in <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> is encapsulated essentially into a one-time performance hit.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> - <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> is called every time a SOAP request is made to an XML Web service method, but has an advantage over the class constructor, in that the <see cref="T:System.Object" /> initialized in <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> is passed to it.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, allows a SOAP extension to initialize data specific to an XML Web service method using an attribute applied to the XML Web service method at a one time performance cost.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that the SOAP extension initializes for caching.</para>
+        </returns>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> representing the specific function prototype for the XML Web service method to which the SOAP extension is applied. </param>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Protocols.SoapExtensionAttribute" /> applied to the XML Web service method. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,9 +171,40 @@
         <Parameter Name="initializer" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="initializer">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP extension has three opportunities to initialize data and they all have different purposes: </para>
+          <list type="bullet">
+            <item>
+              <para>Class constructor - The class constructor is called every time a SOAP extension is instantiated and is typically used to initialize member variables.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> - <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" />, however, is called just once, the first time a SOAP request is made to an XML Web services method. If a custom attribute is applied to the XML Web service method, the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> method is invoked. This allows the SOAP extension to interrogate the <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> of an XML Web service method for prototype information or to access extension-specific data passed by a class deriving from <see cref="T:System.Web.Services.Protocols.SoapExtensionAttribute" />. The return value is cached by ASP.NET and passed into subsequent <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> methods. Therefore, initialization done in <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> is encapsulated essentially into a one-time performance hit.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> - <see cref="M:System.Web.Services.Protocols.SoapExtension.Initialize(System.Object)" /> is called every time a SOAP request is made to an XML Web service method, but has an advantage over the class constructor, in that the <see cref="T:System.Object" /> initialized in <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> is passed to it.</para>
+            </item>
+            <item>
+              <para />
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>You can also add a SOAP extension without deriving from <see cref="T:System.Web.Services.Protocols.SoapExtensionAttribute" /> by using the <format type="text/html"><a href="7a373a98-6d82-4f8d-a6fc-2996da3fd54c">&lt;soapExtensionTypes&gt; Element</a></format> in a configuration file. For details, see <format type="text/html"><a href="7a373a98-6d82-4f8d-a6fc-2996da3fd54c">&lt;soapExtensionTypes&gt; Element</a></format> and <format type="text/html"><a href="97d81ace-95e7-4acc-ae39-9692a0021e95">SOAP Message Modification Using SOAP Extensions</a></format>.</para>
+          </block>
+          <list type="bullet">
+            <item>
+              <para />
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, allows a SOAP extension to initialize itself using the data cached in the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> method.</para>
+        </summary>
+        <param name="initializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> returned from <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> cached by ASP.NET. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,9 +221,17 @@
         <Parameter Name="message" Type="System.Web.Services.Protocols.SoapMessage" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'SoapMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" /> is called at all <see cref="T:System.Web.Services.Protocols.SoapMessageStage" /> stages for SOAP extensions applied to both XML Web services created using ASP.NET and their clients. At each <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />, an instance of a class deriving from <see cref="T:System.Web.Services.Protocols.SoapMessage" /> is passed to <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" />. If the SOAP extension is running on the XML Web service client, then a <see cref="T:System.Web.Services.Protocols.SoapClientMessage" /> object is passed into <see cref="M:System.Web.Services.Protocols.SoapExtension.ProcessMessage(System.Web.Services.Protocols.SoapMessage)" />; otherwise a <see cref="T:System.Web.Services.Protocols.SoapServerMessage" /> object is passed in.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, allows a SOAP extension to receive a <see cref="T:System.Web.Services.Protocols.SoapMessage" /> to process at each <see cref="T:System.Web.Services.Protocols.SoapMessageStage" />.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Protocols.SoapMessage" /> to process. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

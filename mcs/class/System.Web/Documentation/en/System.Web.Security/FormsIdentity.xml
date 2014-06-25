@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormsIdentity" FullName="System.Web.Security.FormsIdentity">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class FormsIdentity : System.Security.Principal.IIdentity" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.FormsIdentity" /> class is used by the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> when a user is authenticated with forms authentication. An instance of the <see cref="T:System.Web.Security.FormsIdentity" /> class is created using the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> that is decrypted from the forms-authentication cookie or from the URL. The new instance of the <see cref="T:System.Web.Security.FormsIdentity" /> class is used to construct a new <see cref="T:System.Security.Principal.GenericPrincipal" /> object that is set as the value of the <see cref="P:System.Web.HttpContext.User" /> property for the current <see cref="T:System.Web.HttpContext" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a user identity authenticated using forms authentication. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +36,13 @@
         <Parameter Name="ticket" Type="System.Web.Security.FormsAuthenticationTicket" />
       </Parameters>
       <Docs>
-        <param name="ticket">To be added: an object of type 'FormsAuthenticationTicket'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.FormsIdentity" /> class.</para>
+        </summary>
+        <param name="ticket">
+          <attribution license="cc4" from="Microsoft" modified="false" />The authentication ticket upon which this identity is based. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +56,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of authenticated identity.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +75,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether authentication took place.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +94,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsIdentity.Name" /> property returns the value of the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Name" /> property from the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> supplied to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user name of the forms identity.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,9 +116,12 @@
         <ReturnType>System.Web.Security.FormsAuthenticationTicket</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FormsAuthenticationTicket'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> for the forms-authentication user identity.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

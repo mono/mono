@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MimeParameterWriter" FullName="System.Web.Services.Protocols.MimeParameterWriter">
   <TypeSignature Language="C#" Value="public abstract class MimeParameterWriter : System.Web.Services.Protocols.MimeFormatter" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" /> and other classes in the <see cref="N:System.Web.Services.Protocols" /> namespace support the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. Web service writers and readers serialize and deserialize, respectively, between the parameters or return objects of Web methods and the HTTP request or response streams. Web service writers and readers use HTTP for transport but don't exchange messages using the SOAP standard.</para>
+      <para>The <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" /> class establishes a common request-writing format for client-side writing of Web method parameters into HTTP request streams.</para>
+      <para>You will typically not need to use <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" /> or its descendant classes directly. Instead, when the Wsdl.exe tool generates client proxy code according to the HTTP-GET or HTTP-POST implementations, it applies the <see cref="T:System.Web.Services.Protocols.HttpMethodAttribute" /> to each Web method and sets the attribute's <see cref="P:System.Web.Services.Protocols.HttpMethodAttribute.ParameterFormatter" /> property to the appropriate type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common base implementation for writers of out-going request parameters for Web service clients implemented using HTTP but without SOAP.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,11 +55,22 @@
         <Parameter Name="parameters" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="parameters">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Of the classes derived from <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" />, only <see cref="T:System.Web.Services.Protocols.UrlParameterWriter" /> modifies the HTTP request URL.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, modifies the outgoing HTTP request's Uniform Request Locator (URL).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> object that contains the modified, outgoing HTTP request's Uniform Request Locator (URL).</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request's original Uniform Resource Locator (URL).</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Web method parameter values to be added to the URL, if necessary.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,10 +88,18 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="request">a <see cref="T:System.Net.WebRequest" /></param>
-        <param name="values">a <see cref="T:System.Object[]" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Of the classes derived from <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" />, only <see cref="T:System.Web.Services.Protocols.HtmlFormParameterWriter" /> implements the <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, initializes the out-going HTTP request.</para>
+        </summary>
+        <param name="request">
+          <attribution license="cc4" from="Microsoft" modified="false" />The out-going request, where the <see cref="T:System.Net.WebRequest" /> class allows transport protocols besides HTTP.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Web method parameter values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +114,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Text.Encoding" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoding, as represented by the <see cref="T:System.Text.Encoding" /> class, defines how to transform characters into a sequence of bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encoding used to write parameters to the HTTP request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +136,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Protocols.MimeParameterWriter.UsesWriteRequest" /> property determines whether the <see cref="M:System.Web.Services.Protocols.MimeParameterWriter.WriteRequest(System.IO.Stream,System.Object[])" /> method is invoked.</para>
+          <para>The <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" /> class's implementation of <see cref="P:System.Web.Services.Protocols.MimeParameterWriter.UsesWriteRequest" /> returns a value of false. The only derived class that overrides <see cref="P:System.Web.Services.Protocols.MimeParameterWriter.UsesWriteRequest" /> is <see cref="T:System.Web.Services.Protocols.HtmlFormParameterWriter" />, whose implementation returns a value of true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether Web method parameter values are serialized to the out-going HTTP request body.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -118,10 +163,18 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="requestStream">a <see cref="T:System.IO.Stream" /></param>
-        <param name="values">a <see cref="T:System.Object[]" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Of the classes derived from <see cref="T:System.Web.Services.Protocols.MimeParameterWriter" />, only <see cref="T:System.Web.Services.Protocols.HtmlFormParameterWriter" /> implements the <see cref="M:System.Web.Services.Protocols.MimeParameterWriter.WriteRequest(System.IO.Stream,System.Object[])" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, serializes Web method parameter values into a stream representing the outgoing HTTP request body.</para>
+        </summary>
+        <param name="requestStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />An input stream for the outgoing HTTP request's body.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Web method parameter values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

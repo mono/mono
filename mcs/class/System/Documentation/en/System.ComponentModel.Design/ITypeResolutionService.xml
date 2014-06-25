@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypeResolutionService" FullName="System.ComponentModel.Design.ITypeResolutionService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ITypeResolutionService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeResolutionService" />
@@ -12,8 +13,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This service is used to load types at design time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface to retrieve an assembly or type by name.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetAssembly">
@@ -32,10 +39,17 @@
         <Parameter Name="name" Type="System.Reflection.AssemblyName" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'Reflection.AssemblyName'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the requested assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested assembly, or null if no assembly can be located.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetAssembly">
@@ -55,11 +69,19 @@
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'Reflection.AssemblyName'</param>
-        <param name="throwOnError">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the requested assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested assembly, or null if no assembly can be located.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly to retrieve. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this method should throw an exception if the assembly cannot be located; otherwise, false, and this method returns null if the assembly cannot be located. </param>
       </Docs>
     </Member>
     <Member MemberName="GetPathOfAssembly">
@@ -78,10 +100,17 @@
         <Parameter Name="name" Type="System.Reflection.AssemblyName" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'Reflection.AssemblyName'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path to the file from which the assembly was loaded.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The path to the file from which the assembly was loaded.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly. </param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -100,10 +129,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a type with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Type" /> that corresponds to the specified name, or null if no type can be found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type. If the type name is not a fully qualified name that indicates an assembly, this service will search its internal set of referenced assemblies. </param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -123,11 +159,22 @@
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="throwOnError">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type cannot be loaded and the <paramref name="throwOnError" /> parameter is true, this will throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a type with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Type" /> that corresponds to the specified name, or null if no type can be found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type. If the type name is not a fully qualified name that indicates an assembly, this service will search its internal set of referenced assemblies. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this method should throw an exception if the assembly cannot be located; otherwise, false, and this method returns null if the assembly cannot be located. </param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -148,12 +195,24 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="throwOnError">To be added: an object of type 'bool'</param>
-        <param name="ignoreCase">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type cannot be loaded and the <paramref name="throwOnError" /> parameter is true, this will throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a type with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Type" /> that corresponds to the specified name, or null if no type can be found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type. If the type name is not a fully qualified name that indicates an assembly, this service will search its internal set of referenced assemblies. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if this method should throw an exception if the assembly cannot be located; otherwise, false, and this method returns null if the assembly cannot be located. </param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore case when searching for types; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="ReferenceAssembly">
@@ -172,9 +231,16 @@
         <Parameter Name="name" Type="System.Reflection.AssemblyName" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'Reflection.AssemblyName'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once a reference to an assembly has been added to this service, this service can load types from names that do not specify an assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a reference to the specified assembly.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Reflection.AssemblyName" /> that indicates the assembly to reference. </param>
       </Docs>
     </Member>
   </Members>

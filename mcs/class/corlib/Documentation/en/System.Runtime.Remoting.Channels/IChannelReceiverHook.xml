@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IChannelReceiverHook" FullName="System.Runtime.Remoting.Channels.IChannelReceiverHook">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IChannelReceiverHook" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelReceiverHook" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the implementing channel wants to hook into the outside listener service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddHookChannelUri">
@@ -36,9 +40,16 @@
         <Parameter Name="channelUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="channelUri">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Client code should not call this method directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a URI on which the channel hook will listen.</para>
+        </summary>
+        <param name="channelUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI on which the channel hook will listen. </param>
       </Docs>
     </Member>
     <Member MemberName="ChannelScheme">
@@ -54,9 +65,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is not case-sensitive.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of listener to hook into.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChannelSinkChain">
@@ -72,9 +89,12 @@
         <ReturnType>System.Runtime.Remoting.Channels.IServerChannelSink</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IServerChannelSink'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the channel sink chain that the current channel is using.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WantsToListen">
@@ -90,9 +110,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value that indicates whether <see cref="T:System.Runtime.Remoting.Channels.IChannelReceiverHook" /> needs to be hooked into the outside listener service.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

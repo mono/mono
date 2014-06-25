@@ -71,8 +71,12 @@ namespace System.Configuration {
 
 			if (File != "") {
 				try {
-					Stream s = System.IO.File.OpenRead (File);
-					XmlReader subreader = new ConfigXmlTextReader (s, File);
+					string filePath = File;
+					if (!Path.IsPathRooted (filePath))
+						filePath = Path.Combine (Path.GetDirectoryName (Configuration.FilePath), filePath);
+
+					Stream s = System.IO.File.OpenRead (filePath);
+					XmlReader subreader = new ConfigXmlTextReader (s, filePath);
 					base.DeserializeElement (subreader, serializeCollectionKey);
 					s.Close ();
 				}

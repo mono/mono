@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Func&lt;T1,T2,TResult&gt;" FullName="System.Func&lt;T1,T2,TResult&gt;">
   <TypeSignature Language="C#" Value="public delegate TResult Func&lt;T1,T2,TResult&gt;(T1 arg1, T2 arg2);" />
   <AssemblyInfo>
@@ -25,8 +26,26 @@
     <typeparam name="TResult">To be added.</typeparam>
     <param name="arg1">To be added.</param>
     <param name="arg2">To be added.</param>
-    <summary>To be added.</summary>
     <value>To be added.</value>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use this delegate to represent a method that can be passed as a parameter without explicitly declaring a custom delegate. The encapsulated method must correspond to the method signature that is defined by this delegate. This means that the encapsulated method must have two parameters, each of which is passed to it by value, and that it must return a value.</para>
+      <block subset="none" type="note">
+        <para>To reference a method that has two parameters and returns void (or in Visual Basic, that is declared as a Sub rather than as a Function), use the generic <see cref="T:System.Action`2" /> delegate instead. </para>
+      </block>
+      <para>When you use the <see cref="T:System.Func`3" /> delegate you do not have to explicitly define a delegate that encapsulates a method with two parameters. For example, the following code explicitly declares a delegate named ExtractMethod and assigns a reference to the ExtractWords method to its delegate instance.</para>
+      <para>code reference: System.Func~3#1</para>
+      <para>The following example simplifies this code by instantiating a <see cref="T:System.Func`3" /> delegate instead of explicitly defining a new delegate and assigning a named method to it. </para>
+      <para>code reference: System.Func~3#2</para>
+      <para>You can use the <see cref="T:System.Func`3" /> delegate with anonymous methods in C#, as the following example illustrates. (For an introduction to anonymous methods, see <format type="text/html"><a href="a62441fa-f0a3-4acb-9aa6-93762a635275">Anonymous Methods (C# Programming Guide)</a></format>.)</para>
+      <para>code reference: System.Func~3#3</para>
+      <para>You can also assign a lambda expression to a <see cref="T:System.Func`3" /> delegate, as the following example illustrates. (For an introduction to lambda expressions, see <format type="text/html"><a href="137064b0-3928-4bfa-ba71-c3f9cbd951e2">Lambda Expressions</a></format> and <format type="text/html"><a href="57e3ba27-9a82-4067-aca7-5ca446b7bf93">Lambda Expressions (C# Programming Guide)</a></format>.)</para>
+      <para>code reference: System.Func~3#4</para>
+      <para>The underlying type of a lambda expression is one of the generic Func delegates. This makes it possible to pass a lambda expression as a parameter without explicitly assigning it to a delegate. In particular, because many methods of types in the <see cref="N:System.Linq" /> namespace have <see cref="T:System.Func`3" /> parameters, you can pass these methods a lambda expression without explicitly instantiating a <see cref="T:System.Func`3" /> delegate.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a method that has two parameters and returns a value of the type specified by the <paramref name="TResult" /> parameter.</para>
+    </summary>
   </Docs>
 </Type>

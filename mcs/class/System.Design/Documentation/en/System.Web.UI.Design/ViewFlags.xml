@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewFlags" FullName="System.Web.UI.Design.ViewFlags">
   <TypeSignature Language="C#" Value="public enum ViewFlags" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates which features are enabled with the <see cref="M:System.Web.UI.Design.ControlDesigner.SetViewFlags(System.Web.UI.Design.ViewFlags,System.Boolean)" /> method of a designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CustomPaint">
@@ -27,7 +31,10 @@
         <ReturnType>System.Web.UI.Design.ViewFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables painting events for displaying a custom control at design time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignTimeHtmlRequiresLoadComplete">
@@ -40,7 +47,10 @@
         <ReturnType>System.Web.UI.Design.ViewFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Postpones all events until after the control is completely loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TemplateEditing">
@@ -53,7 +63,10 @@
         <ReturnType>System.Web.UI.Design.ViewFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables template editing at design time.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

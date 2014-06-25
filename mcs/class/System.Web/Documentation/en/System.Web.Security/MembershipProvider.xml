@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MembershipProvider" FullName="System.Web.Security.MembershipProvider">
   <TypeSignature Language="C#" Value="public abstract class MembershipProvider : System.Configuration.Provider.ProviderBase" />
   <AssemblyInfo>
@@ -9,9 +10,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET membership is designed to enable you to easily use a number of different membership providers for your ASP.NET applications. You can use the supplied membership providers that are included with the .NET Framework, or you can implement your own provider.</para>
+      <block subset="none" type="note">
+        <para>If you are not familiar with the membership features of ASP.NET, see <format type="text/html"><a href="79184d17-f4c7-4c9f-a073-cec4f5543980">Introduction to Membership</a></format> before continuing. For a list of other topics related to membership, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users By Using Membership</a></format>.</para>
+      </block>
+      <para>When implementing a custom membership provider, you are required to inherit the <see cref="T:System.Web.Security.MembershipProvider" /> abstract class.</para>
+      <para>There are two primary reasons for creating a custom membership provider.</para>
+      <list type="bullet">
+        <item>
+          <para>You need to store membership information in a data source that is not supported by the membership providers included with the .NET Framework, such as a FoxPro database, an Oracle database, or other data source.</para>
+        </item>
+        <item>
+          <para>You need to manage membership information using a database schema that is different from the database schema used by the providers that ship with the .NET Framework. A common example of this would be membership data that already exists in a SQL Server database for a company or Web site.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.Security.MembershipProvider" /> abstract class inherits from the <see cref="T:System.Configuration.Provider.ProviderBase" /> abstract class. <see cref="T:System.Web.Security.MembershipProvider" /> implementations must also implement the required members of <see cref="T:System.Configuration.Provider.ProviderBase" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract that ASP.NET implements to provide membership services using custom membership providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +40,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You are not required to implement a constructor for a class that inherits the <see cref="T:System.Web.Security.MembershipProvider" /> abstract class. Initialization values for a <see cref="T:System.Web.Security.MembershipProvider" /> implementation are passed to the <see cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" /> method implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.MembershipProvider" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +61,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.ApplicationName" /> property value is stored in the data source with related user information to associate a user with a particular application. This property is read/write and defaults to the <see cref="P:System.Web.HttpRequest.ApplicationPath" /> property value if not specified explicitly.</para>
+          <para>Because membership providers store user information uniquely for each application, multiple ASP.NET applications can use the same data source without running into a conflict if duplicate user names are created. Alternatively, multiple ASP.NET applications can use the same user data source by specifying the same <see cref="P:System.Web.Security.MembershipProvider.ApplicationName" />.</para>
+          <para>In your membership provider implementation, you will need to ensure that your data schema includes the <see cref="P:System.Web.Security.MembershipProvider.ApplicationName" /> and that data source queries and updates also include the <see cref="P:System.Web.Security.MembershipProvider.ApplicationName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the application using the custom membership provider.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +93,19 @@
         <param name="name">To be added.</param>
         <param name="oldPwd">To be added.</param>
         <param name="newPwd">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name, a current password, and a new password, and updates the password in the data source if the supplied user name and current password are valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a request to update the password for a membership user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the password was updated successfully; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,13 +125,24 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="password">To be added.</param>
         <param name="newPwdQuestion">To be added.</param>
         <param name="newPwdAnswer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name, a password, a password question and a password answer, and updates the password question and answer in the data source if the supplied user name and password are valid. </para>
+          <para>If the supplied user name and password are not valid, false is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a request to update the password question and answer for a membership user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the password question and answer are updated successfully; otherwise, false.</para>
+        </returns>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password for the specified user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,11 +192,21 @@
         <Parameter Name="encodedPassword" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="encodedPassword">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.MembershipProvider.DecryptPassword(System.Byte[])" /> method is a virtual method that is provided for membership provider implementations to use when supporting encrypted password formats.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts an encrypted password.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the decrypted password.</para>
+        </returns>
+        <param name="encodedPassword">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains the encrypted password to decrypt.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -159,11 +224,21 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="deleteAllRelatedData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, the name of a user and deletes that user's information from the data source. If <paramref name="deleteAllRelatedData" /> is true, then all user data stored in the database for the <see cref="T:System.Web.Security.Roles" />, <see cref="P:System.Web.HttpContext.Profile" />, and <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> personalization is also deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a user from the membership data source. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user was successfully deleted; otherwise, false.</para>
+        </returns>
+        <param name="deleteAllRelatedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to delete data related to the user from the database; false to leave data related to the user in the database.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,10 +251,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordReset" /> contains a Boolean value specified in the configuration file (Web.config) using the enablePasswordReset attribute. The value indicates whether users can use the <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> method to overwrite their current password with a new, randomly generated password. This property is read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the membership provider is configured to allow users to reset their passwords.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -192,10 +274,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordRetrieval" /> property contains a Boolean value specified in the configuration file (Web.config) using the enablePasswordRetrieval attribute. The value indicates whether users can use the <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> method to retrieve their current password from the data source. This property is read-only.</para>
+          <para>If your custom membership provider supports hashed passwords, your <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> method implementation should throw an exception if <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordRetrieval" /> is set to true and the password format is set to Hashed. Hashed passwords cannot be retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the membership provider is configured to allow users to retrieve their passwords.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,11 +300,21 @@
         <Parameter Name="password" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="password">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.MembershipProvider.EncryptPassword(System.Byte[])" /> method is a virtual method that is provided for membership provider implementations to use when supporting encrypted password formats.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts a password.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the encrypted password.</para>
+        </returns>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains the password to encrypt.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -305,10 +404,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an integer value that is the count of all the users in the data source where the <see cref="P:System.Web.Security.MembershipUser.LastActivityDate" /> is greater than the current date and time minus the <see cref="P:System.Web.Security.Membership.UserIsOnlineTimeWindow" />. The <see cref="P:System.Web.Security.Membership.UserIsOnlineTimeWindow" /> is a positive integer value specifying the number of minutes to use when determining whether a user is online.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of users currently accessing the application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of users currently accessing the application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -326,11 +434,25 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="answer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name and a password answer and retrieves the password for that user from the data source and returns the password as a string.</para>
+          <para>The <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> method ensures that the <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordRetrieval" /> flag is set to true before performing any action. If <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordRetrieval" /> is false, a <see cref="T:System.NotSupportedException" /> exception is thrown.</para>
+          <para>
+            <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> also checks the value of the <see cref="P:System.Web.Security.MembershipProvider.RequiresQuestionAndAnswer" /> property. If <see cref="P:System.Web.Security.MembershipProvider.RequiresQuestionAndAnswer" /> is true, <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> checks the value of the supplied answer parameter against the stored password answer in the data source. If they do not match, a <see cref="T:System.Web.Security.MembershipPasswordException" /> exception is thrown.</para>
+          <para>If your custom membership provider supports hashed passwords, the <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> method should throw an exception if the <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordRetrieval" /> property is set to true and the password format is set to Hashed. Hashed passwords cannot be retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the password for the specified user name from the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The password for the specified user name.</para>
+        </returns>
+        <param name="answer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password answer for the user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -347,12 +469,23 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="providerUserKey">To be added.</param>
-        <param name="userIsOnline">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a unique identifier for a user record and a Boolean value indicating whether to update the <see cref="P:System.Web.Security.MembershipUser.LastActivityDate" /> value for the user to show that the user is currently online. The <see cref="M:System.Web.Security.MembershipProvider.GetUser(System.Object,System.Boolean)" /> method returns a <see cref="T:System.Web.Security.MembershipUser" /> object populated with current values from the data source for the specified user. If the user name is not found in the data source, <see cref="M:System.Web.Security.MembershipProvider.GetUser(System.Object,System.Boolean)" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets user information from the data source based on the unique identifier for the membership user. Provides an option to update the last-activity date/time stamp for the user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the specified user's information from the data source.</para>
+        </returns>
+        <param name="providerUserKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the membership user to get information for.</param>
+        <param name="userIsOnline">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -370,11 +503,21 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="userIsOnline">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name and a Boolean value indicating whether to update the <see cref="P:System.Web.Security.MembershipUser.LastActivityDate" /> property value for the user to show that the user is currently online. <see cref="M:System.Web.Security.MembershipProvider.GetUser(System.String,System.Boolean)" /> returns a <see cref="T:System.Web.Security.MembershipUser" /> object populated with current values from the data source for the specified user. If the user name is not found in the data source, <see cref="M:System.Web.Security.MembershipProvider.GetUser(System.String,System.Boolean)" /> returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information from the data source for a user. Provides an option to update the last-activity date/time stamp for the user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the specified user's information from the data source.</para>
+        </returns>
+        <param name="userIsOnline">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -390,11 +533,23 @@
         <Parameter Name="email" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="email">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, an e-mail address and returns the first user name from the data source where the e-mail address matches the supplied <paramref name="email" /> parameter value.</para>
+          <para>If no user name is found with a matching e-mail address, null is returned.</para>
+          <para>If multiple user names are found that match a particular e-mail address, only the first user name found should be returned. You can implement a custom mechanism for ensuring a unique e-mail address for each user name such as the <see cref="P:System.Web.Security.SqlMembershipProvider.RequiresUniqueEmail" /> property supported by the <see cref="T:System.Web.Security.SqlMembershipProvider" /> provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user name associated with the specified e-mail address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user name associated with the specified e-mail address. If no match is found, return null.</para>
+        </returns>
+        <param name="email">
+          <attribution license="cc4" from="Microsoft" modified="false" />The e-mail address to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -407,10 +562,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> property works in conjunction with the <see cref="P:System.Web.Security.Membership.PasswordAttemptWindow" /> property to guard against an unwanted source guessing the password or password answer of a membership user through repeated attempts. If the number of invalid passwords or password questions supplied for a membership user is greater than or equal to the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> property value within the number of minutes identified by the <see cref="P:System.Web.Security.Membership.PasswordAttemptWindow" />, then the membership user is locked out by setting the <see cref="P:System.Web.Security.MembershipUser.IsLockedOut" /> property to true until the user is unlocked by a call to the <see cref="M:System.Web.Security.MembershipUser.UnlockUser" /> method. If a valid password or password answer is supplied before the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> value is reached, the counter that tracks the number of invalid attempts is reset to zero.</para>
+          <para>Invalid password and password-answer attempts accumulate independently of one another. For example, if the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> property is set to 5, and three invalid password attempts are made followed by two invalid password-answer attempts, two more invalid password attempts (or three more invalid password-answer attempts) must be made within the <see cref="P:System.Web.Security.Membership.PasswordAttemptWindow" /> for the membership user to be locked out.</para>
+          <para>If the <see cref="P:System.Web.Security.Membership.RequiresQuestionAndAnswer" /> property is set to false, invalid password-answer attempts are not tracked.</para>
+          <para>Invalid password and password-answer attempts are tracked in the <see cref="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)" />, <see cref="M:System.Web.Security.MembershipProvider.ChangePassword(System.String,System.String,System.String)" />, <see cref="M:System.Web.Security.MembershipProvider.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)" />, <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" />, and <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of invalid password or password-answer attempts allowed before the membership user is locked out.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -423,10 +587,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.MinRequiredNonAlphanumericCharacters" /> property returns the minimum number of special, non-alphabetic characters that must be entered to create a valid password for the <see cref="T:System.Web.Security.MembershipProvider" /> object. </para>
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.MinRequiredNonAlphanumericCharacters" /> property value is set in the application configuration using the minRequiredNonalphanumericCharacters attribute of the <format type="text/html"><a href="b9c1ee8f-33ca-4361-8666-b42a0fe86049">membership</a></format> configuration element.</para>
+          <para>A non-alphanumeric character is a character for which the <see cref="M:System.Char.IsLetterOrDigit(System.Char)" /> method returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum number of special characters that must be present in a valid password.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -439,10 +611,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.MinRequiredPasswordLength" /> property gets the minimum number of characters that must be entered to create a valid password for the <see cref="T:System.Web.Security.MembershipProvider" /> object.</para>
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.MinRequiredPasswordLength" /> property value is set in the application configuration using the minRequiredPasswordLength attribute of the <format type="text/html"><a href="b9c1ee8f-33ca-4361-8666-b42a0fe86049">membership</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum length required for a password.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -459,9 +638,15 @@
       </Parameters>
       <Docs>
         <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.MembershipProvider.OnValidatingPassword(System.Web.Security.ValidatePasswordEventArgs)" /> virtual method is used during the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" />, <see cref="M:System.Web.Security.MembershipProvider.ChangePassword(System.String,System.String,System.String)" />, and <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> methods to raise the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event if a <see cref="T:System.Web.Security.MembershipValidatePasswordEventHandler" /> has been specified. The <paramref name="e" /> parameter is used to pass a <see cref="T:System.Web.Security.ValidatePasswordEventArgs" /> object to the <see cref="T:System.Web.Security.MembershipValidatePasswordEventHandler" /> event handler. When the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event has completed, the properties of the <see cref="T:System.Web.Security.ValidatePasswordEventArgs" /> object supplied as the <paramref name="e" /> parameter can be examined to determine whether the current action should be canceled and if a particular <see cref="T:System.Exception" />, stored in the <see cref="P:System.Web.Security.ValidatePasswordEventArgs.FailureInformation" /> property, should be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event if an event handler has been defined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -474,10 +659,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.Membership.PasswordAttemptWindow" /> property works in conjunction with the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> property to guard against an unwanted source guessing the password or password answer of a membership user through repeated attempts. If the number of invalid passwords or password questions supplied for a membership user exceeds the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> within the number of minutes identified by the <see cref="P:System.Web.Security.Membership.PasswordAttemptWindow" />, then the membership user is locked out by setting the <see cref="P:System.Web.Security.MembershipUser.IsLockedOut" /> property to true until the user is unlocked by a call to the <see cref="M:System.Web.Security.MembershipUser.UnlockUser" /> method. If a valid password or password answer is supplied before the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> is reached, the counter that tracks the number of invalid attempts is reset to zero.</para>
+          <para>Invalid password and password-answer attempts accumulate independently of one another. For example, if the <see cref="P:System.Web.Security.Membership.MaxInvalidPasswordAttempts" /> property is set to 5, and three invalid password attempts are made followed by two invalid password-answer attempts, two more invalid password attempts (or three more invalid password-answer attempts) must be made within the <see cref="P:System.Web.Security.Membership.PasswordAttemptWindow" /> value for the membership user to be locked out.</para>
+          <para>If the <see cref="P:System.Web.Security.Membership.RequiresQuestionAndAnswer" /> property is set to false, invalid password-answer attempts are not tracked.</para>
+          <para>Invalid password and password-answer attempts are tracked in the <see cref="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)" />, <see cref="M:System.Web.Security.MembershipProvider.ChangePassword(System.String,System.String,System.String)" />, <see cref="M:System.Web.Security.MembershipProvider.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)" />, <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" />, and <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of minutes in which a maximum number of invalid password or password-answer attempts are allowed before the membership user is locked out.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -490,10 +684,17 @@
         <ReturnType>System.Web.Security.MembershipPasswordFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.PasswordFormat" /> property indicates the format that passwords are stored in. Passwords can be stored in Clear, Encrypted, and Hashed password formats. Clear passwords are stored in plain text, which improves the performance of password storage and retrieval but is less secure, as passwords are easily read if your data source is compromised. Encrypted passwords are encrypted when stored and can be decrypted for password comparison or password retrieval. This requires additional processing for password storage and retrieval, but is more secure, as passwords are not easily determined if the data source is compromised. Hashed passwords are hashed using a one-way hash algorithm and a randomly generated salt value when stored in the database. When a password is validated, it is hashed with the salt value in the database for verification. Hashed passwords cannot be retrieved.</para>
+          <para>You can use the <see cref="M:System.Web.Security.MembershipProvider.EncryptPassword(System.Byte[])" /> and <see cref="M:System.Web.Security.MembershipProvider.DecryptPassword(System.Byte[])" /> virtual methods of the <see cref="T:System.Web.Security.MembershipProvider" /> class to encrypt and decrypt password values, or you can supply your own encryption code. If you use the <see cref="M:System.Web.Security.MembershipProvider.EncryptPassword(System.Byte[])" /> and <see cref="M:System.Web.Security.MembershipProvider.DecryptPassword(System.Byte[])" /> virtual methods of the <see cref="T:System.Web.Security.MembershipProvider" /> class, Encrypted passwords are encrypted using the key information supplied in the <format type="text/html"><a href="4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46">machineKey</a></format> element in your configuration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the format for storing passwords in the membership data store.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -506,10 +707,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.PasswordStrengthRegularExpression" /> property gets the regular expression used to evaluate password complexity for the <see cref="T:System.Web.Security.MembershipProvider" /> object. </para>
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.PasswordStrengthRegularExpression" /> property is set in the application configuration using the passwordStrengthRegularExpression attribute of the <format type="text/html"><a href="b9c1ee8f-33ca-4361-8666-b42a0fe86049">membership</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the regular expression used to evaluate a password.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -522,10 +730,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Boolean value specified in the configuration file (Web.config). The <see cref="P:System.Web.Security.MembershipProvider.RequiresQuestionAndAnswer" /> property indicates whether users must supply a password answer in order to retrieve their password using the <see cref="M:System.Web.Security.MembershipProvider.GetPassword(System.String,System.String)" /> method, or reset their password using the <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> method.</para>
+          <para>This property is read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the membership provider is configured to require the user to answer a password question for password reset and retrieval.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -538,10 +753,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.MembershipProvider.RequiresUniqueEmail" /> property indicates whether users must supply a unique e-mail address value when creating a user. If a user already exists in the data source for the current <see cref="P:System.Web.Security.MembershipProvider.ApplicationName" />, then the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" /> method returns null and a status value of <see cref="F:System.Web.Security.MembershipCreateStatus.DuplicateEmail" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the membership provider is configured to require a unique e-mail address for each user name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -559,11 +780,29 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="answer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name and a password answer and generates a new, random password for the specified user.</para>
+          <block subset="none" type="note">
+            <para>The random password created by the <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> method is not guaranteed to pass the regular expression in the <see cref="P:System.Web.Security.MembershipProvider.PasswordStrengthRegularExpression" /> property. However, the random password will meet the criteria established by the <see cref="P:System.Web.Security.MembershipProvider.MinRequiredPasswordLength" /> and <see cref="P:System.Web.Security.MembershipProvider.MinRequiredNonAlphanumericCharacters" /> properties</para>
+          </block>
+          <para>The <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> method updates the user information in the data source with the new password value and returns the new password as a string. A convenient mechanism for generating a random password is the <see cref="M:System.Web.Security.Membership.GeneratePassword(System.Int32,System.Int32)" /> method.</para>
+          <para>
+            <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> ensures that the <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordReset" /> flag is set to true before performing any action. If <see cref="P:System.Web.Security.MembershipProvider.EnablePasswordReset" /> is false, a <see cref="T:System.NotSupportedException" /> exception is thrown.</para>
+          <para>
+            <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> also checks the value of the <see cref="P:System.Web.Security.MembershipProvider.RequiresQuestionAndAnswer" /> property. If <see cref="P:System.Web.Security.MembershipProvider.RequiresQuestionAndAnswer" /> is true, <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> checks the value of the supplied answer parameter against the stored password answer in the data source. If they do not match, a <see cref="T:System.Web.Security.MembershipPasswordException" /> exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets a user's password to a new, automatically generated password.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new password for the specified user.</para>
+        </returns>
+        <param name="answer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password answer for the specified user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -579,11 +818,21 @@
         <Parameter Name="userName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="userName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name, and updates the field in the data source that stores the <see cref="P:System.Web.Security.MembershipUser.IsLockedOut" /> property to false. The <see cref="M:System.Web.Security.MembershipProvider.UnlockUser(System.String)" /> method returns true if the record for the membership user is updated successfully; otherwise, false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears a lock so that the membership user can be validated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the membership user was successfully unlocked; otherwise, false.</para>
+        </returns>
+        <param name="userName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The membership user whose lock status you want to clear.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -599,10 +848,17 @@
         <Parameter Name="user" Type="System.Web.Security.MembershipUser" />
       </Parameters>
       <Docs>
-        <param name="user">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a <see cref="T:System.Web.Security.MembershipUser" /> object populated with user information and updates the data source with the supplied values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates information about a user in the data source.</para>
+        </summary>
+        <param name="user">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Security.MembershipUser" /> object that represents the user to update and the updated information for the user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -620,11 +876,22 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="password">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes, as input, a user name and a password and verifies that the values match those in the data source. <see cref="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)" /> returns true for a successful user name and password match; otherwise, false.</para>
+          <para>For successful validations, <see cref="M:System.Web.Security.MembershipProvider.ValidateUser(System.String,System.String)" /> updates the <see cref="P:System.Web.Security.MembershipUser.LastLoginDate" /> for the specified user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies that the specified user name and password exist in the data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified username and password are valid; otherwise, false.</para>
+        </returns>
+        <param name="password">
+          <attribution license="cc4" from="Microsoft" modified="false" />The password for the specified user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -637,9 +904,17 @@
         <ReturnType>System.Web.Security.MembershipValidatePasswordEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event is raised during the <see cref="M:System.Web.Security.MembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" />, <see cref="M:System.Web.Security.MembershipProvider.ChangePassword(System.String,System.String,System.String)" />, and <see cref="M:System.Web.Security.MembershipProvider.ResetPassword(System.String,System.String)" /> methods.</para>
+          <para>The <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event occurs before the action requested and enables the user to continue or cancel the requested action. If the action is canceled, the user can specify an exception to be thrown.</para>
+          <para>Users use a <see cref="T:System.Web.Security.MembershipValidatePasswordEventHandler" /> event handler to specify a handler for the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event. Provider implementers can use the <see cref="M:System.Web.Security.MembershipProvider.OnValidatingPassword(System.Web.Security.ValidatePasswordEventArgs)" /> virtual method to raise the <see cref="E:System.Web.Security.MembershipProvider.ValidatingPassword" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a user is created, a password is changed, or a password is reset.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplateDefinition" FullName="System.Web.UI.Design.TemplateDefinition">
   <TypeSignature Language="C#" Value="public class TemplateDefinition : System.Web.UI.Design.DesignerObject" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.TemplateDefinition" /> class provides a base template definition class that can be inherited from and extended for a control designer to use in providing support for templated controls in a design host such as vsprvslong. A design host uses the properties and methods of the <see cref="T:System.Web.UI.Design.TemplateDefinition" /> class to facilitate creating and editing a template at design time.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties and methods that define a template element in a Web server control at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,12 +33,19 @@
         <Parameter Name="templatePropertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="templatedObject">To be added.</param>
-        <param name="templatePropertyName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplateDefinition" /> class, using the provided designer, template name, template, and property name.</para>
+        </summary>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent <see cref="T:System.Web.UI.Design.ControlDesigner" /> object.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template.</param>
+        <param name="templatedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the template.</param>
+        <param name="templatePropertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name that represents this template in the <ui>Properties</ui> list in the design host.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,13 +62,21 @@
         <Parameter Name="serverControlsOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="templatedObject">To be added.</param>
-        <param name="templatePropertyName">To be added.</param>
-        <param name="serverControlsOnly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplateDefinition" /> class, using the provided designer, template name, template, property name, and whether to limit the template contents to Web server controls.</para>
+        </summary>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent <see cref="T:System.Web.UI.Design.ControlDesigner" /> object.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template.</param>
+        <param name="templatedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the template.</param>
+        <param name="templatePropertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name that represents this template in the <ui>Properties</ui> list in the design host.</param>
+        <param name="serverControlsOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value indicating whether the template content should allow only Web server controls.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -71,13 +93,21 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="templatedObject">To be added.</param>
-        <param name="templatePropertyName">To be added.</param>
-        <param name="style">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplateDefinition" /> class, using the provided designer, template name, template, property name, and <see cref="T:System.Web.UI.WebControls.Style" /> object.</para>
+        </summary>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent <see cref="T:System.Web.UI.Design.ControlDesigner" /> object.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template.</param>
+        <param name="templatedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the template.</param>
+        <param name="templatePropertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name that represents this template in the <ui>Properties</ui> list in the design host.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> object to apply to each template.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -95,14 +125,23 @@
         <Parameter Name="serverControlsOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="designer">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="templatedObject">To be added.</param>
-        <param name="templatePropertyName">To be added.</param>
-        <param name="style">To be added.</param>
-        <param name="serverControlsOnly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplateDefinition" /> class, using the provided designer, template name, template, property name, <see cref="T:System.Web.UI.WebControls.Style" /> object, and whether to limit content to Web server controls.</para>
+        </summary>
+        <param name="designer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent <see cref="T:System.Web.UI.Design.ControlDesigner" /> object.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the template.</param>
+        <param name="templatedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the template.</param>
+        <param name="templatePropertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name that represents this template in the <ui>Properties</ui> list in the design host.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> object to apply to each template.</param>
+        <param name="serverControlsOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value indicating whether the template should limit content to Web server controls.</param>
       </Docs>
     </Member>
     <Member MemberName="AllowEditing">
@@ -115,9 +154,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To change the default, derived classes must override the <see cref="P:System.Web.UI.Design.TemplateDefinition.AllowEditing" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the template should enable editing of its contents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Content">
@@ -130,9 +175,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTML markup representing the content of the template.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServerControlsOnly">
@@ -145,9 +193,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a value indicating whether the template should limit content to Web server controls, as set in the <see cref="Overload:System.Web.UI.Design.TemplateDefinition.#ctor" /> constructor. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Style">
@@ -160,9 +211,15 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the <see cref="T:System.Web.UI.WebControls.Style" /> property is read-only, the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> can be set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the style that should be applied to the template as set in the <see cref="Overload:System.Web.UI.Design.TemplateDefinition.#ctor" /> constructor. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsDataBinding">
@@ -175,9 +232,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves or sets a value indicating whether the template supports data binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TemplatedObject">
@@ -190,9 +250,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although this <see cref="P:System.Web.UI.Design.TemplateDefinition.TemplatedObject" /> property is read-only, its properties can be set, and if <see cref="P:System.Web.UI.Design.TemplateDefinition.AllowEditing" /> is true, the content can be edited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the component in which the template resides. This property is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TemplatePropertyName">
@@ -205,9 +271,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the property name for the template that the design host should display in the property grid.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

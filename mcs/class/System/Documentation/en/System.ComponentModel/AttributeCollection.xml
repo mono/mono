@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AttributeCollection" FullName="System.ComponentModel.AttributeCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class AttributeCollection : System.Collections.ICollection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AttributeCollection extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable" />
@@ -24,8 +25,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.AttributeCollection" /> class is read-only; it does not implement methods to add or remove attributes. You must inherit from this class to implement these methods.</para>
+      <para>Use the <see cref="P:System.ComponentModel.AttributeCollection.Count" /> property to find the number of attributes that exist in the collection.</para>
+      <para>You can also use the methods of this class to query the collection about its contents. Call the <see cref="M:System.ComponentModel.AttributeCollection.Contains(System.Attribute)" /> method to verify that a specified attribute or attribute array exists in the collection. Call the <see cref="M:System.ComponentModel.AttributeCollection.Matches(System.Attribute)" /> method to verify that a specified attribute or array of attributes exists in the collection, and that the values of the specified attributes are the same as the values in the collection.</para>
+      <para>While most attributes have default values, default values are not required. If an attribute has no default value, null is returned from the indexed property that takes a type. When defining your own attributes, you can declare a default value by either providing a constructor that takes no arguments, or defining a public static field of your attribute type named "Default".</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of attributes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +47,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.AttributeCollection" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,9 +74,13 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.AttributeCollection" /> class.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that provides the attributes for this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -77,9 +94,12 @@
         <ReturnType>System.Attribute[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attribute collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -99,9 +119,20 @@
       </Parameters>
       <Docs>
         <param name="attr">To be added: an object of type 'Attribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection has the specified attribute if the specified type of attribute exists in the collection, and if the value of the specified attribute is the same as the value of the instance of the attribute in the collection.</para>
+          <para>The difference between the <see cref="M:System.ComponentModel.AttributeCollection.Matches(System.Attribute)" /> and <see cref="M:System.ComponentModel.AttributeCollection.Contains(System.Attribute)" /> methods is that <see cref="M:System.ComponentModel.AttributeCollection.Matches(System.Attribute)" /> calls the <see cref="M:System.Attribute.Match(System.Object)" /> method on an attribute, and <see cref="M:System.ComponentModel.AttributeCollection.Contains(System.Attribute)" /> calls the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+          <para>For most attributes, these methods do the same thing. For attributes that may have multiple flags, however, <see cref="M:System.Attribute.Match(System.Object)" /> is typically implemented so that it returns true if any of the flags are satisfied. For example, consider a data binding attribute with the Boolean flags "SupportsSql", "SupportsOleDb", and "SupportsXml". This attribute may be present on a property that supports all three data-binding approaches. It will often be the case that a programmer needs to know only if a particular approach is available, not all three. Therefore, a programmer could use <see cref="M:System.Attribute.Match(System.Object)" /> with an instance of the attribute containing only the flags the programmer needs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether this collection of attributes has the specified attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the attribute or is the default attribute for the type of attribute; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -120,10 +151,20 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection has the specified array of attributes if all the specified attribute types exist in the collection and if each attribute in the specified array is the same as an attribute in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether this attribute collection contains all the specified attributes in the attribute array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains all the attributes; otherwise, false.</para>
+        </returns>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> to find in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -143,10 +184,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the collection to an array, starting at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Array" /> to copy the collection to. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index to start from. </param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -162,9 +208,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.ComponentModel.AttributeCollection.Count" /> property to set the limits of a loop that iterates through a collection of objects. If the collection is zero-based, be sure to use Count - 1 as the upper boundary of the loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -181,8 +233,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an empty collection that you can use, rather than creating a new one. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromExisting">
@@ -207,11 +262,22 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="existing">To be added.</param>
-        <param name="newAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="newAttributes" /> parameter is provided, its <see cref="T:System.Attribute" /> entries are merged with those of the <paramref name="existing" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ComponentModel.AttributeCollection" /> from an existing <see cref="T:System.ComponentModel.AttributeCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.AttributeCollection" /> that is a copy of <paramref name="existing" />.</para>
+        </returns>
+        <param name="existing">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.AttributeCollection" /> from which to create the copy.</param>
+        <param name="newAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that provides the attributes for this collection. Can be null.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultAttribute">
@@ -230,10 +296,17 @@
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Attribute'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the default <see cref="T:System.Attribute" /> of a given <see cref="T:System.Type" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="T:System.Attribute" /> of a given <paramref name="attributeType" />.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the attribute to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -250,9 +323,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an enumerator for this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of type <see cref="T:System.Collections.IEnumerator" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -316,9 +395,20 @@
       </Parameters>
       <Docs>
         <param name="attr">To be added: an object of type 'Attribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An attribute can provide support for matching.</para>
+          <para>The difference between the <see cref="M:System.ComponentModel.AttributeCollection.Matches(System.Attribute)" /> and <see cref="M:System.ComponentModel.AttributeCollection.Contains(System.Attribute)" /> methods is that <see cref="M:System.ComponentModel.AttributeCollection.Matches(System.Attribute)" /> calls the <see cref="M:System.Attribute.Match(System.Object)" /> method on an attribute, and <see cref="M:System.ComponentModel.AttributeCollection.Contains(System.Attribute)" /> calls the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
+          <para>For most attributes, these methods do the same thing. For attributes that may have multiple flags, however, <see cref="M:System.Attribute.Match(System.Object)" /> is typically implemented so that it returns true if any of the flags are satisfied. For example, consider a data binding attribute with the Boolean flags "SupportsSql", "SupportsOleDb", and "SupportsXml". This attribute may be present on a property that supports all three data binding approaches. It will often be the case that a programmer needs to know only if a particular approach is available, not all three. Therefore, a programmer could use <see cref="M:System.Attribute.Match(System.Object)" /> with an instance of the attribute containing only the flags the programmer needs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a specified attribute is the same as an attribute in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is contained within the collection and has the same value as the attribute in the collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Matches">
@@ -337,10 +427,20 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An attribute can provide support for matching.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the attributes in the specified array are the same as the attributes in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all the attributes in the array are contained in the collection and have the same values as the attributes in the collection; otherwise, false.</para>
+        </returns>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.MemberAttributes" /> to compare with the attributes in this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.Count">
@@ -356,9 +456,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of elements contained in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.IsSynchronized">
@@ -374,9 +477,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the collection is synchronized (thread-safe).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.ICollection.SyncRoot">
@@ -392,9 +498,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object that can be used to synchronize access to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -411,9 +520,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.IDictionary" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.IDictionary" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientChannelSinkStack" FullName="System.Runtime.Remoting.Channels.ClientChannelSinkStack">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ClientChannelSinkStack : System.Runtime.Remoting.Channels.IClientChannelSinkStack" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ClientChannelSinkStack extends System.Object implements class System.Runtime.Remoting.Channels.IClientChannelSinkStack, class System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class makes a link demand. A security exception is thrown if the immediate caller does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds the stack of client channel sinks that must be invoked during an asynchronous message response decoding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.ClientChannelSinkStack" /> class with default values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +67,13 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <param name="replySink">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.ClientChannelSinkStack" /> class with the specified reply sink.</para>
+        </summary>
+        <param name="replySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> that the current stack can use to reply to messages. </param>
       </Docs>
     </Member>
     <Member MemberName="AsyncProcessResponse">
@@ -79,10 +93,18 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="headers">To be added: an object of type 'ITransportHeaders'</param>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Channels.ClientChannelSinkStack.AsyncProcessResponse(System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" /> method initializes asynchronous processing on the top sink in the current sink stack. For additional information, see <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests asynchronous processing of a method call on the sinks that are in the current sink stack.</para>
+        </summary>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The headers that are retrieved from the server response stream. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that is returning from the transport sink. </param>
       </Docs>
     </Member>
     <Member MemberName="DispatchException">
@@ -101,9 +123,16 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'Exception'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Channels.ClientChannelSinkStack.DispatchException(System.Exception)" /> method dispatches the specified exception to the server through the reply sink that is specified in the constructor of the current sink stack. If the current sink stack was created without a reply sink, the exception is not transmitted, and no new exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches the specified exception on the reply sink.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to dispatch to the server. </param>
       </Docs>
     </Member>
     <Member MemberName="DispatchReplyMessage">
@@ -122,9 +151,16 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Channels.ClientChannelSinkStack.DispatchReplyMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method dispatches the specified message to the server through the reply sink that is specified in the constructor of the current sink stack. If the current sink stack was created without a reply sink, the message is not transmitted, and no new exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches the specified reply message on the reply sink.</para>
+        </summary>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> to dispatch. </param>
       </Docs>
     </Member>
     <Member MemberName="Pop">
@@ -143,10 +179,17 @@
         <Parameter Name="sink" Type="System.Runtime.Remoting.Channels.IClientChannelSink" />
       </Parameters>
       <Docs>
-        <param name="sink">To be added: an object of type 'IClientChannelSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops the information that is associated with all the sinks from the sink stack up to and including the specified sink.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information generated on the request side and associated with the specified sink.</para>
+        </returns>
+        <param name="sink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sink to remove and return from the sink stack. </param>
       </Docs>
     </Member>
     <Member MemberName="Push">
@@ -166,10 +209,18 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sink">To be added: an object of type 'IClientChannelSink'</param>
-        <param name="state">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The information generated on the request side and specified in the <paramref name="state" /> parameter is returned in the <paramref name="state" /> parameter of the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" /> method on the corresponding sink.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes the specified sink and information that is associated with it onto the sink stack.</para>
+        </summary>
+        <param name="sink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sink to push onto the sink stack. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information generated on the request side that is needed on the response side. </param>
       </Docs>
     </Member>
   </Members>

@@ -44,19 +44,17 @@ using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
 
+#if !NET_4_5
+using TypeInfo = System.Type;
+#endif
+
 namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_TypeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class TypeBuilder :
-#if NET_4_5
-		TypeInfo
-#else
-		Type
-#endif
-		, _TypeBuilder
+	public sealed class TypeBuilder : TypeInfo, _TypeBuilder
 	{
 #pragma warning disable 169		
 		#region Sync with reflection.h
@@ -82,7 +80,7 @@ namespace System.Reflection.Emit
 		private IntPtr generic_container;
 		private GenericTypeParameterBuilder[] generic_params;
 		private RefEmitPermissionSet[] permissions;
-		private Type created;
+		private TypeInfo created;
 		#endregion
 #pragma warning restore 169		
 		
@@ -727,7 +725,7 @@ namespace System.Reflection.Emit
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern Type create_runtime_class (TypeBuilder tb);
+		private extern TypeInfo create_runtime_class (TypeBuilder tb);
 
 		private bool is_nested_in (Type t)
 		{
@@ -753,8 +751,16 @@ namespace System.Reflection.Emit
 
 			return false;
 	    }
+
+		public Type CreateType ()
+		{
+			return CreateTypeInfo ();
+		}
 		
-		public Type CreateType()
+#if NET_4_5
+		public
+#endif
+		TypeInfo CreateTypeInfo ()
 		{
 			/* handle nesting_type */
 			if (createTypeCalled)

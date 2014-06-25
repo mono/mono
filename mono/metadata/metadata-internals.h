@@ -323,6 +323,7 @@ struct _MonoImage {
 	GSList *reflection_info_unregister_classes;
 
 	/* List of image sets containing this image */
+	/* Protected by image_sets_lock */
 	GSList *image_sets;
 
 	/* Caches for MonoClass-es representing anon generic params */
@@ -576,7 +577,7 @@ void
 mono_remove_image_unload_hook (MonoImageUnloadFunc func, gpointer user_data) MONO_INTERNAL;
 
 void
-mono_image_append_class_to_reflection_info_set (MonoClass *class) MONO_INTERNAL;
+mono_image_append_class_to_reflection_info_set (MonoClass *klass) MONO_INTERNAL;
 
 gpointer
 mono_image_set_alloc  (MonoImageSet *set, guint size) MONO_INTERNAL;
@@ -718,7 +719,7 @@ gboolean
 mono_metadata_type_equal_full (MonoType *t1, MonoType *t2, gboolean signature_only) MONO_INTERNAL;
 
 MonoMarshalSpec *
-mono_metadata_parse_marshal_spec_full (MonoImage *image, const char *ptr) MONO_INTERNAL;
+mono_metadata_parse_marshal_spec_full (MonoImage *image, MonoImage *parent_image, const char *ptr) MONO_INTERNAL;
 
 guint	       mono_metadata_generic_inst_hash (gconstpointer data) MONO_INTERNAL;
 gboolean       mono_metadata_generic_inst_equal (gconstpointer ka, gconstpointer kb) MONO_INTERNAL;
@@ -760,6 +761,8 @@ MonoException *mono_get_exception_method_access_msg (const char *msg) MONO_INTER
 MonoMethod* method_from_method_def_or_ref (MonoImage *m, guint32 tok, MonoGenericContext *context) MONO_INTERNAL;
 
 MonoMethod *mono_get_method_constrained_with_method (MonoImage *image, MonoMethod *method, MonoClass *constrained_class, MonoGenericContext *context) MONO_INTERNAL;
+
+void mono_type_set_alignment (MonoTypeEnum type, int align) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

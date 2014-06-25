@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextRenderer" FullName="System.Windows.Forms.TextRenderer">
   <TypeSignature Language="C#" Value="public sealed class TextRenderer" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.TextRenderer" /> class provides a set of static methods that can be used for measuring and drawing text on a Windows Form control. </para>
+      <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods of <see cref="T:System.Windows.Forms.TextRenderer" /> are not supported for printing. You should always use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods used to measure and render text. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DrawText">
@@ -31,13 +42,29 @@
         <Parameter Name="foreColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. </para>
+          <para>If <paramref name="font" /> is null or <paramref name="forecolor" /> is <see cref="F:System.Drawing.Color.Empty" />, the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Point" /> as the upper-left corner of the drawn text do not render correctly on Windows 2000. If your application is intended for use on machines running Windows 2000, you should use one of the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Rectangle" /> for the bounds of the drawn text.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text at the specified location using the specified device context, font, and color.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> that represents the upper-left corner of the drawn text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the drawn text.</param>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -57,13 +84,26 @@
         <Parameter Name="foreColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="font" /> or <paramref name="forecolor" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>This method will result in text that is horizontally and vertically centered in the rectangle specified by the <paramref name="bounds" /> parameter. To change how the text is drawn, use a version of <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter type.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text within the specified bounds, using the specified device context, font, and color.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the drawn text.</param>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -84,14 +124,31 @@
         <Parameter Name="backColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="backColor" /> parameter is applied to the rectangular area containing the drawn text. If <paramref name="font" />, <paramref name="backcolor" /> or <paramref name="forecolor" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. </para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Point" /> as the upper-left corner of the drawn text do not render correctly on Windows 2000. If your application is intended for use on machines running Windows 2000, you should use one of the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Rectangle" /> for the bounds of the drawn text.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text at the specified location, using the specified device context, font, color, and back color.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> that represents the upper-left corner of the drawn text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the drawn text.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the background area of the drawn text.</param>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -109,15 +166,33 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+          <para>The <paramref name="backColor" /> parameter is applied to the area within the <paramref name="bounds" /> parameter. If <paramref name="font" /> or <paramref name="forecolor" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+          <para>The <see cref="T:System.Windows.Forms.TextRenderer" /> does not support adding tab stops to drawn text, although you can expand existing tab stops using the <see cref="F:System.Windows.Forms.TextFormatFlags.ExpandTabs" /> flag.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Point" /> as the upper-left corner of the drawn text do not render correctly on Windows 2000. If your application is intended for use on machines running Windows 2000, you should use one of the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Rectangle" /> for the bounds of the drawn text.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text at the specified location using the specified device context, font, color, and formatting instructions. </para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> that represents the upper-left corner of the drawn text. </param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the drawn text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,14 +216,28 @@
         <Parameter Name="backColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="backColor" /> parameter is applied to the area within the <paramref name="bounds" /> parameter. If <paramref name="font" />, <paramref name="backcolor" /> or <paramref name="forecolor" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>This method will result in text that is horizontally and vertically centered in the rectangle specified by the <paramref name="bounds" /> parameter. To change how the text is drawn, use a version of <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter type.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text within the specified bounds using the specified device context, font, color, and back color.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the drawn text.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the area represented by <paramref name="bounds" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -166,15 +255,30 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="font" /> or <paramref name="color" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+          <para>The <see cref="T:System.Windows.Forms.TextRenderer" /> does not support adding tab stops to drawn text, although you can expand existing tab stops using the <see cref="F:System.Windows.Forms.TextFormatFlags.ExpandTabs" /> flag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text within the specified bounds using the specified device context, font, color, and formatting instructions.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the drawn text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,15 +303,34 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="pt">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="backcolor" /> parameter is applied the rectangular area containing the drawn text. If <paramref name="font" /> or <paramref name="forecolor" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+          <para>The <see cref="T:System.Windows.Forms.TextRenderer" /> does not support adding tab stops to drawn text, although you can expand existing tab stops using the <see cref="F:System.Windows.Forms.TextFormatFlags.ExpandTabs" /> flag.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Point" /> as the upper-left corner of the drawn text do not render correctly on Windows 2000. If your application is intended for use on machines running Windows 2000, you should use one of the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> methods that specify a <see cref="T:System.Drawing.Rectangle" /> for the bounds of the drawn text.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text at the specified location using the specified device context, font, color, back color, and formatting instructions </para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> that represents the upper-left corner of the drawn text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the text.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the background area of the drawn text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -229,15 +352,31 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="backcolor" /> parameter is applied to the area within the <paramref name="bounds" /> parameter<paramref name=". " />If <paramref name="font" />, <paramref name="forecolor" /> or <paramref name="backcolor" /> is null or <see cref="F:System.Drawing.Color.Empty" />, respectively; the <see cref="Overload:System.Windows.Forms.TextRenderer.DrawText" /> method will draw the text in the font or color currently selected in the device context specified by <paramref name="dc" />. If <paramref name="forecolor" /> is <see cref="P:System.Drawing.Color.Transparent" />, the text will not be drawn.</para>
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+          <para>The text rendering offered by the <see cref="T:System.Windows.Forms.TextRenderer" /> class is based on GDI text rendering and is not supported for printing from Windows Forms. Instead, use the <see cref="Overload:System.Drawing.Graphics.DrawString" /> methods of the <see cref="T:System.Drawing.Graphics" /> class.</para>
+          <para>The <see cref="T:System.Windows.Forms.TextRenderer" /> does not support adding tab stops to drawn text, although you can expand existing tab stops using the <see cref="F:System.Windows.Forms.TextFormatFlags.ExpandTabs" /> flag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the specified text within the specified bounds using the specified device context, font, color, back color, and formatting instructions.</para>
+        </summary>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to draw.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the drawn text.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the text.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the text.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to apply to the area represented by <paramref name="bounds" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="MeasureText">
@@ -251,12 +390,23 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> method requires that the text is drawn on a single line.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the size, in pixels, of the specified text when drawn with the specified font.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn on a single line with the specified <paramref name="font" />. You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the measured text.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -277,12 +427,24 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> method requires that the text is drawn on a single line. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the size, in pixels, of the specified text drawn with the specified font in the specified device context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn in a single line with the specified <paramref name="font" /> in the specified device context.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to measure the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the measured text.</param>
       </Docs>
     </Member>
     <Member MemberName="MeasureText">
@@ -300,12 +462,24 @@
         <Parameter Name="proposedSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="proposedSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.String,System.Drawing.Font,System.Drawing.Size)" /> method uses the <paramref name="proposedSize" /> parameter to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the size, in pixels, of the specified text when drawn with the specified font, using the specified size to create an initial bounding rectangle.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" />.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the measured text.</param>
+        <param name="proposedSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> of the initial bounding rectangle.</param>
       </Docs>
     </Member>
     <Member MemberName="MeasureText">
@@ -324,13 +498,26 @@
         <Parameter Name="proposedSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="proposedSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size)" /> method uses the <paramref name="proposedSize" /> parameter to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the size, in pixels, of the specified text when drawn with the specified font in the specified device context, using the specified size to create an initial bounding rectangle for the text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" />.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to measure the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the measured text.</param>
+        <param name="proposedSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> of the initial bounding rectangle.</param>
       </Docs>
     </Member>
     <Member MemberName="MeasureText">
@@ -346,14 +533,32 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="proposedSize">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.String,System.Drawing.Font,System.Drawing.Size)" /> uses the <paramref name="proposedSize" /> and <paramref name="flags" /> parameters to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces you should use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For an example, see <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" />.</para>
+          <block subset="none" type="note">
+            <para>This overload of <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" /> will ignore a <see cref="T:System.Windows.Forms.TextFormatFlags" /> value of <see cref="F:System.Windows.Forms.TextFormatFlags.NoPadding" /> or <see cref="F:System.Windows.Forms.TextFormatFlags.LeftAndRightPadding" />. If you are specifying a padding value other than the default, you should use the overload of <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" /> that takes a <see cref="T:System.Drawing.IDeviceContext" /> object.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the size, in pixels, of the specified text when drawn with the specified font and formatting instructions, using the specified size to create the initial bounding rectangle for the text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" /> and format.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the measured text.</param>
+        <param name="proposedSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> of the initial bounding rectangle.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting instructions to apply to the measured text.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -376,14 +581,29 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="dc">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="proposedSize">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Size,System.Windows.Forms.TextFormatFlags)" /> method uses the <paramref name="proposedSize" /> and <paramref name="flags" /> parameters to indicate the relationship of height to width when determining the text size. When measuring text on a single line, if the <paramref name="proposedSize" /> parameter represents a <see cref="T:System.Drawing.Size" /> with a height dimension greater than <see cref="F:System.Int32.MaxValue" />, the returned <see cref="T:System.Drawing.Size" /> will be adjusted to reflect the actual height of the text.</para>
+          <para>You can manipulate how the text is drawn by using one of the <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.TextFormatFlags)" /> overloads that takes a <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter. For example, the default behavior of the <see cref="T:System.Windows.Forms.TextRenderer" /> is to add padding to the bounding rectangle of the drawn text to accommodate overhanging glyphs. If you need to draw a line of text without these extra spaces, use the versions of <see cref="M:System.Windows.Forms.TextRenderer.DrawText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font,System.Drawing.Point,System.Drawing.Color)" /> and <see cref="M:System.Windows.Forms.TextRenderer.MeasureText(System.Drawing.IDeviceContext,System.String,System.Drawing.Font)" /> that take a <see cref="T:System.Drawing.Size" /> and <see cref="T:System.Windows.Forms.TextFormatFlags" /> parameter, as shown in the example.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the size, in pixels, of the specified text when drawn with the specified device context, font, and formatting instructions, using the specified size to create the initial bounding rectangle for the text.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Size" />, in pixels, of <paramref name="text" /> drawn with the specified <paramref name="font" /> and format.</para>
+        </returns>
+        <param name="dc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The device context in which to measure the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to the measured text.</param>
+        <param name="proposedSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> of the initial bounding rectangle.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting instructions to apply to the measured text.</param>
       </Docs>
     </Member>
   </Members>

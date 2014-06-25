@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewInsertedEventArgs" FullName="System.Web.UI.WebControls.DetailsViewInsertedEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewInsertedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control raises the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemInserted" /> event when an Insert button (a button with its CommandName property set to "Insert") within the control is clicked, but after the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control inserts the record. This allows you to provide an event handler that performs a custom routine, such as checking the results of an insert operation, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewInsertedEventArgs" /> object is passed to the event handler, which allows you to determine the number of records affected and any exceptions that might have occurred. To determine the number of records affected by the insert operation, use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.AffectedRows" /> property. Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Exception" /> property to determine whether any exceptions occurred. You can also indicate whether the exception was handled in the event handler by setting the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.ExceptionHandled" /> property. If you need to access the values of the inserted record, use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Values" /> property.</para>
+      <para>By default, the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control returns to the mode specified by the <see cref="P:System.Web.UI.WebControls.DetailsView.DefaultMode" /> property after an insert operation. To keep the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control in insert mode, set the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.KeepInInsertMode" /> property to true.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewDeletedEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewDeletedEventArgs.#ctor(System.Int32,System.Exception)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemInserted" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +33,75 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="affectedRows">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewInsertedEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.DetailsViewInsertedEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.AffectedRows" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="affectedRows" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Exception" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Exception" /> object contained in the <paramref name="e" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.ExceptionHandled" />
+                </para>
+              </term>
+              <description>
+                <para>Initialized to false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.KeepInInsertMode" />
+                </para>
+              </term>
+              <description>
+                <para>Initialized to false.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewInsertedEventArgs" /> class.</para>
+        </summary>
+        <param name="affectedRows">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows affected by the insert operation.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Exception" /> that represents the exception raised when the insert operation was performed. If no exception was raised, use null for this parameter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +114,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.AffectedRows" /> property to determine the number of rows affected by the insert operation. This value is commonly used to verify that the appropriate number of rows was inserted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows affected by the insert operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +136,19 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Exception" /> property to determine the exception (if any) that was raised during the insert operation. If no exceptions were raised, this property returns null.</para>
+          <block subset="none" type="note">
+            <para>If an exception was raised and you decide to handle the exception in the event handler, be sure to set the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.ExceptionHandled" /> property to true; otherwise, the exception is passed to the next method on the call stack for handling.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception (if any) that was raised during the insert operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +161,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an exception is raised during the insert operation, use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.ExceptionHandled" /> property to indicate whether the exception was handled in the event handler. When this property is set to true, the exception is considered handled and is not passed further up the call stack. If this property is set to false, the exception is passed to the next method on the call stack for handling. To determine which exception was raised, use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Exception" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an exception that was raised during the insert operation was handled in the event handler.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,10 +183,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control returns to the mode specified by the <see cref="P:System.Web.UI.WebControls.DetailsView.DefaultMode" /> property. Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.KeepInInsertMode" /> property to specify whether the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control should remain in insert mode after an insert operation. To keep the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control in insert mode, set this property to true.</para>
+          <block subset="none" type="note">
+            <para>This property should be used when you want to want to override the default mode only occasionally. If the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control needs to remain in insert mode by default, set the <see cref="P:System.Web.UI.WebControls.DetailsView.DefaultMode" /> property instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control should remain in insert mode after an insert operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,10 +208,20 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Values" /> property to access the values of the fields for the inserted record. For example, you can use these values to keep a log of inserted records.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewInsertedEventArgs.Values" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the inserted record.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the field values directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the field name/value pairs for the inserted record.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

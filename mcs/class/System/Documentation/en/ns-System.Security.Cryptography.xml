@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Security.Cryptography">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security.Cryptography" /> namespace provides cryptographic services, including secure encoding and decoding of data, as well as many other operations, such as hashing, random number generation, and message authentication. For more information, see <format type="text/html"><a href="f96284bc-7b73-44b5-ac59-fac613ad09f8">Cryptographic Services</a></format>.</para>
+    </summary>
   </Docs>
 </Namespace>

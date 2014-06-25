@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlParameter" FullName="System.Data.SqlClient.SqlParameter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SqlParameter : System.Data.Common.DbParameter, ICloneable" />
   <AssemblyInfo>
@@ -22,8 +23,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Parameter names are not case sensitive.</para>
+      <block subset="none" type="note">
+        <para>Nameless, also called ordinal, parameters are not supported by the .NET Framework Data Provider for SQL Server.</para>
+      </block>
+      <para>For more information, along with additional sample code demonstrating how to use parameters, see <format type="text/html"><a href="b623f810-d871-49a5-b0f5-078cc3c34db6">Commands and Parameters (ADO.NET)</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter to a <see cref="T:System.Data.SqlClient.SqlCommand" /> and optionally its mapping to <see cref="T:System.Data.DataSet" /> columns. This class cannot be inherited. For more information on parameters, see <format type="text/html"><a href="537d8a2c-d40b-4000-83eb-bc1fcc93f707">Configuring Parameters and Parameter Data Types (ADO.NET)</a></format>.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,10 +63,18 @@
         <Parameter Name="dbType" Type="System.Data.SqlDbType" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="dbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data type and, if appropriate, Size and <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> are inferred from the value of the <paramref name="dbType" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class that uses the parameter name and the data type.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,10 +90,21 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you specify an <see cref="T:System.Object" /> in the <paramref name="value" /> parameter, the <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> is inferred from the Microsoft .NET Framework type of the <see cref="T:System.Object" />.</para>
+          <para>Use caution when you use this overload of the <see cref="T:System.Data.SqlClient.SqlParameter" /> constructor to specify integer parameter values. Because this overload takes a <paramref name="value" /> of type <see cref="T:System.Object" />, you must convert the integral value to an <see cref="T:System.Object" /> type when the value is zero, as the following C# example demonstrates.</para>
+          <code>Parameter = new SqlParameter("@pname", (object)0);</code>
+          <para>If you do not perform this conversion, the compiler assumes that you are trying to call the SqlParameter (<paramref name="string" />, <paramref name="SqlDbType" />) constructor overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class that uses the parameter name and a value of the new <see cref="T:System.Data.SqlClient.SqlParameter" />.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.SqlClient.SqlParameter" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,11 +121,20 @@
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="dbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Size is inferred from the value of the <paramref name="dbType" /> parameter if it is not explicitly set in the <paramref name="size" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class that uses the parameter name, the <see cref="T:System.Data.SqlDbType" />, and the size.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,12 +152,22 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="dbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <param name="sourceColumn">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Size is inferred from the value of the <paramref name="dbType" /> parameter if it is not explicitly set in the <paramref name="size" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class that uses the parameter name, the <see cref="T:System.Data.SqlDbType" />, the size, and the source column name.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column (<see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" />) if this <see cref="T:System.Data.SqlClient.SqlParameter" /> is used in a call to <see cref="Overload:System.Data.Common.DbDataAdapter.Update" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,18 +191,34 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added: an object of type 'string'</param>
-        <param name="dbType">To be added: an object of type 'Data.SqlDbType'</param>
-        <param name="size">To be added: an object of type 'int'</param>
-        <param name="direction">To be added: an object of type 'Data.ParameterDirection'</param>
-        <param name="isNullable">To be added: an object of type 'bool'</param>
-        <param name="precision">To be added: an object of type 'byte'</param>
-        <param name="scale">To be added: an object of type 'byte'</param>
-        <param name="sourceColumn">To be added: an object of type 'string'</param>
-        <param name="sourceVersion">To be added: an object of type 'Data.DataRowVersion'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Size and <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> are inferred from the value of the <paramref name="dbType" /> parameter if they are not explicitly set in the <paramref name="size" /> and <paramref name="precision" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class that uses the parameter name, the type of the parameter, the size of the parameter, a <see cref="T:System.Data.ParameterDirection" />, the precision of the parameter, the scale of the parameter, the source column, a <see cref="T:System.Data.DataRowVersion" /> to use, and the value of the parameter.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map. </param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter. </param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.ParameterDirection" /> values. </param>
+        <param name="isNullable">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the value of the field can be null; otherwise false. </param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> is resolved. </param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of decimal places to which <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> is resolved. </param>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column (<see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" />) if this <see cref="T:System.Data.SqlClient.SqlParameter" /> is used in a call to <see cref="Overload:System.Data.Common.DbDataAdapter.Update" />.</param>
+        <param name="sourceVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.SqlClient.SqlParameter" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,21 +252,40 @@
         <Parameter Name="xmlSchemaCollectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameterName">To be added.</param>
-        <param name="dbType">To be added.</param>
-        <param name="size">To be added.</param>
-        <param name="direction">To be added.</param>
-        <param name="precision">To be added.</param>
-        <param name="scale">To be added.</param>
-        <param name="sourceColumn">To be added.</param>
-        <param name="sourceVersion">To be added.</param>
-        <param name="sourceColumnNullMapping">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="xmlSchemaCollectionDatabase">To be added.</param>
-        <param name="xmlSchemaCollectionOwningSchema">To be added.</param>
-        <param name="xmlSchemaCollectionName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> and <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> are inferred from the value of the <paramref name="dbType" /> parameter if they are not explicitly set in the <paramref name="size" /> and <paramref name="precision" /> parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlParameter" /> class that uses the parameter name, the type of the parameter, the length of the parameter the direction, the precision, the scale, the name of the source column, one of the <see cref="T:System.Data.DataRowVersion" /> values, a Boolean for source column mapping, the value of the SqlParameter, the name of the database where the schema collection for this XML instance is located, the owning relational schema where the schema collection for this XML instance is located, and the name of the schema collection for this parameter.</para>
+        </summary>
+        <param name="parameterName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to map.</param>
+        <param name="dbType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.SqlDbType" /> values.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the parameter.</param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.ParameterDirection" /> values.</param>
+        <param name="precision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> is resolved.</param>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of decimal places to which <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> is resolved.</param>
+        <param name="sourceColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the source column (<see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" />) if this <see cref="T:System.Data.SqlClient.SqlParameter" /> is used in a call to <see cref="Overload:System.Data.Common.DbDataAdapter.Update" />.</param>
+        <param name="sourceVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowVersion" /> values. </param>
+        <param name="sourceColumnNullMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the source column is nullable; false if it is not.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.SqlClient.SqlParameter" />.</param>
+        <param name="xmlSchemaCollectionDatabase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the database where the schema collection for this XML instance is located.</param>
+        <param name="xmlSchemaCollectionOwningSchema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The owning relational schema where the schema collection for this XML instance is located.</param>
+        <param name="xmlSchemaCollectionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the schema collection for this parameter.</param>
       </Docs>
     </Member>
     <Member MemberName="CompareInfo">
@@ -216,9 +303,12 @@
         <ReturnType>System.Data.SqlTypes.SqlCompareOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Globalization.CompareInfo" /> object that defines how string comparisons should be performed for this parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DbType">
@@ -230,9 +320,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.DbType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> and <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> changes the <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> to a supporting <see cref="T:System.Data.SqlDbType" />.</para>
+          <para>For a list of the supported data types, see the appropriate <see cref="T:System.Data.SqlDbType" /> member. For more information, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.SqlDbType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,9 +345,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.ParameterDirection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Data.ParameterDirection" /> is output, and execution of the associated <see cref="T:System.Data.SqlClient.SqlCommand" /> does not return a value, the <see cref="T:System.Data.SqlClient.SqlParameter" /> contains a null value.</para>
+          <para>Output, InputOut, and ReturnValue parameters returned by calling <see cref="M:System.Data.SqlClient.SqlCommand.ExecuteReader" /> cannot be accessed until you close the <see cref="T:System.Data.SqlClient.SqlDataReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the parameter is input-only, output-only, bidirectional, or a stored procedure return value parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -271,9 +375,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null values are handled using the <see cref="T:System.DBNull" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the parameter accepts null values. <see cref="P:System.Data.SqlClient.SqlParameter.IsNullable" /> is not used to validate the parameter’s value and will not prevent sending or receiving a null value when executing a command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -295,9 +405,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The locale identifies conventions and language for a particular geographical region. The codepage used to encode a specific string (the character set) is based on the locale used by that string or the environment that produced it. This property sets (for input parameters) or gets (for output parameters) the locale to be attached to a string when exchanging data with the server. This property is typically used together with the <see cref="P:System.Data.SqlClient.SqlParameter.CompareInfo" /> property.</para>
+          <code>static void CreateSqlParameterLocaleId(){
+   SqlParameter parameter = new SqlParameter("pName", SqlDbType.VarChar);
+   parameter.LocaleId = 1033;   // English - United States
+}</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the locale identifier that determines conventions and language for a particular region.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Offset">
@@ -309,9 +429,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Offset property is used for client-side chunking of binary and string data. For example, in order to insert 10MB of text into a column on a server, a user might execute 10 parameterized inserts of 1MB chunks, shifting the value of Offset on each iteration by 1MB.</para>
+          <para>Offset specifies the number of bytes for binary types, and the number of characters for strings. The count for strings does not include the terminating character.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the offset to the <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -335,9 +462,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.ParameterName" /> is specified in the form @paramname. You must set <see cref="P:System.Data.SqlClient.SqlParameter.ParameterName" /> before executing a <see cref="T:System.Data.SqlClient.SqlCommand" /> that relies on parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Data.SqlClient.SqlParameter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -353,9 +486,22 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> property is used by parameters that have a <see cref="T:System.Data.SqlDbType" /> of Decimal.</para>
+          <para>You do not need to specify values for the <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> and <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> properties for input parameters, as they can be inferred from the parameter value. Precision and Scale are required for output parameters and for scenarios where you need to specify complete metadata for a parameter without indicating a value, such as specifying a null value with a specific precision and scale.</para>
+          <block subset="none" type="note">
+            <para>Use of this property to coerce data passed to the database is not supported. To round, truncate, or otherwise coerce data before passing it to the database, use the <see cref="T:System.Math" /> class that is part of the System namespace prior to assigning a value to the parameter's Value property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>  Microsoft .NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> or <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> of <see cref="T:System.Decimal" /> parameter values. This can cause truncated data being inserted at the data source. If you are using .NET Framework version 1.0, validate the <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> and <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> of <see cref="T:System.Decimal" /> values before setting the parameter value. When you use .NET Framework version 1.1 or a later version, an exception is thrown if a <see cref="T:System.Decimal" /> parameter value is set with an invalid <see cref="P:System.Data.SqlClient.SqlParameter.Precision" />. <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> values that exceed the <see cref="T:System.Decimal" /> parameter scale are still truncated.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of digits used to represent the <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -378,8 +524,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value. Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter. Calling this method affects both the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> and <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> properties of the <see cref="T:System.Data.SqlClient.SqlParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the type associated with this <see cref="T:System.Data.SqlClient.SqlParameter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetSqlDbType">
@@ -393,8 +545,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value. Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter. Calling this method affects both the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> and <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> properties of the <see cref="T:System.Data.SqlClient.SqlParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the type associated with this <see cref="T:System.Data.SqlClient.SqlParameter" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scale">
@@ -406,9 +564,25 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'byte'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> property is used by parameters that have a <see cref="T:System.Data.SqlDbType" /> of Decimal.</para>
+          <block subset="none" type="note">
+            <para>Data may be truncated if the <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> property is not explicitly specified and the data on the server does not fit in scale 0 (the default). </para>
+          </block>
+          <para>You do not need to specify values for the <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> and <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> properties for input parameters, as they can be inferred from the parameter value. Precision and Scale are required for output parameters and for scenarios where you need to specify complete metadata for a parameter without indicating a value, such as specifying a null value with a specific precision and scale.</para>
+          <block subset="none" type="note">
+            <para>Use of this property to coerce data passed to the database is not supported. To round, truncate, or otherwise coerce data before passing it to the database, use the <see cref="T:System.Math" /> class that is part of the System namespace prior to assigning a value to the parameter's Value property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>.NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> or <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> of <see cref="T:System.Decimal" /> parameter values. This can cause truncated data to be inserted at the data source. If you are using .NET Framework version 1.0, validate the <see cref="P:System.Data.SqlClient.SqlParameter.Precision" /> and <see cref="T:System.Data.SqlClient.SqlParameter" /> of <see cref="T:System.Decimal" /> values before setting the parameter value. <see cref="P:System.Data.SqlClient.SqlParameter.Scale" /> values that exceed the <see cref="T:System.Decimal" /> parameter scale are still truncated. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of decimal places to which <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> is resolved.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -429,9 +603,23 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return values are not affected by this property; return parameters from stored procedures are always fixed-size integers.</para>
+          <para>For output parameters with a variable length type (nvarchar, for example), the size of the parameter defines the size of the buffer holding the output parameter. The output parameter can be truncated to a size specified with <see cref="P:System.Data.SqlClient.SqlParameter.Size" />. For character types, the size specified with <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> is in characters.</para>
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> property is used for binary and string types. For parameters of type SqlType.String, Size means length in Unicode characters. For parameters of type SqlType.Xml, Size is ignored.</para>
+          <para>For nonstring data types and ANSI string data, the <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> property refers to the number of bytes. For Unicode string data, <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> refers to the number of characters. The count for strings does not include the terminating character.</para>
+          <para>For variable-length data types, <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> describes the maximum amount of data to transmit to the server. For example, for a Unicode string value, <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> could be used to limit the amount of data sent to the server to the first one hundred characters.</para>
+          <para>If not explicitly set, the size is inferred from the actual size of the specified parameter value.</para>
+          <para>If the fractional part of the parameter value is greater than the size, then the value will be truncated to match the size.</para>
+          <para>For fixed length data types, the value of <see cref="P:System.Data.SqlClient.SqlParameter.Size" /> is ignored. It can be retrieved for informational purposes, and returns the maximum amount of bytes the provider uses when transmitting the value of the parameter to the server.</para>
+          <para>For information about streaming, see <format type="text/html"><a href="c449365b-470b-4edb-9d61-8353149f5531">SqlClient Streaming Support</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size, in bytes, of the data within the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -447,9 +635,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" /> is set to anything other than an empty string, the value of the parameter is retrieved from the column with the <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" /> name. If <see cref="P:System.Data.SqlClient.SqlParameter.Direction" /> is set to Input, the value is taken from the <see cref="T:System.Data.DataSet" />. If <see cref="P:System.Data.SqlClient.SqlParameter.Direction" /> is set to Output, the value is taken from the data source. A <see cref="P:System.Data.SqlClient.SqlParameter.Direction" /> of InputOutput is a combination of both.</para>
+          <para>For more information about how to use the <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumn" /> property, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format> and <format type="text/html"><a href="d1bd9a8c-0e29-40e3-bda8-d89176b72fb1">Updating the Database with a DataAdapter and the DataSet</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the source column mapped to the <see cref="T:System.Data.DataSet" /> and used for loading or returning the <see cref="P:System.Data.SqlClient.SqlParameter.Value" /></para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -466,9 +661,23 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumnNullMapping" /> is used by the <see cref="T:System.Data.SqlClient.SqlCommandBuilder" /> to correctly generate update commands when dealing with nullable columns. Generally, use of <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumnNullMapping" /> is limited to developers inheriting from <see cref="T:System.Data.SqlClient.SqlCommandBuilder" />.</para>
+          <para>
+            <see cref="T:System.Data.Common.DbCommandBuilder" /> uses this property to determine whether the source column is nullable, and sets this property to true if it is nullable, and false if it is not. When <see cref="T:System.Data.SqlClient.SqlCommandBuilder" /> is generating its Update statement, it examines the <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumnNullMapping" /> for each parameter. If the property is true, <see cref="T:System.Data.SqlClient.SqlCommandBuilder" /> generates a WHERE clauses like the following (in this query expression, "FieldName" represents the name of the field):</para>
+          <code>((@IsNull_FieldName = 1 AND FieldName IS NULL) OR 
+  (FieldName = @Original_FieldName))</code>
+          <para>If <see cref="P:System.Data.SqlClient.SqlParameter.SourceColumnNullMapping" /> for the field is false, <see cref="T:System.Data.SqlClient.SqlCommandBuilder" /> generates the following WHERE clause:</para>
+          <code>FieldName = @OriginalFieldName</code>
+          <para>In addition, @IsNull_FieldName contains 1 if the source field contains null, and 0 if it does not. This mechanism allows for a performance optimization in SQL Server, and provides for common code that works across multiple providers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets or gets a value which indicates whether the source column is nullable. This allows <see cref="T:System.Data.SqlClient.SqlCommandBuilder" /> to correctly generate Update statements for nullable columns.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceVersion">
@@ -480,9 +689,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.DataRowVersion'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by the SqlDataAdapter.UpdateCommand during an update to determine whether the original or current value is used for a parameter value. This lets primary keys be updated. This property is set to the version of the <see cref="T:System.Data.DataRow" /> used by the DataRow.Item property, or one of the DataRow.GetChildRows methods of the <see cref="T:System.Data.DataRow" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DataRowVersion" /> to use when you load <see cref="P:System.Data.SqlClient.SqlParameter.Value" /></para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,9 +713,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.SqlDbType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> and <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> changes the <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> to a supporting <see cref="T:System.Data.SqlDbType" />.</para>
+          <para>For a list of the supported data types, see the appropriate <see cref="T:System.Data.SqlDbType" /> member. For more information, see <format type="text/html"><a href="f21e6aba-b76d-46ad-a83e-2ad8e0af1e12">Using Parameters with a DataAdapter</a></format>.</para>
+          <para>For information about streaming, see <format type="text/html"><a href="c449365b-470b-4edb-9d61-8353149f5531">SqlClient Streaming Support</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.SqlDbType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -533,9 +756,21 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For input parameters, the value is bound to the <see cref="T:System.Data.SqlClient.SqlCommand" /> that is sent to the server. For output and return value parameters, the value is set on completion of the <see cref="T:System.Data.SqlClient.SqlCommand" /> and after the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is closed.</para>
+          <para>This property can be set to null or <see cref="F:System.DBNull.Value" />. Use <see cref="F:System.DBNull.Value" /> to send a NULL value as the value of the parameter. Use null or do not set <see cref="P:System.Data.SqlClient.SqlParameter.SqlValue" /> to use the default value for the parameter.</para>
+          <para>If the application specifies the database type, the bound value is converted to that type when the provider sends the data to the server. The provider tries to convert any type of value if it supports the <see cref="T:System.IConvertible" /> interface. Conversion errors may result if the specified type is not compatible with the value.</para>
+          <para>Both the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> and <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> properties can be inferred by setting the <see cref="P:System.Data.SqlClient.SqlParameter.Value" />.</para>
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> property is overwritten by SqlDataAdapter.UpdateCommand.</para>
+          <para>Use the <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> property to return parameter values as common language runtime (CLR) types.</para>
+          <para>For information about streaming, see <format type="text/html"><a href="c449365b-470b-4edb-9d61-8353149f5531">SqlClient Streaming Support</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the parameter as an SQL type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -550,9 +785,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.SqlClient.SqlParameter" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Object" /> that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -563,9 +807,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that contains the <see cref="P:System.Data.SqlClient.SqlParameter.ParameterName" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the <see cref="P:System.Data.SqlClient.SqlParameter.ParameterName" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -581,9 +831,21 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For input parameters, the value is bound to the <see cref="T:System.Data.SqlClient.SqlCommand" /> that is sent to the server. For output and return value parameters, the value is set on completion of the <see cref="T:System.Data.SqlClient.SqlCommand" /> and after the <see cref="T:System.Data.SqlClient.SqlDataReader" /> is closed.</para>
+          <para>This property can be set to null or <see cref="F:System.DBNull.Value" />. Use <see cref="F:System.DBNull.Value" /> to send a NULL value as the value of the parameter. Use null or do not set <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> to use the default value for the parameter.</para>
+          <para>An exception is thrown if non-Unicode XML data is passed as a string.</para>
+          <para>If the application specifies the database type, the bound value is converted to that type when the provider sends the data to the server. The provider tries to convert any type of value if it supports the <see cref="T:System.IConvertible" /> interface. Conversion errors may result if the specified type is not compatible with the value. </para>
+          <para>Both the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> and <see cref="P:System.Data.SqlClient.SqlParameter.SqlDbType" /> properties can be inferred by setting the Value.</para>
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> property is overwritten by SqlDataAdapter.UpdateCommand.</para>
+          <para>For information about streaming, see <format type="text/html"><a href="c449365b-470b-4edb-9d61-8353149f5531">SqlClient Streaming Support</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -608,9 +870,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is null (Nothing in Microsoft Visual Basic) if the collection is defined within the current database. It is also null if there is no schema collection, in which case <see cref="P:System.Data.SqlClient.SqlParameter.XmlSchemaCollectionName" /> and <see cref="P:System.Data.SqlClient.SqlParameter.XmlSchemaCollectionOwningSchema" /> are also null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the database where the schema collection for this XML instance is located.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlSchemaCollectionName">
@@ -623,9 +891,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is null (Nothing in Microsoft Visual Basic) if there is no associated schema collection. If the value is null, then <see cref="P:System.Data.SqlClient.SqlParameter.XmlSchemaCollectionDatabase" /> and <see cref="P:System.Data.SqlClient.SqlParameter.XmlSchemaCollectionOwningSchema" /> are also null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the schema collection for this XML instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlSchemaCollectionOwningSchema">
@@ -638,9 +912,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is null (Nothing in Microsoft Visual Basic) if the collection is defined within the current database. It is also null if there is no schema collection, in which case <see cref="P:System.Data.SqlClient.SqlParameter.XmlSchemaCollectionDatabase" /> and <see cref="P:System.Data.SqlClient.SqlParameter.XmlSchemaCollectionName" /> are also null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The owning relational schema where the schema collection for this XML instance is located.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

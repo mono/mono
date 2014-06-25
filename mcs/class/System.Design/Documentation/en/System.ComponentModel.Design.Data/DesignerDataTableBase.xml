@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerDataTableBase" FullName="System.ComponentModel.Design.Data.DesignerDataTableBase">
   <TypeSignature Language="C#" Value="public abstract class DesignerDataTableBase" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Data.DesignerDataTableBase" /> class is one of several types that represent the schema of a data store at design-time. These schema items are made available to controls by designers implementing the <see cref="T:System.ComponentModel.Design.Data.IDataEnvironment" /> interface. Controls access schema objects by calling the <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.GetConnectionSchema(System.ComponentModel.Design.Data.DesignerDataConnection)" /> method of the interface.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Data.DesignerDataTableBase" /> class provides the properties and methods shared between data tables in a data store and views defined on those data tables. </para>
+      <para>When you inherit from the <see cref="T:System.ComponentModel.Design.Data.DesignerDataTableBase" /> class, you must override the <see cref="M:System.ComponentModel.Design.Data.DesignerDataTableBase.CreateColumns" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the properties and methods shared between data-store tables and data-store views.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +32,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the class for use by an inherited class instance. This constructor can be called only by an inherited class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DesignerDataTableBase" /> class. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the table or view.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +55,18 @@
         <Parameter Name="owner" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the class for use by an inherited class instance. This constructor can be called only by an inherited class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DesignerDataTableBase" /> class. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the table or view.</param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data-store owner of the table or view.</param>
       </Docs>
     </Member>
     <Member MemberName="Columns">
@@ -55,9 +79,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Data.DesignerDataTableBase.Columns" /> property is populated by the <see cref="M:System.ComponentModel.Design.Data.DesignerDataTableBase.CreateColumns" /> method the first time the <see cref="P:System.ComponentModel.Design.Data.DesignerDataTableBase.Columns" /> property is accessed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of columns defined for a table or view.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateColumns">
@@ -71,9 +101,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Data.DesignerDataTableBase.CreateColumns" /> method is called the first time the <see cref="P:System.ComponentModel.Design.Data.DesignerDataTableBase.Columns" /> property is accessed, to populate the collection of data-store columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a collection of data-store column objects.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ComponentModel.Design.Data.DesignerDataColumn" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -86,9 +125,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the data-store table or view.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Owner">
@@ -101,9 +143,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the owner of the data-store table or view.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

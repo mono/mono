@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectAce" FullName="System.Security.AccessControl.ObjectAce">
   <TypeSignature Language="C#" Value="public sealed class ObjectAce : System.Security.AccessControl.QualifiedAce" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ObjectAce extends System.Security.AccessControl.QualifiedAce" />
@@ -11,9 +12,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls access to Directory Services objects. This class represents an Access Control Entry (ACE) associated with a directory object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,18 +40,30 @@
         <Parameter Name="opaque" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="aceFlags">To be added.</param>
-        <param name="qualifier">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="sid">To be added.</param>
-        <param name="flags">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="inheritedType">To be added.</param>
-        <param name="isCallback">To be added.</param>
-        <param name="opaque">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates a new instance of the <see cref="T:System.Security.AccessControl.ObjectAce" /> class.</para>
+        </summary>
+        <param name="aceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The inheritance, inheritance propagation, and auditing conditions for the new Access Control Entry (ACE).</param>
+        <param name="qualifier">
+          <attribution license="cc4" from="Microsoft" modified="false" />The use of the new ACE.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mask for the ACE.</param>
+        <param name="sid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.SecurityIdentifier" /> associated with the new ACE.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Whether the <paramref name="type" /> and <paramref name="inheritedType" /> parameters contain valid object GUIDs.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A GUID that identifies the object type to which the new ACE applies.</param>
+        <param name="inheritedType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A GUID that identifies the object type that can inherit the new ACE.</param>
+        <param name="isCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new ACE is a callback type ACE.</param>
+        <param name="opaque">
+          <attribution license="cc4" from="Microsoft" modified="false" />Opaque data associated with the new ACE. This is allowed only for callback ACE types. The length of this array must not be greater than the return value of the <see cref="M:System.Security.AccessControl.ObjectAceMaxOpaqueLength" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="BinaryLength">
@@ -62,10 +78,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length, in bytes, of the binary representation of the current <see cref="T:System.Security.AccessControl.ObjectAce" /> object. This length should be used before marshaling the ACL into a binary array with the <see cref="M:System.Security.AccessControl.ObjectAce.GetBinaryForm" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetBinaryForm">
@@ -84,11 +103,16 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="binaryForm">To be added.</param>
-        <param name="offset">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marshals the contents of the <see cref="T:System.Security.AccessControl.ObjectAce" /> object into the specified byte array beginning at the specified offset.</para>
+        </summary>
+        <param name="binaryForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array into which the contents of the <see cref="T:System.Security.AccessControl. ObjectAce" /> is marshaled.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset at which to start marshaling.</param>
       </Docs>
     </Member>
     <Member MemberName="InheritedObjectAceType">
@@ -103,10 +127,16 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Security.AccessControl.ObjectAce.ObjectAceFlags" /> parameter does not contain the value <see cref="F:System.Security.AccessControl.ObjectAceFlags.InheritedObjectAceTypePresent" />, this property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the GUID of the object type that can inherit the Access Control Entry (ACE) that this <see cref="T:System.Security.AccessControl.ObjectAce" /> object represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxOpaqueLength">
@@ -124,11 +154,18 @@
         <Parameter Name="isCallback" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isCallback">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the maximum allowed length, in bytes, of an opaque data BLOB for callback Access Control Entries (ACEs).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum allowed length, in bytes, of an opaque data BLOB for callback Access Control Entries (ACEs).</para>
+        </returns>
+        <param name="isCallback">
+          <attribution license="cc4" from="Microsoft" modified="false" />True if the <see cref="T:System.Security.AccessControl.ObjectAce" /> is a callback ACE type.</param>
       </Docs>
     </Member>
     <Member MemberName="ObjectAceFlags">
@@ -143,10 +180,13 @@
         <ReturnType>System.Security.AccessControl.ObjectAceFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets flags that specify whether the <see cref="P:System.Security.AccessControl.ObjectAce.ObjectAceType" /> and <see cref="P:System.Security.AccessControl.ObjectAce.InheritedObjectAceType" /> properties contain values that identify valid object types.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ObjectAceType">
@@ -161,10 +201,16 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Security.AccessControl.ObjectAce.ObjectAceFlags" /> parameter does not contain the value <see cref="F:System.Security.AccessControl.ObjectAceFlags. ObjectAceTypePresent" />, this property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the GUID of the object type associated with this <see cref="T:System.Security.AccessControl.ObjectAce" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

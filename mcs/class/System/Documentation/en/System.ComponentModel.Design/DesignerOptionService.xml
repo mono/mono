@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerOptionService" FullName="System.ComponentModel.Design.DesignerOptionService">
   <TypeSignature Language="C#" Value="public abstract class DesignerOptionService : System.ComponentModel.Design.IDesignerOptionService" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DesignerOptionService extends System.Object implements class System.ComponentModel.Design.IDesignerOptionService" />
@@ -15,8 +16,38 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerOptionService" /> class provides a collection of options. Each of these option collections has an indexer that enables it to be further filtered. Each option collection contains its own set of options, as well as a rollup of all of its child options. In the event of a naming conflict between properties, the outermost options object takes precedence. The following <ui>Tools | Options</ui> user interface (UI) structure shows how the outermost options object takes on greater importance:</para>
+      <para>
+        <ui>WindowsFormsDesigner | General</ui>
+      </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <ui>SnapToGrid</ui>
+          </para>
+        </item>
+        <item>
+          <para>
+            <ui>ShowGrid</ui>
+          </para>
+        </item>
+        <item>
+          <para>
+            <ui>GridSize</ui>
+          </para>
+        </item>
+      </list>
+      <para>Given a <see cref="T:System.ComponentModel.Design.IDesignerOptionService" /> named service, to get to the value of the <see cref="P:System.Windows.Forms.Design.ParentControlDesigner.GridSize" /> property, you would make the following call:</para>
+      <para>code reference: IDesignerOptionServiceExample#2</para>
+      <para>This works, until you want to move <see cref="P:System.Windows.Forms.Design.ParentControlDesigner.GridSize" /> to another page. Also, <see cref="T:System.ComponentModel.Design.IDesignerOptionService" /> provides no discovery mechanism. If you do not know what string to pass in, the service cannot find the property value.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerOptionService" /> class addresses these issues. You can query collections, and there is a type converter defined on the <see cref="T:System.ComponentModel.Design.DesignerOptionService.DesignerOptionCollection" /> object that marks the collection as expandable. With this type converter, you can pass the entire designer option service to a property window and visually inspect the service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for getting and setting option values for a designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +60,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerOptionService" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateOptionCollection">
@@ -70,9 +104,15 @@
         <ReturnType>System.ComponentModel.Design.DesignerOptionService+DesignerOptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is always a global options collection that contains child collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the options collection for this service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PopulateOptionCollection">
@@ -134,11 +174,19 @@
         <Parameter Name="valueName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pageName">To be added.</param>
-        <param name="valueName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of an option defined in this package.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the option named <paramref name="valueName" />.</para>
+        </returns>
+        <param name="pageName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The page to which the option is bound.</param>
+        <param name="valueName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the option value.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerOptionService.SetOptionValue">
@@ -158,11 +206,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="pageName">To be added.</param>
-        <param name="valueName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of an option defined in this package.</para>
+        </summary>
+        <param name="pageName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The page to which the option is bound</param>
+        <param name="valueName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the option value.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the option.</param>
       </Docs>
     </Member>
   </Members>

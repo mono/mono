@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlRoleProvider" FullName="System.Web.Security.SqlRoleProvider">
   <TypeSignature Language="C#" Value="public class SqlRoleProvider : System.Web.Security.RoleProvider" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by the <see cref="T:System.Web.Security.Roles" /> and <see cref="T:System.Web.Security.RolePrincipal" /> classes to provide role-management services for an ASP.NET application using a SQL Server database. You can use role management to specify different levels of authorization for your application.</para>
+      <para>To use the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, you must first create the SQL Server database used by the <see cref="T:System.Web.Security.SqlRoleProvider" />. To create the database used by the <see cref="T:System.Web.Security.SqlRoleProvider" /> class, run the aspnet_regsql.exe executable found in the C:\WINDOWS\Microsoft.NET\Framework\ <paramref name="versionNumber" /> folder and specify the -Ar option (for example, aspnet_regsql.exe -Ar). The database created is called Aspnetdb. Alternatively, run aspnet_regsql.exe to pull up the GUI configuration mode and choose to configure all ASP.NET features.</para>
+      <para>If the role provider is configured with a connection string that uses integrated security, the process account of the ASP.NET application must have rights to connect to the SQL Server database.</para>
+      <para>The Machine.config file is configured with a <see cref="T:System.Web.Security.SqlRoleProvider" /> instance named AspNetSqlProvider that connects to the SQL Server on the local machine. You can use this instance of the provider, or specify your own in the Web.config file for your ASP.NET application. To use the AspNetSqlProvider instance, specify AspNetSqlProvider as the defaultProvider in your <format type="text/html"><a href="4b0f6078-4824-4fc8-a5ee-4ae00ee3ceec">roleManager</a></format> configuration.</para>
+      <para>You can configure the <see cref="T:System.Web.Security.SqlRoleProvider" /> to use the same database and user information as the <see cref="T:System.Web.Security.SqlMembershipProvider" /> in order to use a single database for authentication and authorization information. To use the same database for membership and role information, run the aspnet_regsql.exe executable and install the membership feature. Then, specify the same connection string in your configuration for both your <see cref="T:System.Web.Security.SqlRoleProvider" /> and <see cref="T:System.Web.Security.SqlMembershipProvider" /> instances. Also ensure that both provider instances are configured with the same <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages storage of role membership information for an ASP.NET application in a SQL Server database.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.#ctor" /> constructor is called by ASP.NET to create an instance of the <see cref="T:System.Web.Security.SqlRoleProvider" /> class as specified in the configuration for the application. This constructor is not intended to be used from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.Security.SqlRoleProvider" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,11 +55,21 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.AddUsersToRoles(System.String[],System.String[])" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to associate one or more users with one or more roles in the SQL Server database specified in the ASP.NET application's configuration file (Web.config). This method is called by the <see cref="M:System.Web.Security.Roles.AddUserToRole(System.String,System.String)" />, <see cref="M:System.Web.Security.Roles.AddUserToRoles(System.String,System.String[])" />, <see cref="M:System.Web.Security.Roles.AddUsersToRole(System.String[],System.String)" />, and <see cref="M:System.Web.Security.Roles.AddUsersToRoles(System.String[],System.String[])" /> methods of the <see cref="T:System.Web.Security.Roles" /> class.</para>
+          <para>The database updates that are performed during the call to the <see cref="M:System.Web.Security.SqlRoleProvider.AddUsersToRoles(System.String[],System.String[])" /> method are made within a transaction. If an error is encountered, such as a user name that is already in a specified role, the transaction is rolled back and no updates are performed.</para>
+          <para>If the <see cref="T:System.Web.Security.SqlRoleProvider" /> is being used with the <see cref="T:System.Web.Security.SqlMembershipProvider" />, and one of the specified user names does not exist in the database, the user name will be automatically added to the database.</para>
+          <para>User names and role names cannot contain commas.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified user names to each of the specified roles.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to be added to the specified roles.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +82,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> is used by the <see cref="T:System.Web.Security.SqlRoleProvider" /> to associate users and roles with different applications. This enables multiple applications to use the same database to store user and role information without running into conflicts between duplicate user names or role names. Multiple ASP.NET applications can use the same database by specifying the same value in the <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property. The <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property can be set programmatically, or it can be set declaratively in the configuration file for the Web application using the applicationName attribute.</para>
+          <para>If a value is not specified for the applicationName attribute in the configuration file for the Web application, then the <see cref="P:System.Web.HttpRequest.ApplicationPath" /> property value for the current <see cref="P:System.Web.HttpContext.Request" /> object is used.</para>
+          <block subset="none" type="note">
+            <para>Because a single default role provider instance is used for all of the requests served by an <see cref="T:System.Web.HttpApplication" /> object, you can have multiple requests executing concurrently and attempting to set the <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property value. The <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property is not thread safe for multiple writes, and changing the <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property value can result in unexpected behavior for multiple users of an application. It is recommended that you avoid writing code that allows users to set the <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property unless you must. An example of an application where setting the <see cref="P:System.Web.Security.SqlRoleProvider.ApplicationName" /> property may be required is an administrative application that manages role data for multiple applications. Such an application should be a single-user application and not a Web application.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the application for which to store and retrieve role information.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,9 +112,16 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.CreateRole(System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to create a role in the SQL Server database specified in the ASP.NET application's configuration file (Web.config).</para>
+          <para>The maximum length for the role name is 256 characters. Role names are not case-sensitive. Commas are not allowed in role names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new role to the role database.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,11 +139,22 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <param name="throwOnPopulatedRole">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.DeleteRole(System.String,System.Boolean)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to delete a role from the SQL Server database specified in the ASP.NET application's configuration file (Web.config). When a role is deleted, the list of users associated with that role is also deleted from the database. The user information in the database is not affected.</para>
+          <para>If <paramref name="throwOnPopulatedRole" /> is true, then an exception will be thrown and the role will not be deleted if the role identified by the <paramref name="roleName" /> parameter has one or more members. If <paramref name="throwOnPopulatedRole" /> is false, then the role will be deleted whether it is empty or not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a role from the role database.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the role was successfully deleted; otherwise, false.</para>
+        </returns>
+        <param name="throwOnPopulatedRole">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, throws an exception if <paramref name="roleName" /> has one or more members.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,12 +171,23 @@
         <Parameter Name="usernameToMatch" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="roleName">To be added.</param>
-        <param name="usernameToMatch">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.FindUsersInRole(System.String,System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class and returns a list of users in a role where the user name contains a match of the supplied <paramref name="usernameToMatch" /> for the configured applicationName. The <see cref="T:System.Web.Security.SqlRoleProvider" /> searches for a user name that matches the <paramref name="usernameToMatch" /> parameter value using the LIKE keyword and supports SQL Server wildcard characters. For example, if the <paramref name="usernameToMatch" /> parameter is set to "user1", then membership information for the user with the user name of "user1" is returned, if it exists. If the <paramref name="usernameToMatch" /> parameter is set to "user%", then membership information for users with the user name of "user1", "user2", "user_admin", and so on are returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of user names in a role where the user name contains the specified user name to match.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users where the user name matches <paramref name="usernameToMatch" /> and the user is a member of the specified role.</para>
+        </returns>
+        <param name="roleName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The role to search in.</param>
+        <param name="usernameToMatch">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to search for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +201,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.GetAllRoles" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to retrieve a list of all the roles in the SQL Server database specified in the ASP.NET application's configuration file (Web.config). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all the roles for the application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles stored in the database for a particular application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -154,11 +229,21 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.GetRolesForUser(System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to retrieve a list of a specified user's roles from the SQL Server database specified in the ASP.NET application's configuration file (Web.config). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the roles that a user is in.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles that the specified user is in.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user to return a list of roles for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -175,10 +260,19 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.GetUsersInRole(System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to retrieve the list of users associated with the specified role in the SQL Server database specified in the ASP.NET application's configuration file (Web.config). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of users in the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users who are members of the specified role.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -195,11 +289,19 @@
         <Parameter Name="config" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="config">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method initializes the <see cref="T:System.Web.Security.SqlRoleProvider" /> with the property values specified in the ASP.NET application configuration file (Web.config) and is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the SQL Server role provider with the property values specified in the ASP.NET application's configuration file. This method is not intended to be used directly from your code.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.Security.SqlRoleProvider" /> instance to initialize. </param>
+        <param name="config">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> that contains the names and values of configuration options for the role provider. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -216,12 +318,22 @@
         <Parameter Name="rolename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="username">To be added.</param>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.IsUserInRole(System.String,System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class and the <see cref="M:System.Security.Principal.IPrincipal.IsInRole(System.String)" /> method of the <see cref="P:System.Web.UI.Page.User" /> property to determine whether a user is associated with a role in the SQL Server database specified in the ASP.NET application's configuration file (Web.config). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified user is in the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified user name is in the specified role; otherwise, false.</para>
+        </returns>
+        <param name="username">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name to search for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,11 +350,20 @@
         <Parameter Name="rolenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="usernames">To be added.</param>
         <param name="rolenames">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.RemoveUsersFromRoles(System.String[],System.String[])" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to remove one or more users from one or more roles in the SQL Server database specified in the ASP.NET application's configuration file (Web.config). This method is called by the <see cref="M:System.Web.Security.Roles.RemoveUserFromRole(System.String,System.String)" />, <see cref="M:System.Web.Security.Roles.RemoveUserFromRoles(System.String,System.String[])" />, <see cref="M:System.Web.Security.Roles.RemoveUsersFromRole(System.String[],System.String)" />, and <see cref="M:System.Web.Security.Roles.RemoveUsersFromRoles(System.String[],System.String[])" /> methods of the <see cref="T:System.Web.Security.Roles" /> class.</para>
+          <para>The database updates that are performed during the call to <see cref="M:System.Web.Security.SqlRoleProvider.RemoveUsersFromRoles(System.String[],System.String[])" /> are made within a transaction. If an error is encountered, such as a user name that does not exist or a user name that is already in a specified role, the transaction is rolled back and no updates are performed.</para>
+          <para>User names and role names cannot contain commas.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified user names from the specified roles.</para>
+        </summary>
+        <param name="usernames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names to be removed from the specified roles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -259,10 +380,19 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.SqlRoleProvider.RoleExists(System.String)" /> method is called by the <see cref="T:System.Web.Security.Roles" /> class to determine whether a role name exists in the SQL Server database specified in the ASP.NET application's configuration file (Web.config). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified role name already exists in the role database.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the role name already exists in the database; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

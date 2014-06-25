@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBinder" FullName="System.Web.UI.DataBinder">
   <TypeSignature Language="C#" Value="public sealed class DataBinder" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the overloaded static <see cref="Overload:System.Web.UI.DataBinder.Eval" /> method of this class in data-binding syntax in an ASP.NET Web page. This provides an easier syntax to work with than standard data binding. However, because DataBinder.Eval provides automatic type conversion, it can result in slower performance.</para>
+      <para>For more information about ASP.NET data binding, expressions, and syntax, see <format type="text/html"><a href="ab7b2846-975b-4057-a948-45527497c742">Data Binding</a></format> and <format type="text/html"><a href="14cdd57d-0f82-4667-b503-73e1a96f136a">Data-Binding Expression Syntax</a></format>.</para>
+      <para>Starting in .NET Framework 4.5, you can use model binding to simplify some of the tasks that you had to perform through data-binding in earlier versions. For a tutorial series on using model binding with Web Forms, see <see cref="http://go.microsoft.com/fwlink/?LinkId=286117">Model Binding and Web Forms</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for rapid application development (RAD) designers to generate and parse data-binding expression syntax. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.DataBinder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,11 +54,29 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added: an object of type 'object'</param>
-        <param name="expression">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="expression" /> parameter must evaluate to a public property. </para>
+          <para>This method is automatically called when you create data bindings in a rapid application development (RAD) designer such as Visual Studio. You can also use it declaratively to simplify casting to a text string. To do so, you use the &lt;%#  %&gt; expression syntax, as used in standard ASP.NET data binding.</para>
+          <para>This method is particularly useful when binding data to controls that are in a templated list.</para>
+          <block subset="none" type="note">
+            <para>Because this method performs late-bound evaluation, using reflection at run time, it can cause performance to noticeably slow compared to standard ASP.NET data-binding syntax.</para>
+          </block>
+          <para>For any of the list Web controls, such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, <see cref="T:System.Web.UI.WebControls.DataList" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, <paramref name="container" /> should be Container.DataItem. If you are binding against the page, <paramref name="container" /> should be Page.</para>
+          <para>Starting in .NET Framework 4.5, you can use model binding to simplify some of the tasks that you had to perform through data-binding in earlier versions. For a tutorial series on using model binding with Web Forms, see <see cref="http://go.microsoft.com/fwlink/?LinkId=286117">Model Binding and Web Forms</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates data-binding expressions at run time.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> instance that results from the evaluation of the data-binding expression.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the page's specified language. </param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the <paramref name="container" /> object to the public property value to be placed in the bound control property. This must be a string of property or field names separated by periods, such as Tables[0].DefaultView.[0].Price in C# or Tables(0).DefaultView.(0).Price in Visual Basic. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,12 +95,32 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added: an object of type 'object'</param>
-        <param name="expression">To be added: an object of type 'string'</param>
-        <param name="format">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <paramref name="expression" /> must evaluate to a public property.</para>
+          <para>For more information about format strings in the .NET Framework, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Overview</a></format>.</para>
+          <para>This method is automatically called when you create data bindings in a rapid application development (RAD) designer such as Visual Studio. You can also use it declaratively to convert the <see cref="T:System.Object" /> resulting from the data-binding expression to a <see cref="T:System.String" />.  To use the method declaratively, use the &lt;%#   %&gt; expression syntax, as used in standard ASP.NET data binding.</para>
+          <para>This method is particularly useful when binding data to controls that are in a templated list.</para>
+          <block subset="none" type="note">
+            <para>Because this method performs late-bound evaluation, using reflection at run time, it can cause performance to noticeably slow compared to standard ASP.NET data-binding syntax. Use this method judiciously, particularly when string formatting is not required.</para>
+          </block>
+          <para>For any of the list Web controls, such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, <see cref="T:System.Web.UI.WebControls.DataList" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, <paramref name="container" /> should be Container.DataItem. If you are binding against the page, <paramref name="container" /> should be Page.</para>
+          <para>Starting in .NET Framework 4.5, you can use model binding to simplify some of the tasks that you had to perform through data-binding in earlier versions. For a tutorial series on using model binding with Web Forms, see <see cref="http://go.microsoft.com/fwlink/?LinkId=286117">Model Binding and Web Forms</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates data-binding expressions at run time and formats the result as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> object that results from evaluating the data-binding expression and converting it to a string type.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the page's specified language. </param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the <paramref name="container" /> object to the public property value to be placed in the bound control property. This must be a string of property or field names separated by periods, such as Tables[0].DefaultView.[0].Price in C# or Tables(0).DefaultView.(0).Price in Visual Basic. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string (like those used by <see cref="M:System.String.Format(System.String,System.Object)" />) that converts the <see cref="T:System.Object" /> instance returned by the data-binding expression to a <see cref="T:System.String" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,10 +140,21 @@
         <Parameter Name="container" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls the <see cref="M:System.Web.UI.DataBinder.GetDataItem(System.Object,System.Boolean@)" /> method, ignoring its <paramref name="foundDataItem" /> parameter when returning the result.</para>
+          <para>An object's data item is identified in one of two ways. If the container object implements the <see cref="T:System.Web.UI.IDataItemContainer" /> interface, the <see cref="P:System.Web.UI.IDataItemContainer.DataItem" /> property identifies the data item, and its value is returned. Otherwise, the method attempts to resolve and return a container property named "DataItem". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an object's declared data item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the container's declared data item. Returns null if no data item is found or if the container evaluates to null.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the page's specified language.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDataItem">
@@ -128,11 +189,23 @@
         <Parameter Name="expr" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added: an object of type 'object'</param>
-        <param name="expr">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <paramref name="expr" /> must evaluate to a public property. </para>
+          <para>For any of the list Web controls, such as <see cref="T:System.Web.UI.WebControls.GridView" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, <see cref="T:System.Web.UI.WebControls.DataList" />, or <see cref="T:System.Web.UI.WebControls.Repeater" />, <paramref name="container" /> should be Container.DataItem. If you are binding against the page, <paramref name="container" /> should be Page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of a property of the specified container and navigation path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which <paramref name="expr" /> is evaluated. This must be a valid object identifier in the specified language for the page.</param>
+        <param name="expr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the <paramref name="container" /> object to the public property value to place in the bound control property. This must be a string of property or field names separated by periods, such as Tables[0].DefaultView.[0].Price in C# or Tables(0).DefaultView.(0).Price in Visual Basic.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -151,12 +224,24 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">a <see cref="T:System.Object" /></param>
         <param name="expr">a <see cref="T:System.String" /></param>
-        <param name="format">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.DataBinder.GetIndexedPropertyValue(System.Object,System.String,System.String)" /> method invokes the <see cref="M:System.Web.UI.DataBinder.GetIndexedPropertyValue(System.Object,System.String)" /> method, and then uses the <see cref="M:System.String.Format(System.String,System.Object)" /> method to format the result as specified in the <paramref name="format" /> parameter. A .NET Framework format string (like those used by <see cref="M:System.String.Format(System.String,System.Object)" />) converts the <see cref="T:System.Object" /> instance returned by the data-binding expression to a <see cref="T:System.String" /> object. </para>
+          <para>Exceptions that are thrown for the <see cref="M:System.Web.UI.DataBinder.GetIndexedPropertyValue(System.Object,System.String)" /> method apply to the <see cref="M:System.Web.UI.DataBinder.GetIndexedPropertyValue(System.Object,System.String,System.String)" /> method as well.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of the specified property for the specified container, and then formats the results.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property in the format specified by <paramref name="format" />.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the specified language for the page.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the format in which to display the results.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -174,11 +259,22 @@
         <Parameter Name="propName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added: an object of type 'object'</param>
-        <param name="propName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.DataBinder.GetPropertyValue(System.Object,System.String)" /> method is used to retrieve the value of a property in an object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of the specified property of the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the property. </param>
+        <param name="propName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property that contains the value to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,12 +293,24 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="container">To be added: an object of type 'object'</param>
-        <param name="propName">To be added: an object of type 'string'</param>
-        <param name="format">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This version of the <see cref="M:System.Web.UI.DataBinder.GetPropertyValue(System.Object,System.String,System.String)" /> method is used to retrieve and format the value of a property in an object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value of the specified property of the specified object, and then formats the results.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property in the format specified by <paramref name="format" />.</para>
+        </returns>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the property. </param>
+        <param name="propName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property that contains the value to retrieve. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the format in which to display the results. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

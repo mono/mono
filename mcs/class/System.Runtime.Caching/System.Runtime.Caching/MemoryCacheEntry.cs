@@ -44,6 +44,7 @@ namespace System.Runtime.Caching
 		CacheEntryUpdateCallback updateCallback;
 		MemoryCache owner;
 		long expiresAt;
+		long expiresAtNext;
 		bool disabled;
 		
 		public bool Disabled {
@@ -63,7 +64,7 @@ namespace System.Runtime.Caching
 				if (absoluteExpiration != ObjectCache.InfiniteAbsoluteExpiration && absoluteExpiration.UtcTicks < DateTime.UtcNow.Ticks)
 					return true;
 
-				if (slidingExpiration != ObjectCache.NoSlidingExpiration && DateTime.UtcNow.Ticks - LastModified.Ticks > slidingExpiration.Ticks)
+				if (IsSliding && expiresAtNext > 0 && DateTime.UtcNow.Ticks > expiresAtNext)
 					return true;
 			
 				return false;
@@ -77,17 +78,38 @@ namespace System.Runtime.Caching
 		public bool IsExpirable {
 			get { return expiresAt > 0; }
 		}
+
+		public bool IsSliding {
+			get { return slidingExpiration != ObjectCache.NoSlidingExpiration; }
+		}
 		
 		public string Key {
 			get; private set;
 		}
 
 		public DateTime LastModified {
-			get; set;
+			get; private set;
 		}
 
 		public long ExpiresAt {
 			get { return expiresAt; }
+		}
+
+		public long ExpiresAtNext {
+			get { return expiresAtNext; }
+		}
+
+		public void UpdateSlidingExpiry () {
+			if (IsSliding) {
+				expiresAtNext = GetSlidingExpiry ();
+			}
+		}
+
+		public void ResetSlidingExpiry () {
+			if (IsSliding) {
+				expiresAt = GetSlidingExpiry ();
+				expiresAtNext = expiresAt;
+			}
 		}
 		
 		public object Value {
@@ -125,11 +147,13 @@ namespace System.Runtime.Caching
 			this.LastModified = DateTime.UtcNow;
 
 			if (absoluteExpiration != ObjectCache.InfiniteAbsoluteExpiration)
-				expiresAt = absoluteExpiration.Ticks;
+				expiresAt = absoluteExpiration.UtcTicks;
 			else if (slidingExpiration != ObjectCache.NoSlidingExpiration)
-				expiresAt = DateTime.Now.Ticks + slidingExpiration.Ticks;
+				expiresAt = GetSlidingExpiry ();
 			else
 				expiresAt = 0;
+
+			expiresAtNext = expiresAt;
 		}
 
 		public void Added ()
@@ -194,6 +218,11 @@ namespace System.Runtime.Caching
 			removedCallback = policy.RemovedCallback;
 			slidingExpiration = policy.SlidingExpiration;
 			updateCallback = policy.UpdateCallback;
+		}
+
+		private long GetSlidingExpiry()
+		{
+			return DateTime.UtcNow.Ticks + slidingExpiration.Ticks;
 		}
 	}
 }

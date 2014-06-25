@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridTablesFactory" FullName="System.Windows.Forms.GridTablesFactory">
   <TypeSignature Language="C#" Value="public sealed class GridTablesFactory" />
   <AssemblyInfo>
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the <see cref="M:System.Windows.Forms.GridTablesFactory.CreateGridTables(System.Windows.Forms.DataGridTableStyle,System.Object,System.String,System.Windows.Forms.BindingContext)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateGridTables">
@@ -27,13 +31,23 @@
         <Parameter Name="bindingManager" Type="System.Windows.Forms.BindingContext" />
       </Parameters>
       <Docs>
-        <param name="gridTable">To be added.</param>
-        <param name="dataSource">To be added.</param>
-        <param name="dataMember">To be added.</param>
-        <param name="bindingManager">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified <see cref="P:System.Windows.Forms.DataGridColumnStyle.DataGridTableStyle" /> in a one-element array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Windows.Forms.DataGridTableStyle" /> objects.</para>
+        </returns>
+        <param name="gridTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridTableStyle" />.</param>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" />.</param>
+        <param name="dataMember">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" />.</param>
+        <param name="bindingManager">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.BindingContext" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

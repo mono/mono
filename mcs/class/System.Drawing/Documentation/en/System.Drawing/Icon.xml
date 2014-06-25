@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Icon" FullName="System.Drawing.Icon">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class Icon : MarshalByRefObject, ICloneable, IDisposable, System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -31,8 +32,26 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can construct <see cref="T:System.Drawing.Icon" /> objects from files, streams, or embedded resources. For a list of constructors, see <see cref="M:System.Drawing.Icon.#ctor(System.Drawing.Icon,System.Drawing.Size)" />. You can also convert an <see cref="T:System.Drawing.Icon" /> to a bitmap by using the <see cref="M:System.Drawing.Icon.ToBitmap" /> method.</para>
+      <para>An icon resource can contain multiple icon images. One icon file may contain images in several sizes and color depths. The image that is used in an application depends on the operating system and settings. The following list details the typical sizes for an icon:</para>
+      <list type="bullet">
+        <item>
+          <para>16 pixels x 16 pixels</para>
+        </item>
+        <item>
+          <para>32 pixels x 32 pixels</para>
+        </item>
+        <item>
+          <para>48 pixels x 48 pixels</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows icon, which is a small bitmap image that is used to represent an object. Icons can be thought of as transparent bitmaps, although their size is determined by the system.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,9 +62,28 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An icon resource can contain multiple icon images. One icon file may contain images in several sizes and color depths. The image that is used in an application depends on the operating system and settings. The following list details the typical sizes for an icon:</para>
+          <list type="bullet">
+            <item>
+              <para>16 pixels x 16 pixels</para>
+            </item>
+            <item>
+              <para>32 pixels x 32 pixels</para>
+            </item>
+            <item>
+              <para>48 pixels x 48 pixels</para>
+            </item>
+          </list>
+          <para>This constructor returns the smallest image that is contained in the specified stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class from the specified data stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data stream from which to load the <see cref="T:System.Drawing.Icon" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +98,28 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An icon resource can contain multiple icon images. One icon file may contain images in several sizes and color depths. The image that is used in an application depends on the operating system and settings. The following list details the typical sizes for an icon:</para>
+          <list type="bullet">
+            <item>
+              <para>16 pixels x 16 pixels</para>
+            </item>
+            <item>
+              <para>32 pixels x 32 pixels</para>
+            </item>
+            <item>
+              <para>48 pixels x 48 pixels</para>
+            </item>
+          </list>
+          <para>This constructor returns the smallest image that is contained in the specified file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class from the specified file name.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to load the <see cref="T:System.Drawing.Icon" /> from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,10 +135,18 @@
         <Parameter Name="size" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="original">To be added: an object of type 'Icon'</param>
-        <param name="size">To be added: an object of type 'Size'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a version cannot be found that exactly matches the size, the closest match is used. If the <paramref name="original" /> parameter is an <see cref="T:System.Drawing.Icon" /> that has a single size, this method only creates a duplicate icon. Use the stretching capabilities of the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method to resize the icon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class and attempts to find a version of the icon that matches the requested size.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Icon" /> from which to load the newly sized icon. </param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Size" /> structure that specifies the height and width of the new <see cref="T:System.Drawing.Icon" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,10 +164,15 @@
         <Parameter Name="size" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="size">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class of the specified size from the specified stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the icon data.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The desired size of the icon.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -116,10 +186,19 @@
         <Parameter Name="size" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="size">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified file does not contain an image that matches the desired size, the icon that has the closest size is returned. </para>
+          <para>The <paramref name="fileName" /> should include the complete path if it is not in the current application directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class of the specified size from the specified file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name and path to the file that contains the icon data.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The desired size of the icon.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -131,10 +210,19 @@
         <Parameter Name="resource" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="resource">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an <see cref="T:System.Drawing.Icon" /> from a resource with the name specified by the <paramref name="resource" /> parameter in the assembly that contains the type specified by the <paramref name="type" /> parameter.</para>
+          <para>This constructor combines the namespace of the given type together with the string name of the resource and looks for a match in the assembly manifest. For example you can pass in the <see cref="T:System.Windows.Forms.Control" /> type and <paramref name="Error.ico" /> to this constructor, and it looks for a resource that is named System.Windows.Forms.Error.ico.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class from a resource in the specified assembly.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that specifies the assembly in which to look for the resource. </param>
+        <param name="resource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The resource name to load. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -151,11 +239,20 @@
         <Parameter Name="height" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="original">To be added: an object of type 'Icon'</param>
-        <param name="width">To be added: an object of type 'int'</param>
-        <param name="height">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a version cannot be found that exactly matches the size, the closest match is used. If the <paramref name="original" /> parameter is an <see cref="T:System.Drawing.Icon" /> that has a single size, this method only creates a duplicate icon. Use the stretching capabilities of the <see cref="Overload:System.Drawing.Graphics.DrawImage" /> method to resize the icon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class and attempts to find a version of the icon that matches the requested size.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />The icon to load the different size from. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width of the new icon. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height of the new icon. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -172,11 +269,17 @@
         <Parameter Name="height" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="width">To be added: an object of type 'int'</param>
-        <param name="height">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class from the specified data stream and with the specified width and height.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data stream from which to load the icon. </param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The width, in pixels, of the icon. </param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The height, in pixels, of the icon. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,11 +298,21 @@
         <Parameter Name="height" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified file does not contain an image that matches the desired height and width, the icon that has the closest size is returned. </para>
+          <para>The <paramref name="fileName" /> should include the complete path if it is not in the current application directory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Icon" /> class with the specified width and height from the specified file.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name and path to the file that contains the <see cref="T:System.Drawing.Icon" /> data.</param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The desired width of the <see cref="T:System.Drawing.Icon" />.</param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />The desired height of the <see cref="T:System.Drawing.Icon" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -210,9 +323,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones the <see cref="T:System.Drawing.Icon" />, creating a duplicate image.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can be cast to an <see cref="T:System.Drawing.Icon" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -227,8 +346,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling Dispose allows the resources that are used by this <see cref="T:System.Drawing.Icon" /> to be reallocated for other purposes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Icon" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,10 +377,21 @@
         <Parameter Name="filePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filePath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A relative path is assumed to be relative to the current working directory.</para>
+          <para>When <see cref="M:System.Drawing.Icon.ExtractAssociatedIcon(System.String)" /> is used with bitmaps, a thumbnail image may be returned instead of an icon if the system that is running the application has a registry setting that causes bitmap files to be shown as thumbnail images.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an icon representation of an image that is contained in the specified file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Icon" /> representation of the image that is contained in the specified file.</para>
+        </returns>
+        <param name="filePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file that contains an image.</param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -280,10 +420,20 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Icon'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using this method, you must dispose of the original icon by using the <unmanagedCodeEntityReference>DestroyIcon</unmanagedCodeEntityReference> method in the Win32 API to ensure that the resources are released.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a GDI+ <see cref="T:System.Drawing.Icon" /> from the specified Windows handle to an icon (HICON).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Icon" /> this method creates.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to an icon. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,9 +447,12 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IntPtr'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Windows handle for this <see cref="T:System.Drawing.Icon" />. This is not a copy of the handle; do not free it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -318,9 +471,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height of this <see cref="T:System.Drawing.Icon" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -342,9 +498,13 @@
         <Parameter Name="outputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="outputStream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves this <see cref="T:System.Drawing.Icon" /> to the specified output <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="outputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> to save to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -358,9 +518,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Size'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of this <see cref="T:System.Drawing.Icon" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -382,10 +545,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data that is required to serialize the target object.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="ToBitmap">
@@ -396,9 +564,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Bitmap'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transparent areas of the icon are lost when it is converted to a bitmap, and the transparent color of the resulting bitmap is set to RGB(13,11,12). The returned bitmap has the same height and width as the original icon.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Drawing.Icon" /> to a GDI+ <see cref="T:System.Drawing.Bitmap" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Bitmap" /> that represents the converted <see cref="T:System.Drawing.Icon" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -413,9 +590,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a human-readable string that describes the <see cref="T:System.Drawing.Icon" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that describes the <see cref="T:System.Drawing.Icon" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -429,9 +612,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width of this <see cref="T:System.Drawing.Icon" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

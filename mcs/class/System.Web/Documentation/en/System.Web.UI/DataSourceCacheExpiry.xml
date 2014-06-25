@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSourceCacheExpiry" FullName="System.Web.UI.DataSourceCacheExpiry">
   <TypeSignature Language="C#" Value="public enum DataSourceCacheExpiry" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.DataSourceCacheExpiry" /> enumeration describes how data cached by a data source control expires in the ASP.NET cache. An ASP.NET data source control caches data in the ASP.NET cache based on a specified time-out period, which is set using the CacheDuration property. The <see cref="T:System.Web.UI.DataSourceCacheExpiry" /> describes how this time-out setting is used. If the expiration policy is set to <see cref="F:System.Web.UI.DataSourceCacheExpiry.Absolute" />, the cached data is discarded when the amount of time specified passes since the data was first cached. If the expiration policy is set to <see cref="F:System.Web.UI.DataSourceCacheExpiry.Sliding" />, the cached data is discarded only when the cache entry has not been used for the amount of time specified. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the way data cached using ASP.NET caching mechanisms expires when a time-out is set. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Absolute">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.DataSourceCacheExpiry</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cached data expires when the amount of time specified by the CacheDuration property has passed since the data was first cached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.DataSourceCacheExpiry</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cached data expires only when the cache entry has not been used for the amount of time specified by the CacheDuration property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

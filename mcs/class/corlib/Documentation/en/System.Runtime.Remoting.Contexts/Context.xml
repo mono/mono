@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Context" FullName="System.Runtime.Remoting.Contexts.Context">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class Context" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit Context extends System.Object" />
@@ -19,8 +20,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A context is an ordered sequence of properties that define an environment for the objects resident inside it. Contexts get created during the activation process for objects that are configured to require certain automatic services, such as synchronization, transactions, just-in-time activation, security, and so on. Multiple objects can live inside a context.</para>
+      <para>Classes are marked with an instance of the <see cref="T:System.Runtime.Remoting.Contexts.ContextAttribute" /> class, which provides the usage rules. Whenever a new object is instantiated, the .NET Framework finds a compatible or creates a new instance of the <see cref="T:System.Runtime.Remoting.Contexts.Context" /> class for the object. Once an object is placed in a context, it stays in it for life. Classes that can be bound to a context are called context-bound classes. When accessed from another context, such classes are referenced directly by using a proxy. Any call from an object in one context to an object in another context will go through a context proxy and be affected by the policy that the combined context properties enforce.</para>
+      <para>A new object's context is generally chosen based on meta-data attributes on the class. This mechanism is extensible through custom attributes. These are known as static-context properties, which are compiled into the class meta-data. Dynamic-context properties (also known as configuration properties) can be applied and configured by administrators.</para>
+      <para>For more information on contexts, see <format type="text/html"><a href="7574180D-70DF-44B8-8B78-55A119F2C96D">[&lt;topic://cpconboundariesprocessesapplicationdomainscontexts&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an environment for the objects that are resident inside it and for which a policy can be enforced.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Contexts.Context" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllocateDataSlot">
@@ -53,9 +66,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'LocalDataStoreSlot'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The slot is allocated on all the contexts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates an unnamed data slot.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local data slot.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllocateNamedDataSlot">
@@ -74,10 +96,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'LocalDataStoreSlot'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The slot is allocated on all the contexts. Named data slots are public and can be manipulated by anyone.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allocates a named data slot.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local data slot object.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The required name for the data slot. </param>
       </Docs>
     </Member>
     <Member MemberName="ContextID">
@@ -93,9 +125,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the context ID for the current context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContextProperties">
@@ -111,9 +146,12 @@
         <ReturnType>System.Runtime.Remoting.Contexts.IContextProperty[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IContextProperty []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the array of the current context properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultContext">
@@ -129,9 +167,15 @@
         <ReturnType>System.Runtime.Remoting.Contexts.Context</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Context'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every thread in an application domain for which a context is not explicitly set is considered to be running in the default context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default context for the current application domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DoCallBack">
@@ -150,9 +194,16 @@
         <Parameter Name="deleg" Type="System.Runtime.Remoting.Contexts.CrossContextDelegate" />
       </Parameters>
       <Docs>
-        <param name="deleg">To be added: an object of type 'CrossContextDelegate'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A callback can be done by calling the <see cref="M:System.Runtime.Remoting.Contexts.Context.DoCallBack(System.Runtime.Remoting.Contexts.CrossContextDelegate)" /> method on it by passing in a delegate. The delegate is used to request a callback. The delegate must be a <see cref="T:System.Runtime.Remoting.Contexts.CrossContextDelegate" /> class type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes code in another context.</para>
+        </summary>
+        <param name="deleg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate used to request the callback. </param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -169,8 +220,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For default contexts, backing objects are cleaned up during shut down of the <see cref="T:System.AppDomain" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cleans up the backing objects for the nondefault contexts.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FreeNamedDataSlot">
@@ -189,9 +246,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Named data slots are public and can be manipulated by anyone.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees a named data slot on all the contexts.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data slot to free. </param>
       </Docs>
     </Member>
     <Member MemberName="Freeze">
@@ -208,8 +272,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Context properties cannot be added after the context has been frozen.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Freezes the context, making it impossible to add or remove context properties from the current context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -228,10 +298,17 @@
         <Parameter Name="slot" Type="System.LocalDataStoreSlot" />
       </Parameters>
       <Docs>
-        <param name="slot">To be added: an object of type 'LocalDataStoreSlot'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the value from the specified slot on the current context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the data associated with <paramref name="slot" />. </para>
+        </returns>
+        <param name="slot">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data slot that contains the data. </param>
       </Docs>
     </Member>
     <Member MemberName="GetNamedDataSlot">
@@ -250,10 +327,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'LocalDataStoreSlot'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the name has not been used, a new slot is allocated. Named data slots are public and can be manipulated by anyone.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Looks up a named data slot.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a local data slot.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data slot name. </param>
       </Docs>
     </Member>
     <Member MemberName="GetProperty">
@@ -272,10 +359,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IContextProperty'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a specific context property, specified by name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified context property.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterDynamicProperty">
@@ -296,12 +390,27 @@
         <Parameter Name="ctx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added: an object of type 'IDynamicProperty'</param>
-        <param name="obj">To be added: an object of type 'ContextBoundObject'</param>
-        <param name="ctx">To be added: an object of type 'Context'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Based on <paramref name="obj" /> and <paramref name="ctx" />, <paramref name="prop" /> is asked to contribute a sink that is placed at some location in the path of remoting calls. If multiple properties are registered, their sinks will be called in an arbitrary order that can change between calls.</para>
+          <para>If <paramref name="obj" /> is not null, and then if it is a proxy, all calls made on the proxy are intercepted. Otherwise, if <paramref name="obj" /> is a real object, all calls on the object are intercepted. The <paramref name="ctx" /> parameter must be null.</para>
+          <para>If <paramref name="ctx" /> is not null, <paramref name="obj" /> must be null and all calls entering and leaving the context are intercepted.</para>
+          <para>If both <paramref name="ctx" /> and <paramref name="obj" /> are null, all calls entering and leaving all contexts are intercepted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a dynamic property implementing the <see cref="T:System.Runtime.Remoting.Contexts.IDynamicProperty" /> interface with the remoting service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property was successfully registered; otherwise, false.</para>
+        </returns>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The dynamic property to register. </param>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object/proxy for which the <paramref name="property" /> is registered. </param>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context for which the <paramref name="property" /> is registered. </param>
       </Docs>
     </Member>
     <Member MemberName="SetData">
@@ -321,10 +430,15 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="slot">To be added: an object of type 'LocalDataStoreSlot'</param>
-        <param name="data">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the data in the specified slot on the current context.</para>
+        </summary>
+        <param name="slot">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data slot where the data is to be added. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data that is to be added. </param>
       </Docs>
     </Member>
     <Member MemberName="SetProperty">
@@ -343,9 +457,16 @@
         <Parameter Name="prop" Type="System.Runtime.Remoting.Contexts.IContextProperty" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added: an object of type 'IContextProperty'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding properties to the default context is not allowed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a specific context property by name.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The actual context property. </param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -362,9 +483,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> class representation of the current context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> class representation of the current context.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="UnregisterDynamicProperty">
@@ -385,12 +512,21 @@
         <Parameter Name="ctx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="obj">To be added: an object of type 'ContextBoundObject'</param>
-        <param name="ctx">To be added: an object of type 'Context'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unregisters a dynamic property implementing the <see cref="T:System.Runtime.Remoting.Contexts.IDynamicProperty" /> interface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object was successfully unregistered; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic property to unregister. </param>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object/proxy for which the <paramref name="property" /> is registered. </param>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context for which the <paramref name="property" /> is registered. </param>
       </Docs>
     </Member>
   </Members>

@@ -83,9 +83,20 @@ namespace Mono.Security.Protocol.Tls
 
 			this.ServerSettings.UpdateCertificateRSA();
 
+			// Build the chain for the certificate and if the chain is correct, add all certificates 
+			// (except the root certificate [FIRST ONE] ... the client is supposed to know that one,
+			// otherwise the whole concept of a trusted chain doesn't work out ... 
+			MonoX509.X509Chain chain = new MonoX509.X509Chain (MonoX509.X509StoreManager.IntermediateCACertificates);
+
+			if (chain.Build (cert)) {
+				for (int j = chain.Chain.Count - 1; j > 0; j--)
+					ServerSettings.Certificates.Add (chain.Chain [j]);
+			}
+
 			// Add requested certificate types
-			this.ServerSettings.CertificateTypes = new ClientCertificateType[1];
-			this.ServerSettings.CertificateTypes[0] = ClientCertificateType.RSA;
+			ServerSettings.CertificateTypes = new ClientCertificateType [ServerSettings.Certificates.Count];
+			for (int j = 0; j < this.ServerSettings.CertificateTypes.Length; j++)
+				ServerSettings.CertificateTypes [j] = ClientCertificateType.RSA;
 
 			// Add certificate authorities
 			MonoX509.X509CertificateCollection trusted = MonoX509.X509StoreManager.TrustedRootCertificates;

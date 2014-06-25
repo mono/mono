@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GenericTypeParameterBuilder" FullName="System.Reflection.Emit.GenericTypeParameterBuilder">
   <TypeSignature Language="C#" Value="public sealed class GenericTypeParameterBuilder : System.Reflection.TypeInfo" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit GenericTypeParameterBuilder extends System.Reflection.TypeInfo" />
@@ -16,9 +17,27 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can get an array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects by using the <see cref="M:System.Reflection.Emit.TypeBuilder.DefineGenericParameters(System.String[])" /> method to add type parameters to a dynamic type, thus making it a generic type, or by using the <see cref="M:System.Reflection.Emit.MethodBuilder.DefineGenericParameters(System.String[])" /> method to add type parameters to a dynamic method. Use the <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects to add constraints to the type parameters. Constraints are of three kinds:</para>
+      <list type="bullet">
+        <item>
+          <para>The base type constraint specifies that any type assigned to the generic type parameter must derive from a particular base type. Set this constraint by using the <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.SetBaseTypeConstraint(System.Type)" /> method. </para>
+        </item>
+        <item>
+          <para>An interface constraint specifies that any type assigned to the generic type parameter must implement a particular interface. Set the interface constraints by using the <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.SetInterfaceConstraints(System.Type[])" /> method. </para>
+        </item>
+        <item>
+          <para>Special constraints specify that any type assigned to the generic type parameter must have a default constructor, must be a reference type, or must be a value type. Set the special constraints for a type parameter by using the <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.SetGenericParameterAttributes(System.Reflection.GenericParameterAttributes)" /> method. </para>
+        </item>
+      </list>
+      <para>Interface constraints and special constraints cannot be retrieved using methods of the <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> class. Once you have created the generic type that contains the type parameters, you can use its <see cref="T:System.Type" /> object to reflect the constraints. Use the <see cref="M:System.Type.GetGenericArguments" /> method to get the type parameters, and for each type parameter use the <see cref="M:System.Type.GetGenericParameterConstraints" /> method to get the base type constraint and interface constraints, and the <see cref="P:System.Type.GenericParameterAttributes" /> property to get the special constraints. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines and creates generic type parameters for dynamically defined generic types and methods. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assembly">
@@ -33,10 +52,13 @@
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Reflection.Assembly" /> object representing the dynamic assembly that contains the generic type definition the current type parameter belongs to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyQualifiedName">
@@ -51,10 +73,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is no assembly-qualified name for type parameters because their scope is limited to the generic type that declares them.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets null in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BaseType">
@@ -69,10 +97,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set the base type constraint, use the <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.SetBaseTypeConstraint(System.Type)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base type constraint of the current generic type parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainsGenericParameters">
@@ -87,10 +121,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> object always represents a generic type parameter. The value of the <see cref="P:System.Reflection.Emit.GenericTypeParameterBuilder.ContainsGenericParameters" /> property reflects that fact and does not imply anything about any generic type argument that might be assigned to the type parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets true in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclaringMethod">
@@ -105,10 +145,16 @@
         <ReturnType>System.Reflection.MethodBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Reflection.Emit.GenericTypeParameterBuilder.DeclaringMethod" /> property is not null, then the declaring method is a generic method definition and DeclaringMethod.IsGenericMethodDefinition is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Reflection.MethodInfo" /> that represents the declaring method, if the current <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> represents a type parameter of a generic method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclaringType">
@@ -123,10 +169,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The declaring type is not necessarily a generic type. If the current type parameter belongs to a generic method, the type in which the method is declared might not be generic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the generic type definition or generic method definition to which the generic type parameter belongs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -144,10 +196,17 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tests whether the given object is an instance of EventToken and is equal to the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if <paramref name="o" /> is an instance of EventToken and equals the current instance; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared with the current instance.</param>
       </Docs>
     </Member>
     <Member MemberName="FullName">
@@ -162,10 +221,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic type parameter does not have a full name, because its scope is limited to the generic type that declares it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets null in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericParameterAttributes">
@@ -198,10 +263,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the position of the type parameter in the type parameter list of the generic type or method that declared the parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAttributeFlagsImpl">
@@ -273,11 +341,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -295,11 +373,21 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to search this member's inheritance chain to find the attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -318,12 +406,23 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to search this member's inheritance chain to find the attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="GetElementType">
@@ -339,10 +438,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic type parameter is a placeholder for a type. Because that type cannot be known in advance, there is no way to know whether it has an element type or what that element type might be. Any return value would be misleading, so the method throws a <see cref="T:System.NotSupportedException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> in all cases. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type referred to by the current array type, pointer type, or ByRef type; or null if the current type is not an array type, is not a pointer type, and is not passed by reference.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvent">
@@ -361,12 +469,23 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEvents">
@@ -382,9 +501,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvents">
@@ -402,11 +530,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetField">
@@ -425,12 +563,23 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFields">
@@ -448,11 +597,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetGenericArguments">
@@ -468,10 +627,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a constructed type, the type that is assigned to a generic type parameter can be a generic type, but the type parameter itself is not generic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericParameterConstraints">
@@ -506,10 +674,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a constructed type, the type that is assigned to a generic type parameter can be a generic type, but the type parameter itself is not generic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -525,9 +702,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a 32-bit integer hash code for the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInterface">
@@ -546,12 +729,23 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the interface.</param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to search without regard for case; false to make a case-sensitive search.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInterfaceMap">
@@ -574,10 +768,20 @@
         <Parameter Name="interfaceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="interfaceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="interfaceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that represents the interface type for which the mapping is to be retrieved.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInterfaces">
@@ -593,10 +797,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMember">
@@ -616,12 +829,24 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMembers">
@@ -639,11 +864,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMethodImpl">
@@ -693,11 +928,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetNestedType">
@@ -716,12 +961,23 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetNestedTypes">
@@ -739,11 +995,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetProperties">
@@ -761,11 +1027,21 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <param name="bindingAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="bindingAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPropertyImpl">
@@ -812,10 +1088,16 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasElementTypeImpl">
@@ -859,18 +1141,35 @@
         <Parameter Name="namedParameters" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="target">To be added.</param>
-        <param name="args">To be added.</param>
-        <param name="modifiers">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="namedParameters">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported. </param>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="modifiers">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="namedParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="IsArrayImpl">
@@ -907,10 +1206,20 @@
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> exception in all cases.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> exception in all cases.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test.</param>
       </Docs>
     </Member>
     <Member MemberName="IsByRefImpl">
@@ -967,12 +1276,23 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="inherit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
+        <param name="inherit">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="IsGenericParameter">
@@ -987,10 +1307,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets true in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsGenericType">
@@ -1005,9 +1328,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a constructed type, the type that is assigned to a generic type parameter can be a generic type, but the type parameter itself is not generic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns false in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsGenericTypeDefinition">
@@ -1022,9 +1351,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a constructed type, the type that is assigned to a generic type parameter can be a generic type, but the type parameter itself is not generic. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets false in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsInstanceOfType">
@@ -1106,11 +1441,21 @@
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="c">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
     </Member>
     <Member MemberName="IsValueTypeImpl">
@@ -1145,9 +1490,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Type.MakeArrayType" /> method provides a way to generate array types for parameter lists. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of a one-dimensional array whose element type is the generic type parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the type of a one-dimensional array whose element type is the generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeArrayType">
@@ -1165,10 +1519,20 @@
         <Parameter Name="rank" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rank">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Type.MakeArrayType" /> method provides a way to generate array types for parameter lists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of an array whose element type is the generic type parameter, with the specified number of dimensions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the type of an array whose element type is the generic type parameter, with the specified number of dimensions.</para>
+        </returns>
+        <param name="rank">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of dimensions for the array.</param>
       </Docs>
     </Member>
     <Member MemberName="MakeByRefType">
@@ -1184,9 +1548,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.MakeByRefType" /> method provides a way to generate ref types (ByRef in Visual Basic) for parameter lists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Type" /> object that represents the current generic type parameter when passed as a reference parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the current generic type parameter when passed as a reference parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeGenericType">
@@ -1210,10 +1583,17 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="typeArguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for incomplete generic type parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is invalid for incomplete generic type parameters.</para>
+        </returns>
+        <param name="typeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type arguments.</param>
       </Docs>
     </Member>
     <Member MemberName="MakePointerType">
@@ -1229,9 +1609,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.MakePointerType" /> method provides a way to generate pointer types for parameter lists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Type" /> object that represents a pointer to the current generic type parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents a pointer to the current generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Module">
@@ -1246,10 +1635,13 @@
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dynamic module that contains the generic type parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -1264,10 +1656,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the generic type parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -1282,10 +1677,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets null in all cases.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectedType">
@@ -1300,10 +1698,13 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> object that was used to obtain the <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetBaseTypeConstraint">
@@ -1321,10 +1722,18 @@
         <Parameter Name="baseTypeConstraint" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="baseTypeConstraint">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve the base type constraint use the <see cref="P:System.Reflection.Emit.GenericTypeParameterBuilder.BaseType" /> property.</para>
+          <para>Once you have created the generic type that contains the type parameter, you can use its <see cref="T:System.Type" /> object to reflect the type parameter and their constraints. To get the type parameters of a completed generic type, use the <see cref="M:System.Type.GetGenericArguments" /> method. For each type parameter, get the base type constraint and interface constraints by using the <see cref="M:System.Type.GetGenericParameterConstraints" /> method, and get the special constraints by using the <see cref="P:System.Type.GenericParameterAttributes" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the base type that a type must inherit in order to be substituted for the type parameter.</para>
+        </summary>
+        <param name="baseTypeConstraint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that must be inherited by any type that is to be substituted for the type parameter.</param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -1342,10 +1751,14 @@
         <Parameter Name="customBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
       </Parameters>
       <Docs>
-        <param name="customBuilder">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set a custom attribute using a custom attribute builder.</para>
+        </summary>
+        <param name="customBuilder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of a helper class that defines the custom attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="SetCustomAttribute">
@@ -1364,10 +1777,20 @@
         <Parameter Name="binaryAttribute" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="con">To be added.</param>
-        <param name="binaryAttribute">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>For details on how to format <paramref name="binaryAttribute" />, see the documentation for Partition II: Metadata Definition and Semantics. The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a custom attribute using a specified custom attribute blob.</para>
+        </summary>
+        <param name="con">
+          <attribution license="cc4" from="Microsoft" modified="false" />The constructor for the custom attribute.</param>
+        <param name="binaryAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte blob representing the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="SetGenericParameterAttributes">
@@ -1385,10 +1808,19 @@
         <Parameter Name="genericParameterAttributes" Type="System.Reflection.GenericParameterAttributes" />
       </Parameters>
       <Docs>
-        <param name="genericParameterAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Special constraints can specify that any type assigned to the generic type parameter must have a default constructor, must be a reference type, or must be a value type. </para>
+          <para>Special constraints cannot be retrieved using methods of the <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> class. Once you have created the generic type that contains the type parameter, you can use its <see cref="T:System.Type" /> object to reflect the type parameters and their constraints. To get the type parameters of a completed generic type, use the <see cref="M:System.Type.GetGenericArguments" /> method. To get the special constraints for each type parameter, use the <see cref="P:System.Type.GenericParameterAttributes" /> property. </para>
+          <para>The <see cref="T:System.Reflection.GenericParameterAttributes" /> enumeration values that refer to the variance characteristics of a type parameter are relevant only in languages that support covariance and contravariance, such as Microsoft intermediate language (MSIL). Visual Basic and C# currently do not support covariance and contravariance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the variance characteristics and special constraints of the generic parameter, such as the parameterless constructor constraint.</para>
+        </summary>
+        <param name="genericParameterAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.GenericParameterAttributes" /> values that represent the variance characteristics and special constraints of the generic type parameter.</param>
       </Docs>
     </Member>
     <Member MemberName="SetInterfaceConstraints">
@@ -1417,10 +1849,17 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="interfaceConstraints">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Interface constraints cannot be retrieved using methods of the <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> class. Once you have created the generic type that contains the type parameter, you can use its <see cref="T:System.Type" /> object to reflect the type parameters and their constraints. To get the type parameters of a completed generic type, use the <see cref="M:System.Type.GetGenericArguments" /> method. For each type parameter, get the base type constraint and interface constraints by using the <see cref="M:System.Type.GetGenericParameterConstraints" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the interfaces a type must implement in order to be substituted for the type parameter. </para>
+        </summary>
+        <param name="interfaceConstraints">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects that represent the interfaces a type must implement in order to be substituted for the type parameter.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1436,10 +1875,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the current generic type parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the name of the generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeHandle">
@@ -1454,10 +1899,16 @@
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnderlyingSystemType">
@@ -1472,10 +1923,13 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current generic type parameter.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

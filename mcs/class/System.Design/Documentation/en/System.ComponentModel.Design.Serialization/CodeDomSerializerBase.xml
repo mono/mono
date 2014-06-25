@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeDomSerializerBase" FullName="System.ComponentModel.Design.Serialization.CodeDomSerializerBase">
   <TypeSignature Language="C#" Value="public abstract class CodeDomSerializerBase" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerBase" /> class is used as a shared base between the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> and <see cref="T:System.ComponentModel.Design.Serialization.TypeCodeDomSerializer" /> classes. Public <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> classes derive from the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerBase" /> class. Each public class defines its own public API. The <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializerBase" /> class defines no public API, but does offer a multitude of utility methods that can be used to aid the serialization process.  </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DeserializeExpression">
@@ -33,12 +40,84 @@
         <Parameter Name="expression" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a helper method that derived classes can call to deserialize an expression. It deserializes the statement by interpreting and executing the CodeDOM expression specified by the <paramref name="expression" /> parameter, and then returns the results. If an object needs to be created as a result of this expression, it will be given the name specified by the <paramref name="name" /> parameter. The name can be null if there is no need to name the object. The following table describes how specific expressions are handled.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Expression</para>
+                </term>
+                <description>
+                  <para>Behavior</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.CodeDom.CodeThisReferenceExpression" />
+                </para>
+              </term>
+              <description>
+                <para>This expression represents this or Me. To locate the object that is associated with this expression, the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializeExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.CodeDom.CodeExpression)" /> method will look in the context stack for a <see cref="T:System.ComponentModel.Design.Serialization.RootContext" />. This object contains the root object of the graph and the expression that represents it. If the object is present and the expression matches, the root object will be returned. An error is reported if an instance cannot be located.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.CodeDom.CodeFieldReferenceExpression" />
+                </para>
+              </term>
+              <description>
+                <para>If the target of the field reference evaluates to the root object, the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetInstance(System.String)" /> method of the manager parameter will be used to retrieve the object instance based on name. Otherwise, standard reflection is used against the target object to locate the requested field. An error is reported if the field cannot be located.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="T:System.CodeDom.CodeVariableReferenceExpression" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetInstance(System.String)" /> method of the <paramref name="manager" /> parameter is used to locate the instance representing the given variable name. An error is reported if an instance cannot be located.</para>
+              </description>
+            </item>
+          </list>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializeExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.CodeDom.CodeExpression)" /> continues to interpret expressions until they are completely resolved to an object, or until it can no longer simplify the expression. In this case, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializeExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.CodeDom.CodeExpression)" /> will return a <see cref="T:System.CodeDom.CodeExpression" /> that contains the most simplified expression. The following expressions are not supported:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.CodeDom.CodeEventReferenceExpression" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.CodeDom.CodeMethodReferenceExpression" />
+              </para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.CodeDom.CodeDelegateCreateExpression" /> </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes the given expression into an in-memory object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object resulting from interpretation of <paramref name="expression" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the object that results from the expression. Can be null if there is no need to name the object.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeExpression" /> to interpret.</param>
       </Docs>
     </Member>
     <Member MemberName="DeserializeInstance">
@@ -58,14 +137,28 @@
         <Parameter Name="addToContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="addToContainer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializeInstance(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Type,System.Object[],System.String,System.Boolean)" /> method is invoked during deserialization to obtain an instance of an object. When this is called, an instance of the requested type should be returned. The default implementation invokes the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method of the <paramref name="manager" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an instance of the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <paramref name="type" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the instance to return.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters to pass to the constructor for <paramref name="type" />.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the deserialized object.</param>
+        <param name="addToContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add this object to the design container; otherwise, false. The object must implement <see cref="T:System.ComponentModel.IComponent" /> for this to have any effect.</param>
       </Docs>
     </Member>
     <Member MemberName="DeserializePropertiesFromResources">
@@ -83,11 +176,22 @@
         <Parameter Name="filter" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializePropertiesFromResources(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Attribute[])" /> method is a helper method that derived classes can call. It looks for properties on the given object and attempts to load their values out of the invariant culture’s resource bundle. This is generally used to handle design-time properties that are not emitted into source code. It should not be used for localized properties because it only operates on the invariant culture.</para>
+          <para>This method inspects all of the properties of the <paramref name="value" /> parameter that match the attributes specified by the <paramref name="filter" /> parameter, and then checks for those properties in a resource binary object. This is useful for deserializing properties that cannot be represented in code, such as design-time properties.</para>
+          <para>This method requires that a designer loader offers an <see cref="T:System.ComponentModel.Design.IResourceService" /> to read resources. If the <see cref="T:System.ComponentModel.Design.IResourceService" /> provides a <see cref="T:System.Resources.ResXResourceReader" /> for the invariant culture, then <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializePropertiesFromResources(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Attribute[])" /> will read resources from the XML resource (.resx) file’s metadata section, which is not included in final compiled code. If this service is not available, no resources will be read.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes properties on the given object from the invariant culture’s resource bundle.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object from which the properties are to be deserialized.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Attribute" /> array that filters which properties will be deserialized.</param>
       </Docs>
     </Member>
     <Member MemberName="DeserializeStatement">
@@ -104,10 +208,19 @@
         <Parameter Name="statement" Type="System.CodeDom.CodeStatement" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statement">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.DeserializeStatement(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatement)" /> method is a helper method that derived classes can call. It interprets the <paramref name="statement" /> parameter.</para>
+          <para>The <see cref="T:System.CodeDom.CodeStatement" /> being deserialized will be pushed on the context stack.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deserializes a statement by interpreting and executing a CodeDOM statement.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="statement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatement" /> to deserialize.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExpression">
@@ -124,11 +237,34 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method returns an expression representing the given object. It can return null, indicating that no expression has been set that describes the object. Expressions are acquired in one of three ways:</para>
+          <list type="bullet">
+            <item>
+              <para>The expression could be the result of a prior call to the <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression" /> method.</para>
+            </item>
+            <item>
+              <para>The expression could have been found in the <see cref="T:System.ComponentModel.Design.Serialization.RootContext" />.</para>
+            </item>
+            <item>
+              <para>The expression could be derived through <see cref="T:System.ComponentModel.Design.IReferenceService" />.</para>
+            </item>
+          </list>
+          <para>To derive expressions through <see cref="T:System.ComponentModel.Design.IReferenceService" />, the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method queries the reference service for a name for the given object. If the expression service returns a valid name, <see cref="T:System.ComponentModel.Design.IReferenceService" />, the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method checks to see if there is a "." in the name. This indicates that the expression service found this object as the return value of a read-only property on another object. If there is a ".", <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> will split the reference into parts. The leftmost part is a name that will be evaluated with the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetInstance(System.String)" /> method. For each subsequent part, a property reference expression will be built. The final expression will then be returned.</para>
+          <para>If the object did not have an expression set, or if the object was not found in the reference service, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> will return null, indicating there is no existing expression for the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an expression for the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> representing v<paramref name="alue" />, or null if there is no existing expression for v<paramref name="alue" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSerializer">
@@ -145,11 +281,21 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetSerializer(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method is an extension to the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method. The <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method takes an object type, rather than an object value. If an external party had overridden metadata for a specific object through <see cref="T:System.ComponentModel.TypeDescriptor" />, that metadata override would not be seen by the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method, which only takes a type. The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetSerializer(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method checks the metadata of the value and the value’s type. If the two differ, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetSerializer(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> will look to see if there is a custom designer serializer attribute on the value. If so, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetSerializer(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> will attempt to use it. Otherwise, it will defer to <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates a serializer for the given object value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> that is appropriate for <paramref name="value" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSerializer">
@@ -166,11 +312,21 @@
         <Parameter Name="instanceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instanceType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetSerializer(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Type)" /> method is an extension to the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method. The <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method takes an object type, rather than an object value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Locates a serializer for the given type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.Design.Serialization.CodeDomSerializer" /> that is appropriate for <paramref name="valueType" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="GetUniqueName">
@@ -187,11 +343,21 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetUniqueName(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method calls the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetName(System.Object)" /> method. If this method does not return a name, then <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetUniqueName(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> uses <see cref="T:System.ComponentModel.Design.Serialization.INameCreationService" /> to fabricate a valid name for the object. If the service is not available, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetUniqueName(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> will fabricate a name based on the short type name combined with an index number to make it unique. The resulting name is associated with the serialization manager by calling the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.SetName(System.Object,System.String)" /> method before the new name is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a unique name for the given object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique name for <paramref name="value" />.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSerialized">
@@ -208,11 +374,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <paramref name="value" /> parameter to be considered serialized, the <paramref name="manager" /> parameter or another serializer must have called the <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression" /> method to create a relationship between <paramref name="value" /> and a referring expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the given object has been serialized.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> has been serialized; otherwise, false.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test for previous serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSerialized">
@@ -230,12 +407,23 @@
         <Parameter Name="honorPreset" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <param name="honorPreset">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <paramref name="value" /> parameter to be considered serialized, the <paramref name="manager" /> parameter or another serializer must have called the <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression" /> method to create a relationship between <paramref name="value" /> and a referring expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the given object has been serialized, optionally considering preset expressions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> has been serialized; otherwise, false.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="honorPreset">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include preset expressions; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="SerializeCreationExpression">
@@ -277,12 +465,26 @@
         <Parameter Name="descriptor" Type="System.ComponentModel.EventDescriptor" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statements">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="descriptor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvent(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.EventDescriptor)" /> method is a helper method that derived classes can call to serialize a single event into the given <see cref="T:System.CodeDom.CodeStatementCollection" />. <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvent(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.EventDescriptor)" /> queries the serialization manager for a <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> for the given event, and then asks the <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> to serialize it.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvent(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.EventDescriptor)" /> places the <paramref name="statements" /> and <paramref name="descriptor" /> parameters on the <see cref="T:System.ComponentModel.Design.Serialization.ContextStack" />.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvent(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.EventDescriptor)" /> requires an <see cref="T:System.ComponentModel.Design.IEventBindingService" /> to discover event bindings to methods that are not compiled. If this service is not present, event bindings to non-compiled methods will not be written. Event bindings to compiled methods will still be serialized if the objects to which the events are bound can be converted into expressions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given event into the given statement collection.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatementCollection" /> into which the event will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to which <paramref name="descriptor" /> is bound.</param>
+        <param name="descriptor">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.EventDescriptor" /> specifying the event to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeEvents">
@@ -307,12 +509,23 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statements">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvents(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> method is a helper method that derived classes can call. It looks at events on the <paramref name="value" /> parameter that match the <paramref name="filter" /> parameter, and then it calls the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvent(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.EventDescriptor)" /> method for each event.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeEvents(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> method places the <see cref="T:System.ComponentModel.InheritanceAttribute" /> for <paramref name="value" /> on the <see cref="T:System.ComponentModel.Design.Serialization.ContextStack" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the specified events into the given statement collection.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatementCollection" /> into which the event will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which events will be serialized.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Attribute" /> array that filters which events will be serialized.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeProperties">
@@ -331,12 +544,23 @@
         <Parameter Name="filter" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statements">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeProperties(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> method is a helper method that derived classes can call. It looks at properties on the <paramref name="value" /> parameter that match the <paramref name="filter" /> parameter, and then it calls the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeProperty(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.PropertyDescriptor)" /> method for each property.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeProperties(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> method places the <see cref="T:System.ComponentModel.InheritanceAttribute" /> for <paramref name="value" /> on the <see cref="T:System.ComponentModel.Design.Serialization.ContextStack" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the properties on the given object into the given statement collection.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatementCollection" /> into which the properties will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which the properties will be serialized.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Attribute" /> array that filters which properties will be serialized.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializePropertiesToResources">
@@ -355,12 +579,25 @@
         <Parameter Name="filter" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statements">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializePropertiesToResources(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> method is a helper method that derived classes can call. It looks at properties on the <paramref name="value" /> parameter that match the <paramref name="filter" /> parameter, and then it serializes the properties into the invariant culture resource bundle. If the resource service returns a <see cref="T:System.Resources.ResXResourceWriter" />, the property values will be stored in the metadata section of the XML resource (.resx) file. The <paramref name="statements" /> parameter is not used. </para>
+          <para>To be serialized as a resource, a property must be simple (not a content property) and its value must be serializable. Properties that do not conform to this pattern will be skipped.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializePropertiesToResources(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.Attribute[])" /> requires an <see cref="T:System.ComponentModel.Design.IResourceService" /> to obtain a <see cref="T:System.Resources.ResourceWriter" /> to write resources for the invariant culture. If this service is not available, no resources will be written.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the properties on the given object into the invariant culture’s resource bundle.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not used.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object whose properties will be serialized.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Attribute" /> array that filters which properties will be serialized.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeProperty">
@@ -379,12 +616,24 @@
         <Parameter Name="propertyToSerialize" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="statements">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="propertyToSerialize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeProperty(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.PropertyDescriptor)" /> method retrieves a <see cref="T:System.ComponentModel.Design.Serialization.MemberCodeDomSerializer" /> for the <paramref name="propertyToSerialize" /> parameter and delegates to it.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeProperty(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.CodeDom.CodeStatementCollection,System.Object,System.ComponentModel.PropertyDescriptor)" /> places the <paramref name="statements" /> and <paramref name="propertyToSerialize" /> parameters on the <see cref="T:System.ComponentModel.Design.Serialization.ContextStack" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes a property on the given object.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeStatementCollection" /> into which the property will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object on which the property will be serialized.</param>
+        <param name="propertyToSerialize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeResource">
@@ -402,11 +651,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="resourceName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeResource(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.Object)" /> method is a helper method that serializes a value to a resource bundle under the given name. The culture that the resource is written to is determined by searching the serialization manager’s <see cref="P:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Properties" /> collection for a property called ResourceCulture. If this property exists, resources will be written to that culture. Otherwise, resources will be written to the invariant culture. The <paramref name="value" /> parameter must be serializable.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeResource(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.Object)" /> requires an <see cref="T:System.ComponentModel.Design.IResourceService" /> to obtain a <see cref="T:System.Resources.ResourceWriter" /> to write resources for the correct culture. If this service is not available, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeResource(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.Object)" /> will instead build a binary object in code that represents the resource. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object into a resource bundle using the given resource name.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="resourceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource bundle into which <paramref name="value" /> will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeResourceInvariant">
@@ -424,11 +684,21 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="resourceName">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource is always written to the invariant culture. The <paramref name="value" /> parameter must be serializable.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeResourceInvariant(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.Object)" /> method requires an <see cref="T:System.ComponentModel.Design.IResourceService" /> to obtain a <see cref="T:System.Resources.ResourceWriter" /> to write resources for the correct culture. If this service is not available, <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeResource(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.Object)" /> will instead build a binary object in code that represents the resource.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object into a resource bundle using the given resource name.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="resourceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource bundle into which <paramref name="value" /> will be serialized.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeToExpression">
@@ -445,11 +715,44 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="value" /> parameter can be null, in which case a primitive expression will be returned.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method uses the following rules for serializing types:</para>
+          <list type="ordered">
+            <item>
+              <para>It first calls the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method to see if an expression has already been created for the object. If so, it returns the existing expression.</para>
+            </item>
+            <item>
+              <para>It then locates the object’s serializer, and asks it to serialize.</para>
+            </item>
+            <item>
+              <para>If the return value of the object’s serializer is a <see cref="T:System.CodeDom.CodeExpression" />, the expression is returned.</para>
+            </item>
+            <item>
+              <para>It makes one last call to <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> to see if the serializer added an expression.</para>
+            </item>
+            <item>
+              <para>Finally, it returns null.</para>
+            </item>
+          </list>
+          <para>If no expression could be created and no suitable serializer could be found, an error will be reported through the serialization manager. No error will be reported if a serializer was found but it failed to produce an expression. In this case, it is assumed that the serializer either already reported the error or it did not attempt to serialize the object.</para>
+          <para>If the serializer returned a statement or a collection of statements, those statements will not be discarded. The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method will first look for a <see cref="T:System.ComponentModel.Design.Serialization.StatementContext" /> on the context stack and add statements to the statement context object's <see cref="P:System.ComponentModel.Design.Serialization.StatementContext.StatementCollection" /> property. If there is no statement context, the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method will look in the context for a <see cref="T:System.CodeDom.CodeStatementCollection" /> and add the statements there. If no place can be found to add the statements, an error will be generated.</para>
+          <block subset="none" type="note">
+            <para>You should not call the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method within <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationService.Serialize(System.Collections.ICollection)" /> when serializing your own object. Instead, you should call <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" />. If it returns null, create your own expression and call <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression" />. Then proceed with the rest of your serialization.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object into an expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> object if <paramref name="value" /> can be serialized; otherwise, null.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeToResourceExpression">
@@ -466,11 +769,37 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToResourceExpression" /> method is a helper method that serializes a value to a resource expression. This is in contrast to the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeResource(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.String,System.Object)" /> method, which writes a value to a resource binary object. <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToResourceExpression" /> goes one step further and returns an expression that can be used to recover the resource. For example, the return value might be "rm.GetValue("SomeBitmap");". The name of the resource is calculated from the <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" />, if one can be found on the context stack. </para>
+          <para>The <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToResourceExpression" /> method will look on the <see cref="T:System.ComponentModel.Design.Serialization.ContextStack" /> for the following objects: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="T:System.CodeDom.CodeStatementCollection" />—a collection of statements to add a resource manager to, if one needs to be declared.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.Serialization.RootContext" />—the root expression, which is needed to create a resource manager.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" />—used to fabricate a name for the resource and to decide what type of resource manager call to make.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object into an expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> containing <paramref name="value" /> as a serialized expression.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
     </Member>
     <Member MemberName="SerializeToResourceExpression">
@@ -488,12 +817,24 @@
         <Parameter Name="ensureInvariant" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="ensureInvariant">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="ensureInvariant" /> parameter is true, the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToResourceExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Boolean)" /> method will also write the resource value into the invariant culture’s resource file if the current ResourceCulture is not the invariant culture..</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the given object into an expression appropriate for the invariant culture.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> containing <paramref name="value" /> as a serialized expression.</para>
+        </returns>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
+        <param name="ensureInvariant">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to serialize into the invariant culture; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="SetExpression">
@@ -511,11 +852,19 @@
         <Parameter Name="expression" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.CodeDom.CodeExpression)" /> method is a helper method that associates a <see cref="T:System.CodeDom.CodeExpression" /> with an object. Objects that have been associated with expressions in this way are accessible through the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method. <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.CodeDom.CodeExpression)" /> stores its expression table as an appended object on the context stack so it is accessible by any serializer’s <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates an object with an expression.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeExpression" /> with which to associate <paramref name="value" />.</param>
       </Docs>
     </Member>
     <Member MemberName="SetExpression">
@@ -534,12 +883,21 @@
         <Parameter Name="isPreset" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="manager">To be added.</param>
         <param name="instance">To be added.</param>
-        <param name="expression">To be added.</param>
-        <param name="isPreset">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.CodeDom.CodeExpression,System.Boolean)" /> method is a helper method that associates a <see cref="T:System.CodeDom.CodeExpression" /> with an object. Objects that have been associated with expressions in this way are accessible through the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method. The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.CodeDom.CodeExpression,System.Boolean)" /> stores its expression table as an appended object on the context stack so it is accessible by any serializer’s <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.GetExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates an object with an expression, optionally specifying a preset expression.</para>
+        </summary>
+        <param name="manager">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use for serialization.</param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeExpression" /> with which to associate <paramref name="value" />.</param>
+        <param name="isPreset">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify a preset expression; otherwise, false.</param>
       </Docs>
     </Member>
   </Members>

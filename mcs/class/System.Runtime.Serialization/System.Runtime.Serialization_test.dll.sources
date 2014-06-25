@@ -1,3 +1,4 @@
+System.Runtime.Serialization/Bug11916Test.cs
 System.Runtime.Serialization/Bug666333Test.cs
 System.Runtime.Serialization/Bug675144Test.cs
 System.Runtime.Serialization/Bug2843Test.cs

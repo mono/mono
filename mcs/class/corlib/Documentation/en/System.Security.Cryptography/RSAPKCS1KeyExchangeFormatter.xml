@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RSAPKCS1KeyExchangeFormatter" FullName="System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class RSAPKCS1KeyExchangeFormatter : System.Security.Cryptography.AsymmetricKeyExchangeFormatter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RSAPKCS1KeyExchangeFormatter extends System.Security.Cryptography.AsymmetricKeyExchangeFormatter" />
@@ -19,10 +20,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>An asymmetric formater (encrypt) for key exchange executed with the PKCS#1 padding.</summary>
     <remarks>
-      <para>Key exchange formatters shouldn't be used as a general purpose encryption mechanism for RSA. See the example for <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.Encrypt" /> for a general encryption method using RSA.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Key exchange allows a sender to create secret information (such as random data that can be used as a key in a symmetric encryption algorithm) and use encryption to send it to the intended recipient.</para>
+      <para>Use <see cref="T:System.Security.Cryptography.RSAPKCS1KeyExchangeDeformatter" /> to receive the key exchange and extract the secret information from it.</para>
+      <block subset="none" type="note">
+        <para>We recommend that you do not attempt to create your own key exchange method from the basic functionality provided, because many details of the operation must be performed carefully in order for the key exchange to be successful.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates the PKCS#1 key exchange data using <see cref="T:System.Security.Cryptography.RSA" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +46,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Construct a PKCS#1 v1.5 key exchange formatter.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter.SetKey(System.Security.Cryptography.AsymmetricAlgorithm)" /> method to set the key to be used for key exchange before calling <see cref="M:System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter.CreateKeyExchange(System.Byte[])" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,9 +70,13 @@
         <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'AsymmetricAlgorithm'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter" /> class with the specified key.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the <see cref="T:System.Security.Cryptography.RSA" /> algorithm that holds the public key. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyExchange">
@@ -76,10 +95,20 @@
         <Parameter Name="rgbData" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgbData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This data can be interpreted only by the holder of the private key corresponding to the public key used to encrypt the data. This helps to ensure that only the intended recipient can access the secret information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the encrypted key exchange data from the specified input data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encrypted key exchange data to be sent to the intended recipient.</para>
+        </returns>
+        <param name="rgbData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret information to be passed in the key exchange. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyExchange">
@@ -99,11 +128,22 @@
         <Parameter Name="symAlgType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="rgbData">To be added.</param>
-        <param name="symAlgType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This data can be interpreted only by the holder of the private key corresponding to the public key used to encrypt the data. This helps to ensure that only the intended recipient can access the secret information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the encrypted key exchange data from the specified input data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encrypted key exchange data to be sent to the intended recipient.</para>
+        </returns>
+        <param name="rgbData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The secret information to be passed in the key exchange. </param>
+        <param name="symAlgType">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used in the current version. </param>
       </Docs>
     </Member>
     <Member MemberName="Parameters">
@@ -119,9 +159,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter.Parameters" /> property returns an XML string that contains Uniform Resource Identifiers (URIs) that describe the parameters of the PKCS #1 key exchange operation.  Note that the URIs are not guaranteed to point to active addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters for the PKCS #1 key exchange.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Rng">
@@ -137,9 +183,15 @@
         <ReturnType>System.Security.Cryptography.RandomNumberGenerator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Specifies the source of random number for the padding.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is null, the default random number generator algorithm is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the random number generator algorithm to use in the creation of the key exchange.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetKey">
@@ -158,9 +210,16 @@
         <Parameter Name="key" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must set the key before calling <see cref="M:System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter.CreateKeyExchange(System.Byte[])" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the public key to use for encrypting the key exchange data.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the <see cref="T:System.Security.Cryptography.RSA" /> algorithm that holds the public key. </param>
       </Docs>
     </Member>
   </Members>

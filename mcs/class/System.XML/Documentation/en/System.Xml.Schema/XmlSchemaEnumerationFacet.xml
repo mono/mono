@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaEnumerationFacet" FullName="System.Xml.Schema.XmlSchemaEnumerationFacet">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaEnumerationFacet : System.Xml.Schema.XmlSchemaFacet" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaEnumerationFacet extends System.Xml.Schema.XmlSchemaFacet" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the enumeration facet from XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class specifies a list of valid values for a simpleType element. Declaration is contained within a restriction declaration.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaEnumerationFacet" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

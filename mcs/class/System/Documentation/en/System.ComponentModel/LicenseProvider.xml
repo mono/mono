@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LicenseProvider" FullName="System.ComponentModel.LicenseProvider">
   <TypeSignature Language="C#" Value="public abstract class LicenseProvider" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit LicenseProvider extends System.Object" />
@@ -15,8 +16,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the abstract base class for implementing a license provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LicenseProvider" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetLicense">
@@ -54,13 +61,23 @@
         <Parameter Name="allowExceptions" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'LicenseContext'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="instance">To be added: an object of type 'object'</param>
-        <param name="allowExceptions">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'License'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a license for an instance or type of component, when given a context and whether the denial of a license throws an exception.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid <see cref="T:System.ComponentModel.License" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.LicenseContext" /> that specifies where you can use the licensed object. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the component requesting the license. </param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that is requesting the license. </param>
+        <param name="allowExceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a <see cref="T:System.ComponentModel.LicenseException" /> should be thrown when the component cannot be granted a license; otherwise, false. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Table" FullName="System.Web.UI.WebControls.Table">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Table : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackEventHandler" />
   <AssemblyInfo>
@@ -31,8 +32,514 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.Table" /> control allows you to build an HTML table and specify its characteristics in a straightforward manner.</para>
+      <para>A table can be built at design time given some static content, but the power of a <see cref="T:System.Web.UI.WebControls.Table" /> Web server control is often realized when the table is built programmatically with dynamic contents.</para>
+      <block subset="none" type="note">
+        <para>If the controlRenderingCompatibilityVersion attribute of the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages</a></format> element in the Web.config file is set to 3.5, the control renders a border attribute that is set to "0" on the HTML table element.</para>
+      </block>
+      <para>It is important to remember that any programmatic addition or modification of table rows or cells will not persist across posts to the server. This is because table rows and cells are controls of their own, and not properties of the <see cref="T:System.Web.UI.WebControls.Table" /> control. To persist any changes to the table, rows and cells must be reconstructed after each postback. In fact, if substantial modifications are expected, it is recommended that a <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, or <see cref="T:System.Web.UI.WebControls.GridView" /> control be used instead of the <see cref="T:System.Web.UI.WebControls.Table" /> control. As a result, the <see cref="T:System.Web.UI.WebControls.Table" /> class is primarily used by control developers.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. You can use validation controls to verify user input before displaying the input text in a control. ASP.NET provides an input request validation feature to block script and HTML in user input. For more information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="4ad3dacb-89e0-4cee-89ac-40a3f2a85461">Introduction to Validating User Input in ASP.NET Web Pages</a></format>.</para>
+      </block>
+      <format type="text/html">
+        <a href="#accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:Table
+    AccessKey="string"
+    BackColor="color name|#dddddd"
+    BackImageUrl="uri"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    Caption="string"
+    CaptionAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Bottom|Left|Right"
+    CellPadding="integer"
+    CellSpacing="integer"
+    CssClass="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    GridLines="<codeFeaturedElement>None</codeFeaturedElement>|Horizontal|Vertical|Both"
+    Height="size"
+    HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+            &lt;asp:TableFooterRow
+                AccessKey="string"
+                BackColor="color name|#dddddd"
+                BorderColor="color name|#dddddd"
+                BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|
+                    Groove|Ridge|Inset|Outset"
+                BorderWidth="size"
+                CssClass="string"
+                Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Names="string"
+                Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Size="string|Smaller|Larger|XX-Small|X-Small|
+                    Small|Medium|Large|X-Large|XX-Large"
+                Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                ForeColor="color name|#dddddd"
+                Height="size"
+                HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+                ID="string"
+                OnDataBinding="DataBinding event handler"
+                OnDisposed="Disposed event handler"
+                OnInit="Init event handler"
+                OnLoad="Load event handler"
+                OnPreRender="PreRender event handler"
+                OnUnload="Unload event handler"
+                runat="server"
+                SkinID="string"
+                Style="string"
+                TabIndex="integer"
+                TableSection="TableHeader|<codeFeaturedElement>TableBody</codeFeaturedElement>|TableFooter"
+                ToolTip="string"
+                VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Width="size"
+&gt;
+                        &lt;asp:TableCell
+                            AccessKey="string"
+                            AssociatedHeaderCellID="string"
+                            BackColor="color name|#dddddd"
+                            BorderColor="color name|#dddddd"
+                            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|
+                                Solid|Double|Groove|Ridge|Inset|
+                                Outset"
+                            BorderWidth="size"
+                            ColumnSpan="integer"
+                            CssClass="string"
+                            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Names="string"
+                            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Size="string|Smaller|Larger|
+                                XX-Small|X-Small|Small|Medium|Large|
+                                X-Large|XX-Large"
+                            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            ForeColor="color name|#dddddd"
+                            Height="size"
+                            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|
+                            Right|Justify"
+                            ID="string"
+                            OnDataBinding="DataBinding event handler"
+                            OnDisposed="Disposed event handler"
+                            OnInit="Init event handler"
+                            OnLoad="Load event handler"
+                            OnPreRender="PreRender event handler"
+                            OnUnload="Unload event handler"
+                            RowSpan="integer"
+                            runat="server"
+                            SkinID="string"
+                            Style="string"
+                            TabIndex="integer"
+                            Text="string"
+                            ToolTip="string"
+                            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Width="size"
+                            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                        /&gt;
+                        &lt;asp:TableHeaderCell
+                            AbbreviatedText="string"
+                            AccessKey="string"
+                            AssociatedHeaderCellID="string"
+                            BackColor="color name|#dddddd"
+                            BorderColor="color name|#dddddd"
+                            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|
+                                Solid|Double|Groove|Ridge|Inset|
+                                Outset"
+                            BorderWidth="size"
+                            CategoryText="string"
+                            ColumnSpan="integer"
+                            CssClass="string"
+                            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Names="string"
+                            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Size="string|Smaller|Larger|
+                                XX-Small|X-Small|Small|Medium|Large|
+                                X-Large|XX-Large"
+                            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            ForeColor="color name|#dddddd"
+                            Height="size"
+                            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|
+                                Right|Justify"
+                            ID="string"
+                            OnDataBinding="DataBinding event handler"
+                            OnDisposed="Disposed event handler"
+                            OnInit="Init event handler"
+                            OnLoad="Load event handler"
+                            OnPreRender="PreRender event handler"
+                            OnUnload="Unload event handler"
+                            RowSpan="integer"
+                            runat="server"
+                            Scope="<codeFeaturedElement>NotSet</codeFeaturedElement>|Row|Column"
+                            SkinID="string"
+                            Style="string"
+                            TabIndex="integer"
+                            Text="string"
+                            ToolTip="string"
+                            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Width="size"
+                            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                        /&gt;
+            &lt;/asp:TableFooterRow&gt;
+            &lt;asp:TableHeaderRow
+                AccessKey="string"
+                BackColor="color name|#dddddd"
+                BorderColor="color name|#dddddd"
+                BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|
+                    Groove|Ridge|Inset|Outset"
+                BorderWidth="size"
+                CssClass="string"
+                Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Names="string"
+                Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Size="string|Smaller|Larger|XX-Small|X-Small|
+                    Small|Medium|Large|X-Large|XX-Large"
+                Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                ForeColor="color name|#dddddd"
+                Height="size"
+                HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+                ID="string"
+                OnDataBinding="DataBinding event handler"
+                OnDisposed="Disposed event handler"
+                OnInit="Init event handler"
+                OnLoad="Load event handler"
+                OnPreRender="PreRender event handler"
+                OnUnload="Unload event handler"
+                runat="server"
+                SkinID="string"
+                Style="string"
+                TabIndex="integer"
+                TableSection="TableHeader|<codeFeaturedElement>TableBody</codeFeaturedElement>|TableFooter"
+                ToolTip="string"
+                VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Width="size"
+&gt;
+                        &lt;asp:TableCell
+                            AccessKey="string"
+                            AssociatedHeaderCellID="string"
+                            BackColor="color name|#dddddd"
+                            BorderColor="color name|#dddddd"
+                            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|
+                                Solid|Double|Groove|Ridge|Inset|
+                                Outset"
+                            BorderWidth="size"
+                            ColumnSpan="integer"
+                            CssClass="string"
+                            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Names="string"
+                            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Size="string|Smaller|Larger|
+                                XX-Small|X-Small|Small|Medium|Large|
+                                X-Large|XX-Large"
+                            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            ForeColor="color name|#dddddd"
+                            Height="size"
+                            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|
+                                Right|Justify"
+                            ID="string"
+                            OnDataBinding="DataBinding event handler"
+                            OnDisposed="Disposed event handler"
+                            OnInit="Init event handler"
+                            OnLoad="Load event handler"
+                            OnPreRender="PreRender event handler"
+                            OnUnload="Unload event handler"
+                            RowSpan="integer"
+                            runat="server"
+                            SkinID="string"
+                            Style="string"
+                            TabIndex="integer"
+                            Text="string"
+                            ToolTip="string"
+                            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Width="size"
+                            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                        /&gt;
+                        &lt;asp:TableHeaderCell
+                            AbbreviatedText="string"
+                            AccessKey="string"
+                            AssociatedHeaderCellID="string"
+                            BackColor="color name|#dddddd"
+                            BorderColor="color name|#dddddd"
+                            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|
+                                Solid|Double|Groove|Ridge|Inset|
+                                Outset"
+                            BorderWidth="size"
+                            CategoryText="string"
+                            ColumnSpan="integer"
+                            CssClass="string"
+                            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Names="string"
+                            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Size="string|Smaller|Larger|
+                                XX-Small|X-Small|Small|Medium|Large|
+                                X-Large|XX-Large"
+                            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            ForeColor="color name|#dddddd"
+                            Height="size"
+                            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|
+                                Right|Justify"
+                            ID="string"
+                            OnDataBinding="DataBinding event handler"
+                            OnDisposed="Disposed event handler"
+                            OnInit="Init event handler"
+                            OnLoad="Load event handler"
+                            OnPreRender="PreRender event handler"
+                            OnUnload="Unload event handler"
+                            RowSpan="integer"
+                            runat="server"
+                            Scope="<codeFeaturedElement>NotSet</codeFeaturedElement>|Row|Column"
+                            SkinID="string"
+                            Style="string"
+                            TabIndex="integer"
+                            Text="string"
+                            ToolTip="string"
+                            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Width="size"
+                            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                        /&gt;
+            &lt;/asp:TableHeaderRow&gt;
+            &lt;asp:TableRow
+                AccessKey="string"
+                BackColor="color name|#dddddd"
+                BorderColor="color name|#dddddd"
+                BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|
+                    Groove|Ridge|Inset|Outset"
+                BorderWidth="size"
+                CssClass="string"
+                Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Names="string"
+                Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Size="string|Smaller|Larger|XX-Small|
+                    X-Small|Small|Medium|Large|X-Large|XX-Large"
+                Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                ForeColor="color name|#dddddd"
+                Height="size"
+                HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|Right|Justify"
+                ID="string"
+                OnDataBinding="DataBinding event handler"
+                OnDisposed="Disposed event handler"
+                OnInit="Init event handler"
+                OnLoad="Load event handler"
+                OnPreRender="PreRender event handler"
+                OnUnload="Unload event handler"
+                runat="server"
+                SkinID="string"
+                Style="string"
+                TabIndex="integer"
+                TableSection="TableHeader|<codeFeaturedElement>TableBody</codeFeaturedElement>|TableFooter"
+                ToolTip="string"
+                VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Width="size"
+&gt;
+                        &lt;asp:TableCell
+                            AccessKey="string"
+                            AssociatedHeaderCellID="string"
+                            BackColor="color name|#dddddd"
+                            BorderColor="color name|#dddddd"
+                            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|
+                                Solid|Double|Groove|Ridge|Inset|
+                                Outset"
+                            BorderWidth="size"
+                            ColumnSpan="integer"
+                            CssClass="string"
+                            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Names="string"
+                            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Size="string|Smaller|Larger|
+                                XX-Small|X-Small|Small|Medium|Large|
+                                X-Large|XX-Large"
+                            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            ForeColor="color name|#dddddd"
+                            Height="size"
+                            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|
+                                Right|Justify"
+                            ID="string"
+                            OnDataBinding="DataBinding event handler"
+                            OnDisposed="Disposed event handler"
+                            OnInit="Init event handler"
+                            OnLoad="Load event handler"
+                            OnPreRender="PreRender event handler"
+                            OnUnload="Unload event handler"
+                            RowSpan="integer"
+                            runat="server"
+                            SkinID="string"
+                            Style="string"
+                            TabIndex="integer"
+                            Text="string"
+                            ToolTip="string"
+                            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                            Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Width="size"
+                            Wrap="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                        /&gt;
+                        &lt;asp:TableHeaderCell
+                            AbbreviatedText="string"
+                            AccessKey="string"
+                            AssociatedHeaderCellID="string"
+                            BackColor="color name|#dddddd"
+                            BorderColor="color name|#dddddd"
+                            BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|
+                                Solid|Double|Groove|Ridge|Inset|
+                                Outset"
+                            BorderWidth="size"
+                            CategoryText="string"
+                            ColumnSpan="integer"
+                            CssClass="string"
+                            Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                            Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Names="string"
+                            Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Size="string|Smaller|Larger|
+                                XX-Small|X-Small|Small|Medium|Large|
+                                X-Large|XX-Large"
+                            Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                            ForeColor="color name|#dddddd"
+                            Height="size"
+                            HorizontalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Center|
+                                Right|Justify"
+                            ID="string"
+                            OnDataBinding="DataBinding event handler"
+                            OnDisposed="Disposed event handler"
+                            OnInit="Init event handler"
+                            OnLoad="Load event handler"
+                            OnPreRender="PreRender event handler"
+                            OnUnload="Unload event handler"
+                            RowSpan="integer"
+                            runat="server"
+                            Scope="<codeFeaturedElement>NotSet</codeFeaturedElement>|Row|Column"
+                            SkinID="string"
+                            Style="string"
+                            TabIndex="integer"
+                            Text="string"
+                            ToolTip="string"
+                            VerticalAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Top|Middle|Bottom"
+                            Visible="True|False"
+                            Width="size"
+                            Wrap="True|False"
+                        /&gt;
+            &lt;/asp:TableRow&gt;
+&lt;/asp:Table&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a table on a Web page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +548,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Table" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Table" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +572,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers to insert the appropriate attributes and styles into the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for a <see cref="T:System.Web.UI.WebControls.Table" /> control. This method overrides <see cref="M:System.Web.UI.WebControls.WebControl.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds HTML attributes and styles that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream that renders HTML content to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +596,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.BackImageUrl" /> property to specify the location of an image to display in the background of the <see cref="T:System.Web.UI.WebControls.Table" /> control. You can use a relative or an absolute URL. A relative URL relates the location of the image to the location of the Web page or user control without specifying a complete path on the server. The path is relative to the location of the Web page. This makes it easier to move the entire site to another directory on the server without updating the path to the image in code. An absolute URL provides the complete path, so moving the site to another directory requires updating the code.</para>
+          <block subset="none" type="note">
+            <para>If the image is smaller than the <see cref="T:System.Web.UI.WebControls.Table" /> control, it will be tiled.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the background image to display behind the <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +644,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.Caption" /> property to specify the text to render in an HTML caption element in a <see cref="T:System.Web.UI.WebControls.Table" /> control. The text that you specify provides Assistive Technology devices with a description of the table that can be used to make the control more accessible.</para>
+          <para>Additional accessibility support for the <see cref="T:System.Web.UI.WebControls.Table" /> control is provided by the <see cref="P:System.Web.UI.WebControls.Table.CaptionAlign" /> property. Use the <see cref="P:System.Web.UI.WebControls.Table.CaptionAlign" /> property to specify the alignment of the HTML caption element in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to render in an HTML caption element in a <see cref="T:System.Web.UI.WebControls.Table" /> control. This property is provided to make the control more accessible to users of Assistive Technology devices.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CaptionAlign">
@@ -136,9 +673,69 @@
         <ReturnType>System.Web.UI.WebControls.TableCaptionAlign</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.CaptionAlign" /> property to specify the horizontal or vertical position of the HTML caption element in a <see cref="T:System.Web.UI.WebControls.Table" /> control. This property is provided to make the control more accessible to users of Assistive Technology devices.</para>
+          <para>This property is set using one of the <see cref="T:System.Web.UI.WebControls.TableCaptionAlign" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet </para>
+              </term>
+              <description>
+                <para>The caption element's alignment is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Top </para>
+              </term>
+              <description>
+                <para>The caption element is aligned with the top of the table. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Bottom </para>
+              </term>
+              <description>
+                <para>The caption element is aligned with the bottom of the table. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Left </para>
+              </term>
+              <description>
+                <para>The caption element is aligned with the left of the table. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Right </para>
+              </term>
+              <description>
+                <para>The caption element is aligned with the right of the table. </para>
+              </description>
+            </item>
+          </list>
+          <para>Additional accessibility support for the <see cref="T:System.Web.UI.WebControls.Table" /> control is provided by the <see cref="P:System.Web.UI.WebControls.Table.Caption" /> property. Use the <see cref="P:System.Web.UI.WebControls.Table.Caption" /> property to specify the text to render in an HTML caption element in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal or vertical position of the HTML caption element in a <see cref="T:System.Web.UI.WebControls.Table" /> control. This property is provided to make the control more accessible to users of Assistive Technology devices.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CellPadding">
@@ -149,9 +746,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.CellPadding" /> property to control the spacing between the contents of a cell and the cell's border. The padding amount specified is added to all four sides of the cell.</para>
+          <para>All cells in the same column of a <see cref="T:System.Web.UI.WebControls.Table" /> control have the same width. The padding amount is applied to the widest cell and all other cells in the column have this cell width.</para>
+          <para>Similarly, all cells in the same row have the same height. The padding amount is applied to the tallest cell in the row and all other cells in the row have this cell height. Individual cell sizes cannot be specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of space between the contents of a cell and the cell's border. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -171,9 +776,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.CellSpacing" /> property to control the spacing between adjacent cells in the <see cref="T:System.Web.UI.WebControls.Table" /> control. This spacing is applied both vertically and horizontally. The cell spacing is uniform for the entire table. Individual cell spacing between each row or column cannot be specified.</para>
+          <block subset="none" type="note">
+            <para>If you set this property to a value greater than 0 and set the <see cref="P:System.Web.UI.WebControls.Table.GridLines" /> property to a value that displays the cell borders, a gap is displayed between the borders of adjacent cells. In this situation, the <see cref="P:System.Web.UI.WebControls.Table.CellSpacing" /> property controls the size of the gap.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of space between cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,9 +807,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.ControlCollection" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers when deriving a custom class from a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+          <para>This method overrides the <see cref="M:System.Web.UI.Control.CreateControlCollection" /> implementation for the base <see cref="T:System.Web.UI.Control" /> class. For a <see cref="T:System.Web.UI.WebControls.Table" /> control, the <see cref="M:System.Web.UI.WebControls.Table.CreateControlCollection" /> always returns a <see cref="T:System.Web.UI.ControlCollection" /> that can only contain <see cref="T:System.Web.UI.WebControls.TableRow" /> controls of the current <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> object to hold the <see cref="T:System.Web.UI.WebControls.TableRow" /> controls of the current <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ControlCollection" /> object to contain the <see cref="T:System.Web.UI.WebControls.TableRow" /> controls of the current <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -210,9 +834,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.WebControls.Style" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.Table" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a collection of properties that define the appearance of a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the <see cref="T:System.Web.UI.WebControls.Style" /> object that contains the properties that define the appearance of the <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -227,9 +860,59 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'GridLines'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.GridLines" /> property to specify which cell borders are displayed in the <see cref="T:System.Web.UI.WebControls.Table" /> control. The following table lists the different grid line styles.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>GridLine value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>None </para>
+              </term>
+              <description>
+                <para>No cell borders are displayed. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Horizontal </para>
+              </term>
+              <description>
+                <para>Only the horizontal cell borders are displayed. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Vertical </para>
+              </term>
+              <description>
+                <para>Only the vertical cell borders are displayed. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Both </para>
+              </term>
+              <description>
+                <para>Both the horizontal and vertical cell borders are displayed. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the grid line style to display in the <see cref="T:System.Web.UI.WebControls.Table" /> control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -249,9 +932,67 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HorizontalAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.HorizontalAlign" /> property to specify the horizontal alignment of the <see cref="T:System.Web.UI.WebControls.Table" /> control within the page. The following table lists the different horizontal alignment styles.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>HorizontalAlign value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet </para>
+              </term>
+              <description>
+                <para>The horizontal alignment of the <see cref="T:System.Web.UI.WebControls.Table" /> control has not been set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Left </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.Table" /> control is left justified on the page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Center </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.Table" /> control is centered on the page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Right </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.Table" /> control is right justified on the page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Justify </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.Table" /> control is aligned with both the left and right margins of the page. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal alignment of the <see cref="T:System.Web.UI.WebControls.Table" /> control on the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -276,9 +1017,16 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page passes the value of the <paramref name="argument" /> parameter to the <see cref="M:System.Web.UI.WebControls.Table.RaisePostBackEvent(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.Table" /> control when a form is posted back to the server.</para>
+        </summary>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the argument for the event. </param>
       </Docs>
     </Member>
     <Member MemberName="RenderBeginTag">
@@ -295,9 +1043,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers when deriving a custom class from a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Table.RenderBeginTag(System.Web.UI.HtmlTextWriter)" /> method renders the opening tag for the <see cref="T:System.Web.UI.WebControls.Table" /> control, and renders tags for the table caption and alignment, if necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the HTML opening tag of the <see cref="T:System.Web.UI.WebControls.Table" /> control to the specified writer. </para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
     </Member>
     <Member MemberName="RenderContents">
@@ -310,9 +1066,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers when deriving a custom class from a <see cref="T:System.Web.UI.WebControls.Table" /> control. </para>
+          <para>The <see cref="T:System.Web.UI.WebControls.Table" /> control implements the <see cref="M:System.Web.UI.WebControls.Table.RenderContents(System.Web.UI.HtmlTextWriter)" /> to render the <see cref="P:System.Web.UI.WebControls.Table.Rows" /> of the table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the rows in the table control to the specified writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -326,9 +1090,18 @@
         <ReturnType>System.Web.UI.WebControls.TableRowCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TableRowCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.Table.Rows" /> collection to programmatically manage the <see cref="T:System.Web.UI.WebControls.TableRow" /> objects in the <see cref="T:System.Web.UI.WebControls.Table" /> control. A <see cref="T:System.Web.UI.WebControls.TableRow" /> represents a row in the table.</para>
+          <block subset="none" type="note">
+            <para>This property is normally used only when building tables programmatically. At design time, it is set by declaring <see cref="T:System.Web.UI.WebControls.TableRow" /> objects between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of rows in the <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -357,8 +1130,15 @@
       </Parameters>
       <Docs>
         <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.Table.RaisePostBackEvent(System.String)" /> method to raise an event for the <see cref="T:System.Web.UI.WebControls.Table" /> control when a form is posted back to the server. </para>
+          <para>This method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.Table" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

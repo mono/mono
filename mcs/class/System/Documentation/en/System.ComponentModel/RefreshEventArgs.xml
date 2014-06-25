@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RefreshEventArgs" FullName="System.ComponentModel.RefreshEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class RefreshEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RefreshEventArgs extends System.EventArgs" />
@@ -15,8 +16,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, component information does not change for the life of a process. During design time, however, you can change the component's properties or events. As a result, the component's information in <see cref="T:System.ComponentModel.TypeDescriptor" /> becomes out-of-date, and a <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event is raised. A <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event is also raised when a <see cref="T:System.Type" /> is changed during design time.</para>
+      <para>A <see cref="T:System.ComponentModel.RefreshEventArgs" /> object specifies the data associated with the <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event; that is, the component and the type of component that changed.</para>
+      <para>The <see cref="T:System.ComponentModel.RefreshEventArgs" /> class provides <see cref="P:System.ComponentModel.RefreshEventArgs.ComponentChanged" /> and <see cref="P:System.ComponentModel.RefreshEventArgs.TypeChanged" /> properties to get the component or type that raised the event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.ComponentModel.TypeDescriptor.Refreshed" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,9 +42,13 @@
         <Parameter Name="componentChanged" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="componentChanged">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.RefreshEventArgs" /> class with the component that has changed.</para>
+        </summary>
+        <param name="componentChanged">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that changed. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -52,9 +65,13 @@
         <Parameter Name="typeChanged" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="typeChanged">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.RefreshEventArgs" /> class with the type of component that has changed.</para>
+        </summary>
+        <param name="typeChanged">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that changed. </param>
       </Docs>
     </Member>
     <Member MemberName="ComponentChanged">
@@ -70,9 +87,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component that changed its properties, events, or extenders.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeChanged">
@@ -88,9 +108,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> that changed its properties or events.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

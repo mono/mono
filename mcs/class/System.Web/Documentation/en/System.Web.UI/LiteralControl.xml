@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LiteralControl" FullName="System.Web.UI.LiteralControl">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class LiteralControl : System.Web.UI.Control, System.Web.UI.ITextControl" />
   <AssemblyInfo>
@@ -22,8 +23,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET compiles all HTML elements and readable text that do not require server-side processing into instances of this class. For example, an HTML element that does not contain a runat="server" attribute/value pair in its opening tag is compiled into a <see cref="T:System.Web.UI.LiteralControl" /> object. <see cref="T:System.Web.UI.LiteralControl" /> objects do not maintain view state, so the contents of a <see cref="T:System.Web.UI.LiteralControl" /> object must be recreated on each request.</para>
+      <para>Literal controls behave as text holders, meaning that you can extract text from the literal control and remove the literal control from the parent server control's <see cref="T:System.Web.UI.ControlCollection" /> collection through the parent's <see cref="P:System.Web.UI.Control.Controls" /> property. Therefore, when you develop a custom control derived from the <see cref="T:System.Web.UI.LiteralControl" /> class, make sure your control performs any required preprocessing steps itself, rather than using a call to the <see cref="M:System.Web.UI.LiteralControl.Render(System.Web.UI.HtmlTextWriter)" /> method to accomplish them. Typically, you would do this to improve the response time of your Web application.</para>
+      <para>You can add or remove literal controls from a page or server control programmatically using the <see cref="M:System.Web.UI.ControlCollection.Add(System.Web.UI.Control)" /> or the <see cref="M:System.Web.UI.ControlCollection.Remove(System.Web.UI.Control)" /> method, respectively.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents HTML elements, text, and any other strings in an ASP.NET page that do not require processing on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +41,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.LiteralControl" /> class that contains a literal string to be rendered on the requested ASP.NET page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +60,13 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.LiteralControl" /> class with the specified text.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to be rendered on the requested Web page. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +81,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.UI.ControlCollection" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, <see cref="T:System.Web.UI.LiteralControl" /> objects contain only text and no child server controls. If you want to change this behavior, you must override this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Web.UI.EmptyControlCollection" /> object for the current instance of the <see cref="T:System.Web.UI.LiteralControl" /> class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.EmptyControlCollection" /> for the current control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -85,8 +110,14 @@
       </Parameters>
       <Docs>
         <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create a custom server control and want to render specific HTML or text to a client, you can improve the performance of the control by passing the value of the <see cref="P:System.Web.UI.LiteralControl.Text" /> property to the <see cref="M:System.Web.UI.Control.Render(System.Web.UI.HtmlTextWriter)" /> method rather than calling the <see cref="M:System.Web.UI.LiteralControl.Render(System.Web.UI.HtmlTextWriter)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the content of the <see cref="T:System.Web.UI.LiteralControl" /> object to the ASP.NET page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -101,9 +132,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text content of the <see cref="T:System.Web.UI.LiteralControl" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

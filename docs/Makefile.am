@@ -73,41 +73,40 @@ dist-hook:
 	cp HtmlAgilityPack/*     $(distdir)/HtmlAgilityPack
 
 clean-local:
-	-rm -Rf $(srcdir)/html
-	-rm -f $(srcdir)/deploy/* $(srcdir)/convert.exe* $(srcdir)/AgilityPack.dll*
-	-cd $(srcdir) && rm -f $(ASSEMBLED_DOCS)
+	-rm -Rf html
+	-rm -f deploy/* convert.exe* AgilityPack.dll*
+	-rm -f $(ASSEMBLED_DOCS)
+
+TOOL_MAKE=$(MAKE) -f $(srcdir)/docs.make topdir=$(srcdir)/../mcs srcdir=$(srcdir)
 
 monoapi.zip: monoapi.tree
-	@test -f $@ || { rm -f $(srcdir)/monoapi.tree && $(MAKE) monoapi.tree; }
-monoapi.tree: docs.make Makefile.am toc.xml $(srcdir)/deploy/.stamp perms
-	cd $(srcdir) && cp -f api-style.css deploy
-	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
+
+monoapi.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/toc.xml $(srcdir)/deploy/.stamp 
+	-mkdir -p deploy
+	cp -f $(srcdir)/api-style.css deploy
+	$(TOOL_MAKE) $@
 
 mono-tools.zip: mono-tools.tree
-	@test -f $@ || { rm -f $(srcdir)/mono-tools.tree && $(MAKE) mono-tools.tree; }
-mono-tools.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp perms
-	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
-mono-file-formats.zip: mono-file-formats.tree perms
-	@test -f $@ || { rm -f $(srcdir)/mono-file-formats.tree && $(MAKE) mono-file-formats.tree; }
-mono-file-formats.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp
-	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
+mono-tools.tree: $(srcdir)/docs.make Makefile.am deploy/.stamp 
+	$(TOOL_MAKE) $@
 
-$(srcdir)/deploy/.stamp: convert.exe Makefile.am perms
-	$(mkdir_p) $(srcdir)/html
+mono-file-formats.zip: mono-file-formats.tree 
+
+mono-file-formats.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/deploy/.stamp
+	$(TOOL_MAKE) $@
+
+deploy/.stamp: convert.exe Makefile.am 
+	$(mkdir_p) html
 	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
-	cd $(srcdir) && MONO_PATH=$(mcs_topdir_from_srcdir)/class/lib/net_2_0 perl ./exdoc -h . ../mono/*/*.c
+	MONO_PATH=../mcs/class/lib/net_2_0 perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c
 	touch $@
 
-extract: $(srcdir)/deploy/.stamp
+extract: deploy/.stamp
 
-convert.exe: convert.cs AgilityPack.dll perms
-	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) convert.exe
+convert.exe: convert.cs AgilityPack.dll
+	$(TOOL_MAKE) PROFILE=net_2_0 convert.exe
 
-AgilityPack.dll: perms
-	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) AgilityPack.dll
-
-.PHONY: perms
-perms:
-	-@test -w $(srcdir) || chmod a+w $(srcdir)
+AgilityPack.dll: 
+	$(TOOL_MAKE) PROFILE=net_2_0 AgilityPack.dll
 

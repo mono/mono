@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlNotificationRequest" FullName="System.Data.Sql.SqlNotificationRequest">
   <TypeSignature Language="C#" Value="public sealed class SqlNotificationRequest" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides low-level access to the query notification services exposed by SQL Server 2005. For most applications the <see cref="T:System.Data.SqlClient.SqlDependency" /> class provides a simpler way of using query notifications. However, if you need fine control over when notifications occur, or you need to customize the message data returned as part of a notification, the <see cref="T:System.Data.Sql.SqlNotificationRequest" /> class is the one to use.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a request for notification for a given command. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the default constructor is used to create a <see cref="T:System.Data.Sql.SqlNotificationRequest" /> object, that instance must have its <see cref="P:System.Data.Sql.SqlNotificationRequest.UserData" /> and <see cref="P:System.Data.Sql.SqlNotificationRequest.Options" /> properties initialized before assigning the object to a <see cref="T:System.Data.SqlClient.SqlCommand" /> object's <see cref="P:System.Data.SqlClient.SqlCommand.Notification" /> property. The default values used by the constructor are NULL (Nothing in Visual Basic) for the <see cref="P:System.Data.Sql.SqlNotificationRequest.UserData" />, an empty string for the <see cref="P:System.Data.Sql.SqlNotificationRequest.Options" />, and zero for the <see cref="P:System.Data.Sql.SqlNotificationRequest.Timeout" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.Sql.SqlNotificationRequest" /> class with default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,12 +49,21 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="userData">To be added.</param>
-        <param name="options">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor allows you to initialize a new <see cref="T:System.Data.Sql.SqlNotificationRequest" /> instance, providing your own identifier, the SQL Server 2005 Service Broker service name, and a time-out value. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.Sql.SqlNotificationRequest" /> class with a user-defined string that identifies a particular notification request, the name of a predefined SQL Server 2005 Service Broker service name, and the time-out period, measured in seconds.</para>
+        </summary>
+        <param name="userData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains an application-specific identifier for this notification. It is not used by the notifications infrastructure, but it allows you to associate notifications with the application state. The value indicated in this parameter is included in the Service Broker queue message. </param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the Service Broker service name where notification messages are posted, and it must include a database name or a Service Broker instance GUID that restricts the scope of the service name lookup to a particular database.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time, in seconds, to wait for a notification message. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +76,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Data.Sql.SqlNotificationRequest.Options" /> property has the following format: </para>
+          <para>service=&lt;service-name&gt;{;(local database=&lt;database&gt;|broker instance=&lt;broker instance&gt;)}</para>
+          <para>For example, if you use the service "myservice" in the database "AdventureWorks" the format is:</para>
+          <para>service=myservice;local database=AdventureWorks</para>
+          <para>The SQL Server Service Broker service must be previously configured on the server. In addition, a Service Broker service and queue must be defined and security access granted as needed. See the SQL Server 2005 documentation for more information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL Server Service Broker service name where notification messages are posted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -70,10 +102,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After the time-out period expires, the notification is sent even if no change takes place. The <see cref="P:System.Data.Sql.SqlNotificationRequest.Timeout" /> property defaults to the value set on the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how long SQL Server waits for a change to occur before the operation times out.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,10 +124,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is not used by the notifications infrastructure. Instead, it is a mechanism that allows an application to associate notifications with application state. The value specified in the <see cref="P:System.Data.Sql.SqlNotificationRequest.UserData" /> property is included in the SQL Server 2005 queue message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an application-specific identifier for this notification.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

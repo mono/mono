@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityElementBase" FullName="System.ServiceModel.Configuration.SecurityElementBase">
   <TypeSignature Language="C#" Value="public class SecurityElementBase : System.ServiceModel.Configuration.BindingElementExtensionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SecurityElementBase extends System.ServiceModel.Configuration.BindingElementExtensionElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a base class with members common to an element that is used to configure security settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,9 +47,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a boolean value that specifies whether a serialized token can be used on reply.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMode">
@@ -64,9 +71,12 @@
         <ReturnType>System.ServiceModel.Configuration.AuthenticationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the authentication setting used for message exchange.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -80,9 +90,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of this binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateBindingElement">
@@ -97,9 +110,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a custom binding element object from the setting of this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom <see cref="T:System.ServiceModel.Channels.BindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultAlgorithmSuite">
@@ -121,9 +140,12 @@
         <ReturnType>System.ServiceModel.Security.SecurityAlgorithmSuite</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default algorithm suite for this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IncludeTimestamp">
@@ -142,9 +164,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that specifies whether each message contains a timestamp.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuedTokenParameters">
@@ -163,9 +188,12 @@
         <ReturnType>System.ServiceModel.Configuration.IssuedTokenParametersElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration element that specifies the current issued token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyEntropyMode">
@@ -184,9 +212,12 @@
         <ReturnType>System.ServiceModel.Security.SecurityKeyEntropyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the source of entropy used to create keys.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalClientSettings">
@@ -205,9 +236,12 @@
         <ReturnType>System.ServiceModel.Configuration.LocalClientSecuritySettingsElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local client security settings for this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalServiceSettings">
@@ -226,9 +260,12 @@
         <ReturnType>System.ServiceModel.Configuration.LocalServiceSecuritySettingsElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local service security settings for this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageProtectionOrder">
@@ -247,9 +284,12 @@
         <ReturnType>System.ServiceModel.Security.MessageProtectionOrder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order of message encryption and signing for this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageSecurityVersion">
@@ -271,9 +311,12 @@
         <ReturnType>System.ServiceModel.MessageSecurityVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the version used for message security.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -287,9 +330,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequireDerivedKeys">
@@ -308,9 +354,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that specifies whether derived keys are required.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequireSecurityContextCancellation">
@@ -329,9 +378,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that specifies whether security context should be cancelled and terminated when it is no longer required.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequireSignatureConfirmation">
@@ -350,9 +402,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that specifies whether message signatures must be confirmed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecurityHeaderLayout">
@@ -371,9 +426,12 @@
         <ReturnType>System.ServiceModel.Channels.SecurityHeaderLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the order of elements in the security header for this binding.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

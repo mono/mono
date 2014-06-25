@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HelpKeywordType" FullName="System.ComponentModel.Design.HelpKeywordType">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum HelpKeywordType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HelpKeywordType extends System.Enum" />
@@ -14,8 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.HelpKeywordType" /> defines identifiers that indicate the type of a Help keyword to the Help system. Any or all of the keyword type identifiers can be specified for a single keyword. The type of a Help keyword is sometimes used when the Help system is determining the Help topics to display for a Help request.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers that indicate the type of a Help keyword.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="F1Keyword">
@@ -32,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A keyword that F1 was pressed to request help about.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FilterKeyword">
@@ -50,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A filter keyword.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GeneralKeyword">
@@ -68,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A general keyword.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

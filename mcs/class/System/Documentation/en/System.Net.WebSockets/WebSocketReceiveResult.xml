@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebSocketReceiveResult" FullName="System.Net.WebSockets.WebSocketReceiveResult">
   <TypeSignature Language="C#" Value="public class WebSocketReceiveResult" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WebSocketReceiveResult extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of this class represents the result of performing a single ReceiveAsync operation on a WebSocket.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +31,17 @@
         <Parameter Name="endOfMessage" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="count">To be added.</param>
-        <param name="messageType">To be added.</param>
-        <param name="endOfMessage">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Net.WebSockets.WebSocketReceiveResult" /> class.</para>
+        </summary>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes received.</param>
+        <param name="messageType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of message that was received.</param>
+        <param name="endOfMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether this is the final message.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,13 +59,21 @@
         <Parameter Name="closeStatusDescription" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="count">To be added.</param>
-        <param name="messageType">To be added.</param>
-        <param name="endOfMessage">To be added.</param>
-        <param name="closeStatus">To be added.</param>
-        <param name="closeStatusDescription">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Net.WebSockets.WebSocketReceiveResult" /> class.</para>
+        </summary>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes received.</param>
+        <param name="messageType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of message that was received.</param>
+        <param name="endOfMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether this is the final message.</param>
+        <param name="closeStatus">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates the <see cref="T:System.Net.WebSockets.WebSocketCloseStatus" /> of the connection.</param>
+        <param name="closeStatusDescription">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of <paramref name="closeStatus" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CloseStatus">
@@ -69,9 +87,12 @@
         <ReturnType>System.Nullable&lt;System.Net.WebSockets.WebSocketCloseStatus&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the reason why the remote endpoint initiated the close handshake.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseStatusDescription">
@@ -85,9 +106,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the optional description that describes why the close handshake has been initiated by the remote endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -101,9 +125,23 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Count can be 0 in two cases:</para>
+          <list type="ordered">
+            <item>
+              <para>The WebSocket received an empty message. In this case the <see cref="P:System.Net.WebSockets.WebSocketReceiveResult.CloseStatus" /> property is None.</para>
+            </item>
+            <item>
+              <para>The WebSocket received a close message was received from the remote endpoint. In this case the <see cref="P:System.Net.WebSockets.WebSocketReceiveResult.CloseStatus" /> property is set to a value other than None.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the number of bytes that the WebSocket received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndOfMessage">
@@ -117,9 +155,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the message has been received completely.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageType">
@@ -133,9 +174,12 @@
         <ReturnType>System.Net.WebSockets.WebSocketMessageType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the current message is a UTF-8 message or a binary message.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

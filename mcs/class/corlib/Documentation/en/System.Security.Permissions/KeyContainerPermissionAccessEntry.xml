@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyContainerPermissionAccessEntry" FullName="System.Security.Permissions.KeyContainerPermissionAccessEntry">
   <TypeSignature Language="C#" Value="public sealed class KeyContainerPermissionAccessEntry" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit KeyContainerPermissionAccessEntry extends System.Object" />
@@ -16,9 +17,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This permission is intended to enable users to easily manage key containers when either a small number of keys is involved, or access is to be granted to only some keys.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies access rights for specific key containers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,11 +41,19 @@
         <Parameter Name="flags" Type="System.Security.Permissions.KeyContainerPermissionFlags" />
       </Parameters>
       <Docs>
-        <param name="parameters">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor allows access rights to be assigned for specific key containers identified in a <see cref="T:System.Security.Cryptography.CspParameters" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> class, using the specified cryptographic service provider (CSP) parameters and access permissions.</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Cryptography.CspParameters" /> object that contains the cryptographic service provider (CSP) parameters. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Security.Permissions.KeyContainerPermissionFlags" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,11 +69,19 @@
         <Parameter Name="flags" Type="System.Security.Permissions.KeyContainerPermissionFlags" />
       </Parameters>
       <Docs>
-        <param name="keyContainerName">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor allows you to specify access rights for specific key containers identified by name; use an asterisk ("*") to represent all the key containers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> class, using the specified key container name and access permissions.</para>
+        </summary>
+        <param name="keyContainerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the key container. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Security.Permissions.KeyContainerPermissionFlags" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -78,15 +101,27 @@
         <Parameter Name="flags" Type="System.Security.Permissions.KeyContainerPermissionFlags" />
       </Parameters>
       <Docs>
-        <param name="keyStore">To be added.</param>
-        <param name="providerName">To be added.</param>
-        <param name="providerType">To be added.</param>
-        <param name="keyContainerName">To be added.</param>
-        <param name="keySpec">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor allows access rights to be assigned for specific key containers. A <paramref name="keySpec" /> or <paramref name="providerType" /> value of –1 represents all key specifications or provider types. A <paramref name="keyStore" />, <paramref name="providerName" />, or <paramref name="keyContainerName" /> of "*" represents all key stores, providers, or key containers. A <paramref name="providerName" /> or <paramref name="keyContainerName" /> that is null represents all providers or key containers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> class with the specified property values.</para>
+        </summary>
+        <param name="keyStore">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the key store. </param>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the provider. </param>
+        <param name="providerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type code for the provider. See the <see cref="P:System.Security.Permissions.KeyContainerPermissionAccessEntry.ProviderType" /> property for values. </param>
+        <param name="keyContainerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the key container. </param>
+        <param name="keySpec">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key specification. See the <see cref="P:System.Security.Permissions.KeyContainerPermissionAccessEntry.KeySpec" /> property for values. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Security.Permissions.KeyContainerPermissionFlags" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -104,11 +139,21 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Permissions.KeyContainerPermissionAccessEntry.Equals(System.Object)" /> method compares the properties of the two <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> objects to determine if they are equal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> object is equal to the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> is equal to the current <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> object; otherwise, false.</para>
+        </returns>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> object to compare with the currentinstance. </param>
       </Docs>
     </Member>
     <Member MemberName="Flags">
@@ -123,10 +168,19 @@
         <ReturnType>System.Security.Permissions.KeyContainerPermissionFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Many of these flags are powerful and permit access to key containers that should only be granted to highly trusted code.</para>
+          </block>
+          <para>The most powerful of the flags are <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Create" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Delete" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Import" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Export" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" />, <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Decrypt" />, and <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.AllFlags" />. For specific threats posed by the use of these flags, see individual flag descriptions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key container permissions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -142,10 +196,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for the <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" />, suitable for use in hashing algorithms and data structures such as a hash table.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a hash code for the current instance that is suitable for use in hashing algorithms and data structures such as a hash table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Security.Permissions.KeyContainerPermissionAccessEntry" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="KeyContainerName">
@@ -160,10 +223,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a value of "*" to apply the access entry to all key containers within the specified provider name and provider type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key container name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeySpec">
@@ -178,10 +247,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Valid values for this property are AT_KEYEXCHANGE (1) and AT_SIGNATURE (2). The default value is –1, representing all possible values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key specification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyStore">
@@ -196,10 +271,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Valid values are "User", "Machine", or "*". If null is specified, the value is set to "*".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the key store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProviderName">
@@ -214,10 +295,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of a provider name is "Microsoft Enhanced Cryptographic Provider". If null is specified, the enhanced cryptographic provider name is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the provider name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProviderType">
@@ -232,10 +319,73 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is –1, representing all possible values.</para>
+          <para>The Wincrypt.h header file defines the following values: </para>
+          <list type="bullet">
+            <item>
+              <para>#define PROV_RSA_FULL 1 </para>
+            </item>
+            <item>
+              <para>#define PROV_RSA_SIG 2 </para>
+            </item>
+            <item>
+              <para>#define PROV_DSS 3</para>
+            </item>
+            <item>
+              <para>#define PROV_FORTEZZA 4 </para>
+            </item>
+            <item>
+              <para>#define PROV_MS_EXCHANGE 5 </para>
+            </item>
+            <item>
+              <para>#define PROV_SSL 6 </para>
+            </item>
+            <item>
+              <para>#define PROV_RSA_SCHANNEL 12 </para>
+            </item>
+            <item>
+              <para>#define PROV_DSS_DH 13 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECDSA_SIG 14 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECNRA_SIG 15 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECDSA_FULL 16 </para>
+            </item>
+            <item>
+              <para>#define PROV_EC_ECNRA_FULL 17 </para>
+            </item>
+            <item>
+              <para>#define PROV_DH_SCHANNEL 18 </para>
+            </item>
+            <item>
+              <para>#define PROV_SPYRUS_LYNKS 20 </para>
+            </item>
+            <item>
+              <para>#define PROV_RNG 21 </para>
+            </item>
+            <item>
+              <para>#define PROV_INTEL_SEC 22 </para>
+            </item>
+            <item>
+              <para>#define PROV_REPLACE_OWF 23 </para>
+            </item>
+            <item>
+              <para>#define PROV_RSA_AES 24 </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the provider type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

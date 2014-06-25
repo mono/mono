@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventHandlerService" FullName="System.Windows.Forms.Design.EventHandlerService">
   <TypeSignature Language="C#" Value="public sealed class EventHandlerService" />
   <AssemblyInfo>
@@ -10,8 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Developers may want to be able to write code in one place that handles events of a certain type.</para>
+      <para>Also, developers may need to globally change the behavior of the handlers for specific events or types of events, which may be distributed among designer components.</para>
+      <para>The designers for a typical project are many different objects so it can be useful to list and store reference to these events from a common place.</para>
+      <para>This service implements an "event stack" that contains the current set of event handlers. The stack may have a variety of different types of handlers on the stack.</para>
+      <para>For example, a designer might push, or add, a keyboard handler and a mouse handler onto the stack. When a designer requests an event handler, the service will find the topmost handler on the stack that matches the class you requested.</para>
+      <para>This way the service can be extended to any eventing scheme, and it also allows specific types of event handlers to be replaced. For example, you can replace mouse event handlers without affecting menu event handlers or keyboard event handlers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a systematic way to manage event handlers for the current document.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,9 +33,13 @@
         <Parameter Name="focusWnd" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="focusWnd">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.EventHandlerService" /> class. </para>
+        </summary>
+        <param name="focusWnd">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> which is being designed.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -37,8 +53,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fires an OnEventHandlerChanged event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,9 +71,12 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control to which event handlers are attached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -71,10 +93,20 @@
         <Parameter Name="handlerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="handlerType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should never cache this value because other components are free to change it. This call is fairly quick, however, especially for cases when you are always asking for the same type of handler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently active event handler of the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the handler, or null if there is no handler of the requested type.</para>
+        </returns>
+        <param name="handlerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the handler to get. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,9 +123,16 @@
         <Parameter Name="handler" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the handler is not the topmost component on the stack, this will pop all handlers up to and including handler.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops the given handler off of the stack.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to remove from the stack. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,9 +149,16 @@
         <Parameter Name="handler" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This handler will be used by all components that request a compatible handler type. If this handler does not support the requested type, the next handler on the stack will be used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a new event handler on the stack.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to add to the stack. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

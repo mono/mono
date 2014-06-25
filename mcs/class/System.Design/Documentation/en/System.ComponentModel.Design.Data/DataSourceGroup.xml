@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSourceGroup" FullName="System.ComponentModel.Design.Data.DataSourceGroup">
   <TypeSignature Language="C#" Value="public abstract class DataSourceGroup" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the basic functionality required by a single data source at the EnvDTE.Project level.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +25,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DataSourceGroup" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataSources">
@@ -35,9 +42,12 @@
         <ReturnType>System.ComponentModel.Design.Data.DataSourceDescriptorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the collection of descriptors for the data sources in this group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Image">
@@ -50,9 +60,15 @@
         <ReturnType>System.Drawing.Bitmap</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Bitmap" /> image that represents the group is typically used in design-time pickers. The image may be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the <see cref="T:System.Drawing.Bitmap" /> image that represents the group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsDefault">
@@ -65,9 +81,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the value indicating whether this group is the default group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -80,9 +99,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the group must be unique across all data sources groups at the EnvDTE.Project level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the name of the group.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

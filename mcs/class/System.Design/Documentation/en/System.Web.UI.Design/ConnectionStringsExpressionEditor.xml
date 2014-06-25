@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConnectionStringsExpressionEditor" FullName="System.Web.UI.Design.ConnectionStringsExpressionEditor">
   <TypeSignature Language="C#" Value="public class ConnectionStringsExpressionEditor : System.Web.UI.Design.ExpressionEditor" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A visual designer host, such as vsprvslong, uses the <see cref="T:System.Web.UI.Design.ConnectionStringsExpressionEditor" /> class to select a connection string from the connectionStrings configuration section.</para>
+      <para>The <see cref="T:System.Web.UI.Design.ConnectionStringsExpressionEditor" /> class is derived from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class, and although it is public for technical reasons, there is no advantage in deriving from it.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties and methods for selecting a data connection expression that is associated with a control property at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ConnectionStringsExpressionEditor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,14 +51,29 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="parseTimeData">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ConnectionStringsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method looks up the connection name and type specified by <paramref name="expression" />, and then returns the connection.</para>
+          <para>The visual designer uses the <see cref="M:System.Web.UI.Design.ConnectionStringsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method to evaluate a connection string expression and provide the design-time value for an associated control property. The visual designer uses the <see cref="M:System.Web.Compilation.ConnectionStringsExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" /> method to parse the expression string at design time, and then calls the <see cref="M:System.Web.UI.Design.ConnectionStringsExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method with the parsed expression data. The visual designer uses the evaluated expression result to assign control property values that are rendered on the design surface.</para>
+          <para>At run time, the page parser uses the <see cref="M:System.Web.Compilation.ConnectionStringsExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> and <see cref="M:System.Web.Compilation.ConnectionStringsExpressionBuilder.GetCodeExpression(System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> methods of the corresponding <see cref="T:System.Web.Compilation.ConnectionStringsExpressionBuilder" /> implementation to evaluate an expression and provide the run-time value for an associated control property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates a connection string expression and provides the design-time value for a control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by the evaluated expression string if the expression evaluation succeeded; otherwise, null.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A connection string expression to evaluate. The expression does not include the ConnectionStrings expression prefix.</param>
+        <param name="parseTimeData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing additional parsing information for evaluating the expression.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the control property.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,12 +90,23 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ConnectionStringsExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns an editor sheet implementation for connection string expressions. The editor sheet for connection string expressions allows users to select a connection name and type, based on the current connection strings that are defined in the <format type="text/html"><a href="b6ffbb2e-a4d1-410e-8f7e-9755e92c65de">connectionStrings</a></format> section of the Web configuration file. Once users have selected the connection expression properties, the editor sheet implementation combines the connection name and type into a connection string expression, which is returned to the visual designer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an expression editor sheet for a connection string expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> instance that defines the connection string expression properties.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression string set for a control property, used to initialize the expression editor sheet. The expression does not include the ConnectionStrings expression prefix.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

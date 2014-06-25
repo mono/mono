@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IResourceProvider" FullName="System.Web.Compilation.IResourceProvider">
   <TypeSignature Language="C#" Value="public interface IResourceProvider" />
   <AssemblyInfo>
@@ -6,9 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A resource provider facilitates the retrieving of values from a resource file. When an expression of the form &lt;%$ Resources: classKey, resourceKey %&gt; is encountered during page parsing, the resource provider returns the localized value for the resource. The <see cref="T:System.Web.Compilation.ResourceProviderFactory" /> class creates instances of <see cref="T:System.Web.Compilation.IResourceProvider" /> objects for use in retrieving the values.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface a class must implement to act as a resource provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetObject">
@@ -22,12 +29,23 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="resourceKey">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, the <see cref="M:System.Web.Compilation.IResourceProvider.GetObject(System.String,System.Globalization.CultureInfo)" /> method returns the localized value for a resource key based on the current culture. The implementing class could retrieve the <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> property if a value for the <paramref name="culture" /> parameter is not passed in. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a resource object for the key and culture.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the resource value for the <paramref name="resourceKey" /> and <paramref name="culture" />.</para>
+        </returns>
+        <param name="resourceKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifying a particular resource.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The culture identifying a localized value for the resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,10 +58,16 @@
         <ReturnType>System.Resources.IResourceReader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Resources.IResourceReader" /> object reads sequential name/value pairs from a source. The <see cref="T:System.Resources.ResourceReader" /> and <see cref="T:System.Resources.ResXResourceReader" /> classes provide default <see cref="T:System.Resources.IResourceReader" /> interface implementation for reading from .resources and .resx files, respectively. Other implementations of the <see cref="T:System.Web.Compilation.IResourceProvider" /> interface could read from any source containing resource values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object to read resource values from a source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

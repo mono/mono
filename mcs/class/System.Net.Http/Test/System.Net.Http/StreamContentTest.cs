@@ -310,6 +310,16 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_ToString ()
+		{
+			var sc = new StreamContent (new MemoryStream ());
+			var headers = sc.Headers;
+			headers.ContentMD5 = new byte[] { 3, 5 };
+
+			Assert.AreEqual ("Content-MD5: AwU=\r\n", headers.ToString (), "#1");
+		}
+
+		[Test]
 		public void Headers_Invalid ()
 		{
 			var sc = new StreamContent (MemoryStream.Null);

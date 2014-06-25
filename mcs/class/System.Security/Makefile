@@ -4,21 +4,15 @@ include ../../build/rules.make
 
 LIBRARY = System.Security.dll
 LIB_MCS_FLAGS = -nowarn:618 \
-	-r:$(corlib) -r:System.dll -r:System.Xml.dll
+	-d:SECURITY_DEP \
+	-r:$(corlib) -r:System.dll -r:System.Xml.dll \
+	-r:Mono.Security.dll -nowarn:414
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,1595
+LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
 
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += -r:Mono.Security.dll -nowarn:414
-TEST_MCS_FLAGS += -nowarn:168,183,414
-endif
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:168,169,183,219,414,1595
 
 VALID_PROFILE := $(filter net_1_1 net_2_0 moonlight_raw net_4_0 net_4_5, $(PROFILE))
-ifndef VALID_PROFILE
-# @echo "** Warning: System.Security.dll built without parts that depend on: Mono.Security.dll "
-else
- LIB_MCS_FLAGS += -d:SECURITY_DEP
-endif
 
 EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Xml/sample.pfx \
@@ -29,6 +23,16 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Pkcs/detached.p7
 
 include ../../build/library.make
+
+$(build_lib): $(secxml_libdir)/System.dll $(the_libdir_base)/Mono.Security.dll
+
+$(secxml_libdir)/System.dll:
+	(cd ../System; $(MAKE) $@)
+
+$(the_libdir_base)/Mono.Security.dll:
+	(cd ../Mono.Security; $(MAKE))
+
+.NOTPARALLEL: $(secxml_libdir)/System.dll $(bare_libdir)/Mono.Security.dll
 
 # run the PKITS tests only if the data was installed/activated, otherwise ignore them
 ifeq (net_2_0, $(PROFILE))

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCellParsingEventArgs" FullName="System.Windows.Forms.DataGridViewCellParsingEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewCellParsingEventArgs : System.Windows.Forms.ConvertEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.CellParsing" /> event to provide custom value conversion from a user-specified value to a value in the type specified by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> property.</para>
+      <para>When you handle the <see cref="E:System.Windows.Forms.DataGridView.CellParsing" /> event, you can convert the value yourself or you can customize the default conversion. For example, you can convert the value yourself using the cell <see cref="M:System.Windows.Forms.DataGridViewCell.ParseFormattedValue(System.Object,System.Windows.Forms.DataGridViewCellStyle,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter)" /> method with type converters of your choosing. Alternately, you can let the default type converters parse the value, but modify the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.InheritedCellStyle" /> property, which is initialized using the cell <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property. </para>
+      <para>When you convert the value yourself, replace the initial, formatted value of the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property with the converted value in the type specified by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> property. To indicate that no further parsing is necessary, set the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.ParsingApplied" /> property to true. </para>
+      <para>When the event handler completes, if the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> is null or is not of the correct type, or the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.ParsingApplied" /> property is false, the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> is parsed using the cell <see cref="M:System.Windows.Forms.DataGridViewCell.ParseFormattedValue(System.Object,System.Windows.Forms.DataGridViewCellStyle,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter)" /> method with default type converters. The default implementation of this method parses the value using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties of the cell style passed in. If the value is not equal to <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, the value is parsed using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> property and the type converters passed in. </para>
+      <para>To customize the conversion of a cell value into a formatted value for display, handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.CellParsing" /> event of a <see cref="T:System.Windows.Forms.DataGridView" /> control. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,14 +37,22 @@
         <Parameter Name="inheritedCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="columnIndex">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="desiredType">To be added.</param>
-        <param name="inheritedCellStyle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewCellParsingEventArgs" /> class. </para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell that was changed.</param>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column index of the cell that was changed.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value.</param>
+        <param name="desiredType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the new value.</param>
+        <param name="inheritedCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The style applied to the cell that was changed.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +65,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.ColumnIndex" /> property to obtain an index into the <see cref="P:System.Windows.Forms.DataGridView.Columns" /> property of a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column index of the cell data that requires parsing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +87,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine the formatting in effect for the cell. Setting this property or changing the properties of the object that this property returns has no effect unless the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.ParsingApplied" /> is false when the event handler exits. In this case, the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties of the cell style are used to parse the cell value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style applied to the edited cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +109,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewCellParsingEventHandler" /> sets the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.ParsingApplied" /> property to indicate whether the new cell value was successfully parsed and no further conversion is necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a cell's value has been successfully parsed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +131,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.DataGridViewCellParsingEventArgs.RowIndex" /> property to obtain an index into the <see cref="P:System.Windows.Forms.DataGridView.Rows" /> property of a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the row index of the cell that requires parsing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

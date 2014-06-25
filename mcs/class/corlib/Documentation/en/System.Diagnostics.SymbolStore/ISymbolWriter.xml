@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISymbolWriter" FullName="System.Diagnostics.SymbolStore.ISymbolWriter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolWriter" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolWriter" />
@@ -16,8 +17,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Diagnostics.SymbolStore.ISymbolWriter" /> interface provides methods that define documents, sequence points, lexical scopes, and variables.</para>
+      <block subset="none" type="note">
+        <para>This interface is the managed counterpart of the ISymUnmanagedWriter interface, which is one of the unmanaged symbol store interfaces that provides an alternative way to read and write debug symbol information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a symbol writer for managed code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -34,8 +44,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this call, <see cref="T:System.Diagnostics.SymbolStore.ISymbolWriter" /> becomes invalid for further updates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes <see cref="T:System.Diagnostics.SymbolStore.ISymbolWriter" /> and commits the symbols to the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseMethod">
@@ -52,8 +68,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After a method is closed, you cannot define a symbol from within it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseNamespace">
@@ -70,8 +92,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the most recent namespace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseScope">
@@ -90,9 +115,16 @@
         <Parameter Name="endOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="endOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After a scope is closed, you cannot define a variable from within it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current lexical scope.</para>
+        </summary>
+        <param name="endOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The points past the last instruction in the scope. </param>
       </Docs>
     </Member>
     <Member MemberName="DefineDocument">
@@ -114,13 +146,23 @@
         <Parameter Name="documentType" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="language">To be added: an object of type 'Guid'</param>
-        <param name="languageVendor">To be added: an object of type 'Guid'</param>
-        <param name="documentType">To be added: an object of type 'Guid'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISymbolDocumentWriter'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a source document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that represents the document.</para>
+        </returns>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL that identifies the document. </param>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document language. This parameter can be <see cref="F:System.Guid.Empty" />. </param>
+        <param name="languageVendor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identity of the vendor for the document language. This parameter can be <see cref="F:System.Guid.Empty" />. </param>
+        <param name="documentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the document. This parameter can be <see cref="F:System.Guid.Empty" />. </param>
       </Docs>
     </Member>
     <Member MemberName="DefineField">
@@ -146,16 +188,30 @@
         <Parameter Name="addr3" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added: an object of type 'SymbolToken'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.FieldAttributes'</param>
-        <param name="signature">To be added: an object of type 'byte []'</param>
-        <param name="addrKind">To be added: an object of type 'SymAddressKind'</param>
-        <param name="addr1">To be added: an object of type 'int'</param>
-        <param name="addr2">To be added: an object of type 'int'</param>
-        <param name="addr3">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.DefineField(System.Diagnostics.SymbolStore.SymbolToken,System.String,System.Reflection.FieldAttributes,System.Byte[],System.Diagnostics.SymbolStore.SymAddressKind,System.Int32,System.Int32,System.Int32)" /> method defines a single variable that is not within a method by using specified fields in classes, bit fields, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a field in a type or a global field.</para>
+        </summary>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata type or method token. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field name. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the field attributes. </param>
+        <param name="signature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The field signature. </param>
+        <param name="addrKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address types for <paramref name="addr1" /> and <paramref name="addr2" />. </param>
+        <param name="addr1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first address for the field specification. </param>
+        <param name="addr2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second address for the field specification. </param>
+        <param name="addr3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third address for the field specification. </param>
       </Docs>
     </Member>
     <Member MemberName="DefineGlobalVariable">
@@ -180,15 +236,25 @@
         <Parameter Name="addr3" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.FieldAttributes'</param>
-        <param name="signature">To be added: an object of type 'byte []'</param>
-        <param name="addrKind">To be added: an object of type 'SymAddressKind'</param>
-        <param name="addr1">To be added: an object of type 'int'</param>
-        <param name="addr2">To be added: an object of type 'int'</param>
-        <param name="addr3">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a single global variable.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The global variable name. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the global variable attributes. </param>
+        <param name="signature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The global variable signature. </param>
+        <param name="addrKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address types for <paramref name="addr1" />, <paramref name="addr2" />, and <paramref name="addr3" />. </param>
+        <param name="addr1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first address for the global variable specification. </param>
+        <param name="addr2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second address for the global variable specification. </param>
+        <param name="addr3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third address for the global variable specification. </param>
       </Docs>
     </Member>
     <Member MemberName="DefineLocalVariable">
@@ -215,17 +281,33 @@
         <Parameter Name="endOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.FieldAttributes'</param>
-        <param name="signature">To be added: an object of type 'byte []'</param>
-        <param name="addrKind">To be added: an object of type 'SymAddressKind'</param>
-        <param name="addr1">To be added: an object of type 'int'</param>
-        <param name="addr2">To be added: an object of type 'int'</param>
-        <param name="addr3">To be added: an object of type 'int'</param>
-        <param name="startOffset">To be added: an object of type 'int'</param>
-        <param name="endOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="startOffset" /> and <paramref name="endOffset" /> parameters are optional. If their value is zero, they are ignored and the variable is defined throughout the entire scope. If their value is nonzero, the variable falls within the offsets of the current scope.</para>
+          <para>You can call <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.DefineLocalVariable(System.String,System.Reflection.FieldAttributes,System.Byte[],System.Diagnostics.SymbolStore.SymAddressKind,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" /> multiple times for a variable of the same name that occurs multiple times in different offset ranges throughout a scope. (In this case, start and end offsets must not overlap.) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a single variable in the current lexical scope.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local variable name. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the local variable attributes. </param>
+        <param name="signature">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local variable signature. </param>
+        <param name="addrKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address types for <paramref name="addr1" />, <paramref name="addr2" />, and <paramref name="addr3" />. </param>
+        <param name="addr1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first address for the local variable specification. </param>
+        <param name="addr2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second address for the local variable specification. </param>
+        <param name="addr3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third address for the local variable specification. </param>
+        <param name="startOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The start offset for the variable. If this parameter is zero, it is ignored and the variable is defined throughout the entire scope. If the parameter is nonzero, the variable falls within the offsets of the current scope. </param>
+        <param name="endOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end offset for the variable. If this parameter is zero, it is ignored and the variable is defined throughout the entire scope. If the parameter is nonzero, the variable falls within the offsets of the current scope. </param>
       </Docs>
     </Member>
     <Member MemberName="DefineParameter">
@@ -250,15 +332,28 @@
         <Parameter Name="addr3" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="attributes">To be added: an object of type 'Reflection.ParameterAttributes'</param>
-        <param name="sequence">To be added: an object of type 'int'</param>
-        <param name="addrKind">To be added: an object of type 'SymAddressKind'</param>
-        <param name="addr1">To be added: an object of type 'int'</param>
-        <param name="addr2">To be added: an object of type 'int'</param>
-        <param name="addr3">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If parameters are defined in the metadata for a given method, you do not have to define them again with calls to this method. Symbol readers need to check for these in the normal metadata first, and then use the symbol store.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a single parameter in the current method. The type of each parameter is taken from its position within the signature of the method.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter name. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the parameter attributes. </param>
+        <param name="sequence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter signature. </param>
+        <param name="addrKind">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address types for <paramref name="addr1" />, <paramref name="addr2" />, and <paramref name="addr3" />. </param>
+        <param name="addr1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first address for the parameter specification. </param>
+        <param name="addr2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second address for the parameter specification. </param>
+        <param name="addr3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third address for the parameter specification. </param>
       </Docs>
     </Member>
     <Member MemberName="DefineSequencePoints">
@@ -282,14 +377,26 @@
         <Parameter Name="endColumns" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'ISymbolDocumentWriter'</param>
-        <param name="offsets">To be added: an object of type 'int []'</param>
-        <param name="lines">To be added: an object of type 'int []'</param>
-        <param name="columns">To be added: an object of type 'int []'</param>
-        <param name="endLines">To be added: an object of type 'int []'</param>
-        <param name="endColumns">To be added: an object of type 'int []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each line and each column defines the start of a statement within a method. The arrays should be sorted in increasing order of offsets. The offset is always the offset from the start of the method, in bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a group of sequence points within the current method.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document object for which the sequence points are being defined. </param>
+        <param name="offsets">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence point offsets measured from the beginning of methods. </param>
+        <param name="lines">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document lines for the sequence points. </param>
+        <param name="columns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document positions for the sequence points. </param>
+        <param name="endLines">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document end lines for the sequence points. </param>
+        <param name="endColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document end positions for the sequence points. </param>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -310,11 +417,21 @@
         <Parameter Name="fFullBuild" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="emitter">To be added: an object of type 'IntPtr'</param>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="fFullBuild">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.Initialize(System.IntPtr,System.String,System.Boolean)" /> also sets the output file name where the debugging symbols are written. This method can be called only once and must be called before any other writer methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the metadata emitter interface to associate with a writer.</para>
+        </summary>
+        <param name="emitter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata emitter interface. </param>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name for which the debugging symbols are written. Some writers require a file name, and others do not. If a file name is specified for a writer that does not use file names, this parameter is ignored. </param>
+        <param name="fFullBuild">
+          <attribution license="cc4" from="Microsoft" modified="false" />true indicates that this is a full rebuild; false indicates that this is an incremental compilation. </param>
       </Docs>
     </Member>
     <Member MemberName="OpenMethod">
@@ -333,9 +450,16 @@
         <Parameter Name="method" Type="System.Diagnostics.SymbolStore.SymbolToken" />
       </Parameters>
       <Docs>
-        <param name="method">To be added: an object of type 'SymbolToken'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified method becomes the current method for calls to define sequence points, parameters, and lexical scopes. There is an implicit lexical scope around the entire method. Reopening a method that has been previously closed erases any previously defined symbols for the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a method to place symbol information into.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata token for the method to be opened. </param>
       </Docs>
     </Member>
     <Member MemberName="OpenNamespace">
@@ -354,9 +478,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method before defining methods or variables that exist within a namespace. Namespaces can be nested.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a new namespace.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new namespace. </param>
       </Docs>
     </Member>
     <Member MemberName="OpenScope">
@@ -375,10 +506,21 @@
         <Parameter Name="startOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="startOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This scope becomes the new current scope and is pushed onto a stack of scopes. Scopes must form a hierarchy. Siblings are not allowed to overlap.</para>
+          <para>Scope identifiers are valid only in the current method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a new lexical scope in the current method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An opaque scope identifier that can be used with <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.SetScopeRange(System.Int32,System.Int32,System.Int32)" /> to define the start and end offsets of a scope at a later time. In this case, the offsets passed to <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.OpenScope(System.Int32)" /> and <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.CloseScope(System.Int32)" /> are ignored. A scope identifier is valid only in the current method.</para>
+        </returns>
+        <param name="startOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset, in bytes, from the beginning of the method to the first instruction in the lexical scope. </param>
       </Docs>
     </Member>
     <Member MemberName="SetMethodSourceRange">
@@ -402,14 +544,23 @@
         <Parameter Name="endColumn" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="startDoc">To be added: an object of type 'ISymbolDocumentWriter'</param>
-        <param name="startLine">To be added: an object of type 'int'</param>
-        <param name="startColumn">To be added: an object of type 'int'</param>
-        <param name="endDoc">To be added: an object of type 'ISymbolDocumentWriter'</param>
-        <param name="endLine">To be added: an object of type 'int'</param>
-        <param name="endColumn">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the true start and end of a method within a source file. Use <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.SetMethodSourceRange(System.Diagnostics.SymbolStore.ISymbolDocumentWriter,System.Int32,System.Int32,System.Diagnostics.SymbolStore.ISymbolDocumentWriter,System.Int32,System.Int32)" /> to specify the extent of a method, independent of the sequence points that exist within the method.</para>
+        </summary>
+        <param name="startDoc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document that contains the starting position. </param>
+        <param name="startLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting line number. </param>
+        <param name="startColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting column. </param>
+        <param name="endDoc">
+          <attribution license="cc4" from="Microsoft" modified="false" />The document that contains the ending position. </param>
+        <param name="endLine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending line number. </param>
+        <param name="endColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending column number. </param>
       </Docs>
     </Member>
     <Member MemberName="SetScopeRange">
@@ -430,11 +581,17 @@
         <Parameter Name="endOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="scopeID">To be added: an object of type 'int'</param>
-        <param name="startOffset">To be added: an object of type 'int'</param>
-        <param name="endOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the offset range for the specified lexical scope.</para>
+        </summary>
+        <param name="scopeID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier of the lexical scope. </param>
+        <param name="startOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset of the beginning of the lexical scope. </param>
+        <param name="endOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte offset of the end of the lexical scope. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSymAttribute">
@@ -455,11 +612,20 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added: an object of type 'SymbolToken'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="data">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.SymbolStore.ISymbolWriter.SetSymAttribute(System.Diagnostics.SymbolStore.SymbolToken,System.String,System.Byte[])" /> method is only associated with symbolic information and is not a metadata custom attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an attribute when given the attribute name and the attribute value.</para>
+        </summary>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata token for which the attribute is being defined. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute name. </param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute value. </param>
       </Docs>
     </Member>
     <Member MemberName="SetUnderlyingWriter">
@@ -478,9 +644,16 @@
         <Parameter Name="underlyingWriter" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="underlyingWriter">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying ISymUnmanagedWriter (the corresponding unmanaged interface) represents a symbol writer for managed code. The interface provides methods for defining documents, sequence points, lexical scopes, and variables.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the underlying ISymUnmanagedWriter (the corresponding unmanaged interface) that a managed <see cref="T:System.Diagnostics.SymbolStore.ISymbolWriter" /> uses to emit symbols.</para>
+        </summary>
+        <param name="underlyingWriter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to code that represents the underlying writer. </param>
       </Docs>
     </Member>
     <Member MemberName="SetUserEntryPoint">
@@ -499,9 +672,16 @@
         <Parameter Name="entryMethod" Type="System.Diagnostics.SymbolStore.SymbolToken" />
       </Parameters>
       <Docs>
-        <param name="entryMethod">To be added: an object of type 'SymbolToken'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is normally your main method, rather than compiler-generated stubs before the main method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the user-defined method as the entry point for the current module.</para>
+        </summary>
+        <param name="entryMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata token for the method that is the user entry point. </param>
       </Docs>
     </Member>
     <Member MemberName="UsingNamespace">
@@ -520,9 +700,16 @@
         <Parameter Name="fullName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fullName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closing the current scope prevents this scope from using the namespace. The namespace remains in use in all scopes that inherit from the current open scope.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the given, fully qualified namespace name is used within the open lexical scope.</para>
+        </summary>
+        <param name="fullName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the namespace. </param>
       </Docs>
     </Member>
   </Members>

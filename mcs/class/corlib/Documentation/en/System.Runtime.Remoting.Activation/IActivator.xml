@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IActivator" FullName="System.Runtime.Remoting.Activation.IActivator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IActivator" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IActivator" />
@@ -16,8 +17,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Activators control and participate in the activation of marshal by reference objects. Some activators create contexts, whereas others create actual objects.</para>
+      <para>Activators use the <see cref="P:System.Runtime.Remoting.Activation.IActivator.NextActivator" /> property to form a hierarchy that must be observed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the basic functionality for a remoting activator class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Activate">
@@ -36,10 +44,17 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'IConstructionCallMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IConstructionReturnMessage'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the object that is specified in the provided <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Status of the object activation contained in a <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" />.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The information about the object that is needed to activate it, stored in a <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Level">
@@ -55,9 +70,15 @@
         <ReturnType>System.Runtime.Remoting.Activation.ActivatorLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ActivatorLevel'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Remoting.Activation.IActivator.Level" /> is used to locate the right position in the chain when adding an activator.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.Remoting.Activation.ActivatorLevel" /> where this activator is active.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NextActivator">
@@ -73,9 +94,12 @@
         <ReturnType>System.Runtime.Remoting.Activation.IActivator</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the next activator in the chain.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

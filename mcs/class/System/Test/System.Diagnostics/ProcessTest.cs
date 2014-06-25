@@ -828,5 +828,16 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
 		}
 #endif
+
+		[Test]
+		public void Handle_ThrowsOnNotStarted ()
+		{
+			Process p = new Process ();
+			try {
+				var x = p.Handle;
+				Assert.Fail ("Handle should throw for unstated procs, but returned " + x);
+			} catch (InvalidOperationException ex) {
+			}
+		}
 	}
 }

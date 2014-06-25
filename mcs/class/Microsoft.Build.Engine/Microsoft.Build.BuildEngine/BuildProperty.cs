@@ -121,10 +121,8 @@ namespace Microsoft.Build.BuildEngine {
 			BuildProperty evaluated = new BuildProperty (Name, Value);
 
 			// In evaluate phase, properties are not expanded
-			Expression exp = new Expression ();
-			exp.Parse (Value, ParseOptions.None);
-			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string),
-					ExpressionOptions.DoNotExpandItemRefs);
+			evaluated.finalValue = Expression.ParseAs<string> (Value, ParseOptions.None, 
+				parentProject, ExpressionOptions.DoNotExpandItemRefs);
 
 			parentProject.EvaluatedProperties.AddProperty (evaluated);
 		}

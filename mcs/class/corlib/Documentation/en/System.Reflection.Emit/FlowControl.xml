@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FlowControl" FullName="System.Reflection.Emit.FlowControl">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum FlowControl" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FlowControl extends System.Enum" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes how an instruction alters the flow of control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Branch">
@@ -36,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Branch instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Break">
@@ -54,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Break instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Call">
@@ -72,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cond_Branch">
@@ -90,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conditional branch instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Meta">
@@ -108,8 +124,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides information about a subsequent instruction. For example, the Unaligned instruction of Reflection.Emit.Opcodes has FlowControl.Meta and specifies that the subsequent pointer instruction might be unaligned.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Next">
@@ -126,8 +145,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Normal flow of control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Phi">
@@ -149,8 +171,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This enumerator value is reserved and should not be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Return">
@@ -167,8 +192,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Throw">
@@ -185,8 +213,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exception throw instruction.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

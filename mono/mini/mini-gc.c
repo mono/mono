@@ -436,6 +436,9 @@ static int callee_saved_regs [] = { AMD64_RBP, AMD64_RBX, AMD64_R12, AMD64_R13, 
 static int callee_saved_regs [] = { X86_EBX, X86_ESI, X86_EDI };
 #elif defined(TARGET_ARM)
 static int callee_saved_regs [] = { ARMREG_V1, ARMREG_V2, ARMREG_V3, ARMREG_V4, ARMREG_V5, ARMREG_V7, ARMREG_FP };
+#elif defined(TARGET_ARM64)
+// FIXME:
+static int callee_saved_regs [] = { };
 #elif defined(TARGET_S390X)
 static int callee_saved_regs [] = { s390_r6, s390_r7, s390_r8, s390_r9, s390_r10, s390_r11, s390_r12, s390_r13, s390_r14 };
 #endif
@@ -595,13 +598,15 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 
 	if (tls->tid != GetCurrentThreadId ()) {
 		/* Happens on osx because threads are not suspended using signals */
+#ifndef TARGET_WIN32
 		gboolean res;
+#endif
 
 		g_assert (tls->info);
 #ifdef TARGET_WIN32
 		return;
 #else
-		res = mono_thread_state_init_from_handle (&tls->unwind_state, (MonoNativeThreadId)tls->tid, tls->info->native_handle);
+		res = mono_thread_state_init_from_handle (&tls->unwind_state, tls->info);
 #endif
 	} else {
 		tls->unwind_state.unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
@@ -1866,7 +1871,11 @@ sp_offset_to_fp_offset (MonoCompile *cfg, int sp_offset)
 #elif defined(TARGET_X86)
 	/* The offset is computed from the sp at the start of the call sequence */
 	g_assert (cfg->frame_reg == X86_EBP);
+#ifdef MONO_X86_NO_PUSHES
+	return (- cfg->arch.sp_fp_offset + sp_offset);
+#else
 	return (- cfg->arch.sp_fp_offset - sp_offset);	
+#endif
 #else
 	NOT_IMPLEMENTED;
 	return -1;
@@ -2053,7 +2062,11 @@ compute_frame_size (MonoCompile *cfg)
 #ifdef TARGET_AMD64
 	min_offset = MIN (min_offset, -cfg->arch.sp_fp_offset);
 #elif defined(TARGET_X86)
+#ifdef MONO_X86_NO_PUSHES
+	min_offset = MIN (min_offset, -cfg->arch.sp_fp_offset);
+#else
 	min_offset = MIN (min_offset, - (cfg->arch.sp_fp_offset + cfg->arch.param_area_size));
+#endif
 #elif defined(TARGET_ARM)
 	// FIXME:
 #elif defined(TARGET_s390X)

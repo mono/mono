@@ -6,7 +6,7 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
 LIB_MCS_FLAGS = $(RESOURCE_FILES:%=-resource:%)
-LIBRARY_USE_INTERMEDIATE_FILE = yes
+#LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifeq (basic, $(PROFILE))
 

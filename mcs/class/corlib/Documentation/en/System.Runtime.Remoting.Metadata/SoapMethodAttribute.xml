@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapMethodAttribute" FullName="System.Runtime.Remoting.Metadata.SoapMethodAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SoapMethodAttribute : System.Runtime.Remoting.Metadata.SoapAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SoapMethodAttribute extends System.Runtime.Remoting.Metadata.SoapAttribute" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The target objects for the <see cref="T:System.Runtime.Remoting.Metadata.SoapMethodAttribute" /> attribute are methods that can be remotely invoked. Apply the <see cref="T:System.Runtime.Remoting.Metadata.SoapMethodAttribute" /> to customize SOAP generation and processing. Properties of this attribute allow the programmer to customize the SOAPAction HTTP header field to indicate the intent of the SOAP HTTP request.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Customizes SOAP generation and processing for a method. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.Metadata.SoapMethodAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResponseXmlElementName">
@@ -55,9 +65,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is the string "Response" appended to the name of the method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element name to use for the method response to the target method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResponseXmlNamespace">
@@ -73,9 +89,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element namesapce used for method response to the target method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnXmlElementName">
@@ -91,9 +110,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is the "__return" string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element name used for the return value from the target method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SoapAction">
@@ -109,9 +134,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is currently not implemented.</para>
+          <para>The SOAPAction HTTP request header field indicates the intent of the SOAP HTTP request. For more information on the SOAPAction field, see www.w3.org/tr/soap/#_Toc478383528.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SOAPAction header field used with HTTP requests sent with this method. This property is currently not implemented.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseAttribute">
@@ -127,9 +159,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Remoting.Metadata.SoapTypeAttribute.UseAttribute" /> property cannot be set on the <see cref="T:System.Runtime.Remoting.Metadata.SoapMethodAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the target of the current attribute will be serialized as an XML attribute instead of an XML field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlNamespace">
@@ -145,9 +183,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace that is used during serialization of remote method calls of the target method.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

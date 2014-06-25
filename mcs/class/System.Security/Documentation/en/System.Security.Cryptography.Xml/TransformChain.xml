@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TransformChain" FullName="System.Security.Cryptography.Xml.TransformChain">
   <TypeSignature Language="C#" Value="public class TransformChain" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TransformChain extends System.Object" />
@@ -14,8 +15,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Container class for all transform inside a document.</summary>
-    <remarks>The &lt;Transforms&gt; element is detailled in section 4.3.3.4 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> class contains a list of <see cref="T:System.Security.Cryptography.Xml.Transform" /> objects that determine how to order XML data before creating a digest.</para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> class whenever you need to add one or more transform objects to an encrypted XML document or to a signed XML document. </para>
+      <para>Both the <see cref="T:System.Security.Cryptography.Xml.Reference" /> class and the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class contain a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.  You can add a <see cref="T:System.Security.Cryptography.Xml.Transform" /> object to the <see cref="T:System.Security.Cryptography.Xml.Reference" /> class by calling the <see cref="M:System.Security.Cryptography.Xml.Reference.AddTransform(System.Security.Cryptography.Xml.Transform)" /> method. You can add a <see cref="T:System.Security.Cryptography.Xml.Transform" /> object to the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class by calling the <see cref="M:System.Security.Cryptography.Xml.EncryptedReference.AddTransform(System.Security.Cryptography.Xml.Transform)" /> method.  You can also create a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object manually and pass it to either the <see cref="P:System.Security.Cryptography.Xml.Reference.TransformChain" /> property or the <see cref="P:System.Security.Cryptography.Xml.EncryptedReference.TransformChain" /> property.      </para>
+      <para>If you want to sign only a portion of an XML document, you can use a transform to identify the XML elements you intend to sign.  Note that the <see cref="P:System.Security.Cryptography.Xml.Reference.Uri" /> property and the <see cref="P:System.Security.Cryptography.Xml.EncryptedReference.Uri" /> property automatically create internal transforms that allow you to sign a portion of a document.</para>
+      <para>For more information about transforms, see the XMLDSIG specification, which is available from the W3C at www.w3.org/TR/xmldsig-core/, or see the XML encryption specification, which is available from the W3C at www.w3.org/TR/xmlenc-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an ordered list of <see cref="T:System.Security.Cryptography.Xml.Transform" /> objects that is applied to unsigned content prior to digest calculation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +41,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -50,9 +64,16 @@
         <Parameter Name="transform" Type="System.Security.Cryptography.Xml.Transform" />
       </Parameters>
       <Docs>
-        <param name="transform">a <see cref="T:System.Security.Cryptography.Xml.Transform" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transforms are applied to the unsigned content in the order in which they were added to the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a transform to the list of transforms to be applied to the unsigned content prior to digest calculation.</para>
+        </summary>
+        <param name="transform">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transform to add to the list of transforms. </param>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -69,9 +90,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Int32" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of transforms in the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -88,9 +112,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator of the transforms in the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of the transforms in the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">

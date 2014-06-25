@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeObjectCreateExpression" FullName="System.CodeDom.CodeObjectCreateExpression">
   <TypeSignature Language="C#" Value="public class CodeObjectCreateExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeObjectCreateExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeObjectCreateExpression" /> can be used to represent an expression that creates an instance of a type.</para>
+      <para>The <see cref="P:System.CodeDom.CodeObjectCreateExpression.CreateType" /> property specifies the data type to create a new instance of. The <see cref="P:System.CodeDom.CodeObjectCreateExpression.Parameters" /> property specifies the parameters to pass to the constructor of the type to create a new instance of.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an expression that creates a new instance of a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeObjectCreateExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -64,10 +76,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="createType">To be added: an object of type 'CodeTypeReference'</param>
-        <param name="parameters">To be added: an object of type 'CodeExpression []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeObjectCreateExpression" /> class using the specified type and parameters.</para>
+        </summary>
+        <param name="createType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeReference" /> that indicates the data type of the object to create. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeExpression" /> objects that indicates the parameters to use to create the object. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -91,10 +108,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="createType">To be added: an object of type 'string'</param>
-        <param name="parameters">To be added: an object of type 'CodeExpression []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeObjectCreateExpression" /> class using the specified type and parameters.</para>
+        </summary>
+        <param name="createType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data type of object to create. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeExpression" /> objects that indicates the parameters to use to create the object. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -118,10 +140,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="createType">To be added: an object of type 'Type'</param>
-        <param name="parameters">To be added: an object of type 'CodeExpression []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeObjectCreateExpression" /> class using the specified type and parameters.</para>
+        </summary>
+        <param name="createType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type of the object to create. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeExpression" /> objects that indicates the parameters to use to create the object. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateType">
@@ -139,9 +166,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the object to create.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parameters">
@@ -157,9 +187,12 @@
         <ReturnType>System.CodeDom.CodeExpressionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpressionCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the parameters to use in creating the object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

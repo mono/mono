@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectSecurity&lt;T&gt;" FullName="System.Security.AccessControl.ObjectSecurity&lt;T&gt;">
   <TypeSignature Language="C#" Value="public abstract class ObjectSecurity&lt;T&gt; : System.Security.AccessControl.NativeObjectSecurity where T : struct" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ObjectSecurity`1&lt;struct .ctor (class System.ValueType) T&gt; extends System.Security.AccessControl.NativeObjectSecurity" />
@@ -20,8 +21,14 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Access rights (permissions) are type T, which you can type-cast to or from an int. For example, you can cast a <see cref="T:System.Security.AccessControl.FileSystemRights" /> as the access rights type, and then use the instance normally. In contrast, <see cref="T:System.Security.AccessControl.ObjectSecurity" /> always takes access rights of type int.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the ability to control access to objects without direct manipulation of Access Control Lists (ACLs); also grants the ability to type-cast access rights. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,10 +43,15 @@
         <Parameter Name="resourceType" Type="System.Security.AccessControl.ResourceType" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <param name="resourceType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ObjectSecurity`1 class.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.ObjectSecurity`1" /> object is a container object.</param>
+        <param name="resourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of resource.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -56,12 +68,19 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <param name="resourceType">To be added.</param>
-        <param name="safeHandle">To be added.</param>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ObjectSecurity`1 class.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.ObjectSecurity`1" /> object is a container object.</param>
+        <param name="resourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of resource.</param>
+        <param name="safeHandle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle.</param>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sections to include.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -78,12 +97,19 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <param name="isContainer">To be added.</param>
-        <param name="resourceType">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="includeSections">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ObjectSecurity`1 class.</para>
+        </summary>
+        <param name="isContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the new <see cref="T:System.Security.AccessControl.ObjectSecurity`1" /> object is a container object.</param>
+        <param name="resourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of resource.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the securable object with which the new <see cref="T:System.Security.AccessControl.ObjectSecurity`1" /> object is associated.</param>
+        <param name="includeSections">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sections to include.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -149,9 +175,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Type of the securable object associated with this ObjectSecurity`1 object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AccessRuleFactory">
@@ -173,15 +202,27 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <param name="identityReference">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="isInherited">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ObjectAccessRule class that represents a new access control rule for the associated security object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a new access control rule for the specified user, with the specified access rights, access control, and flags.</para>
+        </returns>
+        <param name="identityReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />Represents a user account.</param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access type.</param>
+        <param name="isInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the access rule is inherited; otherwise, false.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies how to propagate access masks to child objects.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies how to propagate Access Control Entries (ACEs) to child objects.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether access is allowed or denied.</param>
       </Docs>
     </Member>
     <Member MemberName="AccessRuleType">
@@ -195,9 +236,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Type of the object associated with the access rules of this ObjectSecurity`1 object. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddAccessRule">
@@ -257,15 +301,27 @@
         <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
       </Parameters>
       <Docs>
-        <param name="identityReference">To be added.</param>
-        <param name="accessMask">To be added.</param>
-        <param name="isInherited">To be added.</param>
-        <param name="inheritanceFlags">To be added.</param>
-        <param name="propagationFlags">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AuditRule" /> class representing the specified audit rule for the specified user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified audit rule for the specified user.</para>
+        </returns>
+        <param name="identityReference">
+          <attribution license="cc4" from="Microsoft" modified="false" />Represents a user account. </param>
+        <param name="accessMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />An integer that specifies an access type.</param>
+        <param name="isInherited">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the access rule is inherited; otherwise, false.</param>
+        <param name="inheritanceFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies how to propagate access masks to child objects.</param>
+        <param name="propagationFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies how to propagate Access Control Entries (ACEs) to child objects.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Describes the type of auditing to perform.</param>
       </Docs>
     </Member>
     <Member MemberName="AuditRuleType">
@@ -279,9 +335,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Type object associated with the audit rules of this ObjectSecurity`1 object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Persist">
@@ -298,9 +357,13 @@
         <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the security descriptor associated with this ObjectSecurity`1 object to permanent storage, using the specified handle.</para>
+        </summary>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle of the securable object with which this ObjectSecurity`1 object is associated.</param>
       </Docs>
     </Member>
     <Member MemberName="Persist">
@@ -317,9 +380,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the security descriptor associated with this ObjectSecurity`1 object to permanent storage, using the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the securable object with which this ObjectSecurity`1 object is associated.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAccessRule">

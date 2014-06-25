@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyInfoClause" FullName="System.Security.Cryptography.Xml.KeyInfoClause">
   <TypeSignature Language="C#" Value="public abstract class KeyInfoClause" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit KeyInfoClause extends System.Object" />
@@ -14,9 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Abstract base class for all key informations classes. Key information classes includes:
-<list type="bullet"><item><term><see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.KeyInfoNode" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /></term></item><item><term><see cref="T:System.Security.Cryptography.Xml.RSAKeyValue" /></term></item></list></summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> objects to build a <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object for a specific digital signature or encrypted XML document. <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> allows recipients of XML digital signatures and encrypted XML documents to determine which signing method and key values should be used for validation and decryption.</para>
+      <para>For more information about the <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> element and its subelements, see the XMLDSIG specification, which is available from the W3C at www.w3.org/TR/xmldsig-core/, or see the XML encryption specification, which is available from the W3C at www.w3.org/TR/xmlenc-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all implementations of <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> subelements inherit.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +38,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot create an instance of an abstract class. Application code creates a new instance of a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -49,9 +62,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> returned by this method is suitable for use as a subelement of an XMLDSIG or encrypted XML &lt;KeyInfo&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns an XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -70,9 +92,16 @@
         <Parameter Name="element" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="element">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is typically used to process a subelement of a &lt;KeyInfo&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, parses the input <see cref="T:System.Xml.XmlElement" /> and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" /> to match.</para>
+        </summary>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlElement" /> that specifies the state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoClause" />. </param>
       </Docs>
     </Member>
   </Members>

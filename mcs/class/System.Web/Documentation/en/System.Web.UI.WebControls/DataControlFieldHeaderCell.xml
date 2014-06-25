@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataControlFieldHeaderCell" FullName="System.Web.UI.WebControls.DataControlFieldHeaderCell">
   <TypeSignature Language="C#" Value="public class DataControlFieldHeaderCell : System.Web.UI.WebControls.DataControlFieldCell" />
   <AssemblyInfo>
@@ -9,9 +10,26 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> class is used by data tables (such as the <see cref="T:System.Web.UI.WebControls.GridView" /> control) to represent accessible headers. Tabular controls such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> and <see cref="T:System.Web.UI.WebControls.FormView" /> are considered layout tables, and therefore do not require accessible headers and do not use the <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> class.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> class is used in two cases: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridView.UseAccessibleHeader" /> property is true.</para>
+        </item>
+        <item>
+          <para>The field is a <see cref="T:System.Web.UI.WebControls.BoundField" /> object whose <see cref="P:System.Web.UI.WebControls.BoundField.DataField" /> property is set as the <see cref="P:System.Web.UI.WebControls.GridView.RowHeaderColumn" /> property. </para>
+        </item>
+      </list>
+      <para>If neither is the case, a regular <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> object is used, which renders a &lt;td&gt; instead of a &lt;th&gt; element.</para>
+      <para>Because the <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> class supports the <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.AbbreviatedText" /> property, it is used by the <see cref="T:System.Web.UI.WebControls.GridView" /> control whenever the <see cref="P:System.Web.UI.WebControls.GridView.UseAccessibleHeader" /> property is true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In accessibility scenarios, represents a header cell in the rendered table of a tabular ASP.NET data-bound control, such as <see cref="T:System.Web.UI.WebControls.GridView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +40,15 @@
       </Parameters>
       <Docs>
         <param name="containerField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlFieldHeaderCell.#ctor(System.Web.UI.WebControls.DataControlField)" /> constructor passes the <see cref="F:System.Web.UI.HtmlTextWriterTag.Th" /> element as its <paramref name="tagKey" /> parameter, which is the representation of the HTML tag it is rendered with. The <see cref="T:System.Web.UI.WebControls.DataControlField" /> passed in the <paramref name="containingField" /> parameter is used to determine whether to show headers and what styles to apply to the cell when it is rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> class, setting the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object as the cell's container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +61,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.AbbreviatedText" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets abbreviated text, which is rendered in an HTML abbr attribute and is used by screen readers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +86,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.DataControlFieldHeaderCell.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" /> method adds the <see cref="F:System.Web.UI.HtmlTextWriterAttribute.Scope" /> or <see cref="F:System.Web.UI.HtmlTextWriterAttribute.Abbr" /> attributes if the respective <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.Scope" /> or <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.AbbreviatedText" /> properties are set. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds information about the table cell to the list of attributes to render.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream that renders HTML content to the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +109,17 @@
         <ReturnType>System.Web.UI.WebControls.TableHeaderScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.Scope" /> property is rendered as an HTML scope attribute by the <see cref="T:System.Web.UI.WebControls.DataControlFieldHeaderCell" /> object. Although the <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.Scope" /> property is initialized to <see cref="F:System.Web.UI.WebControls.TableHeaderScope.NotSet" />, you should set it to either <see cref="F:System.Web.UI.WebControls.TableHeaderScope.Column" /> or <see cref="F:System.Web.UI.WebControls.TableHeaderScope.Row" />, depending on the cells that the header represents. </para>
+          <para>The value of the <see cref="P:System.Web.UI.WebControls.DataControlFieldHeaderCell.Scope" /> property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the header cell's scope within an HTML table.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

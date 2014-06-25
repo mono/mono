@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RuntimeMethodHandle" FullName="System.RuntimeMethodHandle" FullNameSP="System_RuntimeMethodHandle" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable RuntimeMethodHandle extends System.ValueType" />
   <TypeSignature Language="C#" Value="public struct RuntimeMethodHandle : System.Runtime.Serialization.ISerializable" />
@@ -25,10 +26,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> The <see cref="T:System.RuntimeMethodHandle" /> is a handle to the internal metadata representation of a method.
-   </para>
-    </summary>
     <remarks>
       <para>
         <see cref="T:System.RuntimeMethodHandle" /> objects are created through the use of the CIL instruction <see langword="ldtoken" />.</para>
@@ -37,6 +34,11 @@
    Specification.</block>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.RuntimeMethodHandle" /> is a handle to the internal metadata representation of a method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Equals">
@@ -59,11 +61,18 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this instance is equal to a specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.RuntimeMethodHandle" /> and equal to the value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Object" /> to compare to this instance.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -86,11 +95,18 @@
         <Parameter Name="handle" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <param name="handle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this instance is equal to a specified <see cref="T:System.RuntimeMethodHandle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="handle" /> is equal to the value of this instance; otherwise, false.</para>
+        </returns>
+        <param name="handle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to this instance.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFunctionPointer">
@@ -107,9 +123,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Obtains a pointer to the method represented by this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to the method represented by this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -125,10 +147,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -148,10 +176,19 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="context" /> parameter is reserved; it does not currently participate in this operation.</para>
+          <para>For more information, see the <see cref="M:System.Runtime.Serialization.SerializationInfo.AddValue(System.String,System.Object,System.Type)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data necessary to deserialize the field represented by this instance.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to populate with serialization information. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Reserved) The place to store and retrieve serialized data. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -170,12 +207,20 @@
         <Parameter Name="right" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two instances of <see cref="T:System.RuntimeMethodHandle" /> are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="left" /> is equal to the value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to <paramref name="right" />.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to <paramref name="left" />.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -194,12 +239,20 @@
         <Parameter Name="right" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether two instances of <see cref="T:System.RuntimeMethodHandle" /> are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="left" /> is unequal to the value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to <paramref name="right" />.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to <paramref name="left" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -217,10 +270,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the value of the current instance.
-      </para>
-        </summary>
         <value>
           <para> A <see cref="T:System.IntPtr" /> containing the value of the handle.
    </para>
@@ -228,6 +277,10 @@
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of this instance.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

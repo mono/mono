@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UCOMITypeLib" FullName="System.Runtime.InteropServices.UCOMITypeLib">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMITypeLib" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract UCOMITypeLib" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about the ITypeLib interface, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.ITypeLib" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FindName">
@@ -163,9 +170,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeLib::GetTypeInfoCount, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of type descriptions in the type library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of type descriptions in the type library.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTypeInfoOfGuid">
@@ -231,11 +247,22 @@
         <Parameter Name="lHashVal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="szNameBuf">To be added: an object of type 'string'</param>
-        <param name="lHashVal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeLib::IsName, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a passed-in string contains the name of a type or member described in the library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="szNameBuf" /> was found in the type library; otherwise false.</para>
+        </returns>
+        <param name="szNameBuf">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to test. </param>
+        <param name="lHashVal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value of <paramref name="szNameBuf" />. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseTLibAttr">
@@ -254,9 +281,16 @@
         <Parameter Name="pTLibAttr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pTLibAttr">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeLib::ReleaseTLibAttr, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the <see cref="T:System.Runtime.InteropServices.TYPELIBATTR" /> originally obtained from <see cref="M:System.Runtime.InteropServices.UCOMITypeLib.GetLibAttr(System.IntPtr@)" />.</para>
+        </summary>
+        <param name="pTLibAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TLIBATTR to release. </param>
       </Docs>
     </Member>
   </Members>

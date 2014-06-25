@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripItemDesignerAvailability" FullName="System.Windows.Forms.Design.ToolStripItemDesignerAvailability">
   <TypeSignature Language="C#" Value="public enum ToolStripItemDesignerAvailability" />
   <AssemblyInfo>
@@ -13,9 +14,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies controls that are visible in the designer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -25,8 +29,11 @@
         <ReturnType>System.Windows.Forms.Design.ToolStripItemDesignerAvailability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that all controls are visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +46,11 @@
         <ReturnType>System.Windows.Forms.Design.ToolStripItemDesignerAvailability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that <see cref="T:System.Windows.Forms.ContextMenuStrip" /> is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +63,11 @@
         <ReturnType>System.Windows.Forms.Design.ToolStripItemDesignerAvailability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that <see cref="T:System.Windows.Forms.MenuStrip" /> is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +80,11 @@
         <ReturnType>System.Windows.Forms.Design.ToolStripItemDesignerAvailability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that no controls are visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +97,11 @@
         <ReturnType>System.Windows.Forms.Design.ToolStripItemDesignerAvailability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that <see cref="T:System.Windows.Forms.StatusStrip" /> is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,8 +114,11 @@
         <ReturnType>System.Windows.Forms.Design.ToolStripItemDesignerAvailability</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that <see cref="T:System.Windows.Forms.ToolStrip" /> is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

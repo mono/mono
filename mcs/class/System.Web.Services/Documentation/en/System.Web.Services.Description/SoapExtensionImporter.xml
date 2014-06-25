@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapExtensionImporter" FullName="System.Web.Services.Description.SoapExtensionImporter">
   <TypeSignature Language="C#" Value="public abstract class SoapExtensionImporter" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,24 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Description.SoapExtensionImporter" /> abstract class exposes an abstract method, <see cref="M:System.Web.Services.Description.SoapExtensionImporter.ImportMethod(System.CodeDom.CodeAttributeDeclarationCollection)" />, which allows a derived class to add metadata to any method that represents an operation in a binding. The method itself is not an input method. The code attributes, which are added to all Web methods in a binding class, represent extensions to the SOAP Web services protocol, for example, for adding extra headers to an outgoing SOAP message or doing extra processing on an incoming SOAP message.</para>
+      <para>You can use a class derived from <see cref="T:System.Web.Services.Description.SoapExtensionImporter" /> to extend the generation of client proxy code or abstract server code. You can use such a derived class in conjunction with a class derived from the abstract <see cref="T:System.Web.Services.Protocols.SoapExtension" /> class, which extends run-time processing of SOAP messages on the client or service.</para>
+      <para>You can specify <see cref="T:System.Web.Services.Description.SoapExtensionImporter" /> in a configuration file through the soapExtensionImporterTypes configuration element and its child add element. You can apply the configuration to: </para>
+      <list type="bullet">
+        <item>
+          <para>An ASP.NET Web application: service or client.</para>
+        </item>
+        <item>
+          <para>A stand-alone .NET Framework application: client only.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common interface and functionality for classes to generate code attributes that specify SOAP extensions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +40,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.SoapExtensionImporter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +59,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapProtocolImporter'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> object maintains references to instances of <see cref="T:System.Web.Services.Description.SoapExtensionImporter" /> derived types, and then calls the <see cref="M:System.Web.Services.Description.SoapExtensionImporter.ImportMethod(System.CodeDom.CodeAttributeDeclarationCollection)" /> on each of those instances.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.Services.Description.SoapProtocolImporter" /> instance that invokes the <see cref="M:System.Web.Services.Description.SoapExtensionImporter.ImportMethod(System.CodeDom.CodeAttributeDeclarationCollection)" /> method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +84,16 @@
         <Parameter Name="metadata" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="metadata">a <see cref="T:System.CodeDom.CodeAttributeDeclarationCollection" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method to which the attribute declarations are applied is not used directly by the <see cref="M:System.Web.Services.Description.SoapExtensionImporter.ImportMethod(System.CodeDom.CodeAttributeDeclarationCollection)" /> method. The attributes are added to all Web methods in a binding class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, adds code attribute declarations to any method that represents an operation in a binding.</para>
+        </summary>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeAttributeDeclarationCollection" /> into which the <see cref="M:System.Web.Services.Description.SoapExtensionImporter.ImportMethod(System.CodeDom.CodeAttributeDeclarationCollection)" />  method can place new <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> instances.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

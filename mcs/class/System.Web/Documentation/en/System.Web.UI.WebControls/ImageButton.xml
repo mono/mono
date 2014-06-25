@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageButton" FullName="System.Web.UI.WebControls.ImageButton">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ImageButton : System.Web.UI.WebControls.Image, System.Web.UI.IPostBackDataHandler, System.Web.UI.IPostBackEventHandler, System.Web.UI.WebControls.IButtonControl" />
   <AssemblyInfo>
@@ -34,8 +35,129 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeterminingWhereTheUserClicked">Determining Where the User Clicked</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#ButtonControlsAndValidation">ImageButton Controls and Validation</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeclarativeSyntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control to display an image that responds to mouse clicks. </para>
+      <para>Both the <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> and <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> events are raised when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+      <para>You can use the <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> event handler to make the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control behave like a Command button. A command name can be associated with the control by using the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> property. This allows multiple <see cref="T:System.Web.UI.WebControls.ImageButton" /> controls to be placed on the same Web page. The value of the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> property can then be programmatically identified in the <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> event handler to determine the appropriate action to perform when each <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. The <see cref="P:System.Web.UI.WebControls.ImageButton.CommandArgument" /> property can also be used to pass additional information about the command, such as specifying ascending order.</para>
+      <para>Using the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is similar to using the ASP.NET <see cref="T:System.Web.UI.WebControls.Button" /> control. For more information, see <format type="text/html"><a href="66b3ce28-3b93-4f0a-951f-42fb5bb5fddf">Button Web Server Controls Overview</a></format>. and the class overview for the <see cref="T:System.Web.UI.WebControls.Button" /> control.</para>
+      <format type="text/html">
+        <a href="#DeterminingWhereTheUserClicked" />
+      </format>
+      <format type="text/html">
+        <h2>Determining Where the User Clicked</h2>
+      </format>
+      <para>By using the <see cref="M:System.Web.UI.WebControls.ImageButton.OnClick(System.Web.UI.ImageClickEventArgs)" /> event handler, you can programmatically determine the coordinates where the image is clicked. You can then code a response, based on the values of the coordinates. Note that the origin (0, 0) is located at the upper left corner of the image.</para>
+      <format type="text/html">
+        <a href="#ButtonControlsAndValidation" />
+      </format>
+      <format type="text/html">
+        <h2>ImageButton Controls and Validation</h2>
+      </format>
+      <para>By default, page validation is performed when an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. Page validation determines whether the input controls associated with a validation control on the page all pass the validation rules specified by the validation control. To prevent page validation from occurring, set the <see cref="P:System.Web.UI.WebControls.ImageButton.CausesValidation" /> property to false.</para>
+      <format type="text/html">
+        <a href="#accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:ImageButton
+    AccessKey="string"
+    AlternateText="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CausesValidation="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    CommandArgument="string"
+    CommandName="string"
+    CssClass="string"
+    DescriptionUrl="uri"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    ImageAlign="<codeFeaturedElement>NotSet</codeFeaturedElement>|Left|Right|Baseline|Top|Middle|Bottom|
+        AbsBottom|AbsMiddle|TextTop"
+    ImageUrl="uri"
+    OnClick="Click event handler"
+    OnClientClick="string"
+    OnCommand="Command event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    PostBackUrl="uri"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    ValidationGroup="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A control that displays an image and responds to mouse clicks on the image.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,8 +166,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ImageButton" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ImageButton" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,9 +190,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.OnPreRender(System.EventArgs)" /> method is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the attributes of an <see cref="T:System.Web.UI.WebControls.ImageButton" /> to the output stream for rendering on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream to render on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,9 +214,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, page validation is performed when an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. Page validation determines whether the input controls associated with a validation control on the page all pass the validation rules specified by the validation control.</para>
+          <para>You can specify or determine whether validation is performed on both the client and the server when an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked by using the <see cref="P:System.Web.UI.WebControls.ImageButton.CausesValidation" /> property. To prevent validation from being performed, set the <see cref="P:System.Web.UI.WebControls.ImageButton.CausesValidation" /> property to false.</para>
+          <para>This property is commonly set to false for a Reset or Clear button to prevent validation from being performed when the button is clicked.</para>
+          <para>When the value of the <see cref="P:System.Web.UI.WebControls.ImageButton.CausesValidation" /> property is set to true, you can also use the <see cref="P:System.Web.UI.WebControls.ImageButton.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control causes validation.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether validation is performed when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,8 +249,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event is raised when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+          <block subset="none" type="note">
+            <para>This event causes the page to be posted back to the server.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -120,8 +275,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event is raised when an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event is raised through the control hierarchy in the form of the BubbleEvent.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This event causes the page to post back to the server.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -136,9 +304,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sometimes, multiple <see cref="T:System.Web.UI.WebControls.ImageButton" /> controls are related and share the same value for the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> property, such as Sort. Use this property to supplement the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> property with additional information about the command to perform, such as Ascending. The values of the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> and <see cref="P:System.Web.UI.WebControls.ImageButton.CommandArgument" /> properties are typically used in the <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> event handler to determine the action to perform when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an optional argument that provides additional information about the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -164,9 +339,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the command to perform when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked, such as Sort, Cancel, or Edit. This allows multiple <see cref="T:System.Web.UI.WebControls.ImageButton" /> controls to be placed on the same Web page. The value in this property can then be programmatically identified in the <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> event handler to determine the appropriate action to perform when each <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+          <para>Supplemental information about the command, such as specifying ascending sort order, can be included by using the <see cref="P:System.Web.UI.WebControls.Button.CommandArgument" /> property.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the command name associated with the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -206,9 +389,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageButton.Enabled" /> property to specify whether an <see cref="T:System.Web.UI.WebControls.ImageButton" /> can be clicked to perform a post back to the server. If you set this property to false, the control renders on the page, but does not raise a post back event when clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ImageButton" /> can be clicked to perform a post back to the server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateEmptyAlternateText">
@@ -235,9 +424,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control renders the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property using an alt attribute. When the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property is not set, the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control does not include the alt attribute to specify the alternate-text in the control rendering. </para>
+          <para>The XHTML document type definition requires the alt attribute on image controls. However, accessibility best practices recommend that image controls that do not convey information relevant to the context of the Web page should not specify an alt attribute. You can meet both XHTML and accessibility requirements by setting the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property to true.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the control generates an alternate-text attribute for an empty string value. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetPostBackOptions">
@@ -251,9 +448,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.GetPostBackOptions" /> method creates a <see cref="T:System.Web.UI.PostBackOptions" /> object that represents the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's postback behavior. The <see cref="T:System.Web.UI.PostBackOptions" /> object is then typically passed to the <see cref="M:System.Web.UI.ClientScriptManager.GetPostBackEventReference(System.Web.UI.PostBackOptions)" /> method, which is used to obtain a reference to a client-side script function that, when invoked, causes the server to postback to the page.</para>
+          <para>This method is used primarily by control developers when extending the <see cref="T:System.Web.UI.WebControls.ImageButton" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.PostBackOptions" /> object that represents the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's postback behavior.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.PostBackOptions" /> that represents the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's postback behavior.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadPostData">
@@ -270,11 +477,23 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> member is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+          <para>The <see cref="T:System.Web.UI.WebControls.ImageButton" /> checks to see if the x and y values were posted, which indicates that the image was clicked by the user. The <see cref="T:System.Web.UI.WebControls.ImageButton" /> then registers with the page that it wants to raise an event during the event-processing phase.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes posted data for the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns false for all cases.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key value used to index an entry in the collection. </param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> that contains post information.</param>
       </Docs>
     </Member>
     <Member MemberName="OnClick">
@@ -287,9 +506,18 @@
         <Parameter Name="e" Type="System.Web.UI.ImageClickEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.Web.UI.ImageClickEventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event is raised when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. By using the <see cref="M:System.Web.UI.WebControls.ImageButton.OnClick(System.Web.UI.ImageClickEventArgs)" /> event handler, you can programmatically determine the coordinates where the image is clicked. You can then code a response, based on the values of these coordinates. Note that the origin (0, 0) is located at the upper left corner of the image.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.OnClick(System.Web.UI.ImageClickEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event and allows you to handle the <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event directly.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.ImageClickEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -314,9 +542,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageButton.OnClientClick" /> property to specify additional client-side script that executes when an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event is raised. The script that you specify for this property is rendered in the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's OnClick attribute in addition to the control's predefined client-side script.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the client-side script that executes when an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event is raised.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCommand">
@@ -329,9 +564,21 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.CommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event is raised when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. The <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> event handler is used to make the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control behave like a Command button. A command name can be associated with the control by using the <see cref="P:System.Web.UI.WebControls.ImageButton.CommandName" /> property. This allows multiple <see cref="T:System.Web.UI.WebControls.ImageButton" /> controls to be placed on the Web page. The value in this property can then be programmatically identified in the <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> event handler to determine the appropriate action to perform when each <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. The <see cref="P:System.Web.UI.WebControls.ImageButton.CommandArgument" /> property can also be used to pass additional information about the command, such as specifying ascending order.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event is raised through the control hierarchy in the form of the BubbleEvent.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event and allows you to handle the <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event directly.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -348,9 +595,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.OnPreRender(System.EventArgs)" /> method is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the image has been clicked prior to rendering on the client.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -381,9 +635,27 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ImageButton.PostBackUrl" /> property allows you to perform a cross-page post using the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control. Set the <see cref="P:System.Web.UI.WebControls.ImageButton.PostBackUrl" /> property to the URL of the Web page to post to when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked. For example, specifying Page2.aspx causes the page that contains the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control to post to Page2.aspx. If you do not specify a value for the <see cref="P:System.Web.UI.WebControls.ImageButton.PostBackUrl" /> property, the page posts back to itself.</para>
+          <block subset="none" type="note">
+            <para>When performing a cross-page postback with controls with server-side validation, you should check that the page's <see cref="P:System.Web.UI.Page.IsValid" /> property is true before processing the postback. In the case of a cross-page postback, the page to check is the PreviousPage. The following Visual Basic code shows how this is done:</para>
+          </block>
+          <code>Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Page.PreviousPage.IsValid Then
+            ' Handle the post back
+        Else
+            Response.Write("Invalid")
+        End If
+End Sub</code>
+          <para>For more information on cross-page posting techniques, see <format type="text/html"><a href="fedf234e-b7c4-4644-a9e8-c1c0870b043b">Cross-Page Posting in an ASP.NET Web Page</a></format>.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the page to post to from the current page when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RaisePostBackEvent">
@@ -399,9 +671,17 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.RaisePostBackEvent(System.String)" /> member is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+          <para>This method is used internally by the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control, when it is clicked, to raise a <see cref="E:System.Web.UI.WebControls.ImageButton.Click" /> event and, if defined, a <see cref="E:System.Web.UI.WebControls.ImageButton.Command" /> event. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control when it posts back to the server.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument for the event.</param>
       </Docs>
     </Member>
     <Member MemberName="RaisePostDataChangedEvent">
@@ -415,8 +695,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.RaisePostDataChangedEvent" /> member is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+          <para>This method can be overridden in a derived class to raise change events for the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control when it posts back to the server. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the ASP.NET application that the state of the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.LoadPostData">
@@ -434,11 +721,22 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="postDataKey">To be added.</param>
-        <param name="postCollection">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
+        <param name="postDataKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control, used to index the <paramref name="postCollection" />.</param>
+        <param name="postCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> collection that contains value information indexed by control identifiers. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent">
@@ -453,8 +751,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackEventHandler.RaisePostBackEvent">
@@ -471,9 +775,16 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> The <see cref="M:System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" />.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument for the event</param>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.IButtonControl.Text">
@@ -486,9 +797,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.IButtonControl.Text" /> member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> instance is cast to an <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.WebControls.IButtonControl.Text" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TagKey">
@@ -499,9 +816,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.HtmlTextWriterTag" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ImageButton.TagKey" /> property is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ImageButton.TagKey" /> property to determine the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value associated with an <see cref="T:System.Web.UI.WebControls.ImageButton" /> control. This property overrides the base implementation to always return HtmlTextWriterTag.Input.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value that corresponds to the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -526,9 +850,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ImageButton.Text" /> property is not intended to be called directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValidationGroup">
@@ -549,9 +879,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validation groups allow you to assign validation controls on a page to a specific category. Each validation group can be validated independently of other validation groups on the page. Use the <see cref="P:System.Web.UI.WebControls.ImageButton.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control causes validation when it posts back to the server. This property has an effect only when the value of the <see cref="P:System.Web.UI.WebControls.ImageButton.CausesValidation" /> property is set to true. When you specify a value for the <see cref="P:System.Web.UI.WebControls.ImageButton.ValidationGroup" /> property, only the validation controls that are part of the specified group are validated when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control posts back to the server. If you do not specify a value for this property and the <see cref="P:System.Web.UI.WebControls.ImageButton.CausesValidation" /> property is set to true, all validation controls on the page that are not assigned to a validation group are validated when the control posts back to the server.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group of controls for which the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control causes validation when it posts back to the server.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

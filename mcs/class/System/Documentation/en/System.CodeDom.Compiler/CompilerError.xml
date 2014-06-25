@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilerError" FullName="System.CodeDom.Compiler.CompilerError">
   <TypeSignature Language="C#" Value="public class CompilerError" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CompilerError extends System.Object" />
@@ -15,8 +16,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.Compiler.CompilerError" /> represents a compiler error or a warning that has been returned by the compiler.</para>
+      <block subset="none" type="note">
+        <para>This class contains an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the derived class does not have full-trust permission. For details about inheritance demands, see  <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a compiler error or warning.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerError" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -53,13 +67,21 @@
         <Parameter Name="errorText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <param name="line">To be added: an object of type 'int'</param>
-        <param name="column">To be added: an object of type 'int'</param>
-        <param name="errorNumber">To be added: an object of type 'string'</param>
-        <param name="errorText">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CompilerError" /> class using the specified file name, line, column, error number, and error text.</para>
+        </summary>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the file that the compiler was compiling when it encountered the error. </param>
+        <param name="line">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line of the source of the error. </param>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column of the source of the error. </param>
+        <param name="errorNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error number of the error. </param>
+        <param name="errorText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message text. </param>
       </Docs>
     </Member>
     <Member MemberName="Column">
@@ -77,9 +99,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerError.Column" /> property can be set to zero for compilers that do not return column information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the column number where the source of the error occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ErrorNumber">
@@ -97,9 +125,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerError.ErrorNumber" /> property can contain a string of any length.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the error number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ErrorText">
@@ -117,9 +151,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.CodeDom.Compiler.CompilerError.ErrorText" /> property can be a string of any length.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the error message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileName">
@@ -137,9 +177,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the file name of the source file that contains the code which caused the error.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsWarning">
@@ -157,9 +200,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the error is a warning.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Line">
@@ -177,9 +223,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line number where the source of the error occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -196,9 +245,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is supported so <see cref="T:System.CodeDom.Compiler.CompilerError" /> objects can be treated as objects for simplified debugging output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an implementation of Object's <see cref="M:System.Object.ToString" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the compiler error.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

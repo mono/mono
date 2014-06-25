@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IVersioningPersonalizable" FullName="System.Web.UI.WebControls.WebParts.IVersioningPersonalizable">
   <TypeSignature Language="C#" Value="public interface IVersioningPersonalizable" />
   <AssemblyInfo>
@@ -6,9 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you upgrade a Web Parts control to a newer version, there might be changes to the personalizable properties on the upgraded class. For example, an upgraded version of a Web Parts control might no longer support properties that were available in previous versions. In such a scenario, the Web Parts control set might load personalization data from the underlying data store, but have no properties against which to apply this data. If a control implements the <see cref="T:System.Web.UI.WebControls.WebParts.IVersioningPersonalizable" /> interface, the Web Parts control is passed the orphaned personalization data. The application can then use this data to update properties in the newer version, or use the data in some other manner. Note that if orphaned properties are detected when importing Web Parts controls, the <see cref="M:System.Web.UI.WebControls.WebParts.IVersioningPersonalizable.Load(System.Collections.IDictionary)" /> method is also called.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an interface that can manage personalization data belonging to a previous version of a Web Parts control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Load">
@@ -21,10 +28,23 @@
         <Parameter Name="unknownProperties" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="unknownProperties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="unknownProperties" /> parameter contains a merged representation of unknown personalization data, of both "User" and "Shared" scope, that could not be applied to the control. When a page is running in user scope, the unknown user-scope values are supplied (if available) rather than unknown shared-scope values. This information is stored as a series of name/value pairs where each name is the string name of a property that was not found on the control and each value contains the property value. It is the responsibility of the control to cast or convert the value to the appropriate type and carry out further processing (such as mapping data from an old property to a new property).</para>
+          <para>If a control's state changes, it should call <see cref="Overload:System.Web.UI.WebControls.WebParts.WebPart.SetPersonalizationDirty" /> (either the inherited method, or the public static method in the case of a control that does not derive from <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" />). If a control marks itself as "dirty", the Web Parts control set will extract personalization data from the control, regardless of the control's "dirty" state, and save it back to the underlying data store later in the personalization life cycle. A control should mark itself as "dirty" if, as a result of processing the values in the <paramref name="unknownProperties" /> parameter, the control's state has changed.</para>
+          <para>Note that if orphaned properties are detected when importing Web Parts controls, this method is automatically called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads personalization data to a Web Parts control that does not have a corresponding personalized property for the data due to a version change.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the personalization data was successfully loaded; otherwise, false.</para>
+        </returns>
+        <param name="unknownProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary of personalization data that could not be applied to a control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

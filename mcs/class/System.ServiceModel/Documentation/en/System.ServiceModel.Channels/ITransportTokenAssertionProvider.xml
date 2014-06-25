@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITransportTokenAssertionProvider" FullName="System.ServiceModel.Channels.ITransportTokenAssertionProvider">
   <TypeSignature Language="C#" Value="public interface ITransportTokenAssertionProvider" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITransportTokenAssertionProvider" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a transport token assertion (for example, an HTTPS token assertion) for use in policy exports.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetTransportTokenAssertion">
@@ -23,9 +27,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a transport token assertion.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> that represents a transport token assertion.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

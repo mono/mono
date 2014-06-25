@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDbCommand" FullName="System.Data.IDbCommand">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDbCommand : IDisposable" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>A SQL query to be executed against a database</summary>
-    <remarks>To create a Command for an arbitrary connection, you probably want the <see cref="M:System.Data.IDbConnection.CreateCommand" /> method on IDbCommand.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.IDbCommand" /> interface enables an inheriting class to implement a Command class, which represents an SQL statement that is executed at a data source. For more information about Command classes, see <format type="text/html"><a href="40494916-C25A-4CB8-8F7C-FCB8D378464E">[&lt;topic://cpconadonetcommands&gt;]</a></format>. </para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.IDbCommand" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.IDbCommand" />.</para>
+      <para>Classes that inherit <see cref="T:System.Data.IDbCommand" /> must implement all inherited members, and typically define additional members to add provider-specific functionality. For example, the <see cref="T:System.Data.IDbCommand" /> interface defines the <see cref="M:System.Data.IDbCommand.ExecuteNonQuery" /> method. In turn, the <see cref="T:System.Data.SqlClient.SqlCommand" /> class inherits this method, and also defines the <see cref="M:System.Data.SqlClient.SqlCommand.ExecuteXmlReader" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an SQL statement that is executed while connected to a data source, and is implemented by .NET Framework data providers that access relational databases.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Cancel">
@@ -26,8 +35,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is nothing to cancel, nothing happens. However, if there is a command in process, and the attempt to cancel fails, no exception is generated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to cancels the execution of an <see cref="T:System.Data.IDbCommand" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +58,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Data.IDbCommand.CommandType" /> property is set to StoredProcedure, set the <see cref="P:System.Data.IDbCommand.CommandText" /> property to the name of the stored procedure. The user may be required to use escape character syntax if the stored procedure name contains any special characters. The command will call this stored procedure when you call one of the Execute methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text command to run against the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +82,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the wait time before terminating the attempt to execute a command and generating an error.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,9 +103,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CommandType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you set the <see cref="P:System.Data.IDbCommand.CommandType" /> property to StoredProcedure, you should set the <see cref="P:System.Data.IDbCommand.CommandText" /> property to the name of the stored procedure. The command executes this stored procedure when you call one of the Execute methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates or specifies how the <see cref="P:System.Data.IDbCommand.CommandText" /> property is interpreted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,9 +127,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IDbConnection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.IDbConnection" /> used by this instance of the <see cref="T:System.Data.IDbCommand" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,9 +147,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDbDataParameter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When inheriting from <see cref="T:System.Data.IDbCommand" />, a .NET Framework data provider implements a strongly-typed version of <see cref="M:System.Data.IDbCommand.CreateParameter" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of an <see cref="T:System.Data.IDbDataParameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IDbDataParameter object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -131,9 +173,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Execute a query and disregard the results</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="M:System.Data.IDbCommand.ExecuteNonQuery" /> to perform catalog operations (for example, querying the structure of a database or creating database objects such as tables), or to change the data in a database without using a <see cref="T:System.Data.DataSet" /> by executing UPDATE, INSERT, or DELETE statements.</para>
+          <para>Although the <see cref="M:System.Data.IDbCommand.ExecuteNonQuery" /> does not return any rows, any output parameters or return values mapped to parameters are populated with data.</para>
+          <para>For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected by the command. For all other types of statements, the return value is -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes an SQL statement against the Connection object of a .NET Framework data provider, and returns the number of rows affected.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows affected.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +201,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDataReader'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the <see cref="P:System.Data.IDbCommand.CommandText" /> against the <see cref="P:System.Data.IDbCommand.Connection" /> and builds an <see cref="T:System.Data.IDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.IDataReader" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,10 +226,25 @@
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <param name="behavior">To be added: an object of type 'CommandBehavior'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IDataReader'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The caller must call the <see cref="M:System.Data.IDbConnection.Open" /> method of the <see cref="P:System.Data.IDbCommand.Connection" /> property.</para>
+          <para>When the <see cref="P:System.Data.IDbCommand.CommandType" /> property is set to StoredProcedure, the <see cref="P:System.Data.IDbCommand.CommandText" /> property should be set to the name of the stored procedure. The command executes this stored procedure when you call <see cref="M:System.Data.IDbCommand.ExecuteReader" />.</para>
+          <block subset="none" type="note">
+            <para>Use <see cref="F:System.Data.CommandBehavior.SequentialAccess" /> to retrieve large values and binary data. Otherwise, an <see cref="T:System.OutOfMemoryException" /> might occur and the connection will be closed.</para>
+          </block>
+          <para>While the <see cref="T:System.Data.IDataReader" /> is in use, the associated <see cref="T:System.Data.IDbConnection" /> is busy serving the <see cref="T:System.Data.IDataReader" />. While in this state, no other operations can be performed on the <see cref="T:System.Data.IDbConnection" /> other than closing it. This is the case until the <see cref="M:System.Data.IDataReader.Close" /> method of the DataReader is called. If the DataReader is created with <see cref="T:System.Data.CommandBehavior" /> set to CloseConnection, closing the DataReader closes the connection automatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the <see cref="P:System.Data.IDbCommand.CommandText" /> against the <see cref="P:System.Data.IDbCommand.Connection" />, and builds an <see cref="T:System.Data.IDataReader" /> using one of the <see cref="T:System.Data.CommandBehavior" /> values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.IDataReader" /> object.</para>
+        </returns>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.CommandBehavior" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -185,9 +259,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Run the command against the database and get a single value.</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Data.IDbCommand.ExecuteScalar" /> method to retrieve a single value (for example, an aggregate value) from a database. This requires less code than using the <see cref="M:System.Data.IDbCommand.ExecuteReader" /> method, and then performing the operations necessary to generate the single value using the data returned by an <see cref="T:System.Data.IDataReader" />.</para>
+          <para>A typical <see cref="M:System.Data.IDbCommand.ExecuteScalar" /> query can be formatted as in the following C# example: </para>
+          <code> CommandText = "select count(*) as NumberOfRegions from region";
+ Int32 count = (int) ExecuteScalar();</code>
+          <para>If the first column of the first row in the result set is not found, a null reference (Nothing in Visual Basic) is returned. If the value in the database is null, the query returns DBNull.Value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes the query, and returns the first column of the first row in the resultset returned by the query. Extra columns or rows are ignored.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first column of the first row in the resultset.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -201,9 +288,12 @@
         <ReturnType>System.Data.IDataParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IDataParameterCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.IDataParameterCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -218,8 +308,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Data.IDbCommand.CommandType" /> property is set to TableDirect, <see cref="M:System.Data.IDbCommand.Prepare" /> does nothing. If <see cref="P:System.Data.IDbCommand.CommandType" /> is set to StoredProcedure, the call to <see cref="M:System.Data.IDbCommand.Prepare" /> should succeed, although it may result in a no-op. The server automatically caches plans for reuse as necessary; therefore, there is no need to call this method directly in your client application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a prepared (or compiled) version of the command on the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -235,9 +331,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IDbTransaction'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the transaction within which the Command object of a .NET Framework data provider executes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -253,9 +352,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'UpdateRowSource'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how command results are applied to the <see cref="T:System.Data.DataRow" /> when used by the <see cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> method of a <see cref="T:System.Data.Common.DbDataAdapter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SnapLinePriority" FullName="System.Windows.Forms.Design.Behavior.SnapLinePriority">
   <TypeSignature Language="C#" Value="public enum SnapLinePriority" />
   <AssemblyInfo>
@@ -8,8 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A snapline's priority acts as a suggestion to visual designers about how to treat a snapline with respect to its peers. The layout engine uses a simple method of determining whether to display the snaplines for a control: only the highest priority snaplines, including those with a value of <see cref="F:System.Windows.Forms.Design.Behavior.SnapLinePriority.Always" />, are shown for each orientation—vertical or horizontal.</para>
+      <para>To set the priority of a snapline, a <see cref="T:System.Windows.Forms.Design.Behavior.SnapLinePriority" /> enumeration is specified when creating an instance of the <see cref="T:System.Windows.Forms.Design.Behavior.SnapLine" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the relative importance of a snapline.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Always">
@@ -22,7 +30,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLinePriority</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The priority category that is equivalent to the highest priority of all the current snaplines. Indicates that this category of snapline should always be active.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="High">
@@ -35,7 +46,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLinePriority</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The highest priority category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Low">
@@ -48,7 +62,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLinePriority</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The lowest priority category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Medium">
@@ -61,7 +78,10 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.SnapLinePriority</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The middle priority category.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

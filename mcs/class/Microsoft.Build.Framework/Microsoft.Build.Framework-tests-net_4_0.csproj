@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{520B9924-B4B3-407F-974A-9C10F8C5B4AA}</ProjectGuid>
+    <ProjectGuid>{1ADD07F3-3897-4865-888E-BD37F1B55EBD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Framework-tests-net_4_0</OutputPath>
@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Test\Microsoft.Build.Framework\BuildErrorEventArgsTest.cs" />
     <Compile Include="Test\Microsoft.Build.Framework\BuildEventArgsTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Framework\BuildEventContextTest.cs" />
     <Compile Include="Test\Microsoft.Build.Framework\BuildFinishedEventArgsTest.cs" />
     <Compile Include="Test\Microsoft.Build.Framework\BuildMessageEventArgsTest.cs" />
     <Compile Include="Test\Microsoft.Build.Framework\BuildStartedEventArgsTest.cs" />
@@ -71,18 +72,21 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_0.csproj">
-      <Project>{1D4BCF4D-31D1-4F92-A2B2-D9E41A640649}</Project>
+      <Project>{7A96CB43-304B-417C-AAB3-C096E48DAE70}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -90,3 +94,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

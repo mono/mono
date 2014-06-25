@@ -120,11 +120,7 @@ namespace NUnit.Core
 
 		public void Cancel()
 		{
-			this.thread.Abort(); // Request abort first
-
-			// Wake up the thread if necessary
-			if ( ( this.thread.ThreadState & ThreadState.WaitSleepJoin ) != 0 )
-				this.thread.Interrupt();
+			ThreadUtility.Kill(this.thread);
 		}
 
 		public void StartRun( EventListener listener )

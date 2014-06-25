@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsBase" FullName="System.Configuration.SettingsBase">
   <TypeSignature Language="C#" Value="public abstract class SettingsBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SettingsBase extends System.Object" />
@@ -11,9 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET Web Forms and Windows Forms both use the same configuration settings infrastructure to support user settings. User settings within ASP.NET are often referred to as ASP.NET Profile. The settings infrastructure includes the <see cref="T:System.Configuration.SettingsBase" /> base class, the <see cref="T:System.Configuration.SettingsProperty" /> class, the <see cref="T:System.Configuration.SettingsPropertyValue" /> class, the <see cref="T:System.Configuration.SettingsContext" /> class, the <see cref="T:System.Configuration.SettingsProvider" /> class, and the <see cref="T:System.Configuration.SettingAttribute" /></para>
+      <para>class.</para>
+      <para>The Settings base classes provide only a common infrastructure for defining and persisting settings properties. Depending on how these base classes are derived and their run-time environment, the settings API can provide different levels of functionality. For example, ASP.NET Profile uses the settings base classes to provide per-user settings that are saved and loaded according to request semantics. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base class used to support user property settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +35,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsBase" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Context">
@@ -43,10 +55,17 @@
         <ReturnType>System.Configuration.SettingsContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsContext" /> is used by the application to provide contextual information that the provider can use to persist settings.</para>
+          <para>Each settings class derived from <see cref="T:System.Configuration.SettingsBase" /> has a context associated with it. The context is passed to the settings provider to identity additional information about the settings information. Context therefore acts as a hint to help the settings provider determine how to persist the associated settings values. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the associated settings context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -66,12 +85,18 @@
         <Parameter Name="providers" Type="System.Configuration.SettingsProviderCollection" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="properties">To be added.</param>
-        <param name="providers">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes internal properties used by <see cref="T:System.Configuration.SettingsBase" /> object.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The settings context related to the settings properties.</param>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The settings properties that will be accessible from the <see cref="T:System.Configuration.SettingsBase" /> instance.</param>
+        <param name="providers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initialized providers that should be used when loading and saving property values.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -91,10 +116,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the object is synchronized (thread safe). </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -131,10 +159,17 @@
         <ReturnType>System.Configuration.SettingsPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The get accessor of the <see cref="P:System.Configuration.SettingsBase.Properties" /> property returns the collection of <see cref="T:System.Configuration.SettingsProperty" /> instances associated with the properties managed by the <see cref="T:System.Configuration.SettingsBase" /> instance.</para>
+          <para>The <see cref="T:System.Configuration.SettingsBase" /> class natively recognizes certain characteristics of a setting, such as its name, property type, settings provider, default value, and read-only status and a serialization preference. These characteristics are mirrored as properties in the <see cref="T:System.Configuration.SettingsProperty" /> class. All other attributes of the <see cref="T:System.Configuration.SettingsProperty" /> class are just passed through to its associated settings provider as a <see cref="T:System.Configuration.SettingsAttributeDictionary" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of settings properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyValues">
@@ -149,10 +184,13 @@
         <ReturnType>System.Configuration.SettingsPropertyValueCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of settings property values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Providers">
@@ -167,10 +205,13 @@
         <ReturnType>System.Configuration.SettingsProviderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of settings providers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -186,9 +227,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Configuration.SettingsBase" /> instance groups properties based on the provider that is associated with each property. Each provider is then called in sequence and is passed the set of properties that the provider should save.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the current values of the settings properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Synchronized">
@@ -206,11 +253,21 @@
         <Parameter Name="settingsBase" Type="System.Configuration.SettingsBase" />
       </Parameters>
       <Docs>
-        <param name="settingsBase">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The indexer will get and set property data in a thread-safe manner if the <see cref="P:System.Configuration.SettingsBase.IsSynchronized" /> property is set to true.  A <see cref="T:System.Configuration.SettingsBase" /> instance by default is not thread-safe.  However, you can call <see cref="M:System.Configuration.SettingsBase.Synchronized(System.Configuration.SettingsBase)" /> passing in a <see cref="T:System.Configuration.SettingsBase" /> instance to make the <see cref="T:System.Configuration.SettingsBase" /> indexer operate in a thread-safe manner.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a <see cref="T:System.Configuration.SettingsBase" /> class that is synchronized (thread safe).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsBase" /> class that is synchronized.</para>
+        </returns>
+        <param name="settingsBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class used to support user property settings.</param>
       </Docs>
     </Member>
   </Members>

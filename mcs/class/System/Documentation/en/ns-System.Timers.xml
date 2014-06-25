@@ -1,6 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Timers">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Timers" /> namespace provides the <see cref="T:System.Timers.Timer" /> component, which allows you to raise an event on a specified interval.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Timers.Timer" /> component is a server-based timer, which allows you to specify a recurring interval at which the <see cref="E:System.Timers.Timer.Elapsed" /> event is raised in your application. You can then handle this event to provide regular processing. For example, suppose you have a critical server that must be kept running 24 hours a day, 7 days a week. You could create a service that uses a <see cref="T:System.Timers.Timer" /> to periodically check the server and ensure that the system is up and running. If the system is not responding, the service could attempt to restart the server or notify an administrator.</para>
+      <para>The server-based <see cref="T:System.Timers.Timer" /> is designed for use with worker threads in a multithreaded environment. Server timers can move among threads to handle the raised <see cref="E:System.Timers.Timer.Elapsed" /> event, resulting in more accuracy than Windows timers in raising the event on time. </para>
+    </remarks>
   </Docs>
 </Namespace>

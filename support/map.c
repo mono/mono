@@ -1136,12 +1136,30 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EALREADY */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EALREADY */
+	if (x == Mono_Posix_Errno_EAUTH)
+#ifdef EAUTH
+		{*r = EAUTH; return 0;}
+#else /* def EAUTH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EAUTH */
+	if (x == Mono_Posix_Errno_EBADARCH)
+#ifdef EBADARCH
+		{*r = EBADARCH; return 0;}
+#else /* def EBADARCH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EBADARCH */
 	if (x == Mono_Posix_Errno_EBADE)
 #ifdef EBADE
 		{*r = EBADE; return 0;}
 #else /* def EBADE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EBADE */
+	if (x == Mono_Posix_Errno_EBADEXEC)
+#ifdef EBADEXEC
+		{*r = EBADEXEC; return 0;}
+#else /* def EBADEXEC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EBADEXEC */
 	if (x == Mono_Posix_Errno_EBADF)
 #ifdef EBADF
 		{*r = EBADF; return 0;}
@@ -1154,6 +1172,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EBADFD */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EBADFD */
+	if (x == Mono_Posix_Errno_EBADMACHO)
+#ifdef EBADMACHO
+		{*r = EBADMACHO; return 0;}
+#else /* def EBADMACHO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EBADMACHO */
 	if (x == Mono_Posix_Errno_EBADMSG)
 #ifdef EBADMSG
 		{*r = EBADMSG; return 0;}
@@ -1166,6 +1190,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EBADR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EBADR */
+	if (x == Mono_Posix_Errno_EBADRPC)
+#ifdef EBADRPC
+		{*r = EBADRPC; return 0;}
+#else /* def EBADRPC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EBADRPC */
 	if (x == Mono_Posix_Errno_EBADRQC)
 #ifdef EBADRQC
 		{*r = EBADRQC; return 0;}
@@ -1190,6 +1220,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EBUSY */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EBUSY */
+	if (x == Mono_Posix_Errno_ECANCELED)
+#ifdef ECANCELED
+		{*r = ECANCELED; return 0;}
+#else /* def ECANCELED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ECANCELED */
 	if (x == Mono_Posix_Errno_ECHILD)
 #ifdef ECHILD
 		{*r = ECHILD; return 0;}
@@ -1244,6 +1280,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EDESTADDRREQ */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EDESTADDRREQ */
+	if (x == Mono_Posix_Errno_EDEVERR)
+#ifdef EDEVERR
+		{*r = EDEVERR; return 0;}
+#else /* def EDEVERR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EDEVERR */
 	if (x == Mono_Posix_Errno_EDOM)
 #ifdef EDOM
 		{*r = EDOM; return 0;}
@@ -1280,6 +1322,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EFBIG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EFBIG */
+	if (x == Mono_Posix_Errno_EFTYPE)
+#ifdef EFTYPE
+		{*r = EFTYPE; return 0;}
+#else /* def EFTYPE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EFTYPE */
 	if (x == Mono_Posix_Errno_EHOSTDOWN)
 #ifdef EHOSTDOWN
 		{*r = EHOSTDOWN; return 0;}
@@ -1346,6 +1394,24 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EISNAM */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EISNAM */
+	if (x == Mono_Posix_Errno_EKEYEXPIRED)
+#ifdef EKEYEXPIRED
+		{*r = EKEYEXPIRED; return 0;}
+#else /* def EKEYEXPIRED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EKEYEXPIRED */
+	if (x == Mono_Posix_Errno_EKEYREJECTED)
+#ifdef EKEYREJECTED
+		{*r = EKEYREJECTED; return 0;}
+#else /* def EKEYREJECTED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EKEYREJECTED */
+	if (x == Mono_Posix_Errno_EKEYREVOKED)
+#ifdef EKEYREVOKED
+		{*r = EKEYREVOKED; return 0;}
+#else /* def EKEYREVOKED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EKEYREVOKED */
 	if (x == Mono_Posix_Errno_EL2HLT)
 #ifdef EL2HLT
 		{*r = EL2HLT; return 0;}
@@ -1454,6 +1520,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def ENAVAIL */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ENAVAIL */
+	if (x == Mono_Posix_Errno_ENEEDAUTH)
+#ifdef ENEEDAUTH
+		{*r = ENEEDAUTH; return 0;}
+#else /* def ENEEDAUTH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ENEEDAUTH */
 	if (x == Mono_Posix_Errno_ENETDOWN)
 #ifdef ENETDOWN
 		{*r = ENETDOWN; return 0;}
@@ -1484,6 +1556,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def ENOANO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ENOANO */
+	if (x == Mono_Posix_Errno_ENOATTR)
+#ifdef ENOATTR
+		{*r = ENOATTR; return 0;}
+#else /* def ENOATTR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ENOATTR */
 	if (x == Mono_Posix_Errno_ENOBUFS)
 #ifdef ENOBUFS
 		{*r = ENOBUFS; return 0;}
@@ -1520,6 +1598,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def ENOEXEC */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ENOEXEC */
+	if (x == Mono_Posix_Errno_ENOKEY)
+#ifdef ENOKEY
+		{*r = ENOKEY; return 0;}
+#else /* def ENOKEY */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ENOKEY */
 	if (x == Mono_Posix_Errno_ENOLCK)
 #ifdef ENOLCK
 		{*r = ENOLCK; return 0;}
@@ -1562,6 +1646,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def ENOPKG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ENOPKG */
+	if (x == Mono_Posix_Errno_ENOPOLICY)
+#ifdef ENOPOLICY
+		{*r = ENOPOLICY; return 0;}
+#else /* def ENOPOLICY */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ENOPOLICY */
 	if (x == Mono_Posix_Errno_ENOPROTOOPT)
 #ifdef ENOPROTOOPT
 		{*r = ENOPROTOOPT; return 0;}
@@ -1622,6 +1712,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def ENOTNAM */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ENOTNAM */
+	if (x == Mono_Posix_Errno_ENOTRECOVERABLE)
+#ifdef ENOTRECOVERABLE
+		{*r = ENOTRECOVERABLE; return 0;}
+#else /* def ENOTRECOVERABLE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ENOTRECOVERABLE */
 	if (x == Mono_Posix_Errno_ENOTSOCK)
 #ifdef ENOTSOCK
 		{*r = ENOTSOCK; return 0;}
@@ -1658,6 +1754,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EOVERFLOW */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EOVERFLOW */
+	if (x == Mono_Posix_Errno_EOWNERDEAD)
+#ifdef EOWNERDEAD
+		{*r = EOWNERDEAD; return 0;}
+#else /* def EOWNERDEAD */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EOWNERDEAD */
 	if (x == Mono_Posix_Errno_EPERM)
 #ifdef EPERM
 		{*r = EPERM; return 0;}
@@ -1676,6 +1778,30 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EPIPE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EPIPE */
+	if (x == Mono_Posix_Errno_EPROCLIM)
+#ifdef EPROCLIM
+		{*r = EPROCLIM; return 0;}
+#else /* def EPROCLIM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPROCLIM */
+	if (x == Mono_Posix_Errno_EPROCUNAVAIL)
+#ifdef EPROCUNAVAIL
+		{*r = EPROCUNAVAIL; return 0;}
+#else /* def EPROCUNAVAIL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPROCUNAVAIL */
+	if (x == Mono_Posix_Errno_EPROGMISMATCH)
+#ifdef EPROGMISMATCH
+		{*r = EPROGMISMATCH; return 0;}
+#else /* def EPROGMISMATCH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPROGMISMATCH */
+	if (x == Mono_Posix_Errno_EPROGUNAVAIL)
+#ifdef EPROGUNAVAIL
+		{*r = EPROGUNAVAIL; return 0;}
+#else /* def EPROGUNAVAIL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPROGUNAVAIL */
 	if (x == Mono_Posix_Errno_EPROTO)
 #ifdef EPROTO
 		{*r = EPROTO; return 0;}
@@ -1694,6 +1820,12 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EPROTOTYPE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EPROTOTYPE */
+	if (x == Mono_Posix_Errno_EPWROFF)
+#ifdef EPWROFF
+		{*r = EPWROFF; return 0;}
+#else /* def EPWROFF */
+		{errno = EINVAL; return -1;}
+#endif /* ndef EPWROFF */
 	if (x == Mono_Posix_Errno_ERANGE)
 #ifdef ERANGE
 		{*r = ERANGE; return 0;}
@@ -1730,6 +1862,18 @@ int Mono_Posix_FromErrno (int x, int *r)
 #else /* def EROFS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef EROFS */
+	if (x == Mono_Posix_Errno_ERPCMISMATCH)
+#ifdef ERPCMISMATCH
+		{*r = ERPCMISMATCH; return 0;}
+#else /* def ERPCMISMATCH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ERPCMISMATCH */
+	if (x == Mono_Posix_Errno_ESHLIBVERS)
+#ifdef ESHLIBVERS
+		{*r = ESHLIBVERS; return 0;}
+#else /* def ESHLIBVERS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ESHLIBVERS */
 	if (x == Mono_Posix_Errno_ESHUTDOWN)
 #ifdef ESHUTDOWN
 		{*r = ESHUTDOWN; return 0;}
@@ -1874,10 +2018,22 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EALREADY)
 		{*r = Mono_Posix_Errno_EALREADY; return 0;}
 #endif /* ndef EALREADY */
+#ifdef EAUTH
+	if (x == EAUTH)
+		{*r = Mono_Posix_Errno_EAUTH; return 0;}
+#endif /* ndef EAUTH */
+#ifdef EBADARCH
+	if (x == EBADARCH)
+		{*r = Mono_Posix_Errno_EBADARCH; return 0;}
+#endif /* ndef EBADARCH */
 #ifdef EBADE
 	if (x == EBADE)
 		{*r = Mono_Posix_Errno_EBADE; return 0;}
 #endif /* ndef EBADE */
+#ifdef EBADEXEC
+	if (x == EBADEXEC)
+		{*r = Mono_Posix_Errno_EBADEXEC; return 0;}
+#endif /* ndef EBADEXEC */
 #ifdef EBADF
 	if (x == EBADF)
 		{*r = Mono_Posix_Errno_EBADF; return 0;}
@@ -1886,6 +2042,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EBADFD)
 		{*r = Mono_Posix_Errno_EBADFD; return 0;}
 #endif /* ndef EBADFD */
+#ifdef EBADMACHO
+	if (x == EBADMACHO)
+		{*r = Mono_Posix_Errno_EBADMACHO; return 0;}
+#endif /* ndef EBADMACHO */
 #ifdef EBADMSG
 	if (x == EBADMSG)
 		{*r = Mono_Posix_Errno_EBADMSG; return 0;}
@@ -1894,6 +2054,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EBADR)
 		{*r = Mono_Posix_Errno_EBADR; return 0;}
 #endif /* ndef EBADR */
+#ifdef EBADRPC
+	if (x == EBADRPC)
+		{*r = Mono_Posix_Errno_EBADRPC; return 0;}
+#endif /* ndef EBADRPC */
 #ifdef EBADRQC
 	if (x == EBADRQC)
 		{*r = Mono_Posix_Errno_EBADRQC; return 0;}
@@ -1910,6 +2074,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EBUSY)
 		{*r = Mono_Posix_Errno_EBUSY; return 0;}
 #endif /* ndef EBUSY */
+#ifdef ECANCELED
+	if (x == ECANCELED)
+		{*r = Mono_Posix_Errno_ECANCELED; return 0;}
+#endif /* ndef ECANCELED */
 #ifdef ECHILD
 	if (x == ECHILD)
 		{*r = Mono_Posix_Errno_ECHILD; return 0;}
@@ -1946,6 +2114,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EDESTADDRREQ)
 		{*r = Mono_Posix_Errno_EDESTADDRREQ; return 0;}
 #endif /* ndef EDESTADDRREQ */
+#ifdef EDEVERR
+	if (x == EDEVERR)
+		{*r = Mono_Posix_Errno_EDEVERR; return 0;}
+#endif /* ndef EDEVERR */
 #ifdef EDOM
 	if (x == EDOM)
 		{*r = Mono_Posix_Errno_EDOM; return 0;}
@@ -1970,6 +2142,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EFBIG)
 		{*r = Mono_Posix_Errno_EFBIG; return 0;}
 #endif /* ndef EFBIG */
+#ifdef EFTYPE
+	if (x == EFTYPE)
+		{*r = Mono_Posix_Errno_EFTYPE; return 0;}
+#endif /* ndef EFTYPE */
 #ifdef EHOSTDOWN
 	if (x == EHOSTDOWN)
 		{*r = Mono_Posix_Errno_EHOSTDOWN; return 0;}
@@ -2014,6 +2190,18 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EISNAM)
 		{*r = Mono_Posix_Errno_EISNAM; return 0;}
 #endif /* ndef EISNAM */
+#ifdef EKEYEXPIRED
+	if (x == EKEYEXPIRED)
+		{*r = Mono_Posix_Errno_EKEYEXPIRED; return 0;}
+#endif /* ndef EKEYEXPIRED */
+#ifdef EKEYREJECTED
+	if (x == EKEYREJECTED)
+		{*r = Mono_Posix_Errno_EKEYREJECTED; return 0;}
+#endif /* ndef EKEYREJECTED */
+#ifdef EKEYREVOKED
+	if (x == EKEYREVOKED)
+		{*r = Mono_Posix_Errno_EKEYREVOKED; return 0;}
+#endif /* ndef EKEYREVOKED */
 #ifdef EL2HLT
 	if (x == EL2HLT)
 		{*r = Mono_Posix_Errno_EL2HLT; return 0;}
@@ -2086,6 +2274,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == ENAVAIL)
 		{*r = Mono_Posix_Errno_ENAVAIL; return 0;}
 #endif /* ndef ENAVAIL */
+#ifdef ENEEDAUTH
+	if (x == ENEEDAUTH)
+		{*r = Mono_Posix_Errno_ENEEDAUTH; return 0;}
+#endif /* ndef ENEEDAUTH */
 #ifdef ENETDOWN
 	if (x == ENETDOWN)
 		{*r = Mono_Posix_Errno_ENETDOWN; return 0;}
@@ -2106,6 +2298,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == ENOANO)
 		{*r = Mono_Posix_Errno_ENOANO; return 0;}
 #endif /* ndef ENOANO */
+#ifdef ENOATTR
+	if (x == ENOATTR)
+		{*r = Mono_Posix_Errno_ENOATTR; return 0;}
+#endif /* ndef ENOATTR */
 #ifdef ENOBUFS
 	if (x == ENOBUFS)
 		{*r = Mono_Posix_Errno_ENOBUFS; return 0;}
@@ -2130,6 +2326,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == ENOEXEC)
 		{*r = Mono_Posix_Errno_ENOEXEC; return 0;}
 #endif /* ndef ENOEXEC */
+#ifdef ENOKEY
+	if (x == ENOKEY)
+		{*r = Mono_Posix_Errno_ENOKEY; return 0;}
+#endif /* ndef ENOKEY */
 #ifdef ENOLCK
 	if (x == ENOLCK)
 		{*r = Mono_Posix_Errno_ENOLCK; return 0;}
@@ -2158,6 +2358,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == ENOPKG)
 		{*r = Mono_Posix_Errno_ENOPKG; return 0;}
 #endif /* ndef ENOPKG */
+#ifdef ENOPOLICY
+	if (x == ENOPOLICY)
+		{*r = Mono_Posix_Errno_ENOPOLICY; return 0;}
+#endif /* ndef ENOPOLICY */
 #ifdef ENOPROTOOPT
 	if (x == ENOPROTOOPT)
 		{*r = Mono_Posix_Errno_ENOPROTOOPT; return 0;}
@@ -2198,6 +2402,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == ENOTNAM)
 		{*r = Mono_Posix_Errno_ENOTNAM; return 0;}
 #endif /* ndef ENOTNAM */
+#ifdef ENOTRECOVERABLE
+	if (x == ENOTRECOVERABLE)
+		{*r = Mono_Posix_Errno_ENOTRECOVERABLE; return 0;}
+#endif /* ndef ENOTRECOVERABLE */
 #ifdef ENOTSOCK
 	if (x == ENOTSOCK)
 		{*r = Mono_Posix_Errno_ENOTSOCK; return 0;}
@@ -2222,6 +2430,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EOVERFLOW)
 		{*r = Mono_Posix_Errno_EOVERFLOW; return 0;}
 #endif /* ndef EOVERFLOW */
+#ifdef EOWNERDEAD
+	if (x == EOWNERDEAD)
+		{*r = Mono_Posix_Errno_EOWNERDEAD; return 0;}
+#endif /* ndef EOWNERDEAD */
 #ifdef EPERM
 	if (x == EPERM)
 		{*r = Mono_Posix_Errno_EPERM; return 0;}
@@ -2234,6 +2446,22 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EPIPE)
 		{*r = Mono_Posix_Errno_EPIPE; return 0;}
 #endif /* ndef EPIPE */
+#ifdef EPROCLIM
+	if (x == EPROCLIM)
+		{*r = Mono_Posix_Errno_EPROCLIM; return 0;}
+#endif /* ndef EPROCLIM */
+#ifdef EPROCUNAVAIL
+	if (x == EPROCUNAVAIL)
+		{*r = Mono_Posix_Errno_EPROCUNAVAIL; return 0;}
+#endif /* ndef EPROCUNAVAIL */
+#ifdef EPROGMISMATCH
+	if (x == EPROGMISMATCH)
+		{*r = Mono_Posix_Errno_EPROGMISMATCH; return 0;}
+#endif /* ndef EPROGMISMATCH */
+#ifdef EPROGUNAVAIL
+	if (x == EPROGUNAVAIL)
+		{*r = Mono_Posix_Errno_EPROGUNAVAIL; return 0;}
+#endif /* ndef EPROGUNAVAIL */
 #ifdef EPROTO
 	if (x == EPROTO)
 		{*r = Mono_Posix_Errno_EPROTO; return 0;}
@@ -2246,6 +2474,10 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EPROTOTYPE)
 		{*r = Mono_Posix_Errno_EPROTOTYPE; return 0;}
 #endif /* ndef EPROTOTYPE */
+#ifdef EPWROFF
+	if (x == EPWROFF)
+		{*r = Mono_Posix_Errno_EPWROFF; return 0;}
+#endif /* ndef EPWROFF */
 #ifdef ERANGE
 	if (x == ERANGE)
 		{*r = Mono_Posix_Errno_ERANGE; return 0;}
@@ -2270,6 +2502,14 @@ int Mono_Posix_ToErrno (int x, int *r)
 	if (x == EROFS)
 		{*r = Mono_Posix_Errno_EROFS; return 0;}
 #endif /* ndef EROFS */
+#ifdef ERPCMISMATCH
+	if (x == ERPCMISMATCH)
+		{*r = Mono_Posix_Errno_ERPCMISMATCH; return 0;}
+#endif /* ndef ERPCMISMATCH */
+#ifdef ESHLIBVERS
+	if (x == ESHLIBVERS)
+		{*r = Mono_Posix_Errno_ESHLIBVERS; return 0;}
+#endif /* ndef ESHLIBVERS */
 #ifdef ESHUTDOWN
 	if (x == ESHUTDOWN)
 		{*r = Mono_Posix_Errno_ESHUTDOWN; return 0;}

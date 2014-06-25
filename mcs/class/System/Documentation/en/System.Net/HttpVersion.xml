@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpVersion" FullName="System.Net.HttpVersion" FullNameSP="System_Net_HttpVersion" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public HttpVersion extends System.Object" />
   <TypeSignature Language="C#" Value="public class HttpVersion" />
@@ -17,18 +18,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Defines the HTTP version numbers supported by <see cref="T:System.Net.HttpWebRequest" /> and
-<see cref="T:System.Net.HttpWebResponse" /> .</para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">This class defines the HTTP versions supported by
- <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.HttpWebResponse" />. The HTTP version number
- is used to control version-specific features of HTTP, such as pipelining and
- chunking.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.HttpVersion" /> class defines the HTTP versions that are supported by the <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.HttpWebResponse" /> classes. The HTTP version number is used to control version-specific features of HTTP, such as pipelining and chunking.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the HTTP version numbers that are supported by the <see cref="T:System.Net.HttpWebRequest" /> and <see cref="T:System.Net.HttpWebResponse" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,8 +41,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Constructs a new instance of the <see cref="T:System.Net.HttpVersion" /> class.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.HttpVersion" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -64,13 +64,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Defines a <see cref="T:System.Version" /> instance for HTTP 1.0.</para>
-        </summary>
         <remarks>
           <para>This field represents a <see cref="T:System.Version" /> with a <see cref="P:System.Version.Major" /> value
  equal to 1, and a <see cref="P:System.Version.Minor" /> value equal to 0.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a <see cref="T:System.Version" /> instance for HTTP 1.0.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -89,13 +90,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Defines a <see cref="T:System.Version" /> instance for HTTP 1.1.</para>
-        </summary>
         <remarks>
           <para>This field represents a <see cref="T:System.Version" /> with a <see cref="P:System.Version.Major" /> value
  equal to 1, and a <see cref="P:System.Version.Minor" /> value equal to 1.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a <see cref="T:System.Version" /> instance for HTTP 1.1.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

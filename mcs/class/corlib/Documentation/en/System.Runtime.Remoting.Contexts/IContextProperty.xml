@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IContextProperty" FullName="System.Runtime.Remoting.Contexts.IContextProperty">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IContextProperty" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IContextProperty" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Contexts.IContextProperty" /> interface is exposed by the property contributed to a context by an attribute. By default, it is also implemented by the <see cref="T:System.Runtime.Remoting.Contexts.ContextAttribute" /> base class, from which <see cref="T:System.Runtime.Remoting.Contexts.Context" /> attribute classes can extend.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Gathers naming information from the context property and determines whether the new context is ok for the context property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Freeze">
@@ -36,9 +43,16 @@
         <Parameter Name="newContext" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <param name="newContext">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Context properties cannot be added after the context has been frozen.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the context is frozen.</para>
+        </summary>
+        <param name="newContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context to freeze. </param>
       </Docs>
     </Member>
     <Member MemberName="IsNewContextOK">
@@ -57,10 +71,20 @@
         <Parameter Name="newCtx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <param name="newCtx">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once all the context properties have been added to the new context, they are all queried as to whether they are okay in the new context. The context property could look at the other context properties from <paramref name="newCtx" /> and determine whether it is compatible with these other context properties. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value indicating whether the context property is compatible with the new context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the context property can coexist with the other context properties in the given context; otherwise, false.</para>
+        </returns>
+        <param name="newCtx">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new context in which the <see cref="T:System.Runtime.Remoting.Contexts.ContextProperty" /> has been created. </param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -76,9 +100,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the property under which it will be added to the context.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

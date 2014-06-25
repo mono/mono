@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RolePrincipal" FullName="System.Web.Security.RolePrincipal">
   <TypeSignature Language="C#" Value="public sealed class RolePrincipal : System.Security.Principal.IPrincipal" />
   <AssemblyInfo>
@@ -13,9 +14,18 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.RolePrincipal" /> object implements the <see cref="T:System.Security.Principal.IPrincipal" /> interface and represents the current security context for the HTTP request.</para>
+      <para>When role management is enabled (see <see cref="T:System.Web.Security.Roles" />), the <see cref="T:System.Web.Security.RoleManagerModule" /> assigns a <see cref="T:System.Web.Security.RolePrincipal" /> object to the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="P:System.Web.HttpContext.Current" /> <see cref="T:System.Web.HttpContext" />.</para>
+      <para>The <see cref="T:System.Web.Security.RolePrincipal" /> class exposes the security identity for the current HTTP request and additionally performs checks for role membership. If <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is true, then the <see cref="T:System.Web.Security.RolePrincipal" /> object manages the cached list of roles and looks up role membership for the current user in the cached list first, then the role <see cref="P:System.Web.Security.Roles.Provider" />. If <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is false, the <see cref="T:System.Web.Security.RolePrincipal" /> object always looks up role membership using the role provider.</para>
+      <para>The <see cref="T:System.Web.Security.RolePrincipal" /> object encrypts and decrypts role information cached in the cookie identified by the <see cref="P:System.Web.Security.Roles.CookieName" /> based on the <see cref="P:System.Web.Security.Roles.CookieProtectionValue" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents security information for the current HTTP request, including role membership. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,10 +35,18 @@
         <Parameter Name="identity" Type="System.Security.Principal.IIdentity" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of the <see cref="M:System.Web.Security.RolePrincipal.#ctor(System.Security.Principal.IIdentity)" /> constructor creates a new <see cref="T:System.Web.Security.RolePrincipal" /> object and initializes its property values. Cached role information is not read from the cookie identified by the <see cref="P:System.Web.Security.Roles.CookieName" /> property. The <see cref="P:System.Web.Security.RolePrincipal.ProviderName" /> property is set to the <see cref="P:System.Configuration.Provider.ProviderBase.Name" /> of the default role provider.</para>
+          <para>For information on enabling role management, see the <see cref="T:System.Web.Security.Roles" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instantiates a <see cref="T:System.Web.Security.RolePrincipal" /> object for the specified <paramref name="identity" />.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user identity to create the <see cref="T:System.Web.Security.RolePrincipal" /> for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,11 +60,20 @@
         <Parameter Name="encryptedTicket" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <param name="encryptedTicket">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of the <see cref="M:System.Web.Security.RolePrincipal.#ctor(System.Security.Principal.IIdentity,System.String)" /> constructor creates a new <see cref="T:System.Web.Security.RolePrincipal" /> object and initializes its property values. Role information for the current user is read from the supplied <paramref name="encryptedTicket" /> and cached with the <see cref="T:System.Web.Security.RolePrincipal" /> object. The <see cref="P:System.Web.Security.RolePrincipal.ProviderName" /> property is set to the <see cref="P:System.Configuration.Provider.ProviderBase.Name" /> of the default role provider.</para>
+          <para>For information on enabling role management, see the <see cref="T:System.Web.Security.Roles" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instantiates a <see cref="T:System.Web.Security.RolePrincipal" /> object for the specified <paramref name="identity" /> with role information from the specified <paramref name="encryptedTicket" />.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user identity to create the <see cref="T:System.Web.Security.RolePrincipal" /> for.</param>
+        <param name="encryptedTicket">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains encrypted role information.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,11 +87,20 @@
         <Parameter Name="identity" Type="System.Security.Principal.IIdentity" />
       </Parameters>
       <Docs>
-        <param name="providerName">To be added.</param>
-        <param name="identity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of the <see cref="M:System.Web.Security.RolePrincipal.#ctor(System.String,System.Security.Principal.IIdentity)" /> constructor creates a new <see cref="T:System.Web.Security.RolePrincipal" /> object and initializes its property values. The <see cref="P:System.Web.Security.RolePrincipal.ProviderName" /> property is set to the value specified in the <paramref name="providerName" /> parameter.</para>
+          <para>For information on enabling role management, see the <see cref="T:System.Web.Security.Roles" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instantiates a <see cref="T:System.Web.Security.RolePrincipal" /> object for the specified <paramref name="identity" /> using the specified <paramref name="providerName" />.</para>
+        </summary>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the role provider for the user.</param>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user identity to create the <see cref="T:System.Web.Security.RolePrincipal" /> for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,12 +115,22 @@
         <Parameter Name="encryptedTicket" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="providerName">To be added.</param>
-        <param name="identity">To be added.</param>
-        <param name="encryptedTicket">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of the <see cref="M:System.Web.Security.RolePrincipal.#ctor(System.Security.Principal.IIdentity,System.String)" /> constructor creates a new <see cref="T:System.Web.Security.RolePrincipal" /> object and initializes its property values. Role information for the current user is read from the supplied <paramref name="encryptedTicket" /> and cached with the <see cref="T:System.Web.Security.RolePrincipal" /> object. The <see cref="P:System.Web.Security.RolePrincipal.ProviderName" /> property is set to the value specified in the <paramref name="providerName" /> parameter.</para>
+          <para>For information on enabling role management, see the <see cref="T:System.Web.Security.Roles" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instantiates a <see cref="T:System.Web.Security.RolePrincipal" /> object for the specified <paramref name="identity" /> using the specified <paramref name="providerName" /> and role information from the specified <paramref name="encryptedTicket" />.</para>
+        </summary>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the role provider for the user.</param>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user identity to create the <see cref="T:System.Web.Security.RolePrincipal" /> for.</param>
+        <param name="encryptedTicket">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains encrypted role information.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,10 +143,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RolePrincipal.CachedListChanged" /> property will return true after role names have been retrieved from the default role <see cref="P:System.Web.Security.Roles.Provider" /> and added to the cache by the <see cref="M:System.Web.Security.RolePrincipal.GetRoles" /> method, or when the <see cref="M:System.Web.Security.RolePrincipal.IsInRole(System.String)" /> method calls the <see cref="M:System.Web.Security.RoleProvider.IsUserInRole(System.String,System.String)" /> method of the default role provider and then receives a response of true, resulting in the role name passed to the <see cref="M:System.Web.Security.RolePrincipal.IsInRole(System.String)" /> method being added to the cache.</para>
+          <para>The <see cref="P:System.Web.Security.RolePrincipal.CachedListChanged" /> property will also return true if <see cref="P:System.Web.Security.Roles.CookieSlidingExpiration" /> is set to true and the <see cref="P:System.Web.Security.RolePrincipal.ExpireDate" /> has passed, resulting in a new <see cref="P:System.Web.Security.RolePrincipal.ExpireDate" /> being set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list of role names cached with the <see cref="T:System.Web.Security.RolePrincipal" /> object has been modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,10 +166,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RolePrincipal.CookiePath" /> property returns the value of the cookiePath attribute from the Web.config file for your ASP.NET application. For more information on cookie paths, see <see cref="P:System.Web.HttpCookie.Path" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for the cached role names cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -129,10 +188,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RolePrincipal.Expired" /> property returns a Boolean value indicating whether the roles cookie has expired based on the <see cref="P:System.Web.Security.RolePrincipal.ExpireDate" /> and the current date and time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the roles cookie has expired.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -145,10 +210,13 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the date and time when the roles cookie will expire.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -162,10 +230,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is true and role names have been cached for the user represented by the <see cref="T:System.Web.Security.RolePrincipal" />, then the <see cref="M:System.Web.Security.RolePrincipal.GetRoles" /> method will return the list of role names in the cache that the user is a member of. If role names have not been cached, then the <see cref="M:System.Web.Security.RolePrincipal.GetRoles" /> method returns the list of role names that the user is a member of from the default role <see cref="P:System.Web.Security.Roles.Provider" />. Only role names for the current <see cref="P:System.Web.Security.Roles.ApplicationName" /> are returned. To determine whether role names have been cached in the <see cref="T:System.Web.Security.RolePrincipal" /> object, check the <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of roles that the <see cref="T:System.Web.Security.RolePrincipal" /> is a member of.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list of roles that the <see cref="T:System.Web.Security.RolePrincipal" /> is a member of.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -178,10 +255,16 @@
         <ReturnType>System.Security.Principal.IIdentity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RolePrincipal.Identity" /> of a <see cref="T:System.Web.Security.RolePrincipal" /> object is set when the <see cref="T:System.Web.Security.RolePrincipal" /> constructor is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security identity for the current HTTP request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,11 +280,23 @@
         <Parameter Name="role" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="role">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Web.Security.RolePrincipal.IsInRole(System.String)" /> first checks the <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> property to determine whether a cached list of role names for the current user is available. If the <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> property is true, the cached list is checked for the specified role. If the <see cref="M:System.Web.Security.RolePrincipal.IsInRole(System.String)" /> method finds the specified role in the cached list, it returns true. </para>
+          <para>If <see cref="M:System.Web.Security.RolePrincipal.IsInRole(System.String)" /> does not find the specified role, it calls the <see cref="M:System.Web.Security.RoleProvider.GetRolesForUser(System.String)" /> method of the default <see cref="P:System.Web.Security.Roles.Provider" /> instance to determine whether the user name is associated with a role from the data source for the configured <see cref="P:System.Web.Security.Roles.ApplicationName" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user represented by the <see cref="T:System.Web.Security.RolePrincipal" /> is in the specified role.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if user represented by the <see cref="T:System.Web.Security.RolePrincipal" /> is in the specified role; otherwise, false.</para>
+        </returns>
+        <param name="role">
+          <attribution license="cc4" from="Microsoft" modified="false" />The role to search for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -214,10 +309,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cacheRolesInCookie attribute in the Web.config file for the application is set to true, then a list of role names for the current user is written to a cookie when user membership in a particular role is checked. The <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> property indicates whether role names have been written to the cookie. Note that, even though the cacheRolesInCookie configuration attribute may be true, the <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> property does not return true until after role information has been written to the cookie. If no role checks are performed for a user, <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> will return false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the list of roles for the user has been cached in a cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,10 +331,13 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the date and time that the roles cookie was issued.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -246,10 +350,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RolePrincipal.ProviderName" /> property exposes the name of the role provider that manages the role information for the user represented by the <see cref="T:System.Web.Security.RolePrincipal" /> object. This enables you to access the specific role-provider instance for a user by using the <see cref="P:System.Web.Security.Roles.Providers" /> property of the <see cref="T:System.Web.Security.Roles" /> class regardless of whether the provider is the default provider for the application. For example, you may create a method that takes a <see cref="T:System.Web.Security.RolePrincipal" /> as input and returns the list of roles for the represented user. You can ensure that the appropriate role provider is used to return the list of roles for the <see cref="T:System.Web.Security.RolePrincipal" /> by calling the <see cref="M:System.Web.Security.RoleProvider.GetRolesForUser(System.String)" /> method of the role provider from the <see cref="P:System.Web.Security.Roles.Providers" /> collection that is indexed by the <see cref="P:System.Web.Security.RolePrincipal.ProviderName" /> property value.</para>
+          <para>To populate the <see cref="T:System.Web.Security.RolePrincipal" /> object for each request, you must use a <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event handler defined in the Global.asax file for the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the role provider that stores and retrieves role information for the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -263,9 +374,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Security.RolePrincipal.SetDirty" /> method marks the cached role list as having been changed by setting <see cref="P:System.Web.Security.RolePrincipal.CachedListChanged" /> to true and <see cref="P:System.Web.Security.RolePrincipal.IsRoleListCached" /> to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the cached role list as having been changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -279,10 +396,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the <see cref="M:System.Web.Security.RolePrincipal.ToEncryptedTicket" /> method is stored in the roles cookie when <see cref="P:System.Web.Security.Roles.CacheRolesInCookie" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the role information cached with the <see cref="T:System.Web.Security.RolePrincipal" /> object encrypted based on the <see cref="P:System.Web.Security.Roles.CookieProtectionValue" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The role information cached with the <see cref="T:System.Web.Security.RolePrincipal" /> object encrypted based on the <see cref="P:System.Web.Security.Roles.CookieProtectionValue" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -295,10 +421,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By including a version number in the roles cookie, future releases of ASP.NET can modify the format of the roles cookie and use the <see cref="P:System.Web.Security.RolePrincipal.Version" /> property to distinguish between different formats.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version number of the roles cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

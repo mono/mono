@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlImage" FullName="System.Web.UI.HtmlControls.HtmlImage">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlImage : System.Web.UI.HtmlControls.HtmlControl" />
   <AssemblyInfo>
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this control to display an image on a Web page. The <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> control can be programmatically manipulated to change the image displayed, the image size, and the alignment of the image relative to other page elements.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlImage" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlImage.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides programmatic access for the HTML &lt;img&gt; element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +37,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlImage" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "img" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +81,79 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the alignment of the image with respect to other elements on the Web page.</para>
+          <para>The following table represents the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>left </para>
+              </term>
+              <description>
+                <para>The image is aligned on the left side of the Web page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>center </para>
+              </term>
+              <description>
+                <para>The image is aligned in the center of the Web page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>right </para>
+              </term>
+              <description>
+                <para>The image is aligned on the right side of the Web page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>top </para>
+              </term>
+              <description>
+                <para>Other elements in the Web page are aligned with the top edge of the image. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>middle </para>
+              </term>
+              <description>
+                <para>Other elements in the Web page are aligned with the middle of the image. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>bottom </para>
+              </term>
+              <description>
+                <para>Other elements in the Web page are aligned with the bottom edge of the image. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The center value might not work on all browsers. To center an image, wrap the <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> control inside paragraph tags that contain the align attribute set to "center" (&lt;p align= "center"&gt;).</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment of the image relative to other Web page elements.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +176,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the caption displayed when the image specified by the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Src" /> property is unavailable. On newer browsers, this caption also appears as a ToolTip.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alternative caption the browser displays if an image is unavailable or currently downloading and not yet finished.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +210,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to create a frame with the specified width (in pixels) for an image.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of a frame for an image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,9 +241,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> properties can be used two ways. You can use the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> properties to send image size specifications to the browser. This displays the Web page faster because the browser does not need to recalculate the positions of elements on the page when the image loads.</para>
+          <para>You can also use the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> properties to scale the image. When using values different from the physical size of the image, the image is resized accordingly. However, this method for scaling the image is not recommended because it takes longer for the page to display it. Instead, physically resize the image to the size you need.</para>
+          <para>By default, the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> property is expressed in pixels, but it can also be expressed as a percentage of the size of the window.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height of the image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -151,8 +277,16 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Src" /> property is a malformed URL, the <see cref="M:System.Web.UI.HtmlControls.HtmlImage.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method throws an <see cref="T:System.Web.HttpException" /> exception.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlImage.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method overrides the base class's <see cref="M:System.Web.UI.HtmlControls.HtmlImage.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method to write the <paramref name="src" /> attribute of the rendered <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> control.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlImage.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlImage" /> control's attributes to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +301,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the path to the image file to display. If the image file is in the same directory as the Web page source file that uses it, you can just specify the file name. Otherwise, you must also include the path to the file. The path can be absolute or relative to the directory that contains the Web page source file. You can use the relative path " ~/ " to refer to the current virtual directory where the page is located. For example, the value of <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Src" /> for &lt;img runat="server" src="~/abc/d.gif"&gt; on a page in the "XspTest" virtual directory is &lt;img src="/XspText/abc/d.gif"&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the source of the image file to display.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,9 +335,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> properties can be used two ways. You can use the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> properties to send the image size specifications to the browser. This displays the Web page faster because the browser does not need to recalculate the positions of elements on the page when the image loads.</para>
+          <para>You can also use the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Height" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> properties to scale the image. When using values that are different from the physical size of the image, the image is resized accordingly. However, this method for scaling the image is not recommended because it takes longer for the page to display it. Instead, physically resize the image to the size you need.</para>
+          <para>By default, the <see cref="P:System.Web.UI.HtmlControls.HtmlImage.Width" /> property is expressed in pixels, but it can also be expressed as a percentage of the window size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

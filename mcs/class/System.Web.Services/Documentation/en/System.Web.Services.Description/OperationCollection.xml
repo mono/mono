@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OperationCollection" FullName="System.Web.Services.Description.OperationCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class OperationCollection : System.Web.Services.Description.ServiceDescriptionBaseCollection" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Description.Operation" /> class corresponds to the Web Services Description Language (WSDL) &lt;operation&gt; element enclosed by the &lt;portType&gt; element. For more information about WSDL, see the specification at http://www.w3.org/TR/wsdl/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of instances of the <see cref="T:System.Web.Services.Description.Operation" /> class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -28,10 +35,17 @@
         <Parameter Name="operation" Type="System.Web.Services.Description.Operation" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added: an object of type 'Operation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.Operation" /> to the end of the <see cref="T:System.Web.Services.Description.OperationCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index where the <paramref name="operation" /> parameter has been added.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Operation" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,10 +62,17 @@
         <Parameter Name="operation" Type="System.Web.Services.Description.Operation" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added: an object of type 'Operation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.Operation" /> is a member of the <see cref="T:System.Web.Services.Description.OperationCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="operation" /> is a member of the <see cref="T:System.Web.Services.Description.OperationCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Operation" /> for which to check collection membership. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +90,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Operation []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire <see cref="T:System.Web.Services.Description.OperationCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.Operation" />, starting at the specified zero-based index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.Services.Description.Operation" /> serving as the destination for the copy action. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to start placing the copied collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -89,10 +115,17 @@
         <Parameter Name="operation" Type="System.Web.Services.Description.Operation" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added: an object of type 'Operation'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified <see cref="T:System.Web.Services.Description.Operation" /> and returns the zero-based index of the first occurrence within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Operation" /> for which to search in the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,10 +143,20 @@
         <Parameter Name="operation" Type="System.Web.Services.Description.Operation" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="operation">To be added: an object of type 'Operation'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the number of items in the collection already equals the collection's capacity, the capacity is doubled by automatically reallocating the internal array before the new element is inserted.</para>
+          <para>If the <paramref name="index" /> parameter is equal to <see cref="P:System.Collections.CollectionBase.Count" />, the <paramref name="operation" /> parameter is added to the end of the <see cref="T:System.Web.Services.Description.OperationCollection" />.</para>
+          <para>The elements after the insertion point move down to accommodate the new element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.Operation" /> to the <see cref="T:System.Web.Services.Description.OperationCollection" /> at the specified zero-based index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to insert the <paramref name="operation" /> parameter. </param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Operation" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -150,9 +193,17 @@
         <Parameter Name="operation" Type="System.Web.Services.Description.Operation" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added: an object of type 'Operation'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method performs a linear search; therefore, the average execution time is proportional to <see cref="P:System.Collections.CollectionBase.Count" />.</para>
+          <para>The elements that follow the removed <see cref="T:System.Web.Services.Description.Operation" /> move up to occupy the vacated spot.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.Operation" /> from the <see cref="T:System.Web.Services.Description.OperationCollection" />.</para>
+        </summary>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Operation" /> to remove from the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="Microsoft.SqlServer.Server">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:Microsoft.SqlServer.Server" /> namespace contains classes, interfaces, and enumerations that are specific to the integration of the Microsoft .NET Framework common language runtime (CLR) into Microsoft SQL Server, and the SQL Server database engine process execution environment.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Using the attribute classes in the <see cref="N:Microsoft.SqlServer.Server" /> namespace, you can create stored procedures, triggers, user-defined types, user-defined functions (both scalar and table-valued), and user-defined aggregate functions in any supported .NET Framework language. You can also register them in SQL Server.</para>
+      <para>Query the <see cref="T:Microsoft.SqlServer.Server.SqlContext" /> class to determine whether the currently executing code is running in the SQL Server database engine process. This also provides the caller's context when a user calls a managed stored procedure or function on the server, or when a user's action fires a managed code trigger.</para>
+      <para>The <see cref="T:Microsoft.SqlServer.Server.SqlContext" /> class provides a <see cref="T:Microsoft.SqlServer.Server.SqlPipe" /> object, through which results are returned to the client from a stored procedure, a <see cref="T:Microsoft.SqlServer.Server.SqlTriggerContext" /> object, which provides information about the operation that caused a trigger to be fired, and a <see cref="T:System.Security.Principal.WindowsIdentity" /> object, which can be used to determine the identity of the calling client when the client used integrated security for authentication.</para>
+      <para>For more information about SQL Server CLR integration and the APIs in the <see cref="N:Microsoft.SqlServer.Server" /> namespace, see SQL Server Books Online.</para>
+    </remarks>
   </Docs>
 </Namespace>

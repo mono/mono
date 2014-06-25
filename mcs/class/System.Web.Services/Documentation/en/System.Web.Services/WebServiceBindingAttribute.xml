@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebServiceBindingAttribute" FullName="System.Web.Services.WebServiceBindingAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class WebServiceBindingAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A binding, as defined by Web Services Description Language (WSDL), is similar to an interface, in that it defines a concrete set of operations. Each XML Web service method is an operation within a particular binding. XML Web service methods are members of either the default binding for an XML Web service or a binding specified within a <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> applied to a class implementing an XML Web service. An XML Web service can implement multiple bindings, by applying multiple <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> attributes to an XML Web service.</para>
+      <para>Once one or more <see cref="T:System.Web.Services.WebServiceAttribute" /> attributes are applied to an XML Web service, a <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> can be applied to individual XML Web service methods to indicate the binding operation implemented by a particular XML Web service method. Set the <see cref="P:System.Web.Services.Protocols.SoapDocumentMethodAttribute.Binding" /> property of <see cref="T:System.Web.Services.Protocols.SoapDocumentMethodAttribute" /> or <see cref="T:System.Web.Services.Protocols.SoapRpcMethodAttribute" /> to specify the binding an XML Web service method is implementing an operation for.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Declares a binding that defines one or more XML Web service methods. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +55,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to specify a name for a binding defined in the XML Web service it is applied to and is a member of the default namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> class setting the name of the binding the XML Web service method is implementing.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the binding an XML Web service method is implementing an operation for. Sets the <see cref="P:System.Web.Services.WebServiceBindingAttribute.Name" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,10 +80,18 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to specify a name for a binding defined in the XML Web service it is applied to that and is a member of the supplied namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the binding an XML Web service method is implementing an operation for. Sets the <see cref="P:System.Web.Services.WebServiceBindingAttribute.Name" /> property. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace associated with the binding. Sets the <see cref="P:System.Web.Services.WebServiceBindingAttribute.Namespace" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,11 +108,20 @@
         <Parameter Name="location" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <param name="location">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to specify a name for a binding not defined in the XML Web service it is applied to that and is a member of the supplied namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the binding an XML Web service method is implementing an operation for. Sets the <see cref="P:System.Web.Services.WebServiceBindingAttribute.Name" /> property. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace associated with the binding. Sets the <see cref="P:System.Web.Services.WebServiceBindingAttribute.Namespace" /> property. </param>
+        <param name="location">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location where the binding is defined. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,9 +138,16 @@
         <ReturnType>System.Web.Services.WsiProfiles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The WS-I organization publishes guidelines to ensure the interoperability of Web services across platforms. This property indicates the WSI specification to which the binding claims to conform.</para>
+          <para>The <see cref="P:System.Web.Services.WebServiceBindingAttribute.EmitConformanceClaims" /> property controls whether the conformance claims are provided when a WSDL description of the Web service is published.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Web Services Interoperability (WSI) specification to which the binding claims to conform.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EmitConformanceClaims">
@@ -118,9 +160,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property controls whether the conformance claims expressed by the <see cref="P:System.Web.Services.WebServiceBindingAttribute.ConformsTo" /> property are provided when a WSDL description of the Web service is published.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the binding emits conformance claims.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Location">
@@ -131,9 +179,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location where the binding is defined.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +199,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -165,9 +219,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace associated with the binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

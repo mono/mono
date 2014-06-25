@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SiteMapHierarchicalDataSourceView" FullName="System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView">
   <TypeSignature Language="C#" Value="public class SiteMapHierarchicalDataSourceView : System.Web.UI.HierarchicalDataSourceView" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control can present its underlying data in both tabular and hierarchical format to Web server controls that bind to it. The <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> is used by controls developers, but not page developers or in page code.</para>
+      <para>Controls such as <see cref="T:System.Web.UI.WebControls.Menu" /> or <see cref="T:System.Web.UI.WebControls.DropDownList" /> use the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> to bind to site map data and present it in list form, while controls that derive from the <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> class, such as <see cref="T:System.Web.UI.WebControls.TreeView" />, bind to sitemap data and present it in hierarchical form. </para>
+      <para>If a data-bound control calls the <see cref="M:System.Web.UI.IDataSource.GetView(System.String)" /> method of the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" />, a <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> is created by the data source. If a control calls the <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> <see cref="M:System.Web.UI.HierarchicalDataSourceControl.GetHierarchicalView(System.String)" /> method, a <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> is created. The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class is provided for Web server controls that derive from <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> and bind to lists and tabular data, while the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> is provided for Web server controls that derive from <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> and bind to hierarchical data. </para>
+      <para>Like all <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> helper objects, the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> defines the operations that the data source can perform with the underlying data. Because the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> class only overrides the <see cref="M:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView.Select" /> method, the associated <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control does not support sort expressions or insert, delete, or update operations. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a data view on a site map node or collection of nodes for a <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +31,17 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> class maintains an internal <see cref="T:System.Web.SiteMapNodeCollection" /> collection of nodes. When the <see cref="M:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView.#ctor(System.Web.SiteMapNode)" /> constructor is used, the specified node is added to the collection. A call to the <see cref="M:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView.Select" /> method will return this collection of one element. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> class, adding the specified node to the <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection that the data source view maintains.</para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.SiteMapNode" /> that the data source view represents.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +54,17 @@
         <Parameter Name="collection" Type="System.Web.SiteMapNodeCollection" />
       </Parameters>
       <Docs>
-        <param name="collection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> class maintains an internal <see cref="T:System.Web.SiteMapNodeCollection" /> collection of nodes. When the <see cref="M:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView.#ctor(System.Web.SiteMapNodeCollection)" /> constructor is used, the specified collection becomes the one the data source view maintains. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> class, setting the specified collection to the <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection that the data source view maintains.</para>
+        </summary>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.SiteMapNodeCollection" /> that the data source view represents.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +78,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView.Select" /> method returns an <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of nodes. You can call the <see cref="M:System.String.System#Collections#IEnumerable#GetEnumerator" /> method to get an <see cref="T:System.Collections.IEnumerator" /> object and iterate through this collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of the <see cref="T:System.Web.SiteMapNode" /> objects that represents the site navigation structure for the current user.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of site map nodes.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

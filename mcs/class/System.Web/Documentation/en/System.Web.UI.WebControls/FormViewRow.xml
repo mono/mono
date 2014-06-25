@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormViewRow" FullName="System.Web.UI.WebControls.FormViewRow">
   <TypeSignature Language="C#" Value="public class FormViewRow : System.Web.UI.WebControls.TableRow" />
   <AssemblyInfo>
@@ -9,9 +10,124 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> class is used to represent an individual row in a <see cref="T:System.Web.UI.WebControls.FormView" /> control. Each row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control has a designated row type. The following table lists the different row types.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Row type</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>DataControlRowType.DataRow</para>
+          </term>
+          <description>
+            <para>The data row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowType.EmptyDataRow</para>
+          </term>
+          <description>
+            <para>The empty data row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control. The empty data row is displayed in a <see cref="T:System.Web.UI.WebControls.FormView" /> control when there are no records to display.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowType.Footer</para>
+          </term>
+          <description>
+            <para>The footer row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowType.Header</para>
+          </term>
+          <description>
+            <para>The header row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowType.Pager</para>
+          </term>
+          <description>
+            <para>A pager row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+          </description>
+        </item>
+      </list>
+      <para>To determine the row type of a <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object, use the <see cref="P:System.Web.UI.WebControls.FormViewRow.RowType" /> property. A <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object also has a state associated with it. The state can be a bitwise combination of the values in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>State value</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>DataControlRowState.Edit</para>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is in edit mode.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowState.Insert</para>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is in insert mode.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowState.Normal</para>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is in its normal (default) state.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>DataControlRowState.Selected</para>
+          </term>
+          <description>
+            <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is selected.</para>
+          </description>
+        </item>
+      </list>
+      <para>To determine the state of a <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object, use the <see cref="P:System.Web.UI.WebControls.FormViewRow.RowState" /> property.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.FormView" /> control displays the contents of its <see cref="P:System.Web.UI.WebControls.FormView.ItemTemplate" /> property in a data row. To access the data row, use the <see cref="P:System.Web.UI.WebControls.FormView.Row" /> property. To determine the index of the current data item in the data source, use the <see cref="P:System.Web.UI.WebControls.FormViewRow.ItemIndex" /> property.</para>
+      <para>You can access the individual cells of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object by using the <see cref="P:System.Web.UI.WebControls.TableRow.Cells" /> property. If a cell contains controls, you can retrieve a control from the cell by using one of the following methods:</para>
+      <list type="bullet">
+        <item>
+          <para>Use the <see cref="P:System.Web.UI.Control.Controls" /> collection of the cell to retrieve the control at a specific index.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Web.UI.Control.FindControl(System.String)" /> method of the cell to retrieve the control, if the control has its <see cref="P:System.Web.UI.Control.ID" /> property set. This is the preferred method to retrieve a control from a cell.</para>
+        </item>
+      </list>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> class, see the <see cref="M:System.Web.UI.WebControls.FormViewRow.#ctor(System.Int32,System.Web.UI.WebControls.DataControlRowType,System.Web.UI.WebControls.DataControlRowState)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a row within a <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,11 +140,62 @@
       </Parameters>
       <Docs>
         <param name="rowIndex">To be added.</param>
-        <param name="rowType">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> class.</para>
+          <para>The following table shows initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.FormViewRow.ItemIndex" />
+                </para>
+              </term>
+              <description>
+                <para>The value specified by the <paramref name="itemIndex" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.FormViewRow.RowType" />
+                </para>
+              </term>
+              <description>
+                <para>The value specified by the <paramref name="rowType" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.FormViewRow.RowState" />
+                </para>
+              </term>
+              <description>
+                <para>The value specified by the <paramref name="rowState" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> class.</para>
+        </summary>
+        <param name="rowType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowType" /> enumeration values.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> enumeration values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +208,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FormViewRow.ItemIndex" /> property to determine the index of the data item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the data item displayed from the data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,12 +234,20 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether to pass an event up the page's ASP.NET server control hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event has been canceled; otherwise, false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,10 +260,61 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FormViewRow.RowState" /> property to determine the state of the row. The state can be a bitwise combination of the values in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>State value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DataControlRowState.Edit</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is in edit mode.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowState.Insert</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is in insert mode.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowState.Normal</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is in its normal, read-only state.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowState.Selected</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object is selected.</para>
+              </description>
+            </item>
+          </list>
+          <para>This property is commonly used to determine the state of a row before performing an operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,10 +327,77 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FormViewRow.RowType" /> property to determine the type of row that the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object represents. The following table lists the different row type values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Row type</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>DataControlRowType.DataRow</para>
+              </term>
+              <description>
+                <para>The data row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowType.EmptyDataRow</para>
+              </term>
+              <description>
+                <para>The empty data row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control. The empty data row is displayed in a <see cref="T:System.Web.UI.WebControls.FormView" /> control when there are no records to display.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowType.Footer</para>
+              </term>
+              <description>
+                <para>The footer row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowType.Header</para>
+              </term>
+              <description>
+                <para>The header row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowType.Pager</para>
+              </term>
+              <description>
+                <para>A pager row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataControlRowType.Separator</para>
+              </term>
+              <description>
+                <para>A separator row in the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+              </description>
+            </item>
+          </list>
+          <para>This property is commonly used to determine a row's type before performing an operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the row type of the <see cref="T:System.Web.UI.WebControls.FormViewRow" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

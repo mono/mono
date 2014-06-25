@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDictionaryString" FullName="System.Xml.XmlDictionaryString">
   <TypeSignature Language="C#" Value="public class XmlDictionaryString" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDictionaryString extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class represents an entry in an <see cref="T:System.Xml.IXmlDictionary" />.  It associates an integer value with a string value for use by <see cref="T:System.Xml.XmlDictionaryReader" /> and <see cref="T:System.Xml.XmlDictionaryWriter" /> implementations.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an entry stored in a <see cref="T:System.Xml.XmlDictionary" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +34,20 @@
         <Parameter Name="key" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dictionary">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlDictionaryString" /> does not automatically add itself to the specified dictionary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of this class. </para>
+        </summary>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.IXmlDictionary" /> containing this instance.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string that is the value of the dictionary entry.</param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The integer that is the key of the dictionary entry.</param>
       </Docs>
     </Member>
     <Member MemberName="Dictionary">
@@ -45,9 +61,12 @@
         <ReturnType>System.Xml.IXmlDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="T:System.Xml.IXmlDictionary" /> passed to the constructor of this instance of <see cref="T:System.Xml.XmlDictionaryString" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -61,9 +80,12 @@
         <ReturnType>System.Xml.XmlDictionaryString</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.XmlDictionaryString" /> representing the empty string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Key">
@@ -77,9 +99,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must be greater than 0 and less than <see cref="F:System.Int32.MaxValue" /> / 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the integer key for this instance of the class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -94,9 +122,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays a text representation of this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value for this instance of the class. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -110,9 +144,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string value for this instance of the class.  </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ScrollableControl" FullName="System.Windows.Forms.ScrollableControl">
   <TypeSignature Language="C#" Value="public class ScrollableControl : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -21,8 +22,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You do not typically use the <see cref="T:System.Windows.Forms.ScrollableControl" /> class directly. The <see cref="T:System.Windows.Forms.ContainerControl" /> and <see cref="T:System.Windows.Forms.Panel" /> classes inherit from this class.</para>
+      <para>The <see cref="T:System.Windows.Forms.ScrollableControl" /> class acts as a base class for controls that require the ability to scroll. To enable a control to display scroll bars as needed, set the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property to true and set the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollMinSize" /> property to the desired size. When the control is sized smaller than the specified minimum size, or a child control is located outside the bounds of the control, the appropriate scroll bars are displayed.</para>
+      <para>To manually override which scroll bars are visible, set the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> and <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> properties. If either property is set to false, the corresponding scroll bar is not visible, even if the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property is set to true.</para>
+      <para>You can handle the <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event to know when the user or code scrolls the client area.</para>
+      <para>When adding controls programmatically to a form, use the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" /> property to position the control either inside or outside of the current viewable scroll area.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a base class for controls that support auto-scrolling behavior.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +41,25 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="M:System.Windows.Forms.ScrollableControl.#ctor" /> constructor performs the following actions:</para>
+          <list type="bullet">
+            <item>
+              <para>Marks the current instance as a container control by calling the <see cref="M:System.Windows.Forms.Control.SetStyle(System.Windows.Forms.ControlStyles,System.Boolean)" /> method to set the <see cref="F:System.Windows.Forms.ControlStyles.ContainerControl" /> style to true.</para>
+            </item>
+            <item>
+              <para>Enables background erasing by setting the <see cref="F:System.Windows.Forms.ControlStyles.AllPaintingInWmPaint" /> to false.</para>
+            </item>
+            <item>
+              <para>Disables auto-scrolling by calling the <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> method to set the <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateAutoScrolling" /> bit to false.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ScrollableControl" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +76,16 @@
         <Parameter Name="displayScrollbars" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="displayScrollbars">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When required, the <see cref="M:System.Windows.Forms.ScrollableControl.AdjustFormScrollbars(System.Boolean)" /> method lays out the client area, including resizing the display area as required to accommodate the scroll bars.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adjusts the scroll bars on the container based on the current control positions and the control currently selected. </para>
+        </summary>
+        <param name="displayScrollbars">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to show the scroll bars; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +112,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When true, this property enables the container to have a virtual size that is larger than its visible boundaries.</para>
+          <para>There is currently a limitation in Windows Forms that prevents all classes derived from <see cref="T:System.Windows.Forms.ScrollableControl" /> from acting properly when both <see cref="P:System.Windows.Forms.Control.RightToLeft" /> is enabled and <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> is set to <see cref="F:System.Windows.Forms.RightToLeft.Yes" />. For example, let's say that you place a control such as <see cref="T:System.Windows.Forms.Panel" />—or a container class derived from <see cref="T:System.Windows.Forms.Panel" /> (such as <see cref="T:System.Windows.Forms.FlowLayoutPanel" /> or <see cref="T:System.Windows.Forms.TableLayoutPanel" />)—on your form. If you set <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> on the container to <see cref="F:System.Windows.Forms.RightToLeft.Yes" /> and then set the <see cref="P:System.Windows.Forms.Control.Anchor" /> property on one or more of the controls inside of the container to <see cref="F:System.Windows.Forms.AnchorStyles.Right" />, then no scrollbar ever appears. The class derived from <see cref="T:System.Windows.Forms.ScrollableControl" /> acts as if <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> were set to <see cref="F:System.Windows.Forms.RightToLeft.No" />.</para>
+          <para>Currently, the only workaround is to nest the <see cref="T:System.Windows.Forms.ScrollableControl" /> inside another <see cref="T:System.Windows.Forms.ScrollableControl" />. For instance, if you need <see cref="T:System.Windows.Forms.TableLayoutPanel" /> to work in this situation, you can place it inside of a <see cref="T:System.Windows.Forms.Panel" /> control and set <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> on the <see cref="T:System.Windows.Forms.Panel" /> to <see cref="F:System.Windows.Forms.RightToLeft.Yes" />.</para>
+          <block subset="none" type="note">
+            <para> <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> maintains the visibility of the scrollbars automatically. Therefore, setting the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> or <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> property to true has no effect when <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> is enabled.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the container enables the user to scroll to any controls placed outside of its visible boundaries.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,9 +144,22 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The auto-scroll margin is the distance between any child controls and the edges of the scrollable parent control. The <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollMargin" /> size is added to the size of any child controls contained in the scrollable control to determine whether or not scroll bars are needed. The <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollMargin" /> property is evaluated when the parent scrollable control is resized or the individual child controls are brought into view, and is used to determine if scroll bars must be displayed. Docked controls are excluded from the calculations that determine if scroll bars must be displayed.</para>
+          <block subset="none" type="note">
+            <para>If a docked control's <see cref="P:System.Windows.Forms.Control.Dock" /> property is set to <see cref="F:System.Windows.Forms.DockStyle.Fill" />, the control fills the parent scrollable control and the docked control is ignored when using the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollMargin" /> to determine whether scroll bars are needed.</para>
+          </block>
+          <para>If the distance from the edge of a child control to the parent scrollable control is less than the value assigned to the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollMargin" /> property and the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property is set to true, the appropriate scroll bar is displayed.</para>
+          <block subset="none" type="note">
+            <para>We recommend, when docking controls within a scrollable control, that you add a child scrollable control, such as a <see cref="T:System.Windows.Forms.Panel" />, to contain any other controls that might require scrolling. You should add the child <see cref="T:System.Windows.Forms.Panel" /> control to the scrollable control and its <see cref="P:System.Windows.Forms.Control.Dock" /> property set to <see cref="F:System.Windows.Forms.DockStyle.Fill" /> and its <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property set to true. You should set the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property of the parent scrollable control to false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the auto-scroll margin.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -119,9 +178,15 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollMinSize" /> property is used to manage the screen size allocated to the automatic scroll bars.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum size of the auto-scroll.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,9 +208,20 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" /> property represents the location of the visible portion of a scrollable control. Use this property to change the portion of the control that is displayed.</para>
+          <para>When adding controls programmatically to a form, use the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" /> property to position the control either inside or outside of the current viewable scroll area.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> coordinate values retrieved are negative if the control has scrolled away from its starting position (0,0). When you set this property, you must always assign positive <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> values to set the scroll position relative to the starting position. For example, if you have a horizontal scroll bar and you set x and y to 200, you move the scroll 200 pixels to the right; if you then set x and y to 100, the scroll appears to jump the left by 100 pixels, because you are setting it 100 pixels away from the starting position. In the first case, <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" /> returns {-200, 0}; in the second case, it returns {-100,0}.</para>
+          </block>
+          <para>To detect when <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" /> changes, create an event handler for the <see cref="E:System.Windows.Forms.Control.Paint" /> event, save the old position value in a private variable, and compare the new value to the old value on subsequent <see cref="E:System.Windows.Forms.Control.Paint" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the auto-scroll position.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,9 +251,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property is set to true, the <see cref="P:System.Windows.Forms.ScrollableControl.DisplayRectangle" /> property is the virtual size and position of the <see cref="T:System.Windows.Forms.ScrollableControl" /> control. For example, if the width and height of the <see cref="T:System.Windows.Forms.ScrollableControl" /> are both 100 pixels and the control contains controls that extend beyond its boundaries, <see cref="P:System.Windows.Forms.ScrollableControl.DisplayRectangle" /> represents the size the <see cref="T:System.Windows.Forms.ScrollableControl" /> needs to be to include the contained controls. Similarly, the <see cref="P:System.Drawing.Rectangle.X" /> and <see cref="P:System.Drawing.Rectangle.Y" /> properties of <see cref="P:System.Windows.Forms.ScrollableControl.DisplayRectangle" /> are relevant to the scroll position of the <see cref="T:System.Windows.Forms.ScrollableControl" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rectangle that represents the virtual display area of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -202,9 +284,15 @@
         <ReturnType>System.Windows.Forms.ScrollableControl+DockPaddingEdges</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property controls the border inside of this control for docked components.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dock padding settings for all edges of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -221,10 +309,82 @@
         <Parameter Name="bit" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bit">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table describes the flags the <see cref="T:System.Windows.Forms.ScrollableControl" /> control uses.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateAutoScrolling" />
+                </para>
+              </term>
+              <description>
+                <para>A mask used to retrieve whether the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property is set to true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateHScrollVisible" />
+                </para>
+              </term>
+              <description>
+                <para>A mask used to retrieve whether the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> property is set to true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateVScrollVisible" />
+                </para>
+              </term>
+              <description>
+                <para>A mask used to retrieve whether the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> property is set to true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateUserHasScrolled" />
+                </para>
+              </term>
+              <description>
+                <para>A mask used to retrieve whether the user has made the <see cref="T:System.Windows.Forms.ScrollableControl" /> scroll.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateFullDrag" />
+                </para>
+              </term>
+              <description>
+                <para>A mask used to retrieve whether the user has enabled the full window drag-and-drop operation.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified flag has been set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified flag has been set; otherwise, false.</para>
+        </returns>
+        <param name="bit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flag to check.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,9 +414,15 @@
         <ReturnType>System.Windows.Forms.HScrollProperties</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.HScrollProperties" /> class contains information about the scroll bar and its operation, such as whether it is enabled and visible, the scroll page size, orientation, display position, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the characteristics associated with the horizontal scroll bar.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HScroll">
@@ -266,9 +432,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The functionality of the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> property can also be accomplished through calls to the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> and <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> methods using <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateHScrollVisible" /> as the parameter.</para>
+          <para>Note    <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> maintains the visibility of the scrollbars automatically. Therefore, setting the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> or <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> properties to true have no effect when <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> is enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the horizontal scroll bar is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -309,9 +482,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the vertical scroll bar is visible, which means that the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> property is set to true, the mouse wheel scrolls through the <see cref="T:System.Windows.Forms.ScrollableControl" /> control vertically. However, if only the horizontal scroll bar is visible, which means that the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> is set to false and the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> property to set to true, the mouse wheel scrolls horizontally.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ScrollableControl.OnMouseWheel(System.Windows.Forms.MouseEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseWheel" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,9 +518,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ScrollableControl.OnPaddingChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.PaddingChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPaintBackground">
@@ -351,10 +541,18 @@
         <Parameter Name="e" Type="System.Windows.Forms.PaintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ScrollableControl.OnPaintBackground(System.Windows.Forms.PaintEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the background of the control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -394,10 +592,18 @@
         <Parameter Name="se" Type="System.Windows.Forms.ScrollEventArgs" />
       </Parameters>
       <Docs>
-        <param name="se">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>. </para>
+          <para>The <see cref="M:System.Windows.Forms.ScrollableControl.OnScroll(System.Windows.Forms.ScrollEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event.</para>
+        </summary>
+        <param name="se">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ScrollEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -483,8 +689,16 @@
         <ReturnType>System.Windows.Forms.ScrollEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event occurs when the user scrolls through the client area by interacting with the scroll bars, or when the user navigates between controls and the active control scrolls into view. The <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event also occurs when you write code, such as setting the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" /> property, that scrolls through the client area.</para>
+          <para>You can use the <see cref="P:System.Windows.Forms.ScrollEventArgs.ScrollOrientation" /> property in your event handler to determine the scroll bar orientation for the <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user or code scrolls through the client area.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScrollControlIntoView">
@@ -497,9 +711,18 @@
         <Parameter Name="activeControl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="activeControl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property must be set to true, and at least one of the scroll bars, horizontal or vertical, must also be visible, for the <see cref="M:System.Windows.Forms.ScrollableControl.ScrollControlIntoView(System.Windows.Forms.Control)" /> method to have an effect. To make the horizontal and vertical scroll bars visible, the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> and <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> properties, respectively, must be set to true.</para>
+          <para>If the <paramref name="activeControl" /> parameter is not a child control, no action takes place.</para>
+          <para>This method may raise the <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scrolls the specified child control into view on an auto-scroll enabled control.</para>
+        </summary>
+        <param name="activeControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child control to scroll into view. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -514,8 +737,14 @@
       </ReturnValue>
       <MemberValue>1</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateAutoScrolling" /> field is a mask. You can use it with the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> and <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> methods to get and set the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the value of the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -530,8 +759,15 @@
       </ReturnValue>
       <MemberValue>16</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateFullDrag" /> field is a mask. Use it with the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> and <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> methods to get and set whether the user has enabled full window drag.</para>
+          <para>When full window drag is enabled, the contents of windows are displayed when the user moves and sizes the windows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the user has enabled full window drag.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -546,8 +782,14 @@
       </ReturnValue>
       <MemberValue>2</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateHScrollVisible" /> field is a mask. Use it with the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> and <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> methods to get and set the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the value of the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> property is set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -562,8 +804,14 @@
       </ReturnValue>
       <MemberValue>8</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateUserHasScrolled" /> field is a mask. Use it with the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> method to get whether the user had scrolled through the <see cref="T:System.Windows.Forms.ScrollableControl" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the user had scrolled through the <see cref="T:System.Windows.Forms.ScrollableControl" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -578,8 +826,14 @@
       </ReturnValue>
       <MemberValue>4</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateVScrollVisible" /> field is a mask. Use it with the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> and <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> methods to get and set the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the value of the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> property is set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -599,10 +853,22 @@
         <Parameter Name="activeControl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="activeControl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ScrollableControl.ScrollControlIntoView(System.Windows.Forms.Control)" /> method uses the <see cref="M:System.Windows.Forms.ScrollableControl.ScrollToControl(System.Windows.Forms.Control)" /> method to calculate how far it must scroll to display the specified control. The <see cref="P:System.Windows.Forms.Control.AutoScrollOffset" /> property of the child control is used to adjust the scrolled position.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.ScrollableControl.ScrollToControl(System.Windows.Forms.Control)" /> does not cause scrolling; the <see cref="M:System.Windows.Forms.ScrollableControl.SetDisplayRectLocation(System.Int32,System.Int32)" /> method is typically used to subsequently scroll to the calculated position.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the scroll offset to the specified child control. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The upper-left hand <see cref="T:System.Drawing.Point" /> of the display area relative to the client area required to scroll the control into view.</para>
+        </returns>
+        <param name="activeControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child control to scroll into view. </param>
       </Docs>
     </Member>
     <Member MemberName="SetAutoScrollMargin">
@@ -616,10 +882,21 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The margin sets the width and height of the border around each control. This margin is used to determine when scroll bars are needed on the container and where to scroll to when a control is selected.</para>
+          <block subset="none" type="note">
+            <para>If a negative number is passed in as the <paramref name="x" /> or <paramref name="y" /> values, the value will be reset to 0.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the size of the auto-scroll margins.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Size.Width" /> value. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Size.Height" /> value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -637,10 +914,18 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> property is set to true, the <see cref="P:System.Windows.Forms.ScrollableControl.DisplayRectangle" /> property is the virtual size and position displayed client area of the <see cref="T:System.Windows.Forms.ScrollableControl" />. Call the <see cref="M:System.Windows.Forms.ScrollableControl.SetDisplayRectLocation(System.Int32,System.Int32)" /> method to scroll through the <see cref="T:System.Windows.Forms.ScrollableControl" /> to the specified position.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Positions the display window to the specified value.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal offset at which to position the <see cref="T:System.Windows.Forms.ScrollableControl" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical offset at which to position the <see cref="T:System.Windows.Forms.ScrollableControl" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -658,10 +943,18 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="bit">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the bit parameter is set to one of the fields of the <see cref="T:System.Windows.Forms.ScrollableControl" /> class, the <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> method updates the state of the control to the <paramref name="value" /> parameter. For more information about the valid parameters and their values, see the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified scroll state flag.</para>
+        </summary>
+        <param name="bit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scroll state flag to set. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to set the flag. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -686,9 +979,15 @@
         <ReturnType>System.Windows.Forms.VScrollProperties</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.VScrollProperties" /> class contains information about the scroll bar and its operation, such as whether it is enabled and visible, the scroll page size, orientation, display position, and so on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the characteristics associated with the vertical scroll bar.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VScroll">
@@ -698,9 +997,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The functionality of the <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> property can also be accomplished through calls to the <see cref="M:System.Windows.Forms.ScrollableControl.GetScrollState(System.Int32)" /> and <see cref="M:System.Windows.Forms.ScrollableControl.SetScrollState(System.Int32,System.Boolean)" /> methods using <see cref="F:System.Windows.Forms.ScrollableControl.ScrollStateVScrollVisible" /> as the parameter.</para>
+          <para>Note    <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> maintains the visibility of the scrollbars automatically. Therefore, setting the <see cref="P:System.Windows.Forms.ScrollableControl.HScroll" /> or <see cref="P:System.Windows.Forms.ScrollableControl.VScroll" /> properties to true have no effect when <see cref="P:System.Windows.Forms.ScrollableControl.AutoScroll" /> is enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the vertical scroll bar is visible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

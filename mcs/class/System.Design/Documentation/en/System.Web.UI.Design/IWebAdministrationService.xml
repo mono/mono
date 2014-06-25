@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebAdministrationService" FullName="System.Web.UI.Design.IWebAdministrationService">
   <TypeSignature Language="C#" Value="public interface IWebAdministrationService" />
   <AssemblyInfo>
@@ -6,8 +7,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The specified arguments can be used to specify how the Web administration user interface (UI) should be launched. The arguments are optional and the design host can choose to ignore them.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for creating services for administering a Web site at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Start">
@@ -23,9 +30,13 @@
         <Parameter Name="arguments" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the Web administration facility in the design host.</para>
+        </summary>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" />.</param>
       </Docs>
     </Member>
   </Members>

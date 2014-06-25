@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</ProjectGuid>
+    <ProjectGuid>{8B53B0E9-E0CA-4378-8C57-F85D518871D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720</NoWarn>
-    <OutputPath>bin\Debug\System.Core-net_4_0</OutputPath>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -305,21 +305,24 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0.csproj">
-      <Project>{267C4423-C2E5-4EA8-9F3B-F2B13EFA4CCC}</Project>
+      <Project>{714C7BA8-AC9A-49C4-ADCA-CD4585EF1A46}</Project>
       <Name>System\System-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_4_0.csproj">
-      <Project>{7ADB0D4D-F0ED-4C82-BEE3-D261699A390B}</Project>
+      <Project>{E9A655D1-EE99-467A-8F4B-CAC80E0E65BE}</Project>
       <Name>Mono.Posix\Mono.Posix-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -327,3 +330,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

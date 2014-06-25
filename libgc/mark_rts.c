@@ -376,7 +376,14 @@ ptr_t GC_approx_sp()
 #   ifdef _MSC_VER
 #     pragma warning(disable:4172)
 #   endif
+#   if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 408)
+#     pragma GCC diagnostic push
+#     pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#   endif
     return((ptr_t)(&dummy));
+#   if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 408)
+#      pragma GCC diagnostic pop
+#   endif
 #   ifdef _MSC_VER
 #     pragma warning(default:4172)
 #   endif

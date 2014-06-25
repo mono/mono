@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMethodReturnMessage" FullName="System.Runtime.Remoting.Messaging.IMethodReturnMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMethodReturnMessage : System.Runtime.Remoting.Messaging.IMethodMessage" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMethodReturnMessage implements class System.Runtime.Remoting.Messaging.IMessage, class System.Runtime.Remoting.Messaging.IMethodMessage" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A method call return message represents the response to a method call on an object at the end of the message sink. An <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" /> is generated as a result of a method called on a remote object, and is used to return the results of the method call back to the caller.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method call return message interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Exception">
@@ -37,9 +44,12 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Exception'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception thrown during the method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetOutArg">
@@ -58,10 +68,17 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="argNum">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified argument marked as a ref or an out parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified argument marked as a ref or an out parameter.</para>
+        </returns>
+        <param name="argNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested argument. </param>
       </Docs>
     </Member>
     <Member MemberName="GetOutArgName">
@@ -80,10 +97,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the specified argument marked as a ref or an out parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The argument name, or null if the current method is not implemented.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested argument name. </param>
       </Docs>
     </Member>
     <Member MemberName="OutArgCount">
@@ -99,9 +123,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of arguments in the method call marked as ref or out parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutArgs">
@@ -117,9 +144,18 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the <see cref="P:System.Runtime.Remoting.Messaging.IMethodReturnMessage.OutArgs" /> property is redundant since the same functionality can be achieved through the <see cref="P:System.Runtime.Remoting.Messaging.IMethodReturnMessage.OutArgCount" /> field and <see cref="M:System.Runtime.Remoting.Messaging.IMethodReturnMessage.GetOutArg(System.Int32)" /> method, there might be performance optimization available if the implementer understands when all the arguments will be retrieved.</para>
+          <block subset="none" type="note">
+            <para>If <see cref="P:System.Runtime.Remoting.Messaging.IMethodReturnMessage.Exception" /> is not null, a <see cref="T:System.IndexOutOfRange" /> exception is thrown when <see cref="P:System.Runtime.Remoting.Messaging.IMethodReturnMessage.OutArgs" /> is accessed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified argument marked as a ref or an out parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnValue">
@@ -135,9 +171,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return value of the method call.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

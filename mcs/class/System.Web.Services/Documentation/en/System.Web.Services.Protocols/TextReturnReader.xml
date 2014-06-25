@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextReturnReader" FullName="System.Web.Services.Protocols.TextReturnReader">
   <TypeSignature Language="C#" Value="public class TextReturnReader : System.Web.Services.Protocols.MimeReturnReader" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> and other classes in the <see cref="N:System.Web.Services.Protocols" /> namespace support the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. Web service writers and readers serialize and deserialize, respectively, between the parameters or return objects of Web methods and the HTTP request or response streams. Web service writers and readers use HTTP for transport but don't exchange messages using the SOAP standard.</para>
+      <para>The <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class implements the client-side reading of non-XML text into Web method return values. To obtain a return value, the text, which is encoded in the body of an HTTP response, is parsed using regular expression pattern matching, as specified by the attribute <see cref="T:System.Web.Services.Protocols.MatchAttribute" />, which can be applied to a Web method in a client proxy class. The <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class calls the <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> class to actually perform the pattern matching.</para>
+      <para>Text pattern matching provides a way for Web services to retrieve HTML content without converting it to XML documents that must be bound to XML Schema definitions. Regular expression search targets are specified in a Web Services Description Language (WSDL) document via match XML elements within text elements. Both elements belong to the namespace http://microsoft.com/wsdl/mime/textMatching/.</para>
+      <para>When match elements are specified in a WSDL document, the Wsdl.exe tool applies <see cref="T:System.Web.Services.Protocols.MatchAttribute" /> attributes to the corresponding Web methods in the client proxy class that is generated. Also, <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> is used in place of <see cref="T:System.Web.Services.Protocols.XmlReturnReader" />, the default class for deserializing Web method return values according to the .NET Framework's implementations of Web services via the HTTP-GET and HTTP-POST operations. </para>
+      <para>You typically will not need to use the <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Reads return values from HTTP response text for Web service clients implemented using HTTP but without SOAP.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +56,21 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <param name="methodInfo">a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method. For the <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class, the initializer is a <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> object based on the return type of the Web method. </para>
+          <para>The <see cref="M:System.Web.Services.Protocols.TextReturnReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method is invoked during service initialization. Later, at the time a response is processed, the initializer object is passed to the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method of another <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> instance. The other instance performs the actual reading.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an initializer for the specified method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer for the specified method</para>
+        </returns>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +87,16 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="o">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method supplies the <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> object used by the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method to parse text contained in the HTTP response. The <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method is invoked at the time a request is processed. The input parameter, <paramref name="o" />, is obtained by calling the <see cref="M:System.Web.Services.Protocols.TextReturnReader.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo)" /> method on another instance of the class that is obtained during client initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance.</para>
+        </summary>
+        <param name="o">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> object for the return type of the Web method being invoked.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,11 +114,22 @@
         <Parameter Name="responseStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="response">a <see cref="T:System.Net.WebResponse" /></param>
-        <param name="responseStream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To parse the text content of the HTTP response, the <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class's implementation of the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method uses the <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> object passed as an argument to the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method. It closes the response stream before returning the deserialized Web method return value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses text contained in the HTTP response.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the deserialized Web method return value.</para>
+        </returns>
+        <param name="response">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.WebResponse" /> object  containing the output message for an operation.</param>
+        <param name="responseStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> whose content is the body of the HTTP response represented by the <paramref name="response" /> parameter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

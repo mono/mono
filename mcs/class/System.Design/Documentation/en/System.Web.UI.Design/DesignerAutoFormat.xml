@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerAutoFormat" FullName="System.Web.UI.Design.DesignerAutoFormat">
   <TypeSignature Language="C#" Value="public abstract class DesignerAutoFormat" />
   <AssemblyInfo>
@@ -9,8 +10,43 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> provides a base class that can be inherited from and extended to display a formatted custom Web server control at design time in a visual designer tool such as vsprvslong.</para>
+      <para>A control developer provides automatic formatting in order to help developers who use the control to select a preferred display. A custom <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object works with a custom control designer to provide automatic formatting at design time for a custom control. For example, the <see cref="T:System.Web.UI.WebControls.Calendar" /> control provides a variety of formats that can be applied by a developer at design time.</para>
+      <para>To implement automatic formatting for a custom control:</para>
+      <list type="ordered">
+        <item>
+          <para>Create the custom control.</para>
+        </item>
+        <item>
+          <para>Derive a designer class from the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class or another designer class that is appropriate for your control, such as the <see cref="T:System.Web.UI.Design.TextControlDesigner" />.</para>
+        </item>
+        <item>
+          <para>Derive a format class from the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> class that formats your custom control by overriding the <see cref="M:System.Web.UI.Design.DesignerAutoFormat.Apply(System.Web.UI.Control)" /> method.</para>
+        </item>
+        <item>
+          <para>In your designer class, populate the <see cref="P:System.Web.UI.Design.ControlDesigner.AutoFormats" /> property, which is a <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object, with one instance of your format class for each named format that your designer can apply.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> class provides the following members to support automatic formatting at design time:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.Apply(System.Web.UI.Control)" /> method, which applies the named format to the specified control.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.GetPreviewControl(System.Web.UI.Control)" /> method, which provides a copy of the control for previewing in an <ui>AutoFormat</ui> dialog box of a visual designer such as vsprvslong.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property, which provides the text to display in a list of formats in a visual designer.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the abstract base class for creating formats that can be applied to a custom Web server control at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +59,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Design.DesignerAutoFormat.#ctor(System.String)" /> constructor to create a new format and add it to a <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> collection that is represented by the <see cref="P:System.Web.UI.Design.ControlDesigner.AutoFormats" /> property of a <see cref="T:System.Web.UI.Design.ControlDesigner" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that identifies a specific <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="Apply">
@@ -41,9 +84,16 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.Apply(System.Web.UI.Control)" /> method applies formatting to the specified control based on the <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property. You can apply the styles directly to the control, or set the <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Style" /> property and then use the <see cref="M:System.Web.UI.WebControls.WebControl.MergeStyle(System.Web.UI.WebControls.Style)" /> method for the control to apply the style changes to the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the associated formatting to the specified control.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Web server control to apply the formatting to.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPreviewControl">
@@ -59,10 +109,21 @@
         <Parameter Name="runtimeControl" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="runtimeControl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.GetPreviewControl(System.Web.UI.Control)" /> method is used by visual designers, such as vsprvslong, in an <ui>AutoFormat</ui> dialog box to display a formatted run-time preview of the control at design time before applying the format to the actual control.</para>
+          <para>Regardless of the setting of the <see cref="T:System.Web.UI.Design.SupportsPreviewControlAttribute" /> attribute for the <see cref="T:System.Web.UI.Design.ControlDesigner" /> object, the <see cref="M:System.Web.UI.Design.DesignerAutoFormat.GetPreviewControl(System.Web.UI.Control)" /> method returns a copy of the control in the <paramref name="runtimeControl" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a copy of the associated control in order to provide a preview before applying the format to the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.GetPreviewControl(System.Web.UI.Control)" /> method returns a copy of the associated Web server control.</para>
+        </returns>
+        <param name="runtimeControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />A run-time version of the Web server control.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -75,9 +136,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A visual designer, such as vsprvslong, uses the <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property from each <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object in the <see cref="P:System.Web.UI.Design.ControlDesigner.AutoFormats" /> collection of a <see cref="T:System.Web.UI.Design.ControlDesigner" /> to create a list of available automatic style formats.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of a <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Style">
@@ -90,9 +157,15 @@
         <ReturnType>System.Web.UI.Design.DesignerAutoFormatStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the object returned by the <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Style" /> property is read-only, each individual property that it contains can be set. For example, you can set the <see cref="P:System.Web.UI.WebControls.Style.ForeColor" /> or <see cref="P:System.Web.UI.Design.DesignerAutoFormatStyle.VerticalAlign" /> property of the <see cref="T:System.Web.UI.Design.DesignerAutoFormatStyle" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.Design.DesignerAutoFormatStyle" /> object that is used by the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object to render a design-time preview of the associated control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -106,9 +179,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.ToString" /> method returns a string that contains the value of the <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property of the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property of the current <see cref="T:System.Web.UI.Design.DesignerAutoFormat" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

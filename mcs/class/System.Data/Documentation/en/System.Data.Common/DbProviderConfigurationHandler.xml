@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DbProviderConfigurationHandler" FullName="System.Data.Common.DbProviderConfigurationHandler">
   <TypeSignature Language="C#" Value="public class DbProviderConfigurationHandler : System.Configuration.IConfigurationSectionHandler" />
   <AssemblyInfo>
@@ -13,9 +14,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class can be used by any provider to support a provider-specific configuration section.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +27,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class can be used by any provider to support a provider-specific configuration section.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,13 +50,22 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added.</param>
-        <param name="configContext">To be added.</param>
-        <param name="section">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="System.Collections.Specialized.NameValueCollection" /> expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new expression.</para>
+        </returns>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />This type supports the .NET Framework infrastructure and is not intended to be used directly from your code.</param>
+        <param name="configContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />This type supports the .NET Framework infrastructure and is not intended to be used directly from your code.</param>
+        <param name="section">
+          <attribution license="cc4" from="Microsoft" modified="false" />This type supports the .NET Framework infrastructure and is not intended to be used directly from your code.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PolicyConversionContext" FullName="System.ServiceModel.Description.PolicyConversionContext">
   <TypeSignature Language="C#" Value="public abstract class PolicyConversionContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PolicyConversionContext extends System.Object" />
@@ -10,8 +11,34 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An implementation of the <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> is passed to <see cref="T:System.ServiceModel.Description.IPolicyExportExtension" /> and <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> objects to export and import, respectively, custom policy assertions to and from metadata. On export, a collection of policy assertions are retrieved in order to add custom assertions. On import, the assertions are retrieved in order to import specific ones and configure binding elements appropriately.</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" /> method returns all policy assertions that are for the binding.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetFaultBindingAssertions(System.ServiceModel.Description.FaultDescription)" /> method returns all policy assertions for a specific fault message.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" /> method returns all policy assertions for a specific message.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> method returns all policy assertions for a specific operation.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Description.PolicyConversionContext.BindingElements" /> property gets the binding elements for the binding being described or configured.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.ServiceModel.Description.PolicyConversionContext.Contract" /> property gets the contract description for which the binding is being described or configured.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a class used to retrieve binding assertions in metadata and to attach implementing binding elements at the appropriate scope.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +52,13 @@
         <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> class using the specified endpoint.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> for the policy context.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingElements">
@@ -41,9 +72,12 @@
         <ReturnType>System.ServiceModel.Channels.BindingElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of binding elements to which custom binding elements that implement policy assertions are added.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contract">
@@ -57,9 +91,12 @@
         <ReturnType>System.ServiceModel.Description.ContractDescription</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contract for the endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetBindingAssertions">
@@ -74,9 +111,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection returned from <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetBindingAssertions" /> is not a copy. You can add and remove assertions as necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of policy assertions from metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.ICollection`1" /> of type <see cref="T:System.Xml.XmlElement" /> that contains binding policy assertions.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFaultBindingAssertions">
@@ -93,10 +139,20 @@
         <Parameter Name="fault" Type="System.ServiceModel.Description.FaultDescription" />
       </Parameters>
       <Docs>
-        <param name="fault">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection returned from <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetFaultBindingAssertions(System.ServiceModel.Description.FaultDescription)" /> is not a copy. You can add and remove assertions as necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of policy assertions for the specified SOAP fault.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of policy assertions for the specified SOAP fault.</para>
+        </returns>
+        <param name="fault">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.FaultDescription" /> object for which policy assertions are to be added or for which bindings are to be configured.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMessageBindingAssertions">
@@ -113,10 +169,20 @@
         <Parameter Name="message" Type="System.ServiceModel.Description.MessageDescription" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection returned from <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetMessageBindingAssertions(System.ServiceModel.Description.MessageDescription)" /> is not a copy. You can add and remove assertions as needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of policy assertions for a message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of policy assertions for the specified message.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessageDescription" /> for which there are binding assertions.</param>
       </Docs>
     </Member>
     <Member MemberName="GetOperationBindingAssertions">
@@ -133,10 +199,20 @@
         <Parameter Name="operation" Type="System.ServiceModel.Description.OperationDescription" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection returned from <see cref="M:System.ServiceModel.Description.PolicyConversionContext.GetOperationBindingAssertions(System.ServiceModel.Description.OperationDescription)" /> is not a copy. You can add and remove assertions as necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of policy assertions for the specified operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The policy assertions for the operation.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.OperationDescription" /> object for which policy assertions are to be added or for which bindings are to be configured.</param>
       </Docs>
     </Member>
   </Members>

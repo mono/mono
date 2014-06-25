@@ -291,21 +291,20 @@ struct _MonoClass {
 	guint wastypebuilder  : 1; /* class was created at runtime from a TypeBuilder */
 	/* next byte */
 	guint8 min_align;
+
 	/* next byte */
 	guint packing_size    : 4;
-	/* still 4 bits free */
-	/* next byte */
 	guint ghcimpl         : 1; /* class has its own GetHashCode impl */ 
 	guint has_finalize    : 1; /* class has its own Finalize impl */ 
 #ifndef DISABLE_REMOTING
 	guint marshalbyref    : 1; /* class is a MarshalByRefObject */
 	guint contextbound    : 1; /* class is a ContextBoundObject */
 #endif
+	/* next byte */
 	guint delegate        : 1; /* class is a Delegate */
 	guint gc_descr_inited : 1; /* gc_descr is initialized */
 	guint has_cctor       : 1; /* class has a cctor */
 	guint has_references  : 1; /* it has GC-tracked references in the instance */
-	/* next byte */
 	guint has_static_refs : 1; /* it has static fields that are GC-tracked */
 	guint no_special_static_fields : 1; /* has no thread/context static fields */
 	/* directly or indirectly derives from ComImport attributed class.
@@ -315,11 +314,12 @@ struct _MonoClass {
 	 */
 	guint is_com_object : 1; 
 	guint nested_classes_inited : 1; /* Whenever nested_class is initialized */
+
+	/* next byte*/
 	guint interfaces_inited : 1; /* interfaces is initialized */
 	guint simd_type : 1; /* class is a simd intrinsic type */
 	guint is_generic : 1; /* class is a generic type definition */
 	guint is_inflated : 1; /* class is a generic instance */
-	/* next byte */
 	guint has_finalize_inited    : 1; /* has_finalize is initialized */
 	guint fields_inited : 1; /* fields is initialized */
 	guint setup_fields_called : 1; /* to prevent infinite loops in setup_fields */
@@ -673,7 +673,7 @@ void
 mono_class_setup_supertypes (MonoClass *klass) MONO_INTERNAL;
 
 void
-mono_class_setup_fields_locking (MonoClass *class) MONO_INTERNAL;
+mono_class_setup_fields_locking (MonoClass *klass) MONO_INTERNAL;
 
 /* WARNING
  * Only call this function if you can ensure both @klass and @parent
@@ -712,38 +712,38 @@ typedef struct {
 
 typedef struct {
 	guint64 new_object_count;
-	gulong initialized_class_count;
-	gulong generic_vtable_count;
-	gulong used_class_count;
-	gulong method_count;
-	gulong class_vtable_size;
-	gulong class_static_data_size;
-	gulong generic_instance_count;
-	gulong generic_class_count;
-	gulong inflated_method_count;
-	gulong inflated_method_count_2;
-	gulong inflated_type_count;
-	gulong generics_metadata_size;
-	gulong delegate_creations;
-	gulong imt_tables_size;
-	gulong imt_number_of_tables;
-	gulong imt_number_of_methods;
-	gulong imt_used_slots;
-	gulong imt_slots_with_collisions;
-	gulong imt_max_collisions_in_slot;
-	gulong imt_method_count_when_max_collisions;
-	gulong imt_thunks_size;
-	gulong jit_info_table_insert_count;
-	gulong jit_info_table_remove_count;
-	gulong jit_info_table_lookup_count;
-	gulong generics_sharable_methods;
-	gulong generics_unsharable_methods;
-	gulong generics_shared_methods;
-	gulong gsharedvt_methods;
-	gulong minor_gc_count;
-	gulong major_gc_count;
-	gulong minor_gc_time_usecs;
-	gulong major_gc_time_usecs;
+	size_t initialized_class_count;
+	size_t generic_vtable_count;
+	size_t used_class_count;
+	size_t method_count;
+	size_t class_vtable_size;
+	size_t class_static_data_size;
+	size_t generic_instance_count;
+	size_t generic_class_count;
+	size_t inflated_method_count;
+	size_t inflated_method_count_2;
+	size_t inflated_type_count;
+	size_t generics_metadata_size;
+	size_t delegate_creations;
+	size_t imt_tables_size;
+	size_t imt_number_of_tables;
+	size_t imt_number_of_methods;
+	size_t imt_used_slots;
+	size_t imt_slots_with_collisions;
+	size_t imt_max_collisions_in_slot;
+	size_t imt_method_count_when_max_collisions;
+	size_t imt_thunks_size;
+	size_t jit_info_table_insert_count;
+	size_t jit_info_table_remove_count;
+	size_t jit_info_table_lookup_count;
+	size_t generics_sharable_methods;
+	size_t generics_unsharable_methods;
+	size_t generics_shared_methods;
+	size_t gsharedvt_methods;
+	size_t minor_gc_count;
+	size_t major_gc_count;
+	size_t minor_gc_time_usecs;
+	size_t major_gc_time_usecs;
 	gboolean enabled;
 } MonoStats;
 
@@ -909,13 +909,13 @@ void
 mono_class_setup_parent    (MonoClass *klass, MonoClass *parent) MONO_INTERNAL;
 
 MonoMethod*
-mono_class_get_method_by_index (MonoClass *class, int index) MONO_INTERNAL;
+mono_class_get_method_by_index (MonoClass *klass, int index) MONO_INTERNAL;
 
 MonoMethod*
-mono_class_get_inflated_method (MonoClass *class, MonoMethod *method) MONO_INTERNAL;
+mono_class_get_inflated_method (MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod*
-mono_class_get_vtable_entry (MonoClass *class, int offset) MONO_INTERNAL;
+mono_class_get_vtable_entry (MonoClass *klass, int offset) MONO_INTERNAL;
 
 GPtrArray*
 mono_class_get_implemented_interfaces (MonoClass *klass, MonoError *error) MONO_INTERNAL;
@@ -985,7 +985,7 @@ void
 mono_install_get_class_from_name (MonoGetClassFromName func) MONO_INTERNAL;
 
 MonoGenericContext*
-mono_class_get_context (MonoClass *class) MONO_INTERNAL;
+mono_class_get_context (MonoClass *klass) MONO_INTERNAL;
 
 MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err) MONO_INTERNAL;
@@ -1263,7 +1263,7 @@ char*
 mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format) MONO_INTERNAL;
 
 char*
-mono_type_get_full_name (MonoClass *class) MONO_INTERNAL;
+mono_type_get_full_name (MonoClass *klass) MONO_INTERNAL;
 
 MonoArrayType *mono_dup_array_type (MonoImage *image, MonoArrayType *a) MONO_INTERNAL;
 MonoMethodSignature *mono_metadata_signature_deep_dup (MonoImage *image, MonoMethodSignature *sig) MONO_INTERNAL;
@@ -1324,7 +1324,7 @@ MonoMethod*
 mono_method_search_in_array_class (MonoClass *klass, const char *name, MonoMethodSignature *sig) MONO_INTERNAL;
 
 void
-mono_class_setup_interface_id (MonoClass *class) MONO_INTERNAL;
+mono_class_setup_interface_id (MonoClass *klass) MONO_INTERNAL;
 
 MonoGenericContainer*
 mono_class_get_generic_container (MonoClass *klass) MONO_INTERNAL;
@@ -1342,7 +1342,7 @@ MonoClassField*
 mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoType *type) MONO_INTERNAL;
 
 MonoVTable*
-mono_class_vtable_full (MonoDomain *domain, MonoClass *class, gboolean raise_on_error) MONO_INTERNAL;
+mono_class_vtable_full (MonoDomain *domain, MonoClass *klass, gboolean raise_on_error) MONO_INTERNAL;
 
 gboolean
 mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate) MONO_INTERNAL;
@@ -1362,13 +1362,13 @@ MonoClassField*
 mono_class_get_fields_lazy (MonoClass* klass, gpointer *iter) MONO_INTERNAL;
 
 gboolean
-mono_class_check_vtable_constraints (MonoClass *class, GList *in_setup) MONO_INTERNAL;
+mono_class_check_vtable_constraints (MonoClass *klass, GList *in_setup) MONO_INTERNAL;
 
 gboolean
 mono_class_has_finalizer (MonoClass *klass) MONO_INTERNAL;
 
 void
-mono_unload_interface_id (MonoClass *class) MONO_INTERNAL;
+mono_unload_interface_id (MonoClass *klass) MONO_INTERNAL;
 
 GPtrArray*
 mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, gboolean ignore_case, gboolean allow_ctors, MonoException **ex) MONO_INTERNAL;

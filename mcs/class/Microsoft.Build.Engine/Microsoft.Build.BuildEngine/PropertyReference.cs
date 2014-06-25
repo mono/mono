@@ -34,20 +34,15 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class PropertyReference : IReference {
+	class PropertyReference : IReference {
 		
-		string	name;
-		int	start;
-		int	length;
-		
-		public PropertyReference (string name, int start, int length)
+		readonly string	name;
+
+		public PropertyReference (string name)
 		{
 			this.name = name;
-			this.start = start;
-			this.length = length;
 		}
-		
-
+	
 		// when evaluating items: expand: true
 		// all other times, expand: true
 		// so, always true, ignore @options
@@ -93,14 +88,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildProperty bp = project.EvaluatedProperties [name];
 			return bp == null ? String.Empty : bp.Value;
-		}
-
-		public int Start {
-			get { return start; }
-		}
-
-		public int End {
-			get { return start + length - 1; }
 		}
 
 		public override string ToString ()

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaAny" FullName="System.Xml.Schema.XmlSchemaAny">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaAny : System.Xml.Schema.XmlSchemaParticle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaAny extends System.Xml.Schema.XmlSchemaParticle" />
@@ -14,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The any element enables any element from the specified namespace or namespaces to appear in the containing complexType element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the World Wide Web Consortium (W3C) any element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaAny" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -53,9 +63,67 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no namespace is specified, ##any is the default. If the namespace is specified, it must be one of the values shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Namespace value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>##any </para>
+              </term>
+              <description>
+                <para>Elements from any namespace can be present. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>##other </para>
+              </term>
+              <description>
+                <para>Elements from any namespace that is not the targetNamespace of the parent element containing the any element can be present. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>##local </para>
+              </term>
+              <description>
+                <para>Elements that are not qualified with a namespace can be present. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>##targetNamespace </para>
+              </term>
+              <description>
+                <para>Elements from the targetNamespace of the parent element containing the any element can be present. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>List of {URIs, ##targetNamespace, ##local} </para>
+              </term>
+              <description>
+                <para>Elements from a space-delimited list of namespaces can be present. The list can contain the following: Uniform Resource Identifier (URI) references of namespaces, ##targetNamespace, and ##local. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespaces containing the elements that can be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessContents">
@@ -80,9 +148,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaContentProcessing'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets information about how an application or XML processor should handle the validation of XML documents for the elements specified by the any element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

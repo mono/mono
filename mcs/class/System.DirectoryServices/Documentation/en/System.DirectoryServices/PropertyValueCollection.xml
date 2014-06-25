@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyValueCollection" FullName="System.DirectoryServices.PropertyValueCollection">
   <TypeSignature Language="C#" Value="public class PropertyValueCollection : System.Collections.CollectionBase, System.Collections.IList, System.Collections.ICollection, System.Collections.IEnumerable" />
   <AssemblyInfo>
@@ -83,10 +84,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.DirectoryServices.PropertyValueCollection" /> object to this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <see cref="T:System.DirectoryServices.PropertyValueCollection" /> object that is appended to this collection.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DirectoryServices.PropertyValueCollection" />  object to append to this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -99,9 +107,12 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="values">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the contents of the specified <see cref="T:System.DirectoryServices.PropertyValueCollection" /> object to this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -114,9 +125,12 @@
         <Parameter Name="coll" Type="System.DirectoryServices.PropertyValueCollection" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="coll">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the contents of the <see cref="T:System.DirectoryServices.PropertyValueCollection" /> object to this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -129,10 +143,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of a specified property value in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified property value. If the object is not found, the return value is -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property value to find.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -146,10 +167,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a property value into this collection at a specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to insert the property value.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property value to insert.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -162,9 +188,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="value">To be added.</param>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When working with a multi-valued string property value, the <see cref="M:System.DirectoryServices.PropertyValueCollection.Remove" /> method will successfully remove the correct item. However, identifying the correct items by name is difficult with a multi-valued DNWithString property value (as the DNWithString COM class, which is used to store the DNWithString items, has 2 string properties representing the item). The way to remove such items is to find the object in the collection (by looping thru all the items), then call the <see cref="M:System.DirectoryServices.PropertyValueCollection.Remove" /> function with the object's pointer that you just found.  This is illustrated in the example below.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specified property value from this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -177,10 +209,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.DirectoryServices.PropertyValueCollection" /> object is in this collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DirectoryServices.PropertyValueCollection" /> object to search for in this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -194,10 +233,14 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="copy_to">To be added.</param>
-        <param name="index">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all <see cref="T:System.DirectoryServices.PropertyValueCollection" /> objects in this collection to the specified array, starting at the specified index in the target array.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> where this method starts copying this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -207,9 +250,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To add multiple values, set this property to an array of the values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the values of the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -230,7 +279,10 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the values of a <see cref="T:System.DirectoryServices.DirectoryEntry" /> property.</para>
+    </summary>
   </Docs>
 </Type>

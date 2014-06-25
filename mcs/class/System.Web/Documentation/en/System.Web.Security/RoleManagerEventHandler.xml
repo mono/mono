@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RoleManagerEventHandler" FullName="System.Web.Security.RoleManagerEventHandler">
   <TypeSignature Language="C#" Value="public delegate void RoleManagerEventHandler(object sender, RoleManagerEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.RoleManagerEventHandler" /> delegate is defined for the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class. You can access the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class in the Global.asax file for your ASP.NET application as shown in the example for this topic.</para>
+      <para>You can use the <see cref="T:System.Web.Security.RoleManagerEventHandler" /> to replace the creation of the <see cref="T:System.Web.Security.RolePrincipal" /> object by the <see cref="T:System.Web.Security.RoleManagerModule" /> with your own custom object. To do this, define a delegate using the <see cref="T:System.Web.Security.RoleManagerEventHandler" /> and assign it to the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the delegate for the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class.</para>
+    </summary>
   </Docs>
 </Type>

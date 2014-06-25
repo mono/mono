@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RangeAttribute" FullName="System.ComponentModel.DataAnnotations.RangeAttribute">
   <TypeSignature Language="C#" Value="public class RangeAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RangeAttribute extends System.ComponentModel.DataAnnotations.ValidationAttribute" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you apply this attribute to a data field, you must follow the guidelines for how to use validation attributes. For more information, see <format type="text/html"><a href="c563bbf3-feb9-484e-81d1-a585f1b0e192">ASP.NET Dynamic Data Guidelines</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the numeric range constraints for the value of a data field. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,10 +38,15 @@
         <Parameter Name="maximum" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="minimum">To be added.</param>
-        <param name="maximum">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.RangeAttribute" /> class by using the specified minimum and maximum values. </para>
+        </summary>
+        <param name="minimum">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the minimum value allowed for the data field value.</param>
+        <param name="maximum">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the maximum value allowed for the data field value.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,10 +61,15 @@
         <Parameter Name="maximum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="minimum">To be added.</param>
-        <param name="maximum">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.RangeAttribute" /> class by using the specified minimum and maximum values.</para>
+        </summary>
+        <param name="minimum">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the minimum value allowed for the data field value.</param>
+        <param name="maximum">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the maximum value allowed for the data field value.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -68,11 +85,20 @@
         <Parameter Name="maximum" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="minimum">To be added.</param>
-        <param name="maximum">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object to validate must implement the <see cref="T:System.IComparable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.RangeAttribute" /> class by using the specified minimum and maximum values and the specific type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the type of the object to test.</param>
+        <param name="minimum">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the minimum value allowed for the data field value.</param>
+        <param name="maximum">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the maximum value allowed for the data field value.</param>
       </Docs>
     </Member>
     <Member MemberName="FormatErrorMessage">
@@ -89,10 +115,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.DataAnnotations.RangeAttribute.FormatErrorMessage(System.String)" /> creates the error message by using the name of the data field that caused the validation failure. You can override this method in a custom validation attribute to customize how errors are created, or to provide a more complex message that contains parameters that you evaluate at run time. For an example, see the <see cref="M:System.ComponentModel.DataAnnotations.RangeAttribute.#ctor(System.Type,System.String,System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Formats the error message that is displayed when range validation fails.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The formatted error message.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the field that caused the validation failure. </param>
       </Docs>
     </Member>
     <Member MemberName="IsValid">
@@ -109,10 +145,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks that the value of the data field is in the specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified value is in the range; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data field value to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="Maximum">
@@ -126,9 +169,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum allowed field value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Minimum">
@@ -142,9 +188,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value that is allowed for the data field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minimum allowed field value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OperandType">
@@ -158,9 +210,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object to be tested must implement the <see cref="T:System.IComparable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the data field whose value must be validated.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

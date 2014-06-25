@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BindingContext" FullName="System.ServiceModel.Channels.BindingContext">
   <TypeSignature Language="C#" Value="public class BindingContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BindingContext extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The channel listeners and channel factories, in turn, construct the channel stacks used to process incoming and outgoing messages. The binding context also provides the linkage to the inner channel factories and channel listeners that are used to construct the channel and listener stacks. The binding context basically stores all of the dynamic information needed during the construction of the channel stack.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about the addresses, bindings, binding elements and binding parameters required to build the channel listeners and channel factories.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +33,17 @@
         <Parameter Name="parms" Type="System.ServiceModel.Channels.BindingParameterCollection" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
         <param name="parms">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of <see cref="T:System.ServiceModel.Description.ListenUriMode" /> is set to <see cref="F:System.ServiceModel.Description.ListenUriMode.Explicit" /> by this constructor, the relative address is set to <see cref="F:System.String.Empty" />, and the base address is set to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.BindingContext" /> class for a specified binding and collection of binding parameters.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.CustomBinding" /> for the channel.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -47,13 +61,21 @@
         <Parameter Name="listenUriMode" Type="System.ServiceModel.Description.ListenUriMode" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="listenUriBaseAddress">To be added.</param>
-        <param name="listenUriRelativeAddress">To be added.</param>
-        <param name="listenUriMode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.BindingContext" /> class for a specified binding, collection of binding parameters, and address for the endpoint at which the service listens.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.CustomBinding" /> for the channel.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingParameterCollection" /> for the channel.</param>
+        <param name="listenUriBaseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> at which the service endpoint listens.</param>
+        <param name="listenUriRelativeAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relative address at which the service endpoint listens.</param>
+        <param name="listenUriMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ListenUriMode" /> that indicates whether the transport must ensure that the URI provided for the service to listen on is unique.</param>
       </Docs>
     </Member>
     <Member MemberName="Binding">
@@ -67,9 +89,12 @@
         <ReturnType>System.ServiceModel.Channels.CustomBinding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the binding for the channel built in the current context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingParameters">
@@ -83,9 +108,15 @@
         <ReturnType>System.ServiceModel.Channels.BindingParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection holds the settings encountered when building the channel stack from the bindings. Settings that need to be pushed down the channel stack during creation are put into the collection until a channel lower in the stack needs them.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of binding parameters for the channel built in the current context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BuildInnerChannelFactory&lt;TChannel&gt;">
@@ -103,10 +134,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the inner channel factory for channels of a specified type below the current channel factory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.IChannelFactory`1" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> that represents the inner channel factory of the current channel factory.</para>
+        </returns>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object the inner channel factory produces.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildInnerChannelListener&lt;TChannel&gt;">
@@ -129,10 +167,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds an inner channel listener that listens for a specified type of channel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.IChannelListener`1" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> that represents the inner channel listener of the current channel factory.</para>
+        </returns>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object for which the inner channel listener listens.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildInnerChannelFactory&lt;TChannel&gt;">
@@ -150,10 +195,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the inner channel factory can produce a specified type of channel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the inner channel factory can produce the specified <paramref name="TChannel" />; otherwise, false.</para>
+        </returns>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object the inner channel factory produces.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildInnerChannelListener&lt;TChannel&gt;">
@@ -176,10 +228,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the inner channel listener can be built to listen for a specified type of channel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the inner channel listener can be built to listen for the <paramref name="TChannel" /> specified; otherwise, false.</para>
+        </returns>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object for which the inner channel listener listens.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -194,9 +253,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a copy that is a deep clone of your binding context. A deep clone of an object creates a copy of the object and a copy of everything directly or indirectly referenced by that object. (This is also called copying the entire object graph.) A shallow clone of an object, by contrast, is a copy of the object only. If the object contains references to other objects, the shallow copy does not create copies of the referred objects; instead, it copies only the references to the original objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a copy of the current channel build context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.BindingContext" /> object that is a copy of the current channel build context.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInnerProperty&lt;T&gt;">
@@ -218,10 +286,20 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones the binding context and calls <see cref="M:System.ServiceModel.Channels.BindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)" /> on the next binding element stored in the binding context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a typed object requested, if present, from the appropriate layer in the binding stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The typed object <paramref name="T" /> requested if it is present or null if it is not.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ListenUriBaseAddress">
@@ -235,9 +313,15 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The address for the endpoint at which a service listens is obtained by appending the <see cref="P:System.ServiceModel.Channels.BindingContext.ListenUriRelativeAddress" /> to the <see cref="P:System.ServiceModel.Channels.BindingContext.ListenUriBaseAddress" />. This absolute address can be set using the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI that provides the base address at which the service endpoint listens.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListenUriMode">
@@ -251,9 +335,12 @@
         <ReturnType>System.ServiceModel.Description.ListenUriMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the transport must ensure that the URI provided for the service to listen on is unique. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListenUriRelativeAddress">
@@ -267,9 +354,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The address for the endpoint at which a service listens is obtained by appending the <see cref="P:System.ServiceModel.Channels.BindingContext.ListenUriRelativeAddress" /> to the <see cref="P:System.ServiceModel.Channels.BindingContext.ListenUriBaseAddress" />. This absolute address can be set using the <see cref="P:System.ServiceModel.Description.ServiceEndpoint.ListenUri" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI that provides the relative address at which the service endpoint listens.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemainingBindingElements">
@@ -283,9 +376,15 @@
         <ReturnType>System.ServiceModel.Channels.BindingElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The binding elements that are put into this collection are those elements that do not correspond directly to a listener or factory in one of the channel stacks. The encoder binding element, for example, ends up in this collection and is then used by the transport channel to construct a message encoder.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the binding elements that are used by other binding elements to construct the channel stack.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

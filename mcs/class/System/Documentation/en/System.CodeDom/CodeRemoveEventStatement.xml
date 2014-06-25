@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeRemoveEventStatement" FullName="System.CodeDom.CodeRemoveEventStatement">
   <TypeSignature Language="C#" Value="public class CodeRemoveEventStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeRemoveEventStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeRemoveEventStatement" /> can be used to represent a statement that removes an event handler for an event.</para>
+      <para>The <see cref="P:System.CodeDom.CodeRemoveEventStatement.Event" /> property specifies the event to remove the event handler from. The <see cref="P:System.CodeDom.CodeRemoveEventStatement.Listener" /> property specifies the event handler to remove.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a statement that removes an event handler.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeRemoveEventStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +70,15 @@
         <Parameter Name="listener" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="eventRef">To be added: an object of type 'CodeEventReferenceExpression'</param>
-        <param name="listener">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeRemoveEventStatement" /> class with the specified event and event handler.</para>
+        </summary>
+        <param name="eventRef">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeEventReferenceExpression" /> that indicates the event to detach the event handler from. </param>
+        <param name="listener">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the event handler to remove. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,11 +97,17 @@
         <Parameter Name="listener" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="targetObject">To be added: an object of type 'CodeExpression'</param>
-        <param name="eventName">To be added: an object of type 'string'</param>
-        <param name="listener">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeRemoveEventStatement" /> class using the specified target object, event name, and event handler.</para>
+        </summary>
+        <param name="targetObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the object that contains the event. </param>
+        <param name="eventName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the event. </param>
+        <param name="listener">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the event handler to remove. </param>
       </Docs>
     </Member>
     <Member MemberName="Event">
@@ -102,9 +125,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeEventReferenceExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the event to remove a listener from.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Listener">
@@ -122,9 +148,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the event handler to remove.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

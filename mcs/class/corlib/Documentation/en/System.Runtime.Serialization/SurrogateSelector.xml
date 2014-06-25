@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SurrogateSelector" FullName="System.Runtime.Serialization.SurrogateSelector">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SurrogateSelector : System.Runtime.Serialization.ISurrogateSelector" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SurrogateSelector extends System.Object implements class System.Runtime.Serialization.ISurrogateSelector" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A serialization surrogate gives the users an object that can handle the serialization requirements of a different object and can transform the serialized data if necessary.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Assists formatters in selection of the serialization surrogate to delegate the serialization or deserialization process to.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.SurrogateSelector" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddSurrogate">
@@ -61,11 +71,17 @@
         <Parameter Name="surrogate" Type="System.Runtime.Serialization.ISerializationSurrogate" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="context">To be added: an object of type 'StreamingContext'</param>
-        <param name="surrogate">To be added: an object of type 'ISerializationSurrogate'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a surrogate to the list of checked surrogates.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> for which the surrogate is required.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context-specific data. </param>
+        <param name="surrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The surrogate to call for this type. </param>
       </Docs>
     </Member>
     <Member MemberName="ChainSelector">
@@ -84,9 +100,16 @@
         <Parameter Name="selector" Type="System.Runtime.Serialization.ISurrogateSelector" />
       </Parameters>
       <Docs>
-        <param name="selector">To be added: an object of type 'ISurrogateSelector'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last selector added to the list will be the first one checked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> that can handle a particular object type to the list of surrogates.</para>
+        </summary>
+        <param name="selector">
+          <attribution license="cc4" from="Microsoft" modified="false" />The surrogate selector to add. </param>
       </Docs>
     </Member>
     <Member MemberName="GetNextSelector">
@@ -103,9 +126,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ISurrogateSelector'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the next selector on the chain of selectors.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next <see cref="T:System.Runtime.Serialization.ISurrogateSelector" /> on the chain of selectors.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSurrogate">
@@ -151,10 +180,18 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="context">To be added: an object of type 'StreamingContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not check chained surrogates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the surrogate associated with a given type.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> for which to remove the surrogate. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> for the current surrogate. </param>
       </Docs>
     </Member>
   </Members>

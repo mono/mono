@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeCompiler" FullName="System.CodeDom.Compiler.CodeCompiler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class CodeCompiler : System.CodeDom.Compiler.CodeGenerator, System.CodeDom.Compiler.ICodeCompiler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CodeCompiler extends System.CodeDom.Compiler.CodeGenerator implements class System.CodeDom.Compiler.ICodeCompiler" />
@@ -19,8 +20,18 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> is a useful utility base class for code generators to derive from in order to provide code compilation functions.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an example implementation of the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CmdArgsFromParameters">
@@ -55,10 +69,17 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CompilerParameters" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command arguments to be passed to the compiler from the specified <see cref="T:System.CodeDom.Compiler.CompilerParameters" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The command arguments.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> that indicates the compiler options. </param>
       </Docs>
     </Member>
     <Member MemberName="CompilerName">
@@ -74,9 +95,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates the name of the compiler executable to invoke.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the compiler executable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileExtension">
@@ -92,9 +119,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates the file name extension of the source files that are to be compiled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file name extension to use for source files.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromDom">
@@ -114,11 +147,19 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="e">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the specified compile unit using the specified options, and returns the results from the compilation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> object that indicates the source to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="FromDomBatch">
@@ -138,11 +179,19 @@
         <Parameter Name="ea" Type="System.CodeDom.CodeCompileUnit[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="ea">To be added: an object of type 'CodeDom.CodeCompileUnit []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the specified compile units using the specified options, and returns the results from the compilation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="ea">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeCompileUnit" /> objects that indicates the source to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="FromFile">
@@ -162,11 +211,19 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the specified file using the specified options, and returns the results from the compilation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="FromFileBatch">
@@ -186,11 +243,19 @@
         <Parameter Name="fileNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="fileNames">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the specified files using the specified options, and returns the results from the compilation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="fileNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of strings that indicates the file names of the files to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="FromSource">
@@ -210,11 +275,19 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="source">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the specified source code string using the specified options, and returns the results from the compilation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source code string to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="FromSourceBatch">
@@ -234,11 +307,19 @@
         <Parameter Name="sources" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="sources">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles the specified source code strings using the specified options, and returns the results from the compilation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="sources">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of strings containing the source code to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="GetResponseFileCmdArgs">
@@ -263,11 +344,19 @@
         <Parameter Name="cmdArgs" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added: an object of type 'CompilerParameters'</param>
-        <param name="cmdArgs">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command arguments to use when invoking the compiler to generate a response file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The command arguments to use to generate a response file, or null if there are no response file arguments.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="cmdArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A command arguments string. </param>
       </Docs>
     </Member>
     <Member MemberName="JoinStringArray">
@@ -287,11 +376,19 @@
         <Parameter Name="separator" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sa">To be added: an object of type 'string []'</param>
-        <param name="separator">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Joins the specified string arrays.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated string.</para>
+        </returns>
+        <param name="sa">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of strings to join. </param>
+        <param name="separator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The separator to use. </param>
       </Docs>
     </Member>
     <Member MemberName="ProcessCompilerOutputLine">
@@ -311,10 +408,15 @@
         <Parameter Name="line" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="results">To be added: an object of type 'CompilerResults'</param>
-        <param name="line">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes the specified line from the specified <see cref="T:System.CodeDom.Compiler.CompilerResults" />.</para>
+        </summary>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> that indicates the results of compilation. </param>
+        <param name="line">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line to process. </param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromDom">
@@ -334,11 +436,22 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromDom(System.CodeDom.Compiler.CompilerParameters,System.CodeDom.CodeCompileUnit)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> that indicates the source to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromDomBatch">
@@ -358,11 +471,22 @@
         <Parameter Name="ea" Type="System.CodeDom.CodeCompileUnit[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="ea">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromDomBatch(System.CodeDom.Compiler.CompilerParameters,System.CodeDom.CodeCompileUnit[])" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="ea">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeCompileUnit" /> objects that indicates the source to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromFile">
@@ -382,11 +506,22 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="fileName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromFile(System.CodeDom.Compiler.CompilerParameters,System.String)" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromFileBatch">
@@ -406,11 +541,22 @@
         <Parameter Name="fileNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="fileNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromFileBatch(System.CodeDom.Compiler.CompilerParameters,System.String[])" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="fileNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of strings that indicates the file names to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromSource">
@@ -430,11 +576,22 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromSource(System.CodeDom.Compiler.CompilerParameters,System.String)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that indicates the source code to compile. </param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromSourceBatch">
@@ -454,11 +611,22 @@
         <Parameter Name="sources" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="options">To be added.</param>
-        <param name="sources">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromSourceBatch(System.CodeDom.Compiler.CompilerParameters,System.String[])" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
+        <param name="sources">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of strings that indicates the source code to compile. </param>
       </Docs>
     </Member>
   </Members>

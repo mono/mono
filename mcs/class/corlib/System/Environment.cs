@@ -715,7 +715,7 @@ namespace System {
 			return GetLogicalDrivesInternal ();
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void internalBroadcastSettingChange ();
 
@@ -826,10 +826,24 @@ namespace System {
 				throw new ArgumentException ("target");
 			}
 		}
+#else
+		public static void SetEnvironmentVariable (string variable, string value)
+		{
+			if (variable == null)
+				throw new ArgumentNullException ("variable");
+			if (variable == String.Empty)
+				throw new ArgumentException ("String cannot be of zero length.", "variable");
+			if (variable.IndexOf ('=') != -1)
+				throw new ArgumentException ("Environment variable name cannot contain an equal character.", "variable");
+			if (variable[0] == '\0')
+				throw new ArgumentException ("The first char in the string is the null character.", "variable");
 
+			InternalSetEnvironmentVariable (variable, value);
+		}
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
-#endif
+
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{

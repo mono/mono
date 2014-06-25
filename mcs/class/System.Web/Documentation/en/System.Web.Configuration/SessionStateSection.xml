@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionStateSection" FullName="System.Web.Configuration.SessionStateSection">
   <TypeSignature Language="C#" Value="public sealed class SessionStateSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.SessionStateSection" /> class refers to the element in the Machine.config or Web.config configuration file identified by the sessionState tag.  </para>
+      <para>When a new client begins interacting with a Web application, a session ID is issued and associated with all the subsequent requests from the same client during the time that the session is valid. This ID is used to maintain server-side state associated with the client session across requests. The <see cref="T:System.Web.Configuration.SessionStateSection" /> controls how the ASP.NET application establishes and maintains this association on behalf of each client.</para>
+      <para>This mechanism is very flexible and gives you the ability to host session-state information out of process and to track state without using cookies, among other things.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the session state for a Web application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.SessionStateSection.#ctor" /> constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.SessionStateSection" /> class by using the <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.SessionStateSection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +54,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user can specify the initial catalog value in the <see cref="P:System.Web.Configuration.SessionStateSection.SqlConnectionString" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +78,23 @@
         <ReturnType>System.Web.HttpCookieMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There are two ways that session state can store the unique ID that associates the client with a server session: by storing an HTTP cookie on the client or by encoding the session ID in the URL. Storing the session ID in the cookie is more secure but requires the client browser to support cookies.</para>
+          <para>For applications that allow clients that do not support cookies, such as a variety of mobile devices, the session ID may be stored in the URL. The URL option has several drawbacks. It requires that the links on the site be relative and that the page be redirected at the beginning of the session with new query-string values, and it exposes the session ID right in the query string, where it can be picked up for use in a security attack. </para>
+          <para>You are encouraged to use the cookieless mode only if you need to support clients that lack cookie support.</para>
+          <para>Session state also supports two additional options: <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" /> and <see cref="F:System.Web.HttpCookieMode.AutoDetect" />. The former enables the session-state module to determine what mode (cookie or cookieless) is used on a per-client basis based on the browser capabilities.  The <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> option performs a handshake with the browser to verify whether a cookie may be stored, and therefore requires an additional request to make the determination. If you need to support cookieless clients, strongly consider using <see cref="F:System.Web.HttpCookieMode.UseDeviceProfile" /> to generate cookieless URLs only for clients that require them.</para>
+          <block subset="none" type="note">
+            <para> With UP.Browser 4.1 or UP.Browser 3.2, <see cref="M:System.Web.HttpResponse.Redirect(System.String)" /> always behaves as if the value of the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.SupportsRedirectWithCookie" /> property of the <see cref="T:System.Web.HttpBrowserCapabilities" /> object is false, unless the <see cref="P:System.Web.Configuration.SessionStateSection.Cookieless" /> property in the <see cref="P:System.Web.Configuration.SystemWebSectionGroup.SessionState" /> section of Web.config has been explicitly set to true. </para>
+            <para>In ASP.NET version 1.1, the options for this setting were true or false, but with ASP.NET 2.0, the choices are expanded, and <see cref="F:System.Web.HttpCookieMode.AutoDetect" /> is now the default setting. If your Web application has the <see cref="P:System.Web.Configuration.SessionStateSection.Cookieless" /> property set to a Boolean value, then <see cref="M:System.Web.HttpResponse.Redirect(System.String)" /> should work as expected for these browsers. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether cookies are used to identify client sessions.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,10 +112,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is "ASP.NET_SessionId".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cookie name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -102,10 +139,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The provider is only used when the session-state mode is set to <see cref="F:System.Web.SessionState.SessionStateMode.Custom" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the custom provider from the <see cref="P:System.Web.Configuration.SessionStateSection.Providers" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -139,10 +182,16 @@
         <ReturnType>System.Web.SessionState.SessionStateMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateMode" /> is not a required attribute and can be inherited from a higher level in the configuration hierarchy or from the default value. However, the configuration handler for this section will always write out the mode based on the current inherited value when writing this section.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying where to store the session state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -160,10 +209,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.Configuration.SessionStateSection.PartitionResolverType" /> property is specified, the <see cref="P:System.Web.Configuration.SessionStateSection.SqlConnectionString" /> property and <see cref="P:System.Web.Configuration.SessionStateSection.StateConnectionString" /> property are ignored.  The <see cref="P:System.Web.Configuration.SessionStateSection.PartitionResolverType" /> can be locked via the <see cref="P:System.Configuration.ConfigurationElement.LockAttributes" /> property like other properties within the <format type="text/html"><a href="bda6fb8c-0076-43e3-9ce2-8cf1f8bdaa7d">&lt;sessionState&gt; Element for &lt;system.web&gt;</a></format> element. The connection string returned by the <see cref="P:System.Web.Configuration.SessionStateSection.PartitionResolverType" /> will be used on every request to connect to the appropriate server location for the remainder of the request.  If the connection string is invalid, ASP.NET will throw the same exception that is thrown when the configured connection string to the server is invalid.</para>
+          <para>This property is used to partition session-state data across multiple backend nodes when in SQL or state-server mode.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying where to store the session state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -213,10 +269,16 @@
         <ReturnType>System.Configuration.ProviderSettingsCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property refers to the information contained by the configuration tag identified by the providers element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Configuration.ProviderSettingsCollection" /> providers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -234,10 +296,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, only cookieless URLs are reissued when <see cref="P:System.Web.Configuration.SessionStateSection.RegenerateExpiredSessionId" /> is enabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the session Id will be re-issued when an expired session ID is specified by the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -255,10 +323,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.SessionStateSection.SessionIDManagerType" /> overrides session ID generation and management for custom session ID management schemes. The default value is an empty string ("").</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying the fully qualified type of session ID Manager.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -279,10 +353,13 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the duration time-out for the SQL commands using the SQL Server session state mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -300,10 +377,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This sqlConnectionString attribute is required when <see cref="P:System.Web.Configuration.SessionStateSection.Mode" /> is set to <see cref="F:System.Web.SessionState.SessionStateMode.SQLServer" />. </para>
+          <block subset="none" type="note">
+            <para>To use the <see cref="F:System.Web.SessionState.SessionStateMode.SQLServer" /> session state mode, you must run the InstallSqlState.sql SQL script (which is installed in [drive:]\WINDOWS\Microsoft.NET\Framework\VersionNumber as part of the default .NET Framework installation) on the computer running SQL Server that will store the session state. This creates a database called ASPState with new stored procedures and creates new ASPStateTempApplications and ASPStateTempSessions tables in the TempDB database.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SQL connection string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -321,10 +407,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the server name and the port when the session state is stored remotely. The stateConnectionString attribute is required when the <see cref="P:System.Web.Configuration.SessionStateSection.Mode" /> is set to <see cref="F:System.Web.SessionState.SessionStateMode.StateServer" />. </para>
+          <block subset="none" type="note">
+            <para>Make sure the ASP.NET state service is running on the remote server that stores the session-state information. This service is installed with ASP.NET and is located by default at [drive:]\WINDOWS\Microsoft.NET\Framework\VersionNumber\aspnet_state.exe.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the state server connection string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -345,10 +440,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This sessionStateSection attribute is required when the <see cref="P:System.Web.Configuration.SessionStateSection.Mode" /> property is set to <see cref="F:System.Web.SessionState.SessionStateMode.StateServer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time the network connection between the Web server and the state server can remain idle. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -372,10 +473,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.SessionStateSection.Timeout" /> property cannot be set to a value greater than 525,601 minutes (1 year).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the session time-out</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -393,10 +500,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value specifying the whether the session state will use client impersonation when available, or will always revert to the hosting identity.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GraphicsState" FullName="System.Drawing.Drawing2D.GraphicsState">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class GraphicsState : MarshalByRefObject" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the state of a <see cref="T:System.Drawing.Graphics" /> object. This object is returned by a call to the <see cref="M:System.Drawing.Graphics.Save" /> methods. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

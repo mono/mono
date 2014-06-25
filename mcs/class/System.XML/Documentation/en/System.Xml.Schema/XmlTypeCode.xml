@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlTypeCode" FullName="System.Xml.Schema.XmlTypeCode">
   <TypeSignature Language="C#" Value="public enum XmlTypeCode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlTypeCode extends System.Enum" />
@@ -10,9 +11,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the W3C XML Schema Definition Language (XSD) schema types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AnyAtomicType">
@@ -27,8 +31,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any atomic value of a union.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AnyUri">
@@ -43,8 +50,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:anyURI type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Attribute">
@@ -59,8 +69,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Base64Binary">
@@ -75,8 +88,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:base64Binary type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Boolean">
@@ -91,8 +107,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:boolean type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Byte">
@@ -107,8 +126,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:byte type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Comment">
@@ -123,8 +145,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Date">
@@ -139,8 +164,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:date type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DateTime">
@@ -155,8 +183,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:dateTime type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DayTimeDuration">
@@ -171,8 +202,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Decimal">
@@ -187,8 +221,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:decimal type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Document">
@@ -203,8 +240,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Double">
@@ -219,8 +259,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:double type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Duration">
@@ -235,8 +278,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:Duration type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Element">
@@ -251,8 +297,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Entity">
@@ -267,8 +316,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:ENTITY type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Float">
@@ -283,8 +335,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:float type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GDay">
@@ -299,8 +354,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:gDay type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GMonth">
@@ -315,8 +373,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:gMonth type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GMonthDay">
@@ -331,8 +392,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:gMonthDay type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GYear">
@@ -347,8 +411,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:gYear type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GYearMonth">
@@ -363,8 +430,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:gYearMonth type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HexBinary">
@@ -379,8 +449,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:hexBinary type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -395,8 +468,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:ID type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Idref">
@@ -411,8 +487,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:IDREF type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Int">
@@ -427,8 +506,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:int type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Integer">
@@ -443,8 +525,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:integer type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -459,8 +544,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An item such as a node or atomic value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Language">
@@ -475,8 +563,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:language type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Long">
@@ -491,8 +582,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:long type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -507,8 +601,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:Name type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -523,8 +620,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NCName">
@@ -539,8 +639,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:NCName type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NegativeInteger">
@@ -555,8 +658,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:negativeInteger type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NmToken">
@@ -571,8 +677,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:NMTOKEN type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Node">
@@ -587,8 +696,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -603,8 +715,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No type information.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NonNegativeInteger">
@@ -619,8 +734,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:nonNegativeInteger type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NonPositiveInteger">
@@ -635,8 +753,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:nonPositiveInteger type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NormalizedString">
@@ -651,8 +772,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:normalizedString type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Notation">
@@ -667,8 +791,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:NOTATION type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PositiveInteger">
@@ -683,8 +810,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:positiveInteger type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessingInstruction">
@@ -699,8 +829,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QName">
@@ -715,8 +848,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:QName type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Short">
@@ -731,8 +867,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:short type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="String">
@@ -747,8 +886,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:string type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -763,8 +905,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Time">
@@ -779,8 +924,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:time type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Token">
@@ -795,8 +943,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:token type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsignedByte">
@@ -811,8 +962,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:unsignedByte type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsignedInt">
@@ -827,8 +981,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:unsignedInt type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsignedLong">
@@ -843,8 +1000,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:unsignedLong type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsignedShort">
@@ -859,8 +1019,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A W3C XML Schema xs:unsignedShort type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UntypedAtomic">
@@ -875,8 +1038,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An untyped atomic value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="YearMonthDuration">
@@ -891,8 +1057,11 @@
         <ReturnType>System.Xml.Schema.XmlTypeCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

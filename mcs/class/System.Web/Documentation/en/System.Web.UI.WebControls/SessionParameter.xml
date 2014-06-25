@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionParameter" FullName="System.Web.UI.WebControls.SessionParameter">
   <TypeSignature Language="C#" Value="public class SessionParameter : System.Web.UI.WebControls.Parameter" />
   <AssemblyInfo>
@@ -14,9 +15,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A SessionParameter object is typically used in order to include the value of an <see cref="T:System.Web.SessionState.HttpSessionState" /> variable in the Where clause of a database query. The <see cref="P:System.Web.UI.WebControls.SessionParameter.SessionField" /> property identifies the session variable from which the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> retrieves a value.</para>
+      <block subset="none" type="note">
+        <para>Controls that bind data to a parameter by using a <see cref="T:System.Web.UI.WebControls.SessionParameter" /> object might throw an exception if the specified session variable is not set. To avoid this error (where appropriate), set the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Binds the value of a session variable to a parameter object. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +34,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.SessionParameter" /> object created with the <see cref="M:System.Web.UI.WebControls.SessionParameter.#ctor" /> constructor is initialized with default values for all its properties. The <see cref="P:System.Web.UI.WebControls.SessionParameter.SessionField" /> property is initialized to <see cref="F:System.String.Empty" />. Additionally, the <see cref="P:System.Web.UI.WebControls.Parameter.Name" /> property is initialized to <see cref="F:System.String.Empty" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> property is initialized to <see cref="F:System.TypeCode.Object" />, the <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> property is initialized to <see cref="F:System.Data.ParameterDirection.Input" />, and the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is initialized to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new unnamed instance of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +55,17 @@
         <Parameter Name="original" Type="System.Web.UI.WebControls.SessionParameter" />
       </Parameters>
       <Docs>
-        <param name="original">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SessionParameter.#ctor(System.Web.UI.WebControls.SessionParameter)" /> constructor is a Protected copy constructor used to clone a <see cref="T:System.Web.UI.WebControls.SessionParameter" /> instance. The values of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> object, including the <see cref="P:System.Web.UI.WebControls.SessionParameter.SessionField" />, <see cref="P:System.Web.UI.WebControls.Parameter.Name" />, and <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> properties, are all transferred to the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> class with the values of the instance specified by the <paramref name="original" /> parameter.</para>
+        </summary>
+        <param name="original">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.SessionParameter" /> from which the current instance is initialized. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,11 +79,19 @@
         <Parameter Name="sessionField" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="sessionField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Parameter.Type" /> and <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> properties are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named instance of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> class, using the specified string to identify which session state name/value pair to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="sessionField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.SessionState.HttpSessionState" /> name/value pair that the parameter object is bound to. The default is <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,12 +106,21 @@
         <Parameter Name="sessionField" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="sessionField">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Parameter.Direction" /> and <see cref="P:System.Web.UI.WebControls.Parameter.ConvertEmptyStringToNull" /> properties are initialized with default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new named and strongly typed instance of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> class, using the specified string to identify which session state name/value pair to bind to.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that the parameter represents. The default is <see cref="F:System.TypeCode.Object" />. </param>
+        <param name="sessionField">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.SessionState.HttpSessionState" /> name/value pair that the parameter object is bound to. The default is <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,10 +134,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.SessionParameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.SessionParameter.#ctor(System.Web.UI.WebControls.SessionParameter)" /> copy constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> class with the values of the current instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.SessionParameter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.SessionParameter" /> that is an exact duplicate of the current one.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,11 +164,22 @@
       </Parameters>
       <Docs>
         <param name="ctx">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.SessionParameter" /> object attempts to bind to the value of the session variable every time the <see cref="M:System.Web.UI.WebControls.SessionParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is called. </para>
+          <para>The <paramref name="context" /> parameter is used by the <see cref="M:System.Web.UI.WebControls.SessionParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method to retrieve the name/value pair that the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> object binds to. The <paramref name="control" /> parameter is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the updated and current value of the parameter. If the context or the request is null, the <see cref="M:System.Web.UI.WebControls.SessionParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method returns null.</para>
+        </returns>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Control" /> that is associated with the Web Forms page where the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> is used. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,10 +197,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.SessionParameter.SessionField" /> property identifies a name/value pair that is stored in the current session object associated with the Web browser. While the <see cref="P:System.Web.UI.WebControls.SessionParameter.SessionField" /> property identifies the name of the pair, the <see cref="T:System.Web.UI.WebControls.SessionParameter" /> binds to its corresponding value at run time. If the expected session string name/value pair is not found in the session, the <see cref="M:System.Web.UI.WebControls.SessionParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method binds the parameter to the value of the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property, if it is set. If the <see cref="P:System.Web.UI.WebControls.Parameter.DefaultValue" /> property is not set, the <see cref="M:System.Web.UI.WebControls.SessionParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method fails to bind the parameter to a value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the session variable that the parameter binds to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

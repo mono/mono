@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignSurfaceManager" FullName="System.ComponentModel.Design.DesignSurfaceManager">
   <TypeSignature Language="C#" Value="public class DesignSurfaceManager : IDisposable, IServiceProvider" />
   <AssemblyInfo>
@@ -16,8 +17,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class is designed to be a container of <see cref="T:System.ComponentModel.Design.DesignSurface" /> objects. It provides common services that handle event routing between designers, property windows, and other global objects. Using <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> is optional, but it is recommended if you intend to have several designer windows.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class provides several design-time services automatically. You can override each of these services by replacing them in the protected <see cref="P:System.ComponentModel.Design.DesignSurfaceManager.ServiceContainer" /> property. To replace a service, override the constructor, call base, and make any changes through the protected <see cref="P:System.ComponentModel.Design.DesignSurfaceManager.ServiceContainer" /> property. All services added to the service container that implement the <see cref="T:System.IDisposable" /> interface are disposed when the design surface manager is disposed. The <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class provides the <see cref="T:System.ComponentModel.Design.IDesignerEventService" /> interface as the default service. <see cref="T:System.ComponentModel.Design.IDesignerEventService" /> provides a global eventing mechanism for designer events. With this mechanism, an application is informed when a designer becomes active. The service provides a collection of designers and a single place where global objects, such as the Properties window, can monitor selection change events.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages a collection of <see cref="T:System.ComponentModel.Design.DesignSurface" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,8 +54,11 @@
       </Parameters>
       <Docs>
         <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActiveDesignSurface">
@@ -57,9 +71,15 @@
         <ReturnType>System.ComponentModel.Design.DesignSurface</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.DesignSurfaceManager.ActiveDesignSurface" /> property should be set by the designer's user interface whenever a designer becomes the active window. The default implementation of this property works with the default implementation of the <see cref="T:System.ComponentModel.Design.IDesignerEventService" /> interface to notify interested parties that a new designer is now active. If you provide your own implementation of <see cref="T:System.ComponentModel.Design.IDesignerEventService" />, you should override this property to notify your service appropriately. This property can be set to null, indicating that no designer is active.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the active designer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActiveDesignSurfaceChanged">
@@ -72,8 +92,11 @@
         <ReturnType>System.ComponentModel.Design.ActiveDesignSurfaceChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the currently active designer changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignSurface">
@@ -87,9 +110,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a design surface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new design surface instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignSurface">
@@ -105,10 +134,21 @@
         <Parameter Name="parentProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="parentProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to conveniently add additional per-designer services, use the <paramref name="parentProvider" /> parameter to provide a service provider for this design surface. The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface(System.IServiceProvider)" /> method creates a merged service provider that can satisfy service requests from both the given service provider as well as the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> itself. The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface(System.IServiceProvider)" /> method then passes this service provider into the <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> method.</para>
+          <para>After <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> returns the design surface, the <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface(System.IServiceProvider)" /> method tries to obtain the <see cref="T:System.ComponentModel.Design.IDesignerEventService" />. If it is present, and if it is the instance of the service that <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> provided by default, the <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface(System.IServiceProvider)" /> method raises the <see cref="E:System.ComponentModel.Design.IDesignerEventService.DesignerCreated" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a design surface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new design surface instance.</para>
+        </returns>
+        <param name="parentProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A parent service provider. A new merged service provider will be created that will first ask this provider for a service, and then delegate any failures to the design surface manager object. This merged provider will be passed into the <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignSurfaceCore">
@@ -124,10 +164,20 @@
         <Parameter Name="parentProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="parentProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> method is called by both <see cref="Overload:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface" /> methods. It is the implementation that actually creates the design surface. The default implementation just returns a new <see cref="T:System.ComponentModel.Design.DesignSurface" />. You may override this method to provide a custom object that derives from the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementation that creates the design surface.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new design surface instance.</para>
+        </returns>
+        <param name="parentProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider to pass to the design surface. This is either an instance of <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> or an object that implements <see cref="T:System.IServiceProvider" />, and represents a merge between the service provider of the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class and an externally passed provider.</param>
       </Docs>
     </Member>
     <Member MemberName="DesignSurfaceCreated">
@@ -140,8 +190,11 @@
         <ReturnType>System.ComponentModel.Design.DesignSurfaceEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a designer is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignSurfaceDisposed">
@@ -154,8 +207,11 @@
         <ReturnType>System.ComponentModel.Design.DesignSurfaceEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a designer is disposed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignSurfaces">
@@ -168,9 +224,15 @@
         <ReturnType>System.ComponentModel.Design.DesignSurfaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.DesignSurfaceManager.DesignSurfaces" /> property is implemented directly on top of <see cref="T:System.ComponentModel.Design.IDesignerEventService" />, so if you provide your own implementation of that service, this property uses your implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of design surfaces.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -184,8 +246,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The public <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.Dispose" /> method follows the standard <see cref="T:System.IDisposable" /> pattern. Calling this method destroys the design surface manager. It also disposes the service container, which causes all services that implement <see cref="T:System.IDisposable" /> to also be disposed. The protected version of this method is virtual and follows the normal <see cref="T:System.IDisposable" /> pattern. </para>
+          <block subset="none" type="note">
+            <para>Because <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> does not have any native code to clean up, it does not have a finalizer that calls <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.Dispose(System.Boolean)" />. If you need to call <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.Dispose(System.Boolean)" />, you must add a finalizer yourself.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -201,9 +272,21 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The public <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.Dispose" /> method follows the standard <see cref="T:System.IDisposable" /> pattern. Calling this method destroys the design surface manager. It also disposes the service container, which causes all services that implement <see cref="T:System.IDisposable" /> to also be disposed. The protected version of this method is virtual and follows the normal <see cref="T:System.IDisposable" /> pattern. </para>
+          <block subset="none" type="note">
+            <para>Because <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> does not have any native code to clean up, it does not have a finalizer that calls <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.Dispose(System.Boolean)" />. If you need to call <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.Dispose(System.Boolean)" />, you must add a finalizer yourself.</para>
+          </block>
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -220,9 +303,18 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.GetService(System.Type)" /> method forwards to any service provider that was given to the design surface manager at construction time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a service in the design surface manager’s service container.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements, or is a derived class of, the given service type; otherwise, null if the service does not exist in the service container.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SelectionChanged">
@@ -235,8 +327,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when the active designer's selection of component set changes. This is mapped through the <see cref="T:System.ComponentModel.Design.IDesignerEventService" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the global selection changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServiceContainer">
@@ -249,9 +347,12 @@
         <ReturnType>System.ComponentModel.Design.ServiceContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the design surface manager's <see cref="P:System.ComponentModel.Design.DesignSurfaceManager.ServiceContainer" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

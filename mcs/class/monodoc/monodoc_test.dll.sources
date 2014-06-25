@@ -6,4 +6,3 @@ Monodoc/SettingsTest.cs
 Monodoc.Generators/RawGeneratorTests.cs
 Monodoc/NodeTest.cs
 Monodoc/RootTreeTest.cs
-Monodoc.Generators/AvoidCDataTextReaderTests.cs

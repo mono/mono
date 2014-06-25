@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataControlFieldCollection" FullName="System.Web.UI.WebControls.DataControlFieldCollection">
   <TypeSignature Language="C#" Value="public sealed class DataControlFieldCollection : System.Web.UI.StateManagedCollection" />
   <AssemblyInfo>
@@ -9,9 +10,132 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> class represents a collection of <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects used by data-bound controls to specify how their child controls are presented. The <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> class derives from <see cref="T:System.Web.UI.StateManagedCollection" />, an abstract base collection class used specifically to store <see cref="T:System.Web.UI.IStateManager" /> objects.</para>
+      <para>A <see cref="T:System.Web.UI.StateManagedCollection" /> object influences the behavior of a <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> object. <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects that are dynamically added to the collection will be re-added to the control when state is restored. This means that a field needs to be added, removed, or changed just once instead of on each postback, as most collection types in ASP.NET require.</para>
+      <para> (The <see cref="T:System.Web.UI.WebControls.DataControlField" /> class implements the <see cref="T:System.Web.UI.IStateManager" /> interface, which enables it to store its state in ASP.NET view state. )</para>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> class to programmatically manage a set of <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects. Note that it is more common to define these fields declaratively. </para>
+      <para>You can add, insert, and remove <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects using the appropriate methods of the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> class. To programmatically retrieve <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects from a collection, use one of following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>Use the indexer to get a single <see cref="T:System.Web.UI.WebControls.DataControlField" /> object from the collection using array notation.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Web.UI.StateManagedCollection.GetEnumerator" /> method to create a <see cref="T:System.Collections.IEnumerator" />-implemented object, which can then be used to get items from the collection.</para>
+        </item>
+      </list>
+      <para>The <see cref="P:System.Web.UI.StateManagedCollection.Count" /> property specifies the total number of items in the collection, and is commonly used to determine the upper bound of the collection. You can add items to and remove items from the collection using the <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Add(System.Web.UI.WebControls.DataControlField)" />, <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Insert(System.Int32,System.Web.UI.WebControls.DataControlField)" />, <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Remove(System.Web.UI.WebControls.DataControlField)" />, and <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.RemoveAt(System.Int32)" /> methods.</para>
+      <para>If you are using the <see cref="T:System.Web.UI.WebControls.GridView" /> or <see cref="T:System.Web.UI.WebControls.DetailsView" /> control, the <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects that are automatically created (for example, when the <see cref="P:System.Web.UI.WebControls.GridView.AutoGenerateColumns" /> property is true) are not stored in the publicly accessible fields collection. You can only access and manipulate <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects that are not automatically generated. </para>
+      <para>The following table lists the different data control field classes and how they are used.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Parameter Class</para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.DataControlField" />
+            </para>
+          </term>
+          <description>
+            <para>The abstract base class for all fields. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.BoundField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that is used to bind to text or data retrieved from an ASP.NET data source control. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ButtonFieldBase" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that encapsulates general button functionality. <see cref="T:System.Web.UI.WebControls.ButtonField" /> and <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> are derived from it. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ButtonField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that displays at least one button. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.CheckBoxField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that displays a <see cref="T:System.Web.UI.WebControls.CheckBox" /> control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.CommandField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that displays actions that can be performed on the data displayed by the row (or column), such as edit, update, or delete.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.HyperLinkField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that displays a <see cref="T:System.Web.UI.WebControls.HyperLink" /> control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ImageField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that displays an <see cref="T:System.Web.UI.WebControls.Image" /> control.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.TemplateField" />
+            </para>
+          </term>
+          <description>
+            <para>A data-bound control field that displays custom content in a data-bound control.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.UI.WebControls.DataControlField" /> objects that are used by data-bound controls such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +143,18 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> class.</para>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +170,17 @@
         <Parameter Name="field" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="field">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Add(System.Web.UI.WebControls.DataControlField)" /> method to append a <see cref="T:System.Web.UI.WebControls.DataControlField" /> object to the end of the collection. This implementation of the method takes the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object specified by the <paramref name="field" /> parameter and appends it to the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object to the end of the collection.</para>
+        </summary>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to append to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,10 +194,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.CloneFields" /> method to create a copy of the current collection. This method is used primarily by design-time dialog boxes to implement rollback behavior when an operation is canceled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a copy of the current collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> that contains a copy of each data control field in the current collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,11 +222,21 @@
         <Parameter Name="field" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="field">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method performs a linear search. It determines equality by calling <see cref="M:System.Object.Equals(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> collection contains a specific <see cref="T:System.Web.UI.WebControls.DataControlField" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> contains the specified field; otherwise, false.</para>
+        </returns>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to locate in the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -94,11 +253,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> collection to a compatible one-dimensional <see cref="T:System.Array" />, starting at the specified index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,9 +295,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.DataControlFieldCollection.FieldsChanged" /> event is raised when the <see cref="M:System.Web.UI.StateManagedCollection.Clear" />, <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Insert(System.Int32,System.Web.UI.WebControls.DataControlField)" />, or <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Remove(System.Web.UI.WebControls.DataControlField)" /> method is called.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the fields in the collection change, usually as the result of a <see cref="M:System.Web.UI.StateManagedCollection.Clear" />, <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Insert(System.Int32,System.Web.UI.WebControls.DataControlField)" />, <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Remove(System.Web.UI.WebControls.DataControlField)" /> or <see cref="M:System.Web.UI.WebControls.DataControlFieldCollection.Add(System.Web.UI.WebControls.DataControlField)" /> method call. This event is also raised anytime a <see cref="T:System.Web.UI.WebControls.DataControlField" /> in the collection raises its FieldChanged event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -166,11 +337,18 @@
         <Parameter Name="field" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="field">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines the index of a specific <see cref="T:System.Web.UI.WebControls.DataControlField" /> object in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the <paramref name="field" /> parameter, if it is found in the collection; otherwise, -1.</para>
+        </returns>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to locate in the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -187,11 +365,16 @@
         <Parameter Name="field" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="field">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object into the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which the <see cref="T:System.Web.UI.WebControls.DataControlField" /> is inserted. </param>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to insert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -290,10 +473,14 @@
         <Parameter Name="field" Type="System.Web.UI.WebControls.DataControlField" />
       </Parameters>
       <Docs>
-        <param name="field">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.UI.WebControls.DataControlField" /> object from the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> collection.</para>
+        </summary>
+        <param name="field">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.DataControlField" /> to remove from the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -309,10 +496,14 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.UI.WebControls.DataControlField" /> object at the specified index from the <see cref="T:System.Web.UI.WebControls.DataControlFieldCollection" /> collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Web.UI.WebControls.DataControlField" /> to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

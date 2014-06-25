@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartAuthorizationEventHandler" FullName="System.Web.UI.WebControls.WebParts.WebPartAuthorizationEventHandler">
   <TypeSignature Language="C#" Value="public delegate void WebPartAuthorizationEventHandler(object source, WebPartAuthorizationEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
   <Docs>
     <param name="source">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.AuthorizeWebPart" /> event is raised before a Web Parts control is added to a Web Parts zone. You can specify which Web Parts controls can be added to a zone by customizing how the event is handled. The method specified in the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartAuthorizationEventHandler" /> delegate is called when an <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.AuthorizeWebPart" /> event is raised.</para>
+      <para>Page developers can provide custom handlers for Web Parts events by adding an OnAuthorizeWebPart attribute to the &lt;asp:webpartmanager&gt; element in a page, and assigning a custom method name to the attribute. A custom handler can also be assigned programmatically. For more information on programmatically assigning an event handler, see <format type="text/html"><a href="348e9600-22e3-49a2-8864-11c5bb3e98fc">How to: Connect Event Handler Methods to Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.AuthorizeWebPart" /> event of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> object. </para>
+    </summary>
   </Docs>
 </Type>

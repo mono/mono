@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyHash" FullName="System.Configuration.Assemblies.AssemblyHash">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct AssemblyHash : ICloneable" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit AssemblyHash extends System.ValueType implements class System.ICloneable" />
@@ -26,8 +27,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Configuration.Assemblies.AssemblyHash" /> values are used throughout the common language runtime to detect a change in assembly contents.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a hash of an assembly manifest's contents.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -49,9 +57,13 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Assemblies.AssemblyHash" /> structure with the specified hash value. The hash algorithm defaults to <see cref="F:System.Configuration.Assemblies.AssemblyHashAlgorithm.SHA1" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -74,10 +86,15 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="algorithm">To be added: an object of type 'AssemblyHashAlgorithm'</param>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Assemblies.AssemblyHash" /> structure with the specified hash algorithm and the hash value.</para>
+        </summary>
+        <param name="algorithm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The algorithm used to generate the hash. Values for this parameter come from the <see cref="T:System.Configuration.Assemblies.AssemblyHashAlgorithm" /> enumeration. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value. </param>
       </Docs>
     </Member>
     <Member MemberName="Algorithm">
@@ -100,9 +117,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'AssemblyHashAlgorithm'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash is made up of a byte array and a value from a class of supported algorithm types.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the hash algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -124,9 +147,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clones this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exact copy of this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -148,8 +177,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Configuration.Assemblies.AssemblyHash" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -171,9 +203,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
@@ -197,9 +235,13 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the hash value.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value. </param>
       </Docs>
     </Member>
   </Members>

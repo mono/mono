@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListViewInsertionMark" FullName="System.Windows.Forms.ListViewInsertionMark">
   <TypeSignature Language="C#" Value="public sealed class ListViewInsertionMark" />
   <AssemblyInfo>
@@ -9,8 +10,56 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can retrieve a <see cref="T:System.Windows.Forms.ListViewInsertionMark" /> from the <see cref="P:System.Windows.Forms.ListView.InsertionMark" /> property of a <see cref="T:System.Windows.Forms.ListView" /> control and use it to visually indicate the expected drop location in a drag-and-drop operation when an item is dragged to a new position. </para>
+      <para>This feature works only when the <see cref="P:System.Windows.Forms.ListView.AutoArrange" /> property is set to true and when the <see cref="T:System.Windows.Forms.ListView" /> control does not sort the items automatically. To prevent automatic sorting, the <see cref="P:System.Windows.Forms.ListView.Sorting" /> property must be set to <see cref="F:System.Windows.Forms.SortOrder.None" /> and the <see cref="P:System.Windows.Forms.ListView.View" /> property must be set to <see cref="F:System.Windows.Forms.View.LargeIcon" />, <see cref="F:System.Windows.Forms.View.SmallIcon" />, or <see cref="F:System.Windows.Forms.View.Tile" />. Additionally, the insertion mark feature cannot be used with the <see cref="T:System.Windows.Forms.ListView" /> grouping feature because the grouping feature orders the items by group membership.</para>
+      <para>The <see cref="T:System.Windows.Forms.ListViewInsertionMark" /> class is typically used in a handler for the <see cref="E:System.Windows.Forms.Control.DragOver" /> or <see cref="E:System.Windows.Forms.Control.MouseMove" /> event to update the position of the insertion mark as an item is dragged. It is also used in a handler for the <see cref="E:System.Windows.Forms.Control.DragDrop" /> or <see cref="E:System.Windows.Forms.Control.MouseUp" /> event to insert a dragged item at the correct location.</para>
+      <para>To update the position of the insertion mark, follow these steps: </para>
+      <list type="ordered">
+        <item>
+          <para>In a handler for the <see cref="E:System.Windows.Forms.Control.DragOver" /> or <see cref="E:System.Windows.Forms.Control.MouseMove" /> event, use the <see cref="P:System.Windows.Forms.ListView.InsertionMark" /> property to access the <see cref="T:System.Windows.Forms.ListViewInsertionMark" /> object associated with the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Windows.Forms.ListViewInsertionMark.NearestIndex(System.Drawing.Point)" /> method to retrieve the index of the item closest to the mouse pointer.</para>
+        </item>
+        <item>
+          <para>Pass the index value to the <see cref="M:System.Windows.Forms.ListView.GetItemRect(System.Int32)" /> method to retrieve the bounding rectangle of the item.</para>
+        </item>
+        <item>
+          <para>If the mouse pointer is located to the left of the midpoint of the bounding rectangle, set the <see cref="P:System.Windows.Forms.ListViewInsertionMark.AppearsAfterItem" /> property to false; otherwise, set it to true.</para>
+        </item>
+        <item>
+          <para>Set the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Index" /> property to the index value retrieved from the <see cref="M:System.Windows.Forms.ListViewInsertionMark.NearestIndex(System.Drawing.Point)" /> method. The insertion mark appears next to item with the specified index, either to the left or the right, depending on the <see cref="P:System.Windows.Forms.ListViewInsertionMark.AppearsAfterItem" /> property value. If an item is dragged over itself, the index is -1 and the insertion mark is hidden.</para>
+        </item>
+      </list>
+      <para>To insert the dragged item at the correct location, follow these steps: </para>
+      <list type="ordered">
+        <item>
+          <para>In a handler for the <see cref="E:System.Windows.Forms.Control.DragDrop" /> or <see cref="E:System.Windows.Forms.Control.MouseUp" /> event, use the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Index" /> property to determine the current location of the insertion mark. Store this value to be used later as the insertion index.</para>
+        </item>
+        <item>
+          <para>If the <see cref="P:System.Windows.Forms.ListViewInsertionMark.AppearsAfterItem" /> property is set to true, increment the stored insertion index value.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Windows.Forms.ListView.ListViewItemCollection.Insert(System.Int32,System.Windows.Forms.ListViewItem)" /> method to insert a clone of the dragged item into the <see cref="P:System.Windows.Forms.ListView.Items" /> collection at the stored insertion index.</para>
+        </item>
+        <item>
+          <para>Use the <see cref="M:System.Windows.Forms.ListView.ListViewItemCollection.Remove(System.Windows.Forms.ListViewItem)" /> method to remove the original copy of the dragged item.</para>
+        </item>
+      </list>
+      <para>You must insert a clone of the dragged item before the original copy is removed so the index values in the <see cref="P:System.Windows.Forms.ListView.Items" /> collection are not altered before the insertion.</para>
+      <para>To ensure that the items are displayed in the same order as their index values, you must set the <see cref="P:System.Windows.Forms.ListView.ListViewItemSorter" /> property to an implementation of the <see cref="T:System.Collections.IComparer" /> interface that sorts items by index value. For more information, see the Example section. </para>
+      <para>You can modify the color of the insertion mark by using the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Color" /> property. If you need the size or position of the insertion mark, you can get its bounding rectangle through the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Bounds" /> property.</para>
+      <block subset="none" type="note">
+        <para>The insertion mark feature is available only on Windows XP and the Windows Server 2003 family when your application calls the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method. On earlier operating systems, any code relating to the insertion mark will be ignored and the insertion mark will not appear. As a result, any code that depends on the insertion mark feature may not work correctly. You may want to include a test that determines whether the insertion mark feature is available, and provide alternate functionality when it is unavailable. For example, you may want to bypass all code that implements drag-and-drop item repositioning when running on operating systems that do not support insertion marks.</para>
+        <para>The insertion mark feature is provided by the same library that provides the operating system themes feature. To check for the availability of this library, call the <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.Object)" /> method overload and pass in the <see cref="F:System.Windows.Forms.OSFeature.Themes" /> value.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used to indicate the expected drop location when an item is dragged to a new position in a <see cref="T:System.Windows.Forms.ListView" /> control. This functionality is available only on Windows XP and later.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppearsAfterItem">
@@ -23,9 +72,28 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ListViewInsertionMark.NearestIndex(System.Drawing.Point)" /> method lets you find the item closest to the mouse pointer, but you must do your own calculations to determine whether the insertion mark should appear before or after this item.</para>
+          <para>To calculate the value needed for the <see cref="P:System.Windows.Forms.ListViewInsertionMark.AppearsAfterItem" /> property, follow these steps: </para>
+          <list type="ordered">
+            <item>
+              <para>Use the <see cref="M:System.Windows.Forms.ListViewInsertionMark.NearestIndex(System.Drawing.Point)" /> method to retrieve the index of the item closest to the mouse pointer.</para>
+            </item>
+            <item>
+              <para>Pass the index value to the <see cref="M:System.Windows.Forms.ListView.GetItemRect(System.Int32)" /> method to retrieve the bounding rectangle of the item.</para>
+            </item>
+            <item>
+              <para>If the mouse pointer is located to the left of the midpoint of the bounding rectangle, set the <see cref="P:System.Windows.Forms.ListViewInsertionMark.AppearsAfterItem" /> property to false; otherwise, set it to true.</para>
+            </item>
+          </list>
+          <para>For more information, see the <see cref="T:System.Windows.Forms.ListViewInsertionMark" /> overview reference topic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the insertion mark appears to the right of the item with the index specified by the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Index" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Bounds">
@@ -38,9 +106,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The coordinates in the insertion mark bounding rectangle are relative to the upper-left corner of the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounding rectangle of the insertion mark.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Color">
@@ -53,9 +127,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to set the insertion mark color to a value other than the foreground color of the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of the insertion mark.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Index">
@@ -68,9 +148,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The insertion mark appears to the left of the item with the specified index if the <see cref="P:System.Windows.Forms.ListViewInsertionMark.AppearsAfterItem" /> property is set to false; otherwise, it appears to the right of the item. The insertion mark disappears automatically when a dragged item is inserted into the <see cref="P:System.Windows.Forms.ListView.Items" /> collection. To remove the insertion mark manually, for example, when an item is dragged onto itself or dragged outside the control, set the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Index" /> value to -1.</para>
+          <para>Use the <see cref="M:System.Windows.Forms.ListViewInsertionMark.NearestIndex(System.Drawing.Point)" /> method to retrieve the index of the item closest to a specified location, such as the location of the mouse pointer when positioning an item in a drag-and-drop operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index of the item next to which the insertion mark appears.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NearestIndex">
@@ -86,10 +173,21 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method lets you locate the item closest to the mouse pointer when doing a drag-and-drop operation. Use the index value returned to set the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Index" /> property. When the item closest to the mouse pointer is the item being dragged, the return value of this method is -1. In this case, setting the <see cref="P:System.Windows.Forms.ListViewInsertionMark.Index" /> property to this value hides the insertion mark.</para>
+          <para>This method finds the closest item regardless of where the mouse pointer is located, while the <see cref="M:System.Windows.Forms.ListView.GetItemAt(System.Int32,System.Int32)" /> method returns the item at the specified location only, or null if there is no item at that location. The <see cref="M:System.Windows.Forms.ListView.GetItemAt(System.Int32,System.Int32)" /> method returns null, for example, when the mouse pointer is located between two items. For this reason, you should always use the <see cref="M:System.Windows.Forms.ListViewInsertionMark.NearestIndex(System.Drawing.Point)" /> method when using a drag-and-drop operation to position items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the item closest to the specified point.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the item closest to the specified point or -1 if the closest item is the item currently being dragged.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> representing the location from which to find the nearest item. </param>
       </Docs>
     </Member>
   </Members>

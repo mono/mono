@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBindingCollectionConverter" FullName="System.Web.UI.Design.DataBindingCollectionConverter">
   <TypeSignature Language="C#" Value="public class DataBindingCollectionConverter : System.ComponentModel.TypeConverter" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type converter calls the base <see cref="Overload:System.ComponentModel.TypeConverter.ConvertTo" /> method for all destination types except <see cref="T:System.String" />, for which an empty string ("") is returned.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter for <see cref="T:System.Web.UI.DataBindingCollection" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +26,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.UI.Design.DataBindingCollectionConverter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,13 +50,26 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns an empty string if the <paramref name="destinationType" /> parameter is of type <see cref="T:System.String" />. Otherwise this method calls the <see cref="M:System.ComponentModel.TypeConverter.ConvertTo(System.Object,System.Type)" /> method of the base <see cref="T:System.ComponentModel.TypeConverter" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a data binding collection to the specified type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object produced by the type conversion. If the <paramref name="destinationType" /> parameter is of type <see cref="T:System.String" />, this method returns an empty string ("").</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that indicates the component or control to which the data binding collection belongs. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that can be used to provide additional culture information. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert. </param>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

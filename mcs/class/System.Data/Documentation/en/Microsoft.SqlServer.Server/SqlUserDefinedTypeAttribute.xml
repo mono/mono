@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlUserDefinedTypeAttribute" FullName="Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute">
   <TypeSignature Language="C#" Value="public sealed class SqlUserDefinedTypeAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>SQL Server creates a user-defined type that is bound to the type definition that has the <see cref="T:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute" /> custom attribute. Every UDT must be annotated with this attribute. See <see cref="http://go.microsoft.com/fwlink/?LinkId=128028">CLR User-Defined Types</see> for more information about UDTs, including an example of a UDT.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used to mark a type definition in an assembly as a user-defined type (UDT) in SQL Server. The properties on the attribute reflect the physical characteristics used when the type is registered with SQL Server. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +34,15 @@
       </Parameters>
       <Docs>
         <param name="f">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following example specifies that the Format of the user-defined type is SerializedDataWithMetadata and the MaxByteSize is 8000 bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A required attribute on a user-defined type (UDT), used to confirm that the given type is a UDT and to indicate the storage format of the UDT.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +55,13 @@
         <ReturnType>Microsoft.SqlServer.Server.Format</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialization format as a <see cref="T:Microsoft.SqlServer.Server.Format" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +74,55 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When set to true, the <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.IsByteOrdered" /> property in effect guarantees that the serialized binary data can be used for semantic ordering of the information. Thus, each instance of a byte-ordered UDT object can only have one serialized representation. When a comparison operation is performed in SQL Server on the serialized bytes, its results should be the same as if the same comparison operation had taken place in managed code..</para>
+          <para>The following features are supported when <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.IsByteOrdered" /> is set to true:</para>
+          <list type="bullet">
+            <item>
+              <para>The ability to create indexes on columns of this type.</para>
+            </item>
+            <item>
+              <para>The ability to create primary and foreign keys as well as CHECK and UNIQUE constraints on columns of this type.</para>
+            </item>
+            <item>
+              <para>The ability to use Transact-SQL ORDER BY, GROUP BY, and PARTITION BY clauses. In these cases, the binary representation of the type is used to determine the order.</para>
+            </item>
+            <item>
+              <para>The ability to use comparison operators in Transact-SQL statements.</para>
+            </item>
+            <item>
+              <para>The ability to persist computed columns of this type.</para>
+            </item>
+          </list>
+          <para>Note that both the Native and UserDefined serialization formats support the following comparison operators when <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.IsByteOrdered" /> is set to true:</para>
+          <list type="bullet">
+            <item>
+              <para>Equal to (=)</para>
+            </item>
+            <item>
+              <para>Not equal to (!=)</para>
+            </item>
+            <item>
+              <para>Greater than (&gt;)</para>
+            </item>
+            <item>
+              <para>Less than (&lt;)</para>
+            </item>
+            <item>
+              <para>Greater than or equal to (&gt;=)</para>
+            </item>
+            <item>
+              <para>Less than or equal to (&lt;=)</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the user-defined type is byte ordered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,10 +135,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If set to true, all instances of UDTs corresponding to this common language runtime (CLR) type must have a length in bytes exactly equal to <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.MaxByteSize" />. This attribute is only relevant for UDTs with UserDefined serialization <see cref="T:Microsoft.SqlServer.Server.Format" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether all instances of this user-defined type are the same length.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,10 +157,20 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must specify the <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.MaxByteSize" /> property with the UserDefined serialization <see cref="T:Microsoft.SqlServer.Server.Format" />.</para>
+          <para>When connecting to SQL Server 2005 or earlier, <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.MaxByteSize" /> must be between 1 and 8000.</para>
+          <para>When connecting to SQL Server 2008 or later, set <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.MaxByteSize" /> between 1 and 8000, for a type whose instances are always 8,000 bytes or less. For types that can have instances larger than 8000, specify -1.</para>
+          <para>For a UDT with user-defined serialization specified, <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.MaxByteSize" /> refers to the total size of the UDT in its serialized form as defined by the user. Consider a UDT with a property of a string of 10 characters (<see cref="T:System.Char" />). When the UDT is serialized using a <see cref="T:System.IO.BinaryWriter" />, the total size of the serialized string is 22 bytes: 2 bytes per Unicode UTF-16 character, multiplied by the maximum number of characters, plus 2 control bytes of overhead incurred from serializing a binary stream. So, when determining the value of <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.MaxByteSize" />, the total size of the serialized UDT must be considered: the size of the data serialized in binary form plus the overhead incurred by serialization.</para>
+          <para>This property should not be used with Native serialization <see cref="T:Microsoft.SqlServer.Server.Format" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum size of the instance, in bytes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

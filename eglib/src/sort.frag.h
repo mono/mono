@@ -88,12 +88,24 @@ merge_lists (list_node *first, list_node *second, GCompareFunc func)
 static inline list_node *
 sweep_up (struct sort_info *si, list_node *list, int upto)
 {
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406)
+	/*
+	 * GCC incorrectly thinks we're writing below si->ranks array bounds.
+	 */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+
 	int i;
 	for (i = si->min_rank; i < upto; ++i) {
 		list = merge_lists (si->ranks [i], list, si->func);
 		si->ranks [i] = NULL;
 	}
 	return list;
+
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406)
+#pragma GCC diagnostic pop
+#endif
 }
 
 /*
@@ -124,6 +136,14 @@ sweep_up (struct sort_info *si, list_node *list, int upto)
 static inline void
 insert_list (struct sort_info *si, list_node* list, int rank)
 {
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406)
+	/*
+	 * GCC incorrectly thinks we're writing below si->ranks array bounds.
+	 */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+
 	int i;
 
 	if (rank > si->n_ranks) {
@@ -149,6 +169,10 @@ insert_list (struct sort_info *si, list_node* list, int rank)
 		si->n_ranks = i + 1;
 	si->min_rank = i;
 	si->ranks [i] = list;
+
+#if defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406)
+#pragma GCC diagnostic pop
+#endif
 }
 
 #undef stringify2

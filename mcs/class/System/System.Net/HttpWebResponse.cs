@@ -347,22 +347,31 @@ namespace System.Net
 			if (webHeaders == null)
 				return;
 
-			string value = webHeaders.Get ("Set-Cookie");
-			if (value != null) {
-				SetCookie (value);
+			//
+			// Don't terminate response reading on bad cookie value
+			//
+			string value;
+			try {
+				value = webHeaders.Get ("Set-Cookie");
+				if (value != null && SetCookie (value))
+					return;
+			} catch {
 			}
 
-			value = webHeaders.Get ("Set-Cookie2");
-			if (value != null) {
-				SetCookie (value);
+			try {
+				value = webHeaders.Get ("Set-Cookie2");
+				if (value != null)
+					SetCookie (value);
+			} catch {
 			}
 		}
 
-		void SetCookie (string header)
+		bool SetCookie (string header)
 		{
 			if (cookieCollection == null)
 				cookieCollection = new CookieCollection ();
 
+			bool at_least_one_set = false;
 			var parser = new CookieParser (header);
 			foreach (var cookie in parser.Parse ()) {
 				if (cookie.Domain == "") {
@@ -375,9 +384,13 @@ namespace System.Net
 					continue;
 
 				cookieCollection.Add (cookie);
-				if (cookie_container != null)
+				if (cookie_container != null) {
 					cookie_container.Add (uri, cookie);
+					at_least_one_set = true;
+				}
 			}
+
+			return at_least_one_set;
 		}
 	}	
 }

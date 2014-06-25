@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionStateItemCollection" FullName="System.Web.SessionState.SessionStateItemCollection">
   <TypeSignature Language="C#" Value="public sealed class SessionStateItemCollection : System.Collections.Specialized.NameObjectCollectionBase, System.Web.SessionState.ISessionStateItemCollection" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> class is used to manage session-state variable values indexed by a variable name or by numerical index. The session-state variables are exposed to ASP.NET application code using the <see cref="T:System.Web.SessionState.HttpSessionState" /> class, which is accessed using the <see cref="P:System.Web.HttpContext.Session" /> property of the current <see cref="T:System.Web.HttpContext" /> or the <see cref="T:System.Web.UI.Page" />. The <see cref="T:System.Web.SessionState.HttpSessionState" /> class calls the <see cref="T:System.Web.SessionState.HttpSessionStateContainer" /> class, which manages session-state variable values using the <see cref="T:System.Web.SessionState.SessionStateItemCollection" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection of objects stored in session state. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +32,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> class is used to manage session-state variable values indexed by a variable name or by numerical index. The session-state variables are exposed to ASP.NET application code using the <see cref="T:System.Web.SessionState.HttpSessionState" /> class, which is accessed using the <see cref="P:System.Web.HttpContext.Session" /> property of the current <see cref="T:System.Web.HttpContext" /> or the <see cref="T:System.Web.UI.Page" />. The <see cref="T:System.Web.SessionState.HttpSessionState" /> class calls the <see cref="T:System.Web.SessionState.HttpSessionStateContainer" /> class, which manages session-state variable values using the <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new, empty <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -40,8 +53,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all values and keys from the session-state collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -57,10 +73,21 @@
         <Parameter Name="reader" Type="System.IO.BinaryReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SessionState.SessionStateItemCollection.Deserialize(System.IO.BinaryReader)" /> method can be used to read the contents of a <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection from the session store.</para>
+          <para>To write the contents of a <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> object to the session store, use the <see cref="M:System.Web.SessionState.SessionStateItemCollection.Serialize(System.IO.BinaryWriter)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection from a storage location that is written to using the <see cref="M:System.Web.SessionState.SessionStateItemCollection.Serialize(System.IO.BinaryWriter)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection populated with the contents from a storage location that is written to using the <see cref="M:System.Web.SessionState.SessionStateItemCollection.Serialize(System.IO.BinaryWriter)" /> method.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.BinaryReader" /> used to read the serialized collection from a stream or encoded string.</param>
       </Docs>
     </Member>
     <Member MemberName="Dirty">
@@ -73,9 +100,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.SessionState.SessionStateItemCollection.Dirty" /> property is used to indicate whether the contents of the <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection have changed.</para>
+          <para>The <see cref="P:System.Web.SessionState.SessionStateItemCollection.Dirty" /> property is set to true when an object value is set or added to the collection using the <see cref="Overload:System.Web.SessionState.SessionStateItemCollection.Item" /> property and when one or more object values are removed from the collection using the <see cref="M:System.Web.SessionState.SessionStateItemCollection.Remove(System.String)" />, <see cref="M:System.Web.SessionState.SessionStateItemCollection.RemoveAt(System.Int32)" />, or <see cref="M:System.Web.SessionState.SessionStateItemCollection.Clear" /> methods.</para>
+          <para>The <see cref="P:System.Web.SessionState.SessionStateItemCollection.Dirty" /> property is also set to true when a mutable object is retrieved from the collection using the <see cref="Overload:System.Web.SessionState.SessionStateItemCollection.Item" /> property. </para>
+          <para>Calling the <see cref="M:System.Web.SessionState.SessionStateItemCollection.Deserialize(System.IO.BinaryReader)" /> method to populate a <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection results in the <see cref="P:System.Web.SessionState.SessionStateItemCollection.Dirty" /> property being set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the collection has been marked as changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -89,9 +125,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can be used to read all the key names in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can iterate through the variable names in the session-state collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -142,9 +184,15 @@
         <ReturnType>System.Collections.Specialized.NameObjectCollectionBase+KeysCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each key is a string that represents a variable name for a value stored in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the variable names for all values stored in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -160,9 +208,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection does not contain an element with the specified <paramref name="name" />, the collection remains unchanged. No exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes an item from the collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the item to delete from the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveAt">
@@ -178,9 +233,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection does not contain an element with the specified <paramref name="name" />, the collection remains unchanged. No exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes an item at a specified index from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to remove from the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
@@ -196,9 +258,17 @@
         <Parameter Name="writer" Type="System.IO.BinaryWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.SessionState.SessionStateItemCollection.Serialize(System.IO.BinaryWriter)" /> method can be used to write the contents of a <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> collection to the session store.</para>
+          <para>To retrieve a serialized <see cref="T:System.Web.SessionState.SessionStateItemCollection" /> object from the session store, use the <see cref="M:System.Web.SessionState.SessionStateItemCollection.Deserialize(System.IO.BinaryReader)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the contents of the collection to a <see cref="T:System.IO.BinaryWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.BinaryWriter" /> used to write the serialized collection to a stream or encoded string.</param>
       </Docs>
     </Member>
   </Members>

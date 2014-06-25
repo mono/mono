@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Image" FullName="System.Drawing.Image">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class Image : MarshalByRefObject, ICloneable, IDisposable, System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -37,8 +38,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To draw an <see cref="T:System.Drawing.Image" /> on a Windows Form, you should use one of the <see cref="M:System.Drawing.Graphics.DrawImage(System.Drawing.Image,System.Drawing.Point)" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract base class that provides functionality for the <see cref="T:System.Drawing.Bitmap" /> and <see cref="T:System.Drawing.Imaging.Metafile" /> descended classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clone">
@@ -49,9 +56,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates, cast as an object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,8 +79,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Drawing.Image.Dispose" /> method allows the resources used by this <see cref="T:System.Drawing.Image" /> to be reallocated for other purposes.</para>
+          <para>Call <see cref="M:System.Drawing.Image.Dispose" /> when you are finished using the <see cref="T:System.Drawing.Image" />. The <see cref="M:System.Drawing.Image.Dispose" /> method leaves the <see cref="T:System.Drawing.Image" /> in an unusable state. After calling <see cref="M:System.Drawing.Image.Dispose" />, you must release all references to the <see cref="T:System.Drawing.Image" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Drawing.Image" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.Image.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.Image" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.Image" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,9 +111,19 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.Image.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.Image" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.Image" /> object's Finalize method.</para>
+          </block>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Drawing.Image" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +153,140 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer value returned from this method will correspond to a sum of <see cref="T:System.Drawing.Imaging.ImageFlags" />, as described in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>ImageFlag value</para>
+                </term>
+                <description>
+                  <para>Integer representation</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ImageFlagsNone</para>
+              </term>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsScalable</para>
+              </term>
+              <description>
+                <para>1</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsHasAlpha</para>
+              </term>
+              <description>
+                <para>2</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsHasTranslucent</para>
+              </term>
+              <description>
+                <para>4</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsPartiallyScalable</para>
+              </term>
+              <description>
+                <para>8</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsColorSpaceRGB</para>
+              </term>
+              <description>
+                <para>16</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsColorSpaceCMYK</para>
+              </term>
+              <description>
+                <para>32</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsColorSpaceGRAY</para>
+              </term>
+              <description>
+                <para>64</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsColorSpaceYCBCR</para>
+              </term>
+              <description>
+                <para>128</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsColorSpaceYCCK</para>
+              </term>
+              <description>
+                <para>256</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsHasRealDPI</para>
+              </term>
+              <description>
+                <para>4096</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsHasRealPixelSize</para>
+              </term>
+              <description>
+                <para>8192</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsReadOnly</para>
+              </term>
+              <description>
+                <para>65536</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ImageFlagsCaching</para>
+              </term>
+              <description>
+                <para>131072</para>
+              </description>
+            </item>
+          </list>
+          <para>For example, if the <see cref="P:System.Drawing.Image.Flags" /> property for an image returned 77960, the <see cref="T:System.Drawing.Imaging.ImageFlags" /> for the image would be <see cref="F:System.Drawing.Imaging.ImageFlags.ReadOnly" />, <see cref="F:System.Drawing.Imaging.ImageFlags.HasRealDpi" />, <see cref="F:System.Drawing.Imaging.ImageFlags.HasRealPixelSize" />, <see cref="F:System.Drawing.Imaging.ImageFlags.ColorSpaceYcbcr" />, and <see cref="F:System.Drawing.Imaging.ImageFlags.PartiallyScalable" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets attribute flags for the pixel data of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -137,9 +305,17 @@
         <ReturnType>System.Guid[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Guid []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns information about multiple-frame images, which come in two styles: multiple page and multiple resolution.</para>
+          <para>A multiple-page image is an image that contains more than one image. Each page contains a single image (or frame). These pages (or images, or frames) are typically displayed in succession to produce an animated sequence, such as an animated .gif file.</para>
+          <para>A multiple-resolution image is an image that contains more than one copy of an image at different resolutions. This is commonly used by MIP mapping where the displayed image size determines the resolution of the image used for drawing. ndptecgdiplus can support an arbitrary number of pages (or images, or frames), as well as an arbitrary number of resolutions. The defined dimensions are properties of the <see cref="T:System.Drawing.Imaging.FrameDimension" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of GUIDs that represent the dimensions of frames within this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,10 +337,42 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Managed GDI+ has built-in encoders and decoders that support the following file types: </para>
+          <list type="bullet">
+            <item>
+              <para>BMP </para>
+            </item>
+            <item>
+              <para>GIF </para>
+            </item>
+            <item>
+              <para>JPEG </para>
+            </item>
+            <item>
+              <para>PNG </para>
+            </item>
+            <item>
+              <para>TIFF </para>
+            </item>
+          </list>
+          <para>The file remains locked until the <see cref="T:System.Drawing.Image" /> is disposed.</para>
+          <para>If the file does not have a valid image format or if ndptecgdiplus does not support the pixel format of the file, this method throws an <see cref="T:System.OutOfMemoryException" /> exception.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Drawing.Image" /> class does not support alpha transparency in bitmaps. To enable alpha transparency, use PNG images with 32 bits per pixel.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file from which to create the <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -182,11 +390,45 @@
         <Parameter Name="useEmbeddedColorManagement" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="useEmbeddedColorManagement">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Managed GDI+ has built-in encoders and decoders that support the following file types: </para>
+          <list type="bullet">
+            <item>
+              <para>BMP </para>
+            </item>
+            <item>
+              <para>GIF </para>
+            </item>
+            <item>
+              <para>JPEG </para>
+            </item>
+            <item>
+              <para>PNG </para>
+            </item>
+            <item>
+              <para>TIFF </para>
+            </item>
+          </list>
+          <para>If the file does not have a valid image format or if ndptecgdiplus does not support the pixel format of the file, this method throws an <see cref="T:System.OutOfMemoryException" /> exception.</para>
+          <para>The file remains locked until the <see cref="T:System.Drawing.Image" /> is disposed.</para>
+          <para>The <paramref name="useEmbeddedColorManagement" /> parameter specifies whether the new <see cref="T:System.Drawing.Image" /> applies color correction according to color management information that is embedded in the image file. Embedded information can include International Color Consortium (ICC) profiles, gamma values, and chromaticity information.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Drawing.Image" /> class does not support alpha transparency in bitmaps. To enable alpha transparency, use PNG images with 32 bits per pixel.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified file using embedded color management information in that file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file from which to create the <see cref="T:System.Drawing.Image" />. </param>
+        <param name="useEmbeddedColorManagement">
+          <attribution license="cc4" from="Microsoft" modified="false" />Set to true to use color management information embedded in the image file; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -203,10 +445,20 @@
         <Parameter Name="hbitmap" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hbitmap">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Bitmap'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Image.FromHbitmap(System.IntPtr)" /> method makes a copy of the ndptecgdi bitmap; so you can release the incoming ndptecgdi bitmap using the ndptecgdi DeleteObject method immediately after creating the new <see cref="T:System.Drawing.Image" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Drawing.Bitmap" /> from a handle to a GDI bitmap.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> this method creates.</para>
+        </returns>
+        <param name="hbitmap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ndptecgdi bitmap handle from which to create the <see cref="T:System.Drawing.Bitmap" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -224,11 +476,22 @@
         <Parameter Name="hpalette" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hbitmap">To be added: an object of type 'IntPtr'</param>
-        <param name="hpalette">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Bitmap'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Image.FromHbitmap(System.IntPtr,System.IntPtr)" /> method makes a copy of the ndptecgdi bitmap; so you can release the incoming ndptecgdi bitmap using the ndptecgdi DeleteObject method immediately after creating the new <see cref="T:System.Drawing.Image" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Drawing.Bitmap" /> from a handle to a GDI bitmap and a handle to a GDI palette.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> this method creates.</para>
+        </returns>
+        <param name="hbitmap">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ndptecgdi bitmap handle from which to create the <see cref="T:System.Drawing.Bitmap" />. </param>
+        <param name="hpalette">
+          <attribution license="cc4" from="Microsoft" modified="false" />A handle to a ndptecgdi palette used to define the bitmap colors if the bitmap specified in the <paramref name="hBitmap" /> parameter is not a device-independent bitmap (DIB). </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,10 +508,24 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must keep the stream open for the lifetime of the <see cref="T:System.Drawing.Image" />.</para>
+          <para>The stream is reset to zero if this method is called successively with the same stream.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Drawing.Image" /> class does not support alpha transparency in bitmaps. To enable alpha transparency, use PNG images with 32 bits per pixel.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified data stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -266,11 +543,27 @@
         <Parameter Name="useEmbeddedColorManagement" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="useEmbeddedColorManagement">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Image'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must keep the stream open for the lifetime of the <see cref="T:System.Drawing.Image" />.</para>
+          <para>The <paramref name="useEmbeddedColorManagement" /> parameter specifies whether the new <see cref="T:System.Drawing.Image" /> applies color correction according to color management information that is embedded in the data stream. Embedded information can include International Color Consortium (ICC) profiles, gamma values, and chromaticity information.</para>
+          <para>The stream is reset to zero if this method is called successively with the same stream.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Drawing.Image" /> class does not support alpha transparency in bitmaps. To enable alpha transparency, use PNG images with 32 bits per pixel.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified data stream, optionally using embedded color management information in that stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Image" />. </param>
+        <param name="useEmbeddedColorManagement">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use color management information embedded in the data stream; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,12 +586,27 @@
         <Parameter Name="validateImageData" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="useEmbeddedColorManagement">To be added.</param>
-        <param name="validateImageData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="useEmbeddedColorManagement" /> parameter specifies whether the new <see cref="T:System.Drawing.Image" /> applies color correction according to color management information that is embedded in the data stream. Embedded information can include International Color Consortium (ICC) profiles, gamma values, and chromaticity information.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Drawing.Image" /> class does not support alpha transparency in bitmaps. To enable alpha transparency, use PNG images with 32 bits per pixel.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified data stream, optionally using embedded color management information and validating the image data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Image" />. </param>
+        <param name="useEmbeddedColorManagement">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use color management information embedded in the data stream; otherwise, false. </param>
+        <param name="validateImageData">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to validate the image data; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="GetBounds">
@@ -331,10 +639,17 @@
         <Parameter Name="encoder" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="encoder">To be added: an object of type 'Guid'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Imaging.EncoderParameters'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns information about the parameters supported by the specified image encoder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> that contains an array of <see cref="T:System.Drawing.Imaging.EncoderParameter" /> objects. Each <see cref="T:System.Drawing.Imaging.EncoderParameter" /> contains information about one of the parameters supported by the specified image encoder.</para>
+        </returns>
+        <param name="encoder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A GUID that specifies the image encoder. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,10 +666,22 @@
         <Parameter Name="dimension" Type="System.Drawing.Imaging.FrameDimension" />
       </Parameters>
       <Docs>
-        <param name="dimension">To be added: an object of type 'Imaging.FrameDimension'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns information about multiple-frame images, which come in two styles: multiple page and multiple resolution.</para>
+          <para>A multiple-page image is an image that contains more than one image. Each page contains a single image (or frame). These pages (or images, or frames) are typically displayed in succession to produce an animated sequence, such as an animated .gif file.</para>
+          <para>A multiple-resolution image is an image that contains more than one copy of an image at different resolutions. This is commonly used by MIP mapping where the displayed image size determines the resolution of the image used for drawing. ndptecgdiplus can support an arbitrary number of pages (or images, or frames), as well as an arbitrary number of resolutions. The defined dimensions are properties of the <see cref="T:System.Drawing.Imaging.FrameDimension" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of frames of the specified dimension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of frames in the specified dimension.</para>
+        </returns>
+        <param name="dimension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.FrameDimension" /> that specifies the identity of the dimension type. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -371,10 +698,17 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <param name="pixfmt">To be added: an object of type 'Imaging.PixelFormat'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the color depth, in number of bits per pixel, of the specified pixel format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color depth of the specified pixel format.</para>
+        </returns>
+        <param name="pixfmt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> member that specifies the format for which to find the size. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -391,10 +725,21 @@
         <Parameter Name="propid" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="propid">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Imaging.PropertyItem'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a list of property item IDs and links to more information, see <see cref="P:System.Drawing.Imaging.PropertyItem.Id" />. </para>
+          <para>It is difficult to set property items, because the <see cref="T:System.Drawing.Imaging.PropertyItem" /> class has no public constructors. One way to work around this restriction is to obtain a <see cref="T:System.Drawing.Imaging.PropertyItem" /> by retrieving the <see cref="P:System.Drawing.Image.PropertyItems" /> property value or calling the <see cref="M:System.Drawing.Image.GetPropertyItem(System.Int32)" /> method of an <see cref="T:System.Drawing.Image" /> that already has property items. Then you can set the fields of the <see cref="T:System.Drawing.Imaging.PropertyItem" /> and pass it to <see cref="M:System.Drawing.Image.SetPropertyItem(System.Drawing.Imaging.PropertyItem)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the specified property item from this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.PropertyItem" /> this method gets.</para>
+        </returns>
+        <param name="propid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the property item to get. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -434,9 +779,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height, in pixels, of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -461,9 +809,12 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the horizontal resolution, in pixels per inch, of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -480,10 +831,17 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <param name="pixfmt">To be added: an object of type 'Imaging.PixelFormat'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the pixel format for this <see cref="T:System.Drawing.Image" /> contains alpha information.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="pixfmt" /> contains alpha information; otherwise, false.</para>
+        </returns>
+        <param name="pixfmt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -500,10 +858,20 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <param name="pixfmt">To be added: an object of type 'Imaging.PixelFormat'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The canonical pixel format indicates a pixel format of 32 bits per pixel. This format specifies 24-bit color depth and an 8-bit alpha channel. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the pixel format is 32 bits per pixel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="pixfmt" /> is canonical; otherwise, false.</para>
+        </returns>
+        <param name="pixfmt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -520,10 +888,17 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <param name="pixfmt">To be added: an object of type 'Imaging.PixelFormat'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the pixel format is 64 bits per pixel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="pixfmt" /> is extended; otherwise, false.</para>
+        </returns>
+        <param name="pixfmt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> enumeration to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -539,9 +914,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Imaging.ColorPalette'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns a copy of the <see cref="T:System.Drawing.Imaging.ColorPalette" /> object used by this <see cref="T:System.Drawing.Image" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color palette used for this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -560,9 +941,15 @@
         <ReturnType>System.Drawing.SizeF</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SizeF'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the image is a bitmap, the width and height are returned in pixels. If the image is a metafile, the width and height are returned in 0.01 millimeter units.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width and height of this image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -576,9 +963,12 @@
         <ReturnType>System.Drawing.Imaging.PixelFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Imaging.PixelFormat'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the pixel format for this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -592,9 +982,15 @@
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the image has no property items or if the image format does not support property items, the <see cref="P:System.Drawing.Image.PropertyIdList" /> property returns an empty array (that is, an array of length zero).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets IDs of the property items stored in this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -613,9 +1009,15 @@
         <ReturnType>System.Drawing.Imaging.PropertyItem[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Imaging.PropertyItem []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the image has no property items or if the image format does not support property items, <see cref="P:System.Drawing.Image.PropertyItems" /> returns an empty array (that is, an array of length zero).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the property items (pieces of metadata) stored in this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -634,9 +1036,12 @@
         <ReturnType>System.Drawing.Imaging.ImageFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Imaging.ImageFormat'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file format of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -653,9 +1058,16 @@
         <Parameter Name="propid" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="propid">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is difficult to set property items, because the <see cref="T:System.Drawing.Imaging.PropertyItem" /> class has no public constructors. One way to work around this restriction is to obtain a <see cref="T:System.Drawing.Imaging.PropertyItem" /> by retrieving the <see cref="P:System.Drawing.Image.PropertyItems" /> property value or calling the <see cref="M:System.Drawing.Image.GetPropertyItem(System.Int32)" /> method of an <see cref="T:System.Drawing.Image" /> that already has property items. Then you can set the fields of the <see cref="T:System.Drawing.Imaging.PropertyItem" /> and pass it to <see cref="M:System.Drawing.Image.SetPropertyItem(System.Drawing.Imaging.PropertyItem)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified property item from this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
+        <param name="propid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the property item to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -672,9 +1084,17 @@
         <Parameter Name="rotateFlipType" Type="System.Drawing.RotateFlipType" />
       </Parameters>
       <Docs>
-        <param name="rotateFlipType">To be added: an object of type 'RotateFlipType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Image.RotateFlip(System.Drawing.RotateFlipType)" /> method rotates the image clockwise. </para>
+          <para>If you wish to draw on an image once it has been rotated, you should always retrieve a new graphics object from the image, otherwise an exception could occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rotates, flips, or rotates and flips the <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
+        <param name="rotateFlipType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.RotateFlipType" /> member that specifies the type of rotation and flip to apply to the image. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -691,9 +1111,17 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no encoder exists for the file format of the image, the Portable Network Graphics (PNG) encoder is used. When you use the <see cref="M:System.Drawing.Image.Save(System.String)" /> method to save a graphic image as a Windows Metafile Format (WMF) or Enhanced Metafile Format (EMF) file, the resulting file is saved as a Portable Network Graphics (PNG) file. This behavior occurs because the ndptecgdiplus component of the dnprdnshort does not have an encoder that you can use to save files as .wmf or .emf files.</para>
+          <para>Saving the image to the same file it was constructed from is not allowed and throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves this <see cref="T:System.Drawing.Image" /> to the specified file or stream.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file to which to save this <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -711,10 +1139,19 @@
         <Parameter Name="format" Type="System.Drawing.Imaging.ImageFormat" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="format">To be added: an object of type 'Imaging.ImageFormat'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should avoid saving an image to the same stream that was used to construct it. Doing so might damage the stream.</para>
+          <para>The image must be saved to the stream at an offset of zero. If any additional data has been written to the stream before saving the image, the image data in the stream will be corrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves this image to the specified stream in the specified format.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> where the image will be saved. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.ImageFormat" /> that specifies the format of the saved image. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -732,10 +1169,15 @@
         <Parameter Name="format" Type="System.Drawing.Imaging.ImageFormat" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="format">To be added: an object of type 'Imaging.ImageFormat'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves this <see cref="T:System.Drawing.Image" /> to the specified file in the specified format.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file to which to save this <see cref="T:System.Drawing.Image" />. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.ImageFormat" /> for this <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -754,11 +1196,21 @@
         <Parameter Name="encoderParams" Type="System.Drawing.Imaging.EncoderParameters" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <param name="encoder">To be added: an object of type 'Imaging.ImageCodecInfo'</param>
-        <param name="encoderParams">To be added: an object of type 'Imaging.EncoderParameters'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not save an image to the same stream that was used to construct the image. Doing so might damage the stream.</para>
+          <para>The image must be saved to the stream at an offset of zero. If any additional data has been written to the stream before saving the image, the image data in the stream will be corrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves this image to the specified stream, with the specified encoder and image encoder parameters.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> where the image will be saved. </param>
+        <param name="encoder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.ImageCodecInfo" /> for this <see cref="T:System.Drawing.Image" />.</param>
+        <param name="encoderParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> that specifies parameters used by the image encoder. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -777,11 +1229,20 @@
         <Parameter Name="encoderParams" Type="System.Drawing.Imaging.EncoderParameters" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="encoder">To be added: an object of type 'Imaging.ImageCodecInfo'</param>
-        <param name="encoderParams">To be added: an object of type 'Imaging.EncoderParameters'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saving the image to the same file it was constructed from is not allowed and throws an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves this <see cref="T:System.Drawing.Image" /> to the specified file, with the specified encoder and image-encoder parameters.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file to which to save this <see cref="T:System.Drawing.Image" />. </param>
+        <param name="encoder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.ImageCodecInfo" /> for this <see cref="T:System.Drawing.Image" />. </param>
+        <param name="encoderParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> to use for this <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -798,9 +1259,17 @@
         <Parameter Name="encoderParams" Type="System.Drawing.Imaging.EncoderParameters" />
       </Parameters>
       <Docs>
-        <param name="encoderParams">To be added: an object of type 'Imaging.EncoderParameters'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a frame to the file or stream specified in a previous call to the <see cref="Overload:System.Drawing.Image.Save" /> method. Use this method to save selected frames from a multiple-frame image to another multiple-frame image.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="encoderParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> that holds parameters required by the image encoder that is used by the save-add operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -818,10 +1287,19 @@
         <Parameter Name="encoderParams" Type="System.Drawing.Imaging.EncoderParameters" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Image'</param>
-        <param name="encoderParams">To be added: an object of type 'Imaging.EncoderParameters'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a frame to the file or stream specified in a previous call to the <see cref="Overload:System.Drawing.Image.Save" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Image" /> that contains the frame to add. </param>
+        <param name="encoderParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> that holds parameters required by the image encoder that is used by the save-add operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -839,11 +1317,23 @@
         <Parameter Name="frameIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dimension">To be added: an object of type 'Imaging.FrameDimension'</param>
-        <param name="frameIndex">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The possible values of the <paramref name="dimensionID" /> parameter are properties of the <see cref="T:System.Drawing.Imaging.FrameDimension" />. These can be used to identify an image by its time, resolution, or page number.</para>
+          <para>Calling this method causes all changes made to the previous frame to be discarded. Before selecting another frame, save all changes made to the current frame, including changes to pixel values and properties. If the call to the <see cref="M:System.Drawing.Image.SelectActiveFrame(System.Drawing.Imaging.FrameDimension,System.Int32)" /> method is successful (an exception does not occur), the method will return 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the frame specified by the dimension and index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns 0.</para>
+        </returns>
+        <param name="dimension">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.FrameDimension" /> that specifies the identity of the dimension type. </param>
+        <param name="frameIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the active frame. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -860,9 +1350,21 @@
         <Parameter Name="propitem" Type="System.Drawing.Imaging.PropertyItem" />
       </Parameters>
       <Docs>
-        <param name="propitem">To be added: an object of type 'Imaging.PropertyItem'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the image format does not support property items, this method throws <see cref="T:System.ArgumentException" /> with the message "Property not supported." If the image format supports property items but does not support the particular property you are attempting to set, this method ignores the attempt but does not throw an exception.</para>
+          <para>It is difficult to set property items, because the <see cref="T:System.Drawing.Imaging.PropertyItem" /> class has no public constructors. One way to work around this restriction is to obtain a <see cref="T:System.Drawing.Imaging.PropertyItem" /> by retrieving the <see cref="P:System.Drawing.Image.PropertyItems" /> property value or calling the <see cref="M:System.Drawing.Image.GetPropertyItem(System.Int32)" /> method of an <see cref="T:System.Drawing.Image" /> that already has property items. Then you can set the fields of the <see cref="T:System.Drawing.Imaging.PropertyItem" /> and pass it to <see cref="M:System.Drawing.Image.SetPropertyItem(System.Drawing.Imaging.PropertyItem)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores a property item (piece of metadata) in this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
+        <param name="propitem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PropertyItem" /> to be stored. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -876,9 +1378,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Size'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width and height, in pixels, of this image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -900,10 +1405,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="Tag">
@@ -930,9 +1440,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that provides additional data about the image.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VerticalResolution">
@@ -942,9 +1455,12 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the vertical resolution, in pixels per inch, of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -958,9 +1474,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width, in pixels, of this <see cref="T:System.Drawing.Image" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

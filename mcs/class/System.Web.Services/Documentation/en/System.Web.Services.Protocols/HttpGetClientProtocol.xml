@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpGetClientProtocol" FullName="System.Web.Services.Protocols.HttpGetClientProtocol">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HttpGetClientProtocol : System.Web.Services.Protocols.HttpSimpleClientProtocol" />
   <AssemblyInfo>
@@ -14,8 +15,18 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When an XML Web service client uses the HTTP-GET protocol, parameters are encoded within the URL and the response is returned in plain XML.</para>
+      <para>If you are building an XML Web service client using ASP.NET, then a proxy class deriving indirectly or directly from <see cref="T:System.Web.Services.Protocols.WebClientProtocol" /> needs to be created for the XML Web service you want to call. When the XML Web service client calls the XML Web service using HTTP, derive the proxy class from <see cref="T:System.Web.Services.Protocols.HttpSimpleClientProtocol" />, which in turn derives from <see cref="T:System.Web.Services.Protocols.WebClientProtocol" />.</para>
+      <para>
+        <see cref="T:System.Web.Services.Protocols.HttpGetClientProtocol" /> and <see cref="T:System.Web.Services.Protocols.HttpPostClientProtocol" /> derive from <see cref="T:System.Web.Services.Protocols.HttpSimpleClientProtocol" />, providing the support for calling an XML Web service method using the HTTP-GET and HTTP-POST protocols respectively. Clients calling an XML Web service using SOAP should derive from <see cref="T:System.Web.Services.Protocols.SoapHttpClientProtocol" />.</para>
+      <para>For details on building a proxy class, see <format type="text/html"><a href="142D91F5-3249-4CFC-A431-1F3ACB76D756">[&lt;topic://cpconcreatingwebserviceproxy&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The base class for XML Web service client proxies that use the HTTP-GET protocol.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.HttpGetClientProtocol" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,10 +56,20 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="uri">a <see cref="T:System.Uri" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Net.WebRequest" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the base version of <see cref="M:System.Web.Services.Protocols.WebClientProtocol.GetWebRequest(System.Uri)" /> to specify that the HTTP request to the XML Web service is made using HTTP-GET. By overriding this method, additional customizations can be made to the <see cref="T:System.Net.WebRequest" /> object before the XML Web service request is made. For example you could add a custom header to the request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Net.WebRequest" /> instance for the specified URI.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.WebRequest" /> instance.</para>
+        </returns>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> to use when creating the <see cref="T:System.Net.WebRequest" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

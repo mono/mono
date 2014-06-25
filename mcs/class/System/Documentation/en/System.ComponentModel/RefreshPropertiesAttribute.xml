@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RefreshPropertiesAttribute" FullName="System.ComponentModel.RefreshPropertiesAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class RefreshPropertiesAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RefreshPropertiesAttribute extends System.Attribute" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.RefreshPropertiesAttribute" /> indicates the type of refresh mode to use when refreshing a <see cref="T:System.Windows.Forms.PropertyGrid" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the property grid should refresh when the associated property value changes. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,9 +45,16 @@
         <Parameter Name="refresh" Type="System.ComponentModel.RefreshProperties" />
       </Parameters>
       <Docs>
-        <param name="refresh">To be added: an object of type 'RefreshProperties'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.RefreshPropertiesAttribute" /> class is used for refreshing the design-time view.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.RefreshPropertiesAttribute" /> class.</para>
+        </summary>
+        <param name="refresh">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.RefreshProperties" /> value indicating the nature of the refresh.</param>
       </Docs>
     </Member>
     <Member MemberName="All">
@@ -57,8 +71,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify this attribute on a property to query again and refresh all properties in the <see cref="T:System.Windows.Forms.PropertyGrid" /> when the property value changes. The <see cref="T:System.Windows.Forms.PropertyGrid" /> caches data. The <see cref="F:System.ComponentModel.RefreshProperties.All" /> mode causes the Properties window to query each property again and refresh its view.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that all properties are queried again and refreshed if the property value is changed. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -75,8 +95,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify this attribute on a property to refresh only the associated property when the property value is changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no other properties are refreshed if the property value is changed. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -96,9 +122,15 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the object's <see cref="Overload:System.Object.Equals" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is the same; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -115,9 +147,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the object that the attribute belongs to.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefaultAttribute">
@@ -134,9 +172,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current value of the attribute is the default value for the attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current value of the attribute is the default; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RefreshProperties">
@@ -152,9 +196,12 @@
         <ReturnType>System.ComponentModel.RefreshProperties</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'RefreshProperties'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the refresh properties for the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Repaint">
@@ -171,8 +218,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify this attribute on a property to repaint all properties in the <see cref="T:System.Windows.Forms.PropertyGrid" /> when the property value changes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that all properties are repainted if the property value is changed. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

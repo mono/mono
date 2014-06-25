@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <settingsMap>
   <map sectionType="System.Web.Configuration.MembershipSection, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-       mapperType="Mono.Web.Util.MembershipSectionMapper, Mono.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756"
+       mapperType="Mono.Web.Util.MembershipSectionMapper, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
        platform="Unix">
 
     <!-- The 'what' tag specifies which region of the section to modify. The 'value' attribute value is mapper-specific and is not defined here. It can be
@@ -24,7 +24,7 @@
   </map>
 
   <map sectionType="System.Web.Configuration.RoleManagerSection, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-       mapperType="Mono.Web.Util.RoleManagerSectionMapper, Mono.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756"
+       mapperType="Mono.Web.Util.RoleManagerSectionMapper, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
        platform="Unix">
 
     <!-- The 'what' tag specifies which region of the section to modify. The 'value' attribute value is mapper-specific and is not defined here. It can be

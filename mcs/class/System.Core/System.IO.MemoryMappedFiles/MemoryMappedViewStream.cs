@@ -35,15 +35,12 @@ using Microsoft.Win32.SafeHandles;
 namespace System.IO.MemoryMappedFiles
 {
 	public sealed class MemoryMappedViewStream : UnmanagedMemoryStream {
-		IntPtr mmap_addr;
-		ulong mmap_size;
+		IntPtr mmap_handle;
 		object monitor;
-		int fd;
 		
-		internal MemoryMappedViewStream (int fd, long offset, long size, MemoryMappedFileAccess access) {
-			this.fd = fd;
+		internal MemoryMappedViewStream (IntPtr handle, long offset, long size, MemoryMappedFileAccess access) {
 			monitor = new Object ();
-			CreateStream (fd, offset, size, access);
+			CreateStream (handle, offset, size, access);
 		}
 
 		public SafeMemoryMappedViewHandle SafeMemoryMappedViewHandle { 
@@ -52,13 +49,13 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
-		unsafe void CreateStream (int fd, long offset, long size, MemoryMappedFileAccess access)
+		unsafe void CreateStream (IntPtr handle, long offset, long size, MemoryMappedFileAccess access)
 		{
-			int offset_diff;
-			mmap_size = (ulong) size;
-			MemoryMapImpl.Map (fd, offset, ref size, access, out mmap_addr, out offset_diff);
-			FileAccess faccess;
+			IntPtr base_address;
 
+			MemoryMapImpl.Map (handle, offset, ref size, access, out mmap_handle, out base_address);
+
+			FileAccess faccess;
 			switch (access) {
 			case MemoryMappedFileAccess.ReadWrite:
 				faccess = FileAccess.ReadWrite;
@@ -72,23 +69,23 @@ namespace System.IO.MemoryMappedFiles
 			default:
 				throw new NotImplementedException ("access mode " + access + " not supported.");
 			}
-			Initialize ((byte*)mmap_addr + offset_diff, size, size, faccess);
+			Initialize ((byte*)base_address, size, size, faccess);
 		}
 		 
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 			lock (monitor) {
-				if (mmap_addr != (IntPtr)(-1)) {
-					MemoryMapImpl.Unmap (mmap_addr, mmap_size);
-					mmap_addr = (IntPtr)(-1);
+				if (mmap_handle != (IntPtr)(-1)) {
+					MemoryMapImpl.Unmap (mmap_handle);
+					mmap_handle = (IntPtr)(-1);
 				}
 			}
 		}
 
 		public override void Flush ()
 		{
-			MemoryMapImpl.Flush (fd);
+			MemoryMapImpl.Flush (mmap_handle);
 		}
 	}
 }

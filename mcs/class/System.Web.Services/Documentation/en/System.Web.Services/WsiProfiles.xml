@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WsiProfiles" FullName="System.Web.Services.WsiProfiles">
   <TypeSignature Language="C#" Value="public enum WsiProfiles" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The WS-I organization publishes non-proprietary Web services specifications to promote the interoperability of Web services across platforms. This enumeration is used by the <see cref="P:System.Web.Services.WebServiceBindingAttribute.ConformsTo" /> property of the <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> attribute to indicate the WSI specification to which the Web service claims to conform.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the Web services interoperability (WSI) specification to which a Web service claims to conform.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BasicProfile1_1">
@@ -25,8 +32,11 @@
         <ReturnType>System.Web.Services.WsiProfiles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The web service claims to conform to the WSI Basic Profile version 1.1.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +49,11 @@
         <ReturnType>System.Web.Services.WsiProfiles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The web service makes no conformance claims.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

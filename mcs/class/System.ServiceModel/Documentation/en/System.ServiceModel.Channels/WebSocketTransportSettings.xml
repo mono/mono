@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebSocketTransportSettings" FullName="System.ServiceModel.Channels.WebSocketTransportSettings">
   <TypeSignature Language="C#" Value="public sealed class WebSocketTransportSettings : IEquatable&lt;System.ServiceModel.Channels.WebSocketTransportSettings&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit WebSocketTransportSettings extends System.Object implements class System.IEquatable`1&lt;class System.ServiceModel.Channels.WebSocketTransportSettings&gt;" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents settings for web socket transport.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.WebSocketTransportSettings" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BinaryEncoderTransferModeHeader">
@@ -43,8 +50,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the header for the binary encoder transfer mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BinaryMessageReceivedAction">
@@ -58,8 +68,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the action when web socket binary message is received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionOpenedAction">
@@ -74,8 +87,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the action when web socket connection is opened.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateNotificationOnConnection">
@@ -89,9 +105,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the create notification during connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisablePayloadMasking">
@@ -105,9 +124,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the web socket masking is disabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -124,10 +146,17 @@
         <Parameter Name="other" Type="System.ServiceModel.Channels.WebSocketTransportSettings" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified web socket transport settings object is equal with the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal with the current object; otherwise, false.</para>
+        </returns>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The web socket transport settings object to compare with the current object.</param>
       </Docs>
     </Member>
     <Member MemberName="KeepAliveInterval">
@@ -141,9 +170,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the keep alive interval of the connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxPendingConnections">
@@ -157,9 +189,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of allowed pending connections.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveBufferSize">
@@ -173,9 +208,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the receive buffer of the socket.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendBufferSize">
@@ -189,9 +227,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the send buffer of the socket.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SoapContentTypeHeader">
@@ -206,8 +247,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the soap content type header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubProtocol">
@@ -221,9 +265,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the web socket sub protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextMessageReceivedAction">
@@ -237,8 +284,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the action when web socket text message is received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransportUsage">
@@ -252,9 +302,12 @@
         <ReturnType>System.ServiceModel.Channels.WebSocketTransportUsage</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the web socket transport usage.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

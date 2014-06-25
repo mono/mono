@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextBoxBase" FullName="System.Windows.Forms.TextBoxBase">
   <TypeSignature Language="C#" Value="public abstract class TextBoxBase : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -27,8 +28,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class implements the core features of text manipulation controls, such as <see cref="T:System.Windows.Forms.TextBox" /> and <see cref="T:System.Windows.Forms.RichTextBox" />. These include text selection, <ui>Clipboard</ui> functionality, multiline text control support, and many events.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the basic functionality required by text controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AcceptsTab">
@@ -43,9 +50,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property must also be true to get a TAB character in the control.</para>
+          <para>If the <see cref="P:System.Windows.Forms.TextBoxBase.AcceptsTab" /> property is set to true, the user must press CTRL+TAB to move the focus to the next control in the tab order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether pressing the TAB key in a multiline text box control types a TAB character in the control instead of moving the focus to the next control in the tab order.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +73,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.AcceptsTab" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +97,16 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to add text to the existing text in the control instead of using the concatenation operator (+) to concatenate text to the <see cref="P:System.Windows.Forms.TextBoxBase.Text" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends text to the current text of a text box.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to append to the current contents of the text box. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,9 +137,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you set the <see cref="P:System.Windows.Forms.TextBoxBase.AutoSize" /> property to true for a <see cref="T:System.Windows.Forms.TextBox" />, when the <see cref="P:System.Windows.Forms.Control.Font" /> changes, the <see cref="T:System.Windows.Forms.TextBox" /> expands or contracts the <see cref="P:System.Windows.Forms.Control.Height" /> to accommodate the larger or smaller text. The <see cref="P:System.Windows.Forms.Control.Width" /> of the <see cref="T:System.Windows.Forms.TextBox" /> does not change.</para>
+          <para>If you want to change the size of the control as the user enters text, you can use a <see cref="T:System.Windows.Forms.RichTextBox" /> control and use its <see cref="E:System.Windows.Forms.RichTextBox.ContentsResized" /> event to change its size.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the height of the control automatically adjusts when the font assigned to the control is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,8 +160,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,9 +194,17 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.TextBoxBase.BackColor" /> property to change the background color of the text control to blend into the color scheme of your forms.</para>
+          <para>To change the color of the text within the control, use the <see cref="P:System.Windows.Forms.TextBoxBase.ForeColor" /> property. When setting the <see cref="P:System.Windows.Forms.TextBoxBase.BackColor" /> property of your text control, ensure that the color you choose does not cause the text of the control to disappear. For example, if the <see cref="P:System.Windows.Forms.TextBoxBase.BackColor" /> and <see cref="P:System.Windows.Forms.TextBoxBase.ForeColor" /> properties are both set to Color.Black, the text within your textbox control will not be visible.</para>
+          <para>This property might be over ridden if the <see cref="P:System.Windows.Forms.TextBoxBase.ReadOnly" /> property of the <see cref="T:System.Windows.Forms.TextBoxBase" /> is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -178,9 +226,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -202,8 +256,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.BackgroundImage" /> property changes. This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -228,9 +288,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -251,8 +317,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.BackgroundImageLayout" /> property changes. This event is not relevant for this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BorderStyle">
@@ -270,9 +342,18 @@
         <ReturnType>System.Windows.Forms.BorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.TextBoxBase.BorderStyle" /> property to create borderless and flat style controls, in addition to the default three-dimensional control.</para>
+          <block subset="none" type="note">
+            <para>The derived class, <see cref="T:System.Windows.Forms.RichTextBox" />, does not support the BorderStyle.FixedSingle style. This style will cause the <see cref="T:System.Windows.Forms.BorderStyle" /> to use the BorderStyle.Fixed3D style instead.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border type of the text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -286,9 +367,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.BorderStyle" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,9 +392,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.Control.ImeMode" /> property can be set to an active value, to enable IME support.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanUndo">
@@ -325,9 +415,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this method returns true, you can call the <see cref="M:System.Windows.Forms.TextBoxBase.Undo" /> method to undo the last operation in a text box. You can use this method in the <see cref="E:System.Windows.Forms.MenuItem.Popup" /> event of a <see cref="T:System.Windows.Forms.MenuItem" />, or in code that manages the state of buttons on a <see cref="T:System.Windows.Forms.ToolBar" /> to enable or disable the ability to undo the previous operation in a text box control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user can undo the previous operation in a text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -342,9 +438,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to clear the contents of the control instead of assigning the <see cref="P:System.Windows.Forms.TextBoxBase.Text" /> property an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all text from the text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -359,9 +461,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to prevent an undo operation from repeating, based on the state of your application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears information about the most recent operation from the undo buffer of the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -383,9 +491,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the text box is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -400,8 +514,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method, instead of using the <see cref="T:System.Windows.Forms.Clipboard" /> class, to copy text in the text box and place it in the <ui>Clipboard</ui>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the current selection in the text box to the <ui>Clipboard</ui>.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -449,9 +569,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will only cut text from the text box if text is selected in the control. You can use this method, instead of using the <see cref="T:System.Windows.Forms.Clipboard" /> class, to copy text in the text box and move it to the <ui>Clipboard</ui>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the current selection in the text box to the <ui>Clipboard</ui>.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -468,9 +594,15 @@
         <ReturnType>System.Windows.Forms.Cursor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override <see cref="P:System.Windows.Forms.TextBoxBase.DefaultCursor" /> to configure a default cursor for your control. This is more efficient than setting the cursor in the control's constructor, and gives automatic support for certain cursor-related designer functions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default cursor for the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -500,8 +632,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property is zero so that no characters are selected in the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DoubleBuffered">
@@ -519,9 +654,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether control drawing is done in a buffer before the control is displayed. This property is not relevant for this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForeColor">
@@ -536,9 +677,17 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.TextBoxBase.ForeColor" /> property to change the color of the text within the control to match the text of other controls on your form. You can also use this property to highlight a specific text box that contains an invalid value.</para>
+          <para>To change the background color of the control, use the <see cref="P:System.Windows.Forms.TextBoxBase.BackColor" /> property. When setting the <see cref="P:System.Windows.Forms.TextBoxBase.ForeColor" /> property of your text control, ensure that the color you choose does not cause the text of the control to disappear. For example, if the <see cref="P:System.Windows.Forms.TextBoxBase.ForeColor" /> and <see cref="P:System.Windows.Forms.TextBoxBase.BackColor" /> properties are both set to Color.Black, the text within your textbox control will not be visible.</para>
+          <para>This property might be over ridden if the <see cref="P:System.Windows.Forms.TextBoxBase.ReadOnly" /> property of the <see cref="T:System.Windows.Forms.TextBoxBase" /> is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -558,10 +707,23 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the location specified in the <paramref name="pt" /> parameter is outside the client area of the control, the first character of the string closest to the point specified in <paramref name="pt" /> is returned. You can use this method to determine which characters are located near a specific point within the control. You can then use this value to perform operations on the text at that location.</para>
+          <block subset="none" type="note">
+            <para>If the specified location in the <paramref name="pt" /> parameter is located on the right side of the client area of the control, the last character of the string closest to the point specified in <paramref name="pt" /> is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the character that is closest to the specified location within the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character at the specified location.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location from which to seek the nearest character. </param>
       </Docs>
     </Member>
     <Member MemberName="GetCharIndexFromPosition">
@@ -577,10 +739,23 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the character index that is closest to the position specified in the <paramref name="pt" /> parameter. The character index is a zero-based index of text in the control, including spaces. You can use this method to determine where in the text the user has the mouse over by passing the mouse coordinates to this method. This can be useful if you want to perform tasks when the user rests the mouse pointer over a word in the text of the control.</para>
+          <block subset="none" type="note">
+            <para>If the specified location is not within the client rectangle of the control, or is beyond the last character in the control, the return value is the index of the last character.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the character nearest to the specified location.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index at the specified location.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location to search. </param>
       </Docs>
     </Member>
     <Member MemberName="GetFirstCharIndexFromLine">
@@ -596,10 +771,22 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="lineNumber">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Line numbering in the text box starts at zero. If the <paramref name="lineNumber" /> parameter is greater than the last line in the text box, <see cref="M:System.Windows.Forms.TextBoxBase.GetFirstCharIndexFromLine(System.Int32)" /> returns -1.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.TextBoxBase.GetFirstCharIndexFromLine(System.Int32)" /> returns the first character index of a physical line. The physical line is the displayed line, not the assigned line. The number of displayed lines can be greater than the number of assigned lines due to word wrap. For example, if you assign two long lines to a <see cref="T:System.Windows.Forms.RichTextBox" /> control and set <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> and <see cref="P:System.Windows.Forms.TextBoxBase.WordWrap" /> to true, the two long assigned lines result in four physical (or displayed lines).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the first character of a given line.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first character in the specified line.</para>
+        </returns>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line for which to get the index of its first character. </param>
       </Docs>
     </Member>
     <Member MemberName="GetFirstCharIndexOfCurrentLine">
@@ -613,9 +800,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the first character of the current line.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based character index in the current line.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLineFromCharIndex">
@@ -631,10 +824,23 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to determine the line number based on the character index specified in the <paramref name="index" /> parameter of the method. The first line of text in the control returns the value zero. The <see cref="M:System.Windows.Forms.TextBoxBase.GetLineFromCharIndex(System.Int32)" /> method returns the physical line number where the indexed character is located within the control. For example, if a portion of the first logical line of text in the control wraps to the next line, the <see cref="M:System.Windows.Forms.TextBoxBase.GetLineFromCharIndex(System.Int32)" /> method returns 1 if the character at the specified character index has wrapped to the second physical line. If <see cref="P:System.Windows.Forms.TextBoxBase.WordWrap" /> is set to false, no portion of the line wraps to the next, and the method returns 0 for the specified character index. You can use this method to determine which line a specific character index is located within. For example, after calling the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to search for text, you can obtain the character index to where the search results are found. You can call this method with the character index returned by the <see cref="M:System.Windows.Forms.RichTextBox.Find(System.String)" /> method to determine which line the word was found.</para>
+          <block subset="none" type="note">
+            <para>If the character index specified in the <paramref name="index" /> parameter is beyond the available number of lines contained within the control, the last line number is returned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the line number from the specified character position within the text of the control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based line number in which the character index is located.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character index position to search. </param>
       </Docs>
     </Member>
     <Member MemberName="GetPositionFromCharIndex">
@@ -650,10 +856,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to determine where in the control a specific character index is located. You can use this method for such tasks as displaying shortcut menu items or help information for a word in the control. For example, if you wanted to display a menu of options to the user when the user right clicks on a word in the control, you can use this method to determine the position of the word to properly display a <see cref="T:System.Windows.Forms.ContextMenu" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the location within the control at the specified character index.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location of the specified character within the client rectangle of the control.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the character for which to retrieve the location. </param>
       </Docs>
     </Member>
     <Member MemberName="HideSelection">
@@ -668,10 +884,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to keep text highlighted in a text box control while another form or a dialog box has focus, such as a spelling checker dialog box.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the selected text in the text box control remains highlighted when the control loses focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -685,8 +907,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.HideSelection" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -703,10 +931,20 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.IsInputKey(System.Windows.Forms.Keys)" /> method returns true when the <paramref name="keyData" /> parameter includes the <see cref="F:System.Windows.Forms.Keys.Tab" /> value and the <see cref="P:System.Windows.Forms.TextBoxBase.AcceptsTab" /> property is true. <see cref="M:System.Windows.Forms.TextBoxBase.IsInputKey(System.Windows.Forms.Keys)" /> returns false if <paramref name="keyData" /> contains both <see cref="F:System.Windows.Forms.Keys.Tab" /> and <see cref="F:System.Windows.Forms.Keys.Control" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is an input key or a special key that requires preprocessing.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is an input key; otherwise, false.</para>
+        </returns>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the Keys value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -734,9 +972,18 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each element in the array becomes a line of text in the text box control. If the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property of the text box control is set to true and a newline character appears in the text, the text following the newline character is added to a new element in the array and displayed on a separate line.</para>
+          <block subset="none" type="note">
+            <para>By default, the collection of lines is a read-only copy of the lines in the <see cref="T:System.Windows.Forms.TextBox" />. To get a writable collection of lines, use code similar to the following: textBox1.Lines = new string[] { "abcd" };</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lines of text in a text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -758,10 +1005,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to restrict the length of text entered in the control for values such as postal codes and telephone numbers, or to restrict the length of text entered when the data is to be entered in a database. You can limit the text entered into the control to the maximum length of the corresponding field in the database.</para>
+          <block subset="none" type="note">
+            <para>In code, you can set the value of the <see cref="P:System.Windows.Forms.TextBoxBase.Text" /> property to a value that has a length greater than the value specified by the <see cref="P:System.Windows.Forms.TextBoxBase.MaxLength" /> property. This property only affects text entered into the control at run time.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of characters the user can type or paste into the text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -783,10 +1039,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine if the user has modified the contents of the text box control. You can also set this property in code to indicate that changes were made to the text box control by the application. This property can be used by validation and data-saving methods to determine if changes were made in a text box control so the changed contents can be validated or saved.</para>
+          <para>If you change the <see cref="P:System.Windows.Forms.TextBoxBase.Text" /> property programmatically, the <see cref="P:System.Windows.Forms.TextBoxBase.Modified" /> property reverts to false. This does not raise the <see cref="E:System.Windows.Forms.TextBoxBase.ModifiedChanged" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates that the text box control has been modified by the user since the control was created or its contents were last set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -800,8 +1063,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you change the <see cref="P:System.Windows.Forms.TextBoxBase.Text" /> property programmatically, the <see cref="P:System.Windows.Forms.TextBoxBase.Modified" /> property reverts to false. This does not raise the <see cref="E:System.Windows.Forms.TextBoxBase.ModifiedChanged" /> event.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.Modified" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -826,8 +1096,15 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.RichTextBox" /> control does not raise a <see cref="E:System.Windows.Forms.TextBoxBase.Click" /> event for right clicks. The <see cref="E:System.Windows.Forms.TextBoxBase.MouseClick" /> event provides the functional equivalent.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is clicked by the mouse.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multiline">
@@ -848,10 +1125,49 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A multiline text box allows you to display more than one line of text in the control. If the <see cref="P:System.Windows.Forms.TextBoxBase.WordWrap" /> property is set to true, text entered into the multiline text box is wrapped to the next line in the control. If the <see cref="P:System.Windows.Forms.TextBoxBase.WordWrap" /> property is set to false, text entered into the multiline text box control will be displayed on the same line until a newline character is entered.</para>
+          <para>The following can be used as newline characters: </para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.Environment.NewLine" />
+              </para>
+            </item>
+            <item>
+              <para>ControlChars.CrLf</para>
+            </item>
+            <item>
+              <para>vbCrLf (Visual Basic only)</para>
+            </item>
+          </list>
+          <para>You can add scroll bars to a text box using the <see cref="P:System.Windows.Forms.TextBox.ScrollBars" /> property to display horizontal and/or vertical scroll bars. This allows the user to scroll through the text that extends beyond the dimensions of the control.</para>
+          <block subset="none" type="note">
+            <para>Because the default value of the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property is false, the default size of a <see cref="T:System.Windows.Forms.TextBox" /> will be in accordance with the font size even if you resize the <see cref="T:System.Windows.Forms.TextBox" />. To get a consistent size for your <see cref="T:System.Windows.Forms.TextBox" />, set its <see cref="P:System.Windows.Forms.TextBox.Multiline" /> property to true.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>On Japanese operating systems, if the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property is set to true, setting the <see cref="P:System.Windows.Forms.TextBox.PasswordChar" /> property will display the text of the password, thus compromising system security. Therefore, on Japanese operating systems, set the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property to false if you set the <see cref="P:System.Windows.Forms.TextBox.PasswordChar" /> property.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This property is set to false by default for all derived classes, with the exception of the <see cref="T:System.Windows.Forms.RichTextBox" /> control.</para>
+          </block>
+          <para>For a <see cref="T:System.Windows.Forms.RichTextBox" /> control, the <see cref="P:System.Windows.Forms.RichTextBox.Multiline" /> property affects whether or not the control will automatically resize, as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.RichTextBox.AutoSize" /> is set to true and <see cref="P:System.Windows.Forms.RichTextBox.Multiline" /> is set to true, <see cref="T:System.Windows.Forms.RichTextBox" /> will not automatically resize.</para>
+            </item>
+            <item>
+              <para>If <see cref="P:System.Windows.Forms.RichTextBox.AutoSize" /> is set to true and <see cref="P:System.Windows.Forms.RichTextBox.Multiline" /> is set to false, <see cref="T:System.Windows.Forms.RichTextBox" /> will automatically resize.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether this is a multiline text box control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -865,9 +1181,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -884,9 +1206,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.OnAcceptsTabChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TextBoxBase.AcceptsTabChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -921,10 +1251,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.OnBorderStyleChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TextBoxBase.BorderStyleChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -998,9 +1336,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.OnHideSelectionChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raise the <see cref="E:System.Windows.Forms.TextBoxBase.HideSelectionChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1017,10 +1363,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.OnModifiedChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TextBoxBase.ModifiedChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1040,9 +1394,13 @@
         <Parameter Name="mevent" Type="System.Windows.Forms.MouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="mevent">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.MouseUp" /> event.</para>
+        </summary>
+        <param name="mevent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnMultilineChanged">
@@ -1055,10 +1413,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.OnMultilineChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TextBoxBase.MultilineChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1078,9 +1444,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not relevant for this class.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnReadOnlyChanged">
@@ -1093,9 +1466,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.OnReadOnlyChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.TextBoxBase.ReadOnlyChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1142,9 +1523,15 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant for this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingChanged">
@@ -1168,8 +1555,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -1187,9 +1580,15 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is redrawn. This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1204,8 +1603,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.TextBoxBase.Paste" /> method will only paste text into the control if text is currently stored in the <ui>Clipboard</ui>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the current selection in the text box with the contents of the <ui>Clipboard</ui>.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1230,10 +1635,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size returned by this property is based on the font height and border style of the text box. You can use this property to determine the appropriate size of the text box to ensure that text is properly displayed in the control. The value returned by this property is in pixels.</para>
+          <para>The value of <see cref="P:System.Windows.Forms.TextBoxBase.PreferredHeight" /> represents the minimum height the text box must have in order to display a single line of text without clipping the text on the top or bottom. This value is the same whether the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property is set to true or false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the preferred height for a text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1273,8 +1685,11 @@
       <Docs>
         <param name="keyData">To be added.</param>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the control; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1296,10 +1711,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, the contents of the control cannot be changed by the user at runtime. With this property set to true, you can still set the value of the <see cref="P:System.Windows.Forms.TextBoxBase.Text" /> property in code. You can use this feature instead of disabling the control with the <see cref="P:System.Windows.Forms.Control.Enabled" /> property to allow the contents to be copied and ToolTips to be shown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether text in the text box is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1313,8 +1734,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.TextBoxBase.ReadOnly" /> property has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1329,8 +1756,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to scroll the contents of the control until the caret is within the visible region of the control. If the caret is positioned below the visible region of the control, the <see cref="M:System.Windows.Forms.TextBoxBase.ScrollToCaret" /> method will scroll the contents of the control until the caret is visible at the bottom of the control. If the caret is positioned above the visible region of the control, this method scrolls the contents of the control until the caret is visible at the top of the control. You can use this method in a multiline text box to ensure that the current text entry point is within the visible region of the control.</para>
+          <block subset="none" type="note">
+            <para>This method has no effect if the control does not have focus or if the caret is already positioned in the visible region of the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scrolls the contents of the control to the current caret position.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1348,10 +1784,24 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to set the start position to the first character in the control's text, set the <paramref name="start" /> parameter to 0. You can use this method to select a substring of text, such as when searching through the text of the control and replacing information.</para>
+          <block subset="none" type="note">
+            <para>You can programmatically move the caret within the text box by setting the <paramref name="start" /> parameter to the position within the text box where you want the caret to move to and set the <paramref name="length" /> parameter to a value of zero (0). The text box must have focus in order for the caret to be moved.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If this method is called without any parameters, an alternative method is used. This alternative method inherits from the <see cref="T:System.Windows.Forms.Control" /> class. When called, it sets the input focus to the control and selects the contents of the control. For more information, see the <see cref="M:System.Windows.Forms.Control.Select" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects a range of text in the text box.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the first character in the current text selection within the text box. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to select. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1366,8 +1816,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method enables you to select all text within the control. You can use this method in conjunction with the <see cref="M:System.Windows.Forms.TextBoxBase.Cut" /> method, which requires text to be selected in the control, to cut the entire contents of the control and paste them into the <ui>Clipboard</ui>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects all text in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1389,9 +1845,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can assign text to this property to change the text currently selected in the text box. If no text is currently selected in the text box, this property returns a zero-length string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the currently selected text in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1413,9 +1875,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine if any characters are currently selected in the text box control before performing operations on the selected text. When the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property is set to a value that is larger than the number of characters within the text of the control, the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property is set to the entire length of text within the control minus the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> property (if any value is specified for the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> property).</para>
+          <block subset="none" type="note">
+            <para>You can programmatically move the caret within the text box by setting the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> to the position within the text box where you want the caret to move to and set the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property to a value of zero (0). The text box must have focus in order for the caret to be moved.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of characters selected in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1437,9 +1908,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no text is selected in the control, this property indicates the insertion point, or caret, for new text. If you set this property to a location beyond the length of the text in the control, the selection start position will be placed after the last character. When text is selected in the text box control, changing this property might decrease the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property. If the remaining text in the control after the position indicated by the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> property is less than the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property, the value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property is automatically decreased. The value of the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> property never causes an increase in the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property.</para>
+          <para>You can programmatically move the selection within the text box by setting the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> and the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> properties.</para>
+          <para>You can programmatically move the caret within the text box by setting the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> to the position within the text box where you want the caret to move to and set the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionLength" /> property to a value of zero (0).</para>
+          <para>The <see cref="T:System.Windows.Forms.TextBox" /> must have focus in order for the selection or the caret to be moved. You can set the <see cref="P:System.Windows.Forms.TextBoxBase.SelectionStart" /> property of a <see cref="T:System.Windows.Forms.TextBox" /> that is <see cref="P:System.Windows.Forms.TextBoxBase.ReadOnly" /> by giving it the <see cref="M:System.Windows.Forms.Control.Focus" /> first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the starting point of text selected in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1460,13 +1940,26 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <param name="width">To be added.</param>
-        <param name="height">To be added.</param>
-        <param name="specified">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TextBoxBase" /> control uses the <see cref="P:System.Windows.Forms.TextBoxBase.PreferredHeight" /> property to set the bounds if the <see cref="P:System.Windows.Forms.TextBoxBase.AutoSize" /> property is true and the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property is false.</para>
+          <para>Typically, the parameters that correspond to the bounds not included in the <paramref name="specified" /> parameter are passed in with their current values. For example, the <see cref="P:System.Windows.Forms.Control.Height" />, <see cref="P:System.Windows.Forms.Control.Width" />, or the <see cref="P:System.Drawing.Point.X" /> or <see cref="P:System.Drawing.Point.Y" /> properties of the <see cref="P:System.Windows.Forms.Control.Location" /> property can be passed in with a reference to the current instance of the control. However all values passed in are honored and applied to the control.</para>
+          <para>The <paramref name="specified" /> parameter represents the elements of the controls <see cref="P:System.Windows.Forms.Control.Bounds" /> changed by your application. For example, if you change the <see cref="P:System.Windows.Forms.Control.Size" /> of the control, the <paramref name="specified" /> parameter value is the Size value of <see cref="T:System.Windows.Forms.BoundsSpecified" />. However, if the <see cref="P:System.Windows.Forms.Control.Size" /> is adjusted in response to the <see cref="P:System.Windows.Forms.Control.Dock" /> property being set, the <paramref name="specified" /> parameter value is the None value of <see cref="T:System.Windows.Forms.BoundsSpecified" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified bounds of the <see cref="T:System.Windows.Forms.TextBoxBase" /> control.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Left" /> property value of the control.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Top" /> property value of the control.</param>
+        <param name="width">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="P:System.Windows.Forms.Control.Width" /> property value of the control.</param>
+        <param name="height">
+          <attribution license="cc4" from="Microsoft" modified="false" />Not used.</param>
+        <param name="specified">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.BoundsSpecified" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1488,9 +1981,60 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.TextBoxBase.ShortcutsEnabled" /> property to enable or disable the following shortcut key combinations and the control’s shortcut menu: </para>
+          <list type="bullet">
+            <item>
+              <para>CTRL+Z </para>
+            </item>
+            <item>
+              <para>CTRL+E </para>
+            </item>
+            <item>
+              <para>CTRL+C </para>
+            </item>
+            <item>
+              <para>CTRL+Y </para>
+            </item>
+            <item>
+              <para>CTRL+X </para>
+            </item>
+            <item>
+              <para>CTRL+BACKSPACE </para>
+            </item>
+            <item>
+              <para>CTRL+V </para>
+            </item>
+            <item>
+              <para>CTRL+DELETE </para>
+            </item>
+            <item>
+              <para>CTRL+A </para>
+            </item>
+            <item>
+              <para>SHIFT+DELETE </para>
+            </item>
+            <item>
+              <para>CTRL+L </para>
+            </item>
+            <item>
+              <para>SHIFT+INSERT </para>
+            </item>
+            <item>
+              <para>CTRL+R</para>
+            </item>
+          </list>
+          <para>You can override this property to specify other shortcut keys.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.TextBox" /> control does not support the CTRL+A shortcut key when the <see cref="P:System.Windows.Forms.TextBox.Multiline" /> property value is true.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the defined shortcuts are enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -1508,9 +2052,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To display multiple lines of text in a text box, set the <see cref="P:System.Windows.Forms.TextBoxBase.Multiline" /> property to true. To read or set the text of a multiline text box, use the <see cref="P:System.Windows.Forms.TextBoxBase.Lines" /> property. The amount of text that can be entered in the <see cref="T:System.Windows.Forms.RichTextBox" /> control is limited only by available system memory.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current text in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1529,9 +2079,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to determine the number of characters in a string for tasks such as searching for specific strings of text within the text of the control, where knowledge of the total number of characters is needed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of text in the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1546,9 +2102,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the <see cref="T:System.Windows.Forms.TextBoxBase" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.TextBoxBase" />. The string includes the type and the <see cref="T:System.Windows.Forms.TextBoxBase" /> property of the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1563,8 +2125,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will undo the last <ui>Clipboard</ui> or text change operation performed in the text box control if the <see cref="P:System.Windows.Forms.TextBoxBase.CanUndo" /> property returns true.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Windows.Forms.TextBoxBase.Undo" /> method does not work with the <see cref="E:System.Windows.Forms.Control.KeyPress" /> or <see cref="E:System.Windows.Forms.Control.TextChanged" /> events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Undoes the last edit operation in the text box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1605,9 +2176,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is set to true, horizontal scroll bars are not displayed regardless of the <see cref="P:System.Windows.Forms.TextBox.ScrollBars" /> property setting.</para>
+          <block subset="none" type="note">
+            <para>In the derived class, <see cref="T:System.Windows.Forms.TextBox" />, text within the control will always wrap regardless of the property setting of this property unless the <see cref="P:System.Windows.Forms.TextBox.TextAlign" /> property is set to HorizontalAlignment.Left.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a multiline text box control automatically wraps words to the beginning of the next line when necessary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

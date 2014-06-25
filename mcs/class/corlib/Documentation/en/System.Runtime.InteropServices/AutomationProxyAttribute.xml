@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AutomationProxyAttribute" FullName="System.Runtime.InteropServices.AutomationProxyAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AutomationProxyAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AutomationProxyAttribute extends System.Attribute" />
@@ -22,8 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to assemblies, classes, or interfaces.</para>
+      <para>When applied to a class, it extends to the class interface for that class, if present.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether the type should be marshaled using the Automation marshaler or a custom proxy and stub.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +48,13 @@
         <Parameter Name="val" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="val">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.AutomationProxyAttribute" /> class.</para>
+        </summary>
+        <param name="val">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the class should be marshaled using the Automation Marshaler; false if a proxy stub marshaler should be used. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -58,9 +70,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the type of marshaler to use.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

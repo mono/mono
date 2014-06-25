@@ -75,6 +75,17 @@ namespace Mono.Security.X509.Extensions {
 			ski = sequence.Value;
 		}
 
+		protected override void Encode ()
+		{
+			if (ski == null) {
+				throw new InvalidOperationException ("Invalid SubjectKeyIdentifier extension");
+			}
+
+			var seq = new ASN1 (0x04, ski);
+			extnValue = new ASN1 (0x04);
+			extnValue.Add (seq);
+		}
+
 		public override string Name {
 			get { return "Subject Key Identifier"; }
 		}
@@ -85,6 +96,7 @@ namespace Mono.Security.X509.Extensions {
 					return null;
 				return (byte[]) ski.Clone (); 
 			}
+			set { ski = value; }
 		}
 
 		public override string ToString () 

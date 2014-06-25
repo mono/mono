@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolReflector" FullName="System.Web.Services.Description.ProtocolReflector">
   <TypeSignature Language="C#" Value="public abstract class ProtocolReflector" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The abstract <see cref="T:System.Web.Services.Description.ProtocolReflector" /> class and its concrete derived classes create <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects from classes that are identified as Web services with the <see cref="T:System.Web.Services.WebServiceAttribute" /> attribute. Each concrete <see cref="T:System.Web.Services.Description.ProtocolReflector" />-derived class generates <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects according to a specified communication protocol; <see cref="T:System.Web.Services.Description.ProtocolReflector" /> provides common functionality regardless of the protocol. </para>
+      <para>An output <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance can be used to generate a Web Services Description Language (WSDL) document with the <see cref="M:System.Web.Services.Description.ServiceDescription.Write(System.IO.Stream)" /> method or one of the available overloads. The <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance can also be used by the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class and related classes to generate client proxy code or abstract server code.</para>
+      <para>The <see cref="T:System.Web.Services.Description.ProtocolReflector" /> class uses the <see cref="T:System.Web.Services.WebServiceBindingAttribute" /> to create a <see cref="T:System.Web.Services.Description.ServiceDescription" /> for each binding it identifies in the Web service class. If that attribute is not present, the <see cref="T:System.Web.Services.Description.ProtocolReflector" /> class creates a single binding for the entire class. For each Web service method (a method in the Web service class appearing with the <see cref="T:System.Web.Services.WebMethodAttribute" />) belonging to a binding, a class derived from <see cref="T:System.Web.Services.Description.ProtocolReflector" /> generates an operation and associated messages that are added to the <see cref="T:System.Web.Services.Description.ServiceDescription" /> object.</para>
+      <para>Typically, a developer uses these classes indirectly through the <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class, instead of directly invoking classes derived from <see cref="T:System.Web.Services.Description.ProtocolReflector" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides common functionality across communication protocols for creating <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects from classes that are identified as Web services.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ProtocolReflector" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,8 +52,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs processing before <see cref="T:System.Web.Services.Description.ProtocolReflector" /> calls the <see cref="M:System.Web.Services.Description.ProtocolReflector.ReflectMethod" /> method for each of the methods for a binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,9 +70,12 @@
         <ReturnType>System.Web.Services.Description.Binding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Binding'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) binding currently being generated and added to the associated <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +89,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default namespace, as identified by the associated <see cref="T:System.Web.Services.Description.ServiceDescription" /> object's <see cref="F:System.Web.Services.Description.ServiceDescription.Namespace" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,8 +109,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, performs processing after <see cref="ProtocolReflector" /> has called the <see cref="M:System.Web.Services.Description.ProtocolReflector.ReflectMethod" /> method for each of the methods for a binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,10 +130,20 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ServiceDescription'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance obtained subsequently gets populated with objects that correspond to WSDL entities that are reflected from the input Web service class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object for a given XML namespace and the applicable communication protocol.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.ServiceDescription" /> object for a given XML namespace and the applicable communication protocol.</para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance obtained subsequently gets populated with objects that correspond to Web Services Description Language (WSDL) entities that are reflected from the input Web service class.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,9 +157,12 @@
         <ReturnType>System.Web.Services.Description.MessageCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'MessageCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets SOAP header message definitions to be added to the associated <see cref="T:System.Web.Services.Description.ServiceDescription" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,9 +176,12 @@
         <ReturnType>System.Web.Services.Description.Message</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Message'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) input message for the abstract operation that the protocol reflector is currently generating from a Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -155,9 +196,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web service method that the protocol reflector is currently processing to generate a Web Services Description Language (WSDL) operation to be placed in the generated <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -172,9 +216,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.Services.WebMethodAttribute" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.WebMethodAttribute" /> for the method that the protocol reflector is currently processing to generate a Web Services Description Language (WSDL) operation to be placed in the generated <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -189,9 +236,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo[]" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Web service methods are identified by the <see cref="T:System.Web.Services.WebMethodAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web service methods belonging to the Web service class, as identified by the associated <see cref="T:System.Web.Services.Description.ProtocolReflector" /> object's <see cref="P:System.Web.Services.Description.ProtocolReflector.Methods" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -205,9 +258,15 @@
         <ReturnType>System.Web.Services.Description.Operation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Operation'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operation appears as a child of the portType element in a WSDL document. Web service methods are identified by the <see cref="T:System.Web.Services.WebMethodAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the abstract Web Services Description Language (WSDL) operation that the protocol reflector is currently generating from a Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -221,9 +280,15 @@
         <ReturnType>System.Web.Services.Description.OperationBinding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OperationBinding'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Web service methods are identified by the <see cref="T:System.Web.Services.WebMethodAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) operation binding that the protocol importer is currently generating from a Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,9 +302,12 @@
         <ReturnType>System.Web.Services.Description.Message</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Message'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) output message for the abstract operation that the protocol reflector is currently generating from a Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -253,9 +321,12 @@
         <ReturnType>System.Web.Services.Description.Port</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Port'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) port that the protocol reflector is currently generating to contain a reference to the binding being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -269,9 +340,12 @@
         <ReturnType>System.Web.Services.Description.PortType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PortType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) portType that the protocol reflector is currently generating to be implemented by the binding being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -285,9 +359,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the name of the protocol being used.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -305,8 +382,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, generates service-specific description information that gets placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object that corresponds to a binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectionImporter">
@@ -317,9 +397,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlReflectionImporter" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlReflectionImporter" /> instance being used by the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -334,9 +417,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An implementation of the <see cref="M:System.Web.Services.Description.ProtocolReflector.ReflectMethod" /> method should generate information such as operation binding, abstract operation, and messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, generates method-specific information that gets placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object corresponding to a binding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Method-specific information that gets placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object corresponding to a binding.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,9 +443,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns the name of the binding that a method belongs to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the binding that a method belongs to.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -368,9 +466,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> instance being used by the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -385,9 +486,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemas" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML schemas being generated by the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -401,9 +505,12 @@
         <ReturnType>System.Web.Services.Description.Service</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Service'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Services Description Language (WSDL) service that the protocol reflector is currently generating to contain a reference to the binding being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -417,9 +524,12 @@
         <ReturnType>System.Web.Services.Description.ServiceDescription</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescription'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.ServiceDescription" /> object currently being created to contain the binding being generated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -433,9 +543,15 @@
         <ReturnType>System.Web.Services.Description.ServiceDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.ProtocolReflector" /> class creates a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object for each binding, with a distinct namespace, that it finds in a Web service class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects that have so far been created and added to the corresponding to the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> obtained through the <see cref="P:System.Web.Services.Description.ServiceDescriptionReflector.ServiceDescriptions" /> property of the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> instance. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -449,9 +565,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Web service class is identified by the <see cref="T:System.Web.Services.WebServiceAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the Web service class being reflected to produce <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -465,9 +587,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the endpoint of the associated Web service as a Uniform Resource Locator (URL), obtained from the associated <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

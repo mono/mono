@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MarshalByValueComponent" FullName="System.ComponentModel.MarshalByValueComponent">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class MarshalByValueComponent : IDisposable, IServiceProvider, System.ComponentModel.IComponent" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MarshalByValueComponent extends System.Object implements class System.ComponentModel.IComponent, class System.IDisposable, class System.IServiceProvider" />
@@ -39,8 +40,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A component can be contained in a container. For each component in a container, the container creates a site that it uses to manage the component. The component interacts with its container primarily through a container-provided <see cref="T:System.ComponentModel.ISite" />, which is a repository of container-specific, per-component information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements <see cref="T:System.ComponentModel.IComponent" /> and provides the base implementation for remotable components that are marshaled by value (a copy of the serialized object is passed).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -55,8 +62,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A component can be contained in a container. For each component in a container, the container creates a site that it uses to manage the component. The component interacts with its container primarily through a container-provided <see cref="T:System.ComponentModel.ISite" />, which is a repository of container-specific, per-component information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.MarshalByValueComponent" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Container">
@@ -80,9 +93,12 @@
         <ReturnType>System.ComponentModel.IContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IContainer'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the container for the component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignMode">
@@ -106,9 +122,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the component does not have a site, this method always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the component is currently in design mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -125,8 +147,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.ComponentModel.MarshalByValueComponent.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.MarshalByValueComponent" />. The <see cref="M:System.ComponentModel.MarshalByValueComponent.Dispose" /> method leaves the <see cref="T:System.ComponentModel.MarshalByValueComponent" /> in an unusable state. After calling <see cref="M:System.ComponentModel.MarshalByValueComponent.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.MarshalByValueComponent" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.MarshalByValueComponent" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.MarshalByValueComponent.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.MarshalByValueComponent" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.MarshalByValueComponent" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.ComponentModel.MarshalByValueComponent" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -150,9 +181,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the <see cref="M:System.Object.Finalize" /> method. Dispose() invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.ComponentModel.MarshalByValueComponent" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.MarshalByValueComponent" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="Disposed">
@@ -169,8 +208,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an event handler to listen to the <see cref="E:System.ComponentModel.MarshalByValueComponent.Disposed" /> event on the component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Events">
@@ -186,9 +228,12 @@
         <ReturnType>System.ComponentModel.EventHandlerList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'EventHandlerList'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of event handlers that are attached to this component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -225,10 +270,20 @@
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="service">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on designer services you can use, see <format type="text/html"><a href="4881917b-628f-4689-b872-472e4f8a4e3a">Design-Time Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the implementer of the <see cref="T:System.IServiceProvider" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the implementer of the <see cref="T:System.IServiceProvider" />.</para>
+        </returns>
+        <param name="service">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of service you want. </param>
       </Docs>
     </Member>
     <Member MemberName="Site">
@@ -254,9 +309,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ISite'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid value for this property - that is, the value is not null, indicates that the component has been added to a container.</para>
+          <para>When the value of this property is null, the property indicates that the component is being removed from a container. However, this property does not remove the component from the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the site of the component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -273,9 +335,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.Component" /> may or may not have a name. If a <see cref="T:System.ComponentModel.Component" /> is given a name, the name is unique among other <see cref="T:System.ComponentModel.Component" /> objects within its <see cref="T:System.ComponentModel.IContainer" />.</para>
+          <para>The <see cref="T:System.ComponentModel.ISite" /> stores the <see cref="T:System.ComponentModel.Component" />'s name. A <see cref="T:System.ComponentModel.Component" /> can only have a <see cref="T:System.ComponentModel.ISite" /> if it has been added to an <see cref="T:System.ComponentModel.IContainer" /> and the <see cref="T:System.ComponentModel.IContainer" /> assigns an <see cref="T:System.ComponentModel.ISite" /> to it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> containing the name of the <see cref="T:System.ComponentModel.Component" />, if any. This method should not be overridden.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the <see cref="T:System.ComponentModel.Component" />, if any.</para>
+          <para>null if the <see cref="T:System.ComponentModel.Component" /> is unnamed.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

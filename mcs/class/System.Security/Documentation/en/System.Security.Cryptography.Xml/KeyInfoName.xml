@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyInfoName" FullName="System.Security.Cryptography.Xml.KeyInfoName">
   <TypeSignature Language="C#" Value="public class KeyInfoName : System.Security.Cryptography.Xml.KeyInfoClause" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit KeyInfoName extends System.Security.Cryptography.Xml.KeyInfoClause" />
@@ -14,8 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Represent the XMLDSIG KeyName element which identify a key by a name.</summary>
-    <remarks>The &lt;KeyName&gt; element is detailled in section 4.4.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The &lt;KeyName&gt; element contains a string identifier that the party validating or decrypting an XML document uses to identify the corresponding key.  For example, if you receive an encrypted or signed XML document that has a &lt;KeyName&gt; element value of "AsymmetricKey1", you will use a key that you and the sender have named "AsymmetricKey1" to decrypt or verify the document.  Both parties must agree on a key name mapping ahead of time.  Note that the actual key is not imbedded in the XML document.     </para>
+      <para>For more information about the &lt;KeyName&gt; element, see Section 4.4.1 of the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/, or see the XML Encryption specification, which is available from the W3C at www.w3.org/TR/xmlenc-core/. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a &lt;KeyName&gt; subelement of an XMLDSIG or XML Encryption &lt;KeyInfo&gt; element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,9 +57,17 @@
         <Parameter Name="keyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="keyName" /> parameter can contain any string; the interpretation of the string is specific to the application. White space is significant in the string value.</para>
+          <para>The <paramref name="keyName" /> parameter specifies the value of the <see cref="P:System.Security.Cryptography.Xml.KeyInfoName.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /> class by specifying the string identifier that is the value of the &lt;KeyName&gt; element.</para>
+        </summary>
+        <param name="keyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string identifier that is the value of the &lt;KeyName&gt; element.</param>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -65,9 +84,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> object returned by this method is suitable for use as a subelement of an XMLDSIG or XML Encryption &lt;KeyInfo&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -86,9 +114,16 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.KeyInfoName.LoadXml(System.Xml.XmlElement)" /> method is typically used to process a &lt;KeyName&gt; subelement of a &lt;KeyInfo&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses the input <see cref="T:System.Xml.XmlElement" /> object and configures the internal state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /> object to match.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlElement" /> object that specifies the state of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoName" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -105,9 +140,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Xml.KeyInfoName.Value" /> property can contain any string; the interpretation of the string is specific to the application. White space is significant in the string value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string identifier contained within a &lt;KeyName&gt; element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWindowsFormsEditorService" FullName="System.Windows.Forms.Design.IWindowsFormsEditorService">
   <TypeSignature Language="C#" Value="public interface IWindowsFormsEditorService" />
   <AssemblyInfo>
@@ -7,8 +8,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.Design.IWindowsFormsEditorService" /> is only available through the <see cref="M:System.IServiceProvider.GetService(System.Type)" /> method of the <see cref="T:System.Windows.Forms.PropertyGrid" /> control.</para>
+      <para>This service is typically used to display a form from the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method of a <see cref="T:System.Drawing.Design.UITypeEditor" />. When a <see cref="T:System.Windows.Forms.PropertyGrid" /> invokes the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method of a <see cref="T:System.Drawing.Design.UITypeEditor" /> to provide a user interface for editing the value of a property, the <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method is passed a reference to an <see cref="T:System.IServiceProvider" /> that can typically provide an instance of the <see cref="T:System.Windows.Forms.Design.IWindowsFormsEditorService" />. The methods of this service can be used to display dialog boxes and forms, or to show a <see cref="T:System.Windows.Forms.Control" /> within a drop down container that is shown on top of the property grid near the area of the value field whose value is being edited.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for a <see cref="T:System.Drawing.Design.UITypeEditor" /> to display Windows Forms or to display a control in a drop-down area from a property grid control in design mode.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CloseDropDown">
@@ -19,8 +27,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method closes the drop down container area for a control that has been shown using the <see cref="M:System.Windows.Forms.Design.IWindowsFormsEditorService.DropDownControl(System.Windows.Forms.Control)" /> method, and releases the drop down container's reference to the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes any previously opened drop down control area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -37,9 +51,17 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Design.UITypeEditor.EditValue(System.IServiceProvider,System.Object)" /> method of a <see cref="T:System.Drawing.Design.UITypeEditor" /> can call this method to display a specified control in a drop down area over the property grid hosting the editor which uses this service.</para>
+          <para>When possible, the dimensions of the control will be maintained. If this is not possible due to the screen layout, the control may be resized. To ensure that the control resizes neatly, you should implement docking and anchoring, and possibly any resize event-handler update code. If the user performs an action that causes the drop down to close, the control will be hidden and disposed by garbage collection if there is no other stored reference to the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the specified control in a drop down area below a value field of the property grid that provides this service.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The drop down list <see cref="T:System.Windows.Forms.Control" /> to open. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,10 +78,20 @@
         <Parameter Name="dialog" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <param name="dialog">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method displays the specified form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the specified <see cref="T:System.Windows.Forms.Form" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DialogResult" /> indicating the result code returned by the <see cref="T:System.Windows.Forms.Form" />.</para>
+        </returns>
+        <param name="dialog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Form" /> to display. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

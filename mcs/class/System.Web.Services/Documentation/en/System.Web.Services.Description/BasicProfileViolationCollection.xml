@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BasicProfileViolationCollection" FullName="System.Web.Services.Description.BasicProfileViolationCollection">
   <TypeSignature Language="C#" Value="public class BasicProfileViolationCollection : System.Collections.CollectionBase, System.Collections.Generic.IEnumerable&lt;System.Web.Services.Description.BasicProfileViolation&gt;" />
   <AssemblyInfo>
@@ -13,9 +14,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a strongly typed collection of <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +27,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Web.Services.Description.BasicProfileViolationCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,11 +48,18 @@
         <Parameter Name="violation" Type="System.Web.Services.Description.BasicProfileViolation" />
       </Parameters>
       <Docs>
-        <param name="violation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the collection contains the specified <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> object exists in the collection; otherwise false.</para>
+        </returns>
+        <param name="violation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> object to locate in the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,11 +76,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements from the collection to an array, starting at a specified index of the array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> to which to copy the contents of the collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in <paramref name="array" /> at which copying begins.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,11 +101,18 @@
         <Parameter Name="violation" Type="System.Web.Services.Description.BasicProfileViolation" />
       </Parameters>
       <Docs>
-        <param name="violation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the zero-based index of a specified <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified <see cref="T:System.Web.Services.Description.BasicProfileViolation" />, or -1 if the element was not found in the collection.</para>
+        </returns>
+        <param name="violation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> to find in the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,11 +129,16 @@
         <Parameter Name="violation" Type="System.Web.Services.Description.BasicProfileViolation" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="violation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> to the collection at the specified location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index in the collection at which to insert the <paramref name="violation" />.</param>
+        <param name="violation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> to insert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,10 +174,14 @@
         <Parameter Name="violation" Type="System.Web.Services.Description.BasicProfileViolation" />
       </Parameters>
       <Docs>
-        <param name="violation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specified <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> from the collection.</para>
+        </summary>
+        <param name="violation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,10 +211,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.String" /> representation of the <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> objects in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> representation of the <see cref="T:System.Web.Services.Description.BasicProfileViolation" /> objects in the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

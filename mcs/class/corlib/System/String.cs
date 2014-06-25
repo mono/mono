@@ -2046,7 +2046,7 @@ namespace System
 						if (arg is IFormattable)
 							str = ((IFormattable)arg).ToString (arg_format, provider);
 						else
-							str = arg.ToString ();
+							str = arg.ToString () ?? Empty;
 					}
 
 					// pad formatted string and append to result
@@ -2879,6 +2879,8 @@ namespace System
 			if (length != 0)
 				fixed (byte* bytePtr = bytes)
 					try {
+						if (value == null)
+							throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
 						memcpy (bytePtr, (byte*) (value + startIndex), length);
 					} catch (NullReferenceException) {
 						throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");

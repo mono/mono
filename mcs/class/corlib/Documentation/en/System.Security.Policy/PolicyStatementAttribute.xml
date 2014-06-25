@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PolicyStatementAttribute" FullName="System.Security.Policy.PolicyStatementAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum PolicyStatementAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed PolicyStatementAttribute extends System.Enum" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Attribute flags set on policy statements control how code groups merge with other code groups and other policy levels.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines special attribute flags for security policy on code groups.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -39,8 +46,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All attribute flags are set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Exclusive">
@@ -57,8 +67,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exclusive code group flag. When a code group has this flag set, only the permissions associated with that code group are granted to code belonging to the code group. At most, one code group matching a given piece of code can be set as exclusive.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LevelFinal">
@@ -75,8 +88,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The flag representing a policy statement that causes lower policy levels to not be evaluated as part of the resolve operation, effectively allowing the policy level to override lower levels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Nothing">
@@ -93,8 +109,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No flags are set.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

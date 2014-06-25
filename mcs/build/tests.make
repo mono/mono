@@ -11,7 +11,7 @@
 tests_CLEAN_FILES := 
 
 ifndef TEST_COMPILE
-TEST_COMPILE = $(CSCOMPILE)
+TEST_COMPILE = $(subst $(test_remove),,$(CSCOMPILE))
 endif
 
 TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin

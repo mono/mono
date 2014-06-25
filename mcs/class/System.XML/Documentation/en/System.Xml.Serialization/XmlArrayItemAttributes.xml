@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlArrayItemAttributes" FullName="System.Xml.Serialization.XmlArrayItemAttributes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlArrayItemAttributes : System.Collections.CollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlArrayItemAttributes extends System.Collections.CollectionBase" />
@@ -15,8 +16,16 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlArrayItemAttributes" /> class allows you to specify the derived types that can be inserted into an array returned by a public field or public read/write property.</para>
+      <para>An instance of this class is returned by the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlArrayItems" /> property of the <see cref="T:System.Xml.Serialization.XmlAttributes" /> class. The <see cref="T:System.Xml.Serialization.XmlAttributes" /> class is used when overriding the set of <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> objects that can be inserted into an array to which the <see cref="T:System.Xml.Serialization.XmlArrayAttribute" /> has been applied.</para>
+      <para>For each new type you want the field or property to accept, create an <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> and use the <see cref="M:System.Xml.Serialization.XmlArrayItemAttributes.Add(System.Xml.Serialization.XmlArrayItemAttribute)" /> to add the object to the <see cref="T:System.Xml.Serialization.XmlArrayItemAttributes" /> collection returned by the <see cref="P:System.Xml.Serialization.XmlAttributes.XmlArrayItems" /> property. <see cref="M:System.Xml.Serialization.XmlAttributeOverrides.Add(System.Type,System.Xml.Serialization.XmlAttributes)" /> the <see cref="T:System.Xml.Serialization.XmlAttributes" /> to an <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" />, that specifies the type of the object that contains the field or property, and the name of the field or property. Construct an <see cref="T:System.Xml.Serialization.XmlSerializer" /> with the <see cref="T:System.Xml.Serialization.XmlAttributeOverrides" /> before calling the <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize(System.IO.TextWriter,System.Object)" /> or <see cref="M:System.Xml.Serialization.XmlSerializer.Deserialize(System.IO.Stream)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +40,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlArrayItemAttributes" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -51,10 +63,17 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlArrayItemAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlArrayItemAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the added item.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -73,10 +92,17 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlArrayItemAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlArrayItemAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the collection contains the specified <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" />; otherwise, false.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> to check for.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -96,10 +122,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'XmlArrayItemAttribute[]'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies an <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> array to the collection, starting at a specified target index. </para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> objects to copy to the collection.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which the copied attributes begin.</param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -118,10 +149,17 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlArrayItemAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlArrayItemAttribute'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the zero-based index of the first occurrence of the specified <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> in the collection or -1 if the attribute is not found in the collection. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first index of the <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> in the collection or -1 if the attribute is not found in the collection.</para>
+        </returns>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> to locate in the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -141,10 +179,15 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlArrayItemAttribute" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="attribute">To be added: an object of type 'XmlArrayItemAttribute'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts an <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> into the collection at the specified index. </para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which the attribute is inserted.</param>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" />  to insert.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -185,9 +228,16 @@
         <Parameter Name="attribute" Type="System.Xml.Serialization.XmlArrayItemAttribute" />
       </Parameters>
       <Docs>
-        <param name="attribute">To be added: an object of type 'XmlArrayItemAttribute'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The implementation of this is the same as the <see cref="M:System.Collections.ArrayList.Remove(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> from the collection, if it is present. </para>
+        </summary>
+        <param name="attribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlArrayItemAttribute" /> to remove.</param>
       </Docs>
     </Member>
   </Members>

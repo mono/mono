@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebPartTable" FullName="System.Web.UI.WebControls.WebParts.IWebPartTable">
   <TypeSignature Language="C#" Value="public interface IWebPartTable" />
   <AssemblyInfo>
@@ -6,9 +7,17 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is designed to be used with Web Parts connections. In a Web Parts connection, two server controls that reside in a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> zone establish a connection and share data, with one control acting as the consumer and the other control acting as a provider. The mechanism for sharing data in a Web Parts connection is an interface instance, which the provider serves to the consumer by means of a callback method. To establish a connection, the consumer and provider must both work with the same interface type for sharing data. If the consumer does not recognize the interface type sent by the provider, it is still possible to connect the controls by means of a transformer (a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object) that translates the interface instance sent by the provider into a type that the consumer recognizes. For details on connections, see <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> and <format type="text/html"><a href="d98cfd0f-ebd6-4871-89d5-abbd2cdef67b">Web Parts Connections Overview</a></format>. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartTable" /> interface is a provider interface included with the Web Parts control set as a standard interface for creating connections based on a data table. You can also create custom interfaces to use with Web Parts connections, but in many data-driven Web applications, it is useful to create connections based on a common field (for details, see the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartField" /> interface), row (for details, see the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartRow" /> interface), or table from the data source. In a typical connection, a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control acting as a provider would implement the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartTable" /> interface and provide an instance of the interface to consumers in a special callback method. For example, the provider might implement an <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartTable" /> interface for a table that contains financial performance data. Another <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control acting as a consumer would define a special method to receive the interface instance, and could then extract the data and render a chart to display the resulting information.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartTable" /> interface has two exposed members. The <see cref="P:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema" /> property returns schema information about the data table encapsulated in a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> object. The <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData(System.Web.UI.WebControls.WebParts.TableCallback)" /> method declares a method that an implementer (such as a provider control) uses to retrieve the interface instance's table data when the callback method is invoked.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a provider interface for connecting two server controls using an entire table of data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetTableData">
@@ -21,10 +30,17 @@
         <Parameter Name="callback" Type="System.Web.UI.WebControls.WebParts.TableCallback" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to retrieve the data table values passed by the interface. The provider implements this method, and the consumer invokes it at the point when the consumer is ready to process or render data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the data for the table that is being used by the interface as the basis of a connection between two <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebParts.TableCallback" /> delegate that contains the address of a method that receives the data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +53,16 @@
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides property information on the data in an <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartTable" /> instance. There is an implicit contract between the schema referenced by the <see cref="P:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema" /> property and the data in the table. The contract is that for each <see cref="T:System.ComponentModel.PropertyDescriptor" /> object in the <see cref="P:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema" /> property, you can call <see cref="M:System.ComponentModel.PropertyDescriptor.GetValue(System.Object)" /> on an element of the table data to get the value in a column or a row of the table. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the schema information for a data table that is used to share data between two <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

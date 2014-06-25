@@ -12,6 +12,7 @@ Microsoft.Build.Tasks/AssignTargetPath.cs
 Microsoft.Build.Tasks/CallTarget.cs
 Microsoft.Build.Tasks/CombinePath.cs
 Microsoft.Build.Tasks/CommandLineBuilderExtension.cs
+Microsoft.Build.Tasks/CodeTaskFactory.cs
 Microsoft.Build.Tasks/Copy.cs
 Microsoft.Build.Tasks/CreateCSharpManifestResourceName.cs
 Microsoft.Build.Tasks/CreateItem.cs
@@ -82,6 +83,7 @@ Microsoft.Build.Tasks/GetFrameworkPath.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPath.cs
 Microsoft.Build.Tasks/GetReferenceAssemblyPaths.cs
 Microsoft.Build.Tasks.Hosting/ICscHostObject.cs
+Microsoft.Build.Tasks.Hosting/ICscHostObject4.cs
 Microsoft.Build.Tasks.Hosting/IVbcHostObject.cs
 Microsoft.Build.Tasks/LC.cs
 Microsoft.Build.Tasks/MakeDir.cs
@@ -107,6 +109,7 @@ Microsoft.Build.Tasks/UpdateManifest.cs
 Microsoft.Build.Tasks/Vbc.cs
 Microsoft.Build.Tasks/VCBuild.cs
 Microsoft.Build.Tasks/Warning.cs
+Microsoft.Build.Tasks/WriteCodeFragment.cs
 Microsoft.Build.Tasks/WriteLinesToFile.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceReader.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceWriter.cs

@@ -33,6 +33,7 @@
 #include "metadata/profiler-private.h"
 #include "utils/mono-time.h"
 #include "utils/dtrace.h"
+#include "utils/mono-counters.h"
 
 #define TV_DECLARE SGEN_TV_DECLARE
 #define TV_GETTIME SGEN_TV_GETTIME
@@ -49,7 +50,7 @@ align_pointer (void *ptr)
 }
 
 #ifdef USE_MONO_CTX
-static MonoContext cur_thread_ctx = {0};
+static MonoContext cur_thread_ctx;
 #else
 static mword cur_thread_regs [ARCH_NUM_REGS] = {0};
 #endif
@@ -191,17 +192,29 @@ release_gc_locks (void)
 	UNLOCK_INTERRUPTION;
 }
 
+static void
+count_cards (long long *major_total, long long *major_marked, long long *los_total, long long *los_marked)
+{
+	sgen_get_major_collector ()->count_cards (major_total, major_marked);
+	sgen_los_count_cards (los_total, los_marked);
+}
+
 static TV_DECLARE (stop_world_time);
 static unsigned long max_pause_usec = 0;
+
+static long long time_stop_world;
+static long long time_restart_world;
 
 /* LOCKING: assumes the GC lock is held */
 int
 sgen_stop_world (int generation)
 {
+	TV_DECLARE (end_handshake);
 	int count, dead;
 
 	mono_profiler_gc_event (MONO_GC_EVENT_PRE_STOP_WORLD, generation);
 	MONO_GC_WORLD_STOP_BEGIN ();
+	binary_protocol_world_stopping (sgen_timestamp ());
 	acquire_gc_locks ();
 
 	/* We start to scan after locks are taking, this ensures we won't be interrupted. */
@@ -221,9 +234,18 @@ sgen_stop_world (int generation)
 	SGEN_LOG (3, "world stopped %d thread(s)", count);
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_STOP_WORLD, generation);
 	MONO_GC_WORLD_STOP_END ();
+	if (binary_protocol_is_enabled ()) {
+		long long major_total, major_marked, los_total, los_marked;
+		count_cards (&major_total, &major_marked, &los_total, &los_marked);
+		binary_protocol_world_stopped (sgen_timestamp (), major_total, major_marked, los_total, los_marked);
+	}
+
+	TV_GETTIME (end_handshake);
+	time_stop_world += TV_ELAPSED (stop_world_time, end_handshake);
 
 	sgen_memgov_collection_start (generation);
-	sgen_bridge_reset_data ();
+	if (sgen_need_bridge_processing ())
+		sgen_bridge_reset_data ();
 
 	return count;
 }
@@ -235,8 +257,15 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 	int count;
 	SgenThreadInfo *info;
 	TV_DECLARE (end_sw);
+	TV_DECLARE (start_handshake);
 	TV_DECLARE (end_bridge);
 	unsigned long usec, bridge_usec;
+
+	if (binary_protocol_is_enabled ()) {
+		long long major_total, major_marked, los_total, los_marked;
+		count_cards (&major_total, &major_marked, &los_total, &los_marked);
+		binary_protocol_world_restarting (generation, sgen_timestamp (), major_total, major_marked, los_total, los_marked);
+	}
 
 	/* notify the profiler of the leftovers */
 	/* FIXME this is the wrong spot at we can STW for non collection reasons. */
@@ -253,13 +282,16 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 #endif
 	} END_FOREACH_THREAD
 
+	TV_GETTIME (start_handshake);
 	count = sgen_thread_handshake (FALSE);
 	TV_GETTIME (end_sw);
+	time_restart_world += TV_ELAPSED (start_handshake, end_sw);
 	usec = TV_ELAPSED (stop_world_time, end_sw);
 	max_pause_usec = MAX (usec, max_pause_usec);
 	SGEN_LOG (2, "restarted %d thread(s) (pause time: %d usec, max: %d)", count, (int)usec, (int)max_pause_usec);
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD, generation);
 	MONO_GC_WORLD_RESTART_END (generation);
+	binary_protocol_world_restarted (generation, sgen_timestamp ());
 
 	/*
 	 * We must release the thread info suspend lock after doing
@@ -275,7 +307,8 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 
 	sgen_try_free_some_memory = TRUE;
 
-	sgen_bridge_processing_finish (generation);
+	if (sgen_need_bridge_processing ())
+		sgen_bridge_processing_finish (generation);
 
 	TV_GETTIME (end_bridge);
 	bridge_usec = TV_ELAPSED (end_sw, end_bridge);
@@ -288,6 +321,13 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 	sgen_memgov_collection_end (generation, timing, timing ? 2 : 0);
 
 	return count;
+}
+
+void
+sgen_init_stw (void)
+{
+	mono_counters_register ("World stop", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_stop_world);
+	mono_counters_register ("World restart", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &time_restart_world);
 }
 
 #endif

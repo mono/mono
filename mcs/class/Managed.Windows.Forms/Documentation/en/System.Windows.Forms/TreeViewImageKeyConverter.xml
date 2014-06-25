@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeViewImageKeyConverter" FullName="System.Windows.Forms.TreeViewImageKeyConverter">
   <TypeSignature Language="C#" Value="public class TreeViewImageKeyConverter : System.Windows.Forms.ImageKeyConverter" />
   <AssemblyInfo>
@@ -9,8 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.TreeViewImageKeyConverter" /> class is used to convert key values of an image associated with a <see cref="T:System.Windows.Forms.TreeView" /> control to and from other data types. For more information about type converters, see the <see cref="T:System.ComponentModel.TypeConverter" /> base class and <format type="text/html"><a href="90373a3f-d8c8-492d-841c-945d62393c56">How to: Implement a Type Converter</a></format>.</para>
+      <block subset="none" type="note">
+        <para>Typically, you do not directly create an instance of an <see cref="T:System.Windows.Forms.TreeViewImageKeyConverter" />. Instead, call the <see cref="M:System.ComponentModel.TypeDescriptor.GetConverter(System.Object)" /> method of the <see cref="T:System.ComponentModel.TypeDescriptor" /> class. For more information, see the examples in the <see cref="T:System.ComponentModel.TypeConverter" /> base class.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type converter to convert data for an image key to and from another data type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeViewImageKeyConverter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConvertTo">
@@ -41,13 +54,23 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified object to an object of the specified type using the specified culture information and context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted <paramref name="value" />.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context, which can be used to extract additional information about the environment this type converter is being invoked from. This parameter or properties of this parameter can be null.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that provides locale information.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to convert, typically an image key.</param>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert the object to.</param>
       </Docs>
     </Member>
   </Members>

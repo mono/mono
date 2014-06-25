@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EFB8D7EE-3CB6-4361-8A75-B2AD70A2995D}</ProjectGuid>
+    <ProjectGuid>{D61C0DEC-AF59-44ED-BECE-DB9EAB391962}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Novell.Directory.Ldap-tests-net_4_0</OutputPath>
@@ -56,18 +56,21 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Novell.Directory.Ldap\Novell.Directory.Ldap-net_4_0.csproj">
-      <Project>{7738B238-7C12-401A-8CCF-D44B4BD8ABDE}</Project>
+      <Project>{D6DA2E60-D81F-42EC-991E-ED2FFBD5094D}</Project>
       <Name>Novell.Directory.Ldap\Novell.Directory.Ldap-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -75,3 +78,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

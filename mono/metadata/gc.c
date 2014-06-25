@@ -1137,8 +1137,8 @@ mono_gc_init (void)
 	mono_counters_register ("Created object count", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &mono_stats.new_object_count);
 	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
-	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.minor_gc_time_usecs);
-	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.major_gc_time_usecs);
+	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.minor_gc_time_usecs);
+	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time_usecs);
 
 	mono_gc_base_init ();
 
@@ -1173,6 +1173,8 @@ mono_gc_cleanup (void)
 		ResetEvent (shutdown_event);
 		finished = TRUE;
 		if (mono_thread_internal_current () != gc_thread) {
+			gboolean timed_out = FALSE;
+
 			mono_gc_finalize_notify ();
 			/* Finishing the finalizer thread, so wait a little bit... */
 			/* MS seems to wait for about 2 seconds */
@@ -1195,14 +1197,11 @@ mono_gc_cleanup (void)
 					 * state the finalizer thread depends on will vanish.
 					 */
 					g_warning ("Shutting down finalizer thread timed out.");
-				} else {
-					/*
-					 * FIXME: On unix, when the above wait returns, the thread 
-					 * might still be running io-layer code, or pthreads code.
-					 */
-					Sleep (100);
+					timed_out = TRUE;
 				}
-			} else {
+			}
+
+			if (!timed_out) {
 				int ret;
 
 				/* Wait for the thread to actually exit */
@@ -1295,11 +1294,11 @@ mono_gc_get_mach_exception_thread (void)
  * Returns true if passing was successful
  */
 gboolean
-mono_gc_parse_environment_string_extract_number (const char *str, glong *out)
+mono_gc_parse_environment_string_extract_number (const char *str, size_t *out)
 {
 	char *endptr;
 	int len = strlen (str), shift = 0;
-	glong val;
+	size_t val;
 	gboolean is_suffix = FALSE;
 	char suffix;
 
@@ -1334,18 +1333,18 @@ mono_gc_parse_environment_string_extract_number (const char *str, glong *out)
 		return FALSE;
 
 	if (is_suffix) {
-		gulong unshifted;
+		size_t unshifted;
 
 		if (val < 0)	/* negative numbers cannot be suffixed */
 			return FALSE;
 		if (*(endptr + 1)) /* Invalid string. */
 			return FALSE;
 
-		unshifted = (gulong)val;
+		unshifted = (size_t)val;
 		val <<= shift;
 		if (val < 0)	/* overflow */
 			return FALSE;
-		if (((gulong)val >> shift) != unshifted) /* value too large */
+		if (((size_t)val >> shift) != unshifted) /* value too large */
 			return FALSE;
 	}
 

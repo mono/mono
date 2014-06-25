@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IToolboxUser" FullName="System.Drawing.Design.IToolboxUser">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IToolboxUser" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface provides toolbox support functions to designers. The <see cref="M:System.Drawing.Design.IToolboxUser.GetToolSupported(System.Drawing.Design.ToolboxItem)" /> method indicates whether the specified <see cref="T:System.Drawing.Design.ToolboxItem" /> can be used when the current designer is active. The <see cref="M:System.Drawing.Design.IToolboxUser.ToolPicked(System.Drawing.Design.ToolboxItem)" /> method selects the specified <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an interface for setting the currently selected toolbox item and indicating whether a designer supports a particular toolbox item.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetToolSupported">
@@ -24,10 +31,20 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="tool">To be added: an object of type 'ToolboxItem'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified tool is supported by the designer implementing the <see cref="T:System.Drawing.Design.IToolboxUser" /> interface, then the tool will be enabled in the toolbox when this designer has focus. Otherwise, it will be disabled. Once a tool is marked as enabled or disabled, it may not be tested for support with the same designer again.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified tool is supported by the current designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool is supported by the toolbox and can be enabled; false if the document designer does not know how to use the tool.</para>
+        </returns>
+        <param name="tool">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to be tested for toolbox support. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +61,17 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="tool">To be added: an object of type 'ToolboxItem'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Drawing.Design.IToolboxUser.ToolPicked(System.Drawing.Design.ToolboxItem)" /> is called when the user double-clicks on a toolbox item. The document designer should create a component for the specified tool. The Visual Studio integrated development environment will only call <see cref="M:System.Drawing.Design.IToolboxUser.ToolPicked(System.Drawing.Design.ToolboxItem)" /> on tools that are enabled in the toolbox.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the specified tool.</para>
+        </summary>
+        <param name="tool">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to select. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

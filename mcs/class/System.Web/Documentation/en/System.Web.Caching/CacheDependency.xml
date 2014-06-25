@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CacheDependency" FullName="System.Web.Caching.CacheDependency">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CacheDependency : IDisposable" />
   <AssemblyInfo>
@@ -17,8 +18,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you add an item to the cache that is dependent on another object, such as a file or array of files, the dependent item is automatically removed from the cache when the object changes. For example, suppose you create a <see cref="T:System.Data.DataSet" /> object based on data in an XML file. You can add the <see cref="T:System.Data.DataSet" /> to the cache with a <see cref="T:System.Web.Caching.CacheDependency" /> object that makes the <see cref="T:System.Data.DataSet" /> dependent on the XML file. If the XML file changes, the <see cref="T:System.Data.DataSet" /> is removed from the cache.</para>
+      <para>You can add items with dependencies to your application's cache with the <see cref="M:System.Web.Caching.Cache.Add(System.String,System.Object,System.Web.Caching.CacheDependency,System.DateTime,System.TimeSpan,System.Web.Caching.CacheItemPriority,System.Web.Caching.CacheItemRemovedCallback)" /> and <see cref="Overload:System.Web.Caching.Cache.Insert" /> methods. You cannot use the <see cref="P:System.Web.Caching.Cache.Item(System.String)" /> property to add items to the cache with dependencies.</para>
+      <para>To set up a dependency, you create an instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class, specifying the files, keys, or directories on which the item is dependent, and then pass the dependency to the <see cref="M:System.Web.Caching.Cache.Add(System.String,System.Object,System.Web.Caching.CacheDependency,System.DateTime,System.TimeSpan,System.Web.Caching.CacheItemPriority,System.Web.Caching.CacheItemRemovedCallback)" /> or <see cref="Overload:System.Web.Caching.Cache.Insert" /> method. The <see cref="T:System.Web.Caching.CacheDependency" /> instance can represent a single file or directory, an array of files or directories, or an array of files or directories along with an array of cache keys (these represent other items stored in the <see cref="T:System.Web.Caching.Cache" /> object).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Establishes a dependency relationship between an item stored in an ASP.NET application's <see cref="T:System.Web.Caching.Cache" /> object and a file, cache key, an array of either, or another <see cref="T:System.Web.Caching.CacheDependency" /> object. The <see cref="T:System.Web.Caching.CacheDependency" /> class monitors the dependency relationships so that when any of them changes, the cached item will be automatically removed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,8 +38,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to derive your own class from <see cref="T:System.Web.Caching.CacheDependency" />, implement this version of the <see cref="M:System.Web.Caching.CacheDependency.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -41,9 +56,17 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the directory or file specified in the <paramref name="filename" /> parameter is not found in the file system, it will be treated as missing. If the directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when the directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors a file or directory for changes.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to a file or directory that the cached object is dependent upon. When this resource changes, the cached object becomes obsolete and is removed from the cache. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +81,21 @@
         <Parameter Name="filenames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="filenames">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If any of the files or directories in the array changes or is removed from the array, the cached item becomes obsolete and is removed from the application's <see cref="T:System.Web.Caching.Cache" /> object.</para>
+          <para>Also, if any of the directories or files specified in the <paramref name="filenames" /> parameter is not found in the file system, it is treated as missing. If a directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when that directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+          <block subset="none" type="note">
+            <para>When you create the array that contains the file dependencies, you must define the number of files that the item you are adding to the <see cref="T:System.Web.Caching.Cache" /> is dependent on.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors an array of paths (to files or directories) for changes.</para>
+        </summary>
+        <param name="filenames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths (to files or directories) that the cached object is dependent upon. When any of these resources changes, the cached object becomes obsolete and is removed from the cache. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,10 +111,22 @@
         <Parameter Name="start" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="start">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the directory or file specified in the <paramref name="filename" /> parameter is not found in the file system, it will be treated as missing. If the directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when the directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+          <block subset="none" type="note">
+            <para>Change tracking begins immediately and is not directly based on the <paramref name="start" /> parameter. Use the <paramref name="start" /> parameter to pass a date and time in the past against which you want to check the last modified date of the directory or file passed in the <paramref name="filename" /> parameter. If the last modified date is later than the date and time set passed in the <paramref name="start" /> parameter, the cached item is removed from the <see cref="T:System.Web.Caching.Cache" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors a file or directory for changes.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to a file or directory that the cached object is dependent upon. When this resource changes, the cached object becomes obsolete and is removed from the cache. </param>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time against which to check the last modified date of the directory or file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,10 +142,22 @@
         <Parameter Name="start" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="filenames">To be added: an object of type 'string []'</param>
-        <param name="start">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If any of the directories or files specified in the <paramref name="filenames" /> parameter is not found in the file system, it is treated as missing. If a directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when that directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+          <block subset="none" type="note">
+            <para>Change tracking begins immediately and is not directly based on the <paramref name="start" /> parameter. Use the <paramref name="start" /> parameter to pass a date and time in the past against which you want to check the last modified date of the array passed in the <paramref name="filenames" /> parameter. If the last modified date of any object in the array is later than the date and time set passed in the <paramref name="start" /> parameter, the cached item is removed from the <see cref="T:System.Web.Caching.Cache" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors an array of paths (to files or directories) for changes and specifies a time when change monitoring begins.</para>
+        </summary>
+        <param name="filenames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths (to files or directories) that the cached object is dependent upon. When any of these resources changes, the cached object becomes obsolete and is removed from the cache. </param>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time against which to check the last modified date of the objects in the array. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,10 +173,19 @@
         <Parameter Name="cachekeys" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="filenames">To be added: an object of type 'string []'</param>
-        <param name="cachekeys">To be added: an object of type 'string []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Also, if any of the directories or files specified in the <paramref name="filenames" /> parameter is not found in the file system, it is treated as missing. If a directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when that directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors an array of paths (to files or directories), an array of cache keys, or both for changes.</para>
+        </summary>
+        <param name="filenames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths (to files or directories) that the cached object is dependent upon. When any of these resources changes, the cached object becomes obsolete and is removed from the cache. </param>
+        <param name="cachekeys">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of cache keys that the new object monitors for changes. When any of these cache keys changes, the cached object associated with this dependency object becomes obsolete and is removed from the cache. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,11 +202,24 @@
         <Parameter Name="start" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="filenames">To be added: an object of type 'string []'</param>
-        <param name="cachekeys">To be added: an object of type 'string []'</param>
-        <param name="start">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Also, if any of the directories or files specified in the <paramref name="filenames" /> parameter is not found in the file system, it is treated as missing. If a directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when that directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+          <block subset="none" type="note">
+            <para>Change tracking begins immediately and is not directly based on the <paramref name="start" /> parameter. Use the <paramref name="start" /> parameter to pass a date and time in the past against which you want to check the last modified date of any object passed in the <paramref name="filenames" /> or <paramref name="cachekeys" /> parameters. If the last modified date of any of those objects is later than the date and time set passed in the <paramref name="start" /> parameter, the cached item is removed from the <see cref="T:System.Web.Caching.Cache" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors an array of paths (to files or directories), an array of cache keys, or both for changes.</para>
+        </summary>
+        <param name="filenames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths (to files or directories) that the cached object is dependent upon. When any of these resources changes, the cached object becomes obsolete and is removed from the cache. </param>
+        <param name="cachekeys">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of cache keys that the new object monitors for changes. When any of these cache keys changes, the cached object associated with this dependency object becomes obsolete and is removed from the cache. </param>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The date and time against which to check the last modified date of the objects passed in the <paramref name="filenames" /> and <paramref name="cachekeys" /> arrays. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -155,11 +236,21 @@
         <Parameter Name="dependency" Type="System.Web.Caching.CacheDependency" />
       </Parameters>
       <Docs>
-        <param name="filenames">To be added: an object of type 'string []'</param>
-        <param name="cachekeys">To be added: an object of type 'string []'</param>
-        <param name="dependency">To be added: an object of type 'CacheDependency'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Also, if any of the directories or files specified in the <paramref name="filenames" /> parameter is not found in the file system, it is treated as missing. If a directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when that directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors an array of paths (to files or directories), an array of cache keys, or both for changes. It also makes itself dependent upon a separate instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class.</para>
+        </summary>
+        <param name="filenames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths (to files or directories) that the cached object is dependent upon. When any of these resources changes, the cached object becomes obsolete and is removed from the cache. </param>
+        <param name="cachekeys">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of cache keys that the new object monitors for changes. When any of these cache keys changes, the cached object associated with this dependency object becomes obsolete and is removed from the cache. </param>
+        <param name="dependency">
+          <attribution license="cc4" from="Microsoft" modified="false" />Another instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that this instance is dependent upon. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -177,12 +268,26 @@
         <Parameter Name="start" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="filenames">To be added: an object of type 'string []'</param>
-        <param name="cachekeys">To be added: an object of type 'string []'</param>
-        <param name="dependency">To be added: an object of type 'CacheDependency'</param>
-        <param name="start">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Also, if any of the directories or files specified in the <paramref name="filenames" /> parameter is not found in the file system, it is treated as missing. If a directory or file is missing when the object with the dependency is added to the <see cref="T:System.Web.Caching.Cache" />, the cached object will be removed from the <see cref="T:System.Web.Caching.Cache" /> when that directory or file is created.</para>
+          <para>For example, assume that you add an object to the <see cref="T:System.Web.Caching.Cache" /> with a dependency on the following file path: c:\stocks\xyz.dat. If that file is not found when the <see cref="T:System.Web.Caching.CacheDependency" /> object is created, but is created later, the cached object is removed upon the creation of the xyz.dat file.</para>
+          <block subset="none" type="note">
+            <para>Change tracking begins immediately and is not directly based on the <paramref name="start" /> parameter. Use the <paramref name="start" /> parameter to pass a date and time in the past against which you want to check the last modified date of any of the objects passed in the <paramref name="filenames" />, <paramref name="cachekeys" />, or <paramref name="dependency" /> parameters. If the last modified date for any of those objects is later than the date and time passed in the <paramref name="start" /> parameter, the cached item is removed from the <see cref="T:System.Web.Caching.Cache" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that monitors an array of paths (to files or directories), an array of cache keys, or both for changes. It also makes itself dependent upon another instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class and a time when the change monitoring begins.</para>
+        </summary>
+        <param name="filenames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths (to files or directories) that the cached object is dependent upon. When any of these resources changes, the cached object becomes obsolete and is removed from the cache. </param>
+        <param name="cachekeys">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of cache keys that the new object monitors for changes. When any of these cache keys changes, the cached object associated with this dependency object becomes obsolete and is removed from the cache. </param>
+        <param name="dependency">
+          <attribution license="cc4" from="Microsoft" modified="false" />Another instance of the <see cref="T:System.Web.Caching.CacheDependency" /> class that this instance is dependent upon. </param>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time against which to check the last modified date of the objects in the arrays and the <see cref="T:System.Web.Caching.CacheDependency" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -200,8 +305,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any class that derives from the <see cref="T:System.Web.Caching.CacheDependency" /> class is required to implement this method to clean up resources the derived class has used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.Web.Caching.CacheDependency" /> class and any classes that derive from <see cref="T:System.Web.Caching.CacheDependency" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -212,8 +323,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources used by the <see cref="T:System.Web.Caching.CacheDependency" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,8 +345,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Caching.CacheDependency.FinishInit" /> method completes the initialization of the <see cref="T:System.Web.Caching.CacheDependency" /> object. This method is called by all <see cref="T:System.Web.Caching.CacheDependency" /> constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes initialization of the <see cref="T:System.Web.Caching.CacheDependency" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetUniqueID">
@@ -246,9 +366,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be particularly useful for tracking multiple instances of the <see cref="T:System.Web.Caching.CacheDependency" /> class associated with an item or an application.</para>
+          <para>The identifier is a combination of either the file name (for a file dependency) or the key name (for a cache-key dependency) and a string that this method assigns to the dependency. In classes that derive from the <see cref="T:System.Web.Caching.CacheDependency" /> class, you can override this method to customize how it generates the unique identifier.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a unique identifier for a <see cref="T:System.Web.Caching.CacheDependency" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the <see cref="T:System.Web.Caching.CacheDependency" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasChanged">
@@ -258,9 +388,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can add an item to an ASP.NET application's <see cref="T:System.Web.Caching.Cache" /> with a <see cref="T:System.Web.Caching.CacheDependency" />. When the <see cref="T:System.Web.Caching.CacheDependency" /> changes, the item added to the <see cref="T:System.Web.Caching.Cache" /> is invalidated and removed from the cache. You can use this property to determine whether a <see cref="T:System.Web.Caching.CacheDependency" /> has changed, and recreate the item in the <see cref="T:System.Web.Caching.Cache" /> if that has occurred.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.Caching.CacheDependency" /> object has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -281,10 +417,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any class that derives from the <see cref="T:System.Web.Caching.CacheDependency" /> class must implement this method.</para>
+          <para>When you derive from the <see cref="T:System.Web.Caching.CacheDependency" /> class, you use the base functionality of any method or property that you have not overridden. When you create an instance of the derived class, it represents the files, cache keys, database tables, or other arbitrary objects that you want to make a cached item dependent upon. When a dependency item changes, this method notifies the base functionality of the <see cref="T:System.Web.Caching.CacheDependency" /> class that the item has changed, so that the values of the <see cref="P:System.Web.Caching.CacheDependency.HasChanged" /> and <see cref="P:System.Web.Caching.CacheDependency.UtcLastModified" /> properties can be updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the base <see cref="T:System.Web.Caching.CacheDependency" /> object that the dependency represented by a derived <see cref="T:System.Web.Caching.CacheDependency" /> class has changed.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="SetUtcLastModified">
@@ -300,9 +445,13 @@
         <Parameter Name="utcLastModified" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="utcLastModified">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks the time when a dependency last changed.</para>
+        </summary>
+        <param name="utcLastModified">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time when the dependency last changed. </param>
       </Docs>
     </Member>
     <Member MemberName="UtcLastModified">
@@ -315,9 +464,15 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is measured in Coordinated Universal Time (UTC) (also known as Greenwich Mean Time).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time when the dependency was last changed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

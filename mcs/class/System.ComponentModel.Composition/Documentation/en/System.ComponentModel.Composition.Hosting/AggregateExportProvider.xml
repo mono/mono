@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AggregateExportProvider" FullName="System.ComponentModel.Composition.Hosting.AggregateExportProvider">
   <TypeSignature Language="C#" Value="public class AggregateExportProvider : System.ComponentModel.Composition.Hosting.ExportProvider, IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AggregateExportProvider extends System.ComponentModel.Composition.Hosting.ExportProvider implements class System.IDisposable" />
@@ -14,8 +15,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves exports provided by a collection of <see cref="T:System.ComponentModel.Composition.Hosting.ExportProvider" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +33,17 @@
         <Parameter Name="providers" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Hosting.ExportProvider&gt;" />
       </Parameters>
       <Docs>
-        <param name="providers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class consults the providers in the order in which they have been specified when it calls <see cref="M:System.ComponentModel.Composition.Hosting.ExportProvider.GetExports(System.ComponentModel.Composition.Primitives.ImportDefinition)" />. </para>
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> does not take ownership of the specified providers. That is, it tries to dispose of any of the providers when it is disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class.</para>
+        </summary>
+        <param name="providers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prioritized list of export providers. The providers are consulted in the order in which they are supplied.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -51,9 +63,17 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="providers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class consults the providers in the order in which they have been specified when it calls <see cref="M:System.ComponentModel.Composition.Hosting.ExportProvider.GetExports(System.ComponentModel.Composition.Primitives.ImportDefinition)" />. </para>
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> does not take ownership of the specified providers.  That is, it tries to dispose of any of the providers when it is disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class.</para>
+        </summary>
+        <param name="providers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prioritized list of export providers.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -68,8 +88,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" />. The Dispose method leaves the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> so the garbage collector can reclaim the memory that the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -86,9 +116,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="GetExportsCore">
@@ -106,11 +140,23 @@
         <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <param name="atomicComposition">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implementers should not treat cardinality-related mismatches as errors and are not expected to throw exceptions in those cases.</para>
+          <para>For example, if the import requests exactly one export and the provider has either no matching exports or more than one, the method should return an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection of <see cref="T:System.ComponentModel.Composition.Primitives.Export" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports that match the conditions of the specified import.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains all the exports that match the specified condition.</para>
+        </returns>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to be returned.</param>
+        <param name="atomicComposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transactional container for the composition.</param>
       </Docs>
     </Member>
     <Member MemberName="Providers">
@@ -124,9 +170,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ComponentModel.Composition.Hosting.ExportProvider&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection that contains the providers that the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> object aggregates.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

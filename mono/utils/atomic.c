@@ -12,25 +12,26 @@
 #include <glib.h>
 
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-mutex.h>
 
 #if defined (WAPI_NO_ATOMIC_ASM) || defined (BROKEN_64BIT_ATOMICS_INTRINSIC)
 
 #include <pthread.h>
 
-static pthread_mutex_t spin = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t spin G_GNUC_UNUSED = PTHREAD_MUTEX_INITIALIZER;
+
+static mono_once_t spin_once G_GNUC_UNUSED = MONO_ONCE_INIT;
+
+static void spin_init(void)
+{
+	g_warning("Using non-atomic functions!  Expect race conditions when using process-shared handles!");
+}
 
 #define NEED_64BIT_CMPXCHG_FALLBACK
 
 #endif
 
 #ifdef WAPI_NO_ATOMIC_ASM
-
-static mono_once_t spin_once=MONO_ONCE_INIT;
-
-static void spin_init(void)
-{
-	g_warning("Using non-atomic functions!  Expect race conditions when using process-shared handles!");
-}
 
 gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch,
 				  gint32 comp)
@@ -568,15 +569,26 @@ gint64
 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
 	gint64 old;
+	int ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	ret = pthread_mutex_lock(&spin);
+	g_assert (ret == 0);
+	
+	old= *dest;
+	if(old==comp) {
+		*dest=exch;
+	}
+	
+	ret = pthread_mutex_unlock(&spin);
+	g_assert (ret == 0);
+	
+	pthread_cleanup_pop (0);
 
-	pthread_mutex_lock (&spin);
-
-	old = *dest;
-	if(old == comp)
-		*dest = exch;
-
-	pthread_mutex_unlock (&spin);
-	return old;
+	return(old);
 }
 
 #endif

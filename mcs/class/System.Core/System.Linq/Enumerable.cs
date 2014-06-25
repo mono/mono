@@ -885,17 +885,6 @@ namespace System.Linq
 
 		#region GroupBy
 
-		private static List<T> ContainsGroup<K, T> (
-				Dictionary<K, List<T>> items, K key, IEqualityComparer<K> comparer)
-		{
-			IEqualityComparer<K> comparerInUse = (comparer ?? EqualityComparer<K>.Default);
-			foreach (KeyValuePair<K, List<T>> value in items) {
-				if (comparerInUse.Equals (value.Key, key))
-					return value.Value;
-			}
-			return null;
-		}
-
 		public static IEnumerable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector)
 		{
@@ -913,7 +902,7 @@ namespace System.Linq
 		static IEnumerable<IGrouping<TKey, TSource>> CreateGroupByIterator<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			var groups = new Dictionary<TKey, List<TSource>> ();
+			var groups = new Dictionary<TKey, List<TSource>> (comparer);
 			var nullList = new List<TSource> ();
 			int counter = 0;
 			int nullCounter = -1;
@@ -927,8 +916,8 @@ namespace System.Linq
 						counter++;
 					}
 				} else {
-					List<TSource> group = ContainsGroup<TKey, TSource> (groups, key, comparer);
-					if (group == null) {
+					List<TSource> group;
+					if (!groups.TryGetValue (key, out group)) {
 						group = new List<TSource> ();
 						groups.Add (key, group);
 						counter++;
@@ -971,7 +960,7 @@ namespace System.Linq
 		static IEnumerable<IGrouping<TKey, TElement>> CreateGroupByIterator<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
-			var groups = new Dictionary<TKey, List<TElement>> ();
+			var groups = new Dictionary<TKey, List<TElement>> (comparer);
 			var nullList = new List<TElement> ();
 			int counter = 0;
 			int nullCounter = -1;
@@ -986,8 +975,8 @@ namespace System.Linq
 						counter++;
 					}
 				} else {
-					List<TElement> group = ContainsGroup<TKey, TElement> (groups, key, comparer);
-					if (group == null) {
+					List<TElement> group;
+					if (!groups.TryGetValue (key, out group)) {
 						group = new List<TElement> ();
 						groups.Add (key, group);
 						counter++;

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Overlapped" FullName="System.Threading.Overlapped">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class Overlapped" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Overlapped extends System.Object" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="Overload:System.Threading.Overlapped.Pack" /> and <see cref="Overload:System.Threading.Overlapped.UnsafePack" /> methods transfer information from an <see cref="T:System.Threading.Overlapped" /> object to a <see cref="T:System.Threading.NativeOverlapped" /> structure that can be passed to Win32 API functions for asynchronous file I/O. The <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> method transfers information from a <see cref="T:System.Threading.NativeOverlapped" /> structure to an instance of the <see cref="T:System.Threading.Overlapped" /> class. </para>
+      <para>Changes to the properties of an <see cref="T:System.Threading.Overlapped" /> object affect its associated <see cref="T:System.Threading.NativeOverlapped" /> structure, and vice versa. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a managed representation of a Win32 <unmanagedCodeEntityReference>OVERLAPPED</unmanagedCodeEntityReference> structure, including methods to transfer information from an <see cref="T:System.Threading.Overlapped" /> instance to a <see cref="T:System.Threading.NativeOverlapped" /> structure.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new, empty instance of the <see cref="T:System.Threading.Overlapped" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,12 +72,23 @@
         <Parameter Name="ar" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="offsetLo">To be added: an object of type 'int'</param>
-        <param name="offsetHi">To be added: an object of type 'int'</param>
-        <param name="hEvent">To be added: an object of type 'int'</param>
-        <param name="ar">To be added: an object of type 'IAsyncResult'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Threading.WaitHandle.Handle" /> property to get the handle of any managed synchronization event that derives from the <see cref="T:System.Threading.WaitHandle" /> class.</para>
+          <para>Your implementation of <see cref="T:System.IAsyncResult" /> provides status information on the I/O operation. Pass it to the constructor in the <paramref name="ar" /> parameter, and retrieve it later with the <see cref="P:System.Threading.Overlapped.AsyncResult" /> property. If a callback method is specified for the <see cref="Overload:System.Threading.Overlapped.Pack" /> or <see cref="Overload:System.Threading.Overlapped.UnsafePack" /> method, the callback can retrieve your <see cref="T:System.IAsyncResult" /> by unpacking the <see cref="T:System.Threading.NativeOverlapped" /> structure it receives.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Overlapped" /> class with the specified file position, the 32-bit integer handle to an event that is signaled when the I/O operation is complete, and an interface through which to return the results of the operation.</para>
+        </summary>
+        <param name="offsetLo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low word of the file position at which to start the transfer. </param>
+        <param name="offsetHi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high word of the file position at which to start the transfer. </param>
+        <param name="hEvent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to an event that is signaled when the I/O operation is complete. </param>
+        <param name="ar">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IAsyncResult" /> interface and provides status information on the I/O operation. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -84,13 +106,24 @@
         <Parameter Name="ar" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="offsetLo">To be added.</param>
-        <param name="offsetHi">To be added.</param>
-        <param name="hEvent">To be added.</param>
-        <param name="ar">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the handle of a managed synchronization object that derives from the <see cref="T:System.Threading.WaitHandle" /> class, use the <see cref="P:System.Threading.WaitHandle.SafeWaitHandle" /> property to get a <see cref="T:Microsoft.Win32.SafeHandles.SafeWaitHandle" /> object, and then call the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousGetHandle" /> method.</para>
+          <para>Your implementation of <see cref="T:System.IAsyncResult" /> provides status information on the I/O operation. Pass it to the constructor in the <paramref name="ar" /> parameter, and retrieve it later with the <see cref="P:System.Threading.Overlapped.AsyncResult" /> property. If a callback method is specified for the <see cref="Overload:System.Threading.Overlapped.Pack" /> or <see cref="Overload:System.Threading.Overlapped.UnsafePack" /> method, the callback can retrieve your <see cref="T:System.IAsyncResult" /> by unpacking the <see cref="T:System.Threading.NativeOverlapped" /> structure it receives.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Overlapped" /> class with the specified file position, the handle to an event that is signaled when the I/O operation is complete, and an interface through which to return the results of the operation.</para>
+        </summary>
+        <param name="offsetLo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low word of the file position at which to start the transfer. </param>
+        <param name="offsetHi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high word of the file position at which to start the transfer. </param>
+        <param name="hEvent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle to an event that is signaled when the I/O operation is complete. </param>
+        <param name="ar">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that implements the <see cref="T:System.IAsyncResult" /> interface and provides status information on the I/O operation. </param>
       </Docs>
     </Member>
     <Member MemberName="AsyncResult">
@@ -106,9 +139,12 @@
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that provides status information on the I/O operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventHandle">
@@ -129,9 +165,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property cannot be used on 64-bit platforms. Use the <see cref="P:System.Threading.Overlapped.EventHandleIntPtr" /> property instead.</para>
+          <para>Use the <see cref="P:System.Threading.WaitHandle.Handle" /> property to get the handle of any managed synchronization event that derives from the <see cref="T:System.Threading.WaitHandle" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the 32-bit integer handle to a synchronization event that is signaled when the I/O operation is complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventHandleIntPtr">
@@ -151,10 +194,16 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get the handle of a managed synchronization object that derives from the <see cref="T:System.Threading.WaitHandle" /> class, use the <see cref="P:System.Threading.WaitHandle.SafeWaitHandle" /> property to get a <see cref="T:Microsoft.Win32.SafeHandles.SafeWaitHandle" /> object, and then call the <see cref="M:System.Runtime.InteropServices.SafeHandle.DangerousGetHandle" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the handle to the synchronization event that is signaled when the I/O operation is complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Free">
@@ -178,9 +227,16 @@
         <Parameter Name="nativeOverlappedPtr" Type="System.Threading.NativeOverlapped*" />
       </Parameters>
       <Docs>
-        <param name="nativeOverlappedPtr">To be added: an object of type 'NativeOverlapped*'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must call the <see cref="M:System.Threading.Overlapped.Free(System.Threading.NativeOverlapped*)" /> method exactly once on every <see cref="T:System.Threading.NativeOverlapped" /> pointer you receive from the <see cref="Overload:System.Threading.Overlapped.Pack" /> method. If you don't call the <see cref="M:System.Threading.Overlapped.Free(System.Threading.NativeOverlapped*)" /> method, you will leak memory. If you call the <see cref="M:System.Threading.Overlapped.Free(System.Threading.NativeOverlapped*)" /> method more than once, memory will be corrupted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Frees the unmanaged memory associated with a native overlapped structure allocated by the <see cref="Overload:System.Threading.Overlapped.Pack" /> method.</para>
+        </summary>
+        <param name="nativeOverlappedPtr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the <see cref="T:System.Threading.NativeOverlapped" /> structure to be freed.</param>
       </Docs>
     </Member>
     <Member MemberName="OffsetHigh">
@@ -196,9 +252,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the high-order word of the file position at which to start the transfer. The file position is a byte offset from the start of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OffsetLow">
@@ -214,9 +273,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the low-order word of the file position at which to start the transfer. The file position is a byte offset from the start of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pack">
@@ -243,10 +305,23 @@
         <Parameter Name="iocb" Type="System.Threading.IOCompletionCallback" />
       </Parameters>
       <Docs>
-        <param name="iocb">To be added: an object of type 'IOCompletionCallback'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'NativeOverlapped*'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unmanaged pointer returned by this method can be passed to the operating system in overlapped I/O operations. The <see cref="T:System.Threading.NativeOverlapped" /> structure is fixed in physical memory until <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> is called. </para>
+          <block subset="none" type="note">
+            <para>The caller is responsible for pinning the buffer. If the application domain is unloaded, however, the handle to the pinned buffer is destroyed and the buffer is released, leaving the I/O operation to write to the freed address. For this reason, it is better to use the <see cref="M:System.Threading.Overlapped.Pack(System.Threading.IOCompletionCallback,System.Object)" /> method overload, in which the runtime pins the buffer.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure, specifying the delegate to be invoked when the asynchronous I/O operation is complete.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
+        <param name="iocb">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
       </Docs>
     </Member>
     <Member MemberName="Pack">
@@ -273,12 +348,27 @@
         <Parameter Name="userData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="iocb">To be added.</param>
-        <param name="userData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unmanaged pointer returned by this method can be passed to the operating system in overlapped I/O operations. The <see cref="T:System.Threading.NativeOverlapped" /> structure is fixed in physical memory until <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> is called.</para>
+          <para>The buffer or buffers specified in <paramref name="userData" /> must be the same as those passed to the unmanaged operating system function that performs the asynchronous I/O. </para>
+          <block subset="none" type="note">
+            <para>The runtime pins the buffer or buffers specified in <paramref name="userData" /> for the duration of the I/O operation. If the application domain is unloaded, the runtime keeps the memory pinned until the I/O operation completes.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure, specifying a delegate that is invoked when the asynchronous I/O operation is complete and a managed object that serves as a buffer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
+        <param name="iocb">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
+        <param name="userData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object or array of objects representing the input or output buffer for the operation. Each object represents a buffer, for example an array of bytes.</param>
       </Docs>
     </Member>
     <Member MemberName="Unpack">
@@ -302,10 +392,20 @@
         <Parameter Name="nativeOverlappedPtr" Type="System.Threading.NativeOverlapped*" />
       </Parameters>
       <Docs>
-        <param name="nativeOverlappedPtr">To be added: an object of type 'NativeOverlapped*'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Overlapped'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.NativeOverlapped" /> structure is not freed from physical memory until you call the <see cref="M:System.Threading.Overlapped.Free(System.Threading.NativeOverlapped*)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unpacks the specified unmanaged <see cref="T:System.Threading.NativeOverlapped" /> structure into a managed <see cref="T:System.Threading.Overlapped" /> object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.Overlapped" /> object containing the information unpacked from the native structure.</para>
+        </returns>
+        <param name="nativeOverlappedPtr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure.</param>
       </Docs>
     </Member>
     <Member MemberName="UnsafePack">
@@ -332,10 +432,24 @@
         <Parameter Name="iocb" Type="System.Threading.IOCompletionCallback" />
       </Parameters>
       <Docs>
-        <param name="iocb">To be added: an object of type 'IOCompletionCallback'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'NativeOverlapped*'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unmanaged pointer returned by this method can be passed to the operating system in overlapped I/O operations. The <see cref="T:System.Threading.NativeOverlapped" /> structure is fixed in physical memory until <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> is called. </para>
+          <para>The caller is responsible for pinning the buffer. If the application domain is unloaded, however, the handle to the pinned buffer is destroyed and the buffer is released, leaving the I/O operation to write to the freed address. For this reason, it is better to use the <see cref="M:System.Threading.Overlapped.UnsafePack(System.Threading.IOCompletionCallback,System.Object)" /> method overload, in which the runtime pins the buffer. </para>
+          <block subset="none" type="note">
+            <para>Using the <see cref="M:System.Threading.Overlapped.UnsafePack(System.Threading.IOCompletionCallback,System.Object)" /> method could inadvertently open up a security hole. Code access security bases its permission checks on the permissions of all the callers on the stack. The <see cref="M:System.Threading.Overlapped.UnsafePack(System.Threading.IOCompletionCallback,System.Object)" /> method does not propagate the calling stack. Malicious code might be able to exploit this to avoid permission checks.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure specifying the delegate to invoke when the asynchronous I/O operation is complete. Does not propagate the calling stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
+        <param name="iocb">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
       </Docs>
     </Member>
     <Member MemberName="UnsafePack">
@@ -362,12 +476,28 @@
         <Parameter Name="userData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="iocb">To be added.</param>
-        <param name="userData">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unmanaged pointer returned by this method can be passed to the operating system in overlapped I/O operations. The <see cref="T:System.Threading.NativeOverlapped" /> structure is fixed in physical memory until <see cref="M:System.Threading.Overlapped.Unpack(System.Threading.NativeOverlapped*)" /> is called.</para>
+          <para>The buffer or buffers specified in <paramref name="userData" /> must be the same as those passed to the unmanaged operating system function that performs the asynchronous I/O. </para>
+          <para>The runtime pins the buffer or buffers specified in <paramref name="userData" /> for the duration of the I/O operation. If the application domain is unloaded, the runtime keeps the memory pinned until the I/O operation completes.</para>
+          <block subset="none" type="note">
+            <para>Using the <see cref="M:System.Threading.Overlapped.UnsafePack(System.Threading.IOCompletionCallback,System.Object)" /> method could inadvertently open up a security hole. Code access security bases its permission checks on the permissions of all the callers on the stack. The <see cref="M:System.Threading.Overlapped.UnsafePack(System.Threading.IOCompletionCallback,System.Object)" /> method does not propagate the calling stack. Malicious code might be able to exploit this to avoid permission checks.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packs the current instance into a <see cref="T:System.Threading.NativeOverlapped" /> structure, specifying the delegate to invoke when the asynchronous I/O operation is complete and the managed object that serves as a buffer. Does not propagate the calling stack.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged pointer to a <see cref="T:System.Threading.NativeOverlapped" /> structure. </para>
+        </returns>
+        <param name="iocb">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.IOCompletionCallback" /> delegate that represents the callback method invoked when the asynchronous I/O operation completes.</param>
+        <param name="userData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object or array of objects representing the input or output buffer for the operation. Each object represents a buffer, for example an array of bytes.</param>
       </Docs>
     </Member>
   </Members>

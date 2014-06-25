@@ -66,13 +66,25 @@ mono_threads_install_dead_letter (void)
 {
 	id cur, dict;
 
+	/*
+	 * See the 'Dispatch Objective-C Messages Using the Method Function’s Prototype' section in
+	 * the '64-Bit Transition Guide for Cocoa Touch' as to why this is required.
+	 *
+	 * It doesn't hurt on other architectures either, so no need to #ifdef it only for ARM64.
+	 */
+
+	id (*id_objc_msgSend_id)(id, SEL, id) = (id (*)(id, SEL, id)) objc_msgSend;
+	void (*objc_msgSend_id_id)(id, SEL, id, id) = (void (*)(id, SEL, id, id)) objc_msgSend;
+
 	cur = objc_msgSend ((id)nsthread, currentThread);
 	if (!cur)
 		return;
 	dict = objc_msgSend (cur, threadDictionary);
-	if (dict && objc_msgSend (dict, objectForKey, mono_dead_letter_key) == nil) {
+	if (dict && id_objc_msgSend_id (dict, objectForKey, mono_dead_letter_key) == nil) {
 		id value = objc_msgSend (objc_msgSend ((id)mono_dead_letter_class, alloc), init);
-		objc_msgSend (dict, setObjectForKey, value, mono_dead_letter_key);
+
+		objc_msgSend_id_id (dict, setObjectForKey, value, mono_dead_letter_key);
+
 		objc_msgSend (value, release);
 	}
 }
@@ -80,10 +92,11 @@ mono_threads_install_dead_letter (void)
 void
 mono_threads_init_dead_letter (void)
 {
-	id nsstring = objc_getClass ("NSString");
-	id nsautoreleasepool = objc_getClass ("NSAutoreleasePool");
+	id nsstring = (id) objc_getClass ("NSString");
+	id nsautoreleasepool = (id) objc_getClass ("NSAutoreleasePool");
 	SEL stringWithUTF8String = sel_registerName ("stringWithUTF8String:");
 	SEL retain = sel_registerName ("retain");
+	id pool;
 
 	nsthread = (Class)objc_getClass ("NSThread");
 	nsobject = (Class)objc_getClass ("NSObject");
@@ -105,8 +118,11 @@ mono_threads_init_dead_letter (void)
 	objc_registerClassPair (mono_dead_letter_class);
 
 	// create the dict key
-	id pool = objc_msgSend (objc_msgSend (nsautoreleasepool, alloc), init);
-	mono_dead_letter_key = objc_msgSend (nsstring, stringWithUTF8String, "mono-dead-letter");
+	pool = objc_msgSend (objc_msgSend (nsautoreleasepool, alloc), init);
+
+	id (*objc_msgSend_char)(id, SEL, const char*) = (id (*)(id, SEL, const char*)) objc_msgSend;
+	mono_dead_letter_key = objc_msgSend_char (nsstring, stringWithUTF8String, "mono-dead-letter");
+
 	objc_msgSend (mono_dead_letter_key, retain);
 	objc_msgSend (pool, release);
 }

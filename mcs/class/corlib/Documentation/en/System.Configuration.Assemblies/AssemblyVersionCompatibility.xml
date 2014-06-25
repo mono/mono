@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyVersionCompatibility" FullName="System.Configuration.Assemblies.AssemblyVersionCompatibility">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum AssemblyVersionCompatibility" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AssemblyVersionCompatibility extends System.Enum" />
@@ -18,8 +19,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>AssemblyVersionCompatibility defines the compatibility of an assembly with other versions of the same assembly, indicating if it cannot execute side-by-side with other versions (for example, due to conflicts over a device driver).</para>
+      <para>If no compatibility is specified, an assembly is side-by-side compatible in all scopes.</para>
+      <para>An assembly cannot be more specific with regard to exactly which previous versions it is not side-by-side compatible with. Therefore, if the AssemblyVersionCompatibility is specified, it means the assembly is non side-by-side with all know versions. If not specified, it means it is side-by-side with all known versions.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the different types of assembly version compatibility. This feature is not available in version 1.0 of the .NET Framework.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SameDomain">
@@ -36,8 +45,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly cannot execute with other versions if they are executing in the same application domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SameMachine">
@@ -54,8 +66,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly cannot execute with other versions if they are executing on the same machine.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SameProcess">
@@ -72,8 +87,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly cannot execute with other versions if they are executing in the same process.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

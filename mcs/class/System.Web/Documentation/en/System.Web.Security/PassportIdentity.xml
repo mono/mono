@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PassportIdentity" FullName="System.Web.Security.PassportIdentity">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PassportIdentity : IDisposable, System.Security.Principal.IIdentity" />
   <AssemblyInfo>
@@ -20,8 +21,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a class to be used by <see cref="T:System.Web.Security.PassportAuthenticationModule" />. It provides a way for an application to access the <see cref="M:System.Web.Security.PassportIdentity.Ticket(System.String)" /> method. This class cannot be inherited. This class is deprecated.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.PassportIdentity" /> class. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +58,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of authentication used to identify the user. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,9 +81,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the Login server URL for a member, as well as with optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as optional information sent to the Login server in the query string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,10 +109,21 @@
         <Parameter Name="strReturnUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the Login server URL for a member, along with optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as the optional information sent to the Login server in the query string.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the location that the Login server should redirect to after logon is complete. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,17 +147,34 @@
         <Parameter Name="bUseSecureAuth" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'bool'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="bUseSecureAuth">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the authentication server URL for a member. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as the optional information sent to the Login server in the query string.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location that the Login server should redirect to after logon is complete. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter will be used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended to the URL of the Cobranding Template script page that was specified at initial participant registration. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language in which the required domain authority page should be displayed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="bUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,17 +198,34 @@
         <Parameter Name="iUseSecureAuth" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="iForceLogin">To be added: an object of type 'int'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the Login server URL for a member, along with the optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as the optional information sent to the Login server in the query string.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location that the Login server should redirect to after logon is complete. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter will be used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended to the URL of the Cobranding Template script page that was specified at initial participant registration. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language in which the required domain authority page should be displayed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual Login UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +240,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the Login server URL for a member, as well as optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as optional information sent to the Login server in the query string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -186,10 +268,20 @@
         <Parameter Name="strReturnUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the Login server URL for a member, as well as optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as the optional information sent to the Login server in the query string.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL of the location that the Login server should redirect to after logon is complete. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,17 +305,34 @@
         <Parameter Name="bUseSecureAuth" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'bool'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="bUseSecureAuth">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the Login server URL for a member, as well as the optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as the optional information sent to the Login server in the query string.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location that the Login server should redirect to after logon is complete. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter will be used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended to the URL of the Cobranding Template script page that was specified at initial participant registration. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language in which the required domain authority page should be displayed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="bUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,17 +356,34 @@
         <Parameter Name="iUseSecureAuth" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="iForceLogin">To be added: an object of type 'int'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a string containing the Login server URL for a member, as well as the optional information sent to the Login server in the query string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Login server URL for a member, as well as the optional information sent to the Login server in the query string.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location that the Login server should redirect to after logon is complete. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter will be used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended to the URL of the Cobranding Template script page that was specified at initial participant registration. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language in which the required domain authority page should be displayed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -274,10 +400,20 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compresses data. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compressed data.</para>
+        </returns>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be compressed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -292,9 +428,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of a flag indicating if the Passport Manager is in a valid state for encryption. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key used for encryption and decryption is valid and if the Passport Manager is in a valid state for encryption; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -311,10 +456,20 @@
         <Parameter Name="strHost" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strHost">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the key being used for Passport encryption and decryption. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer result code.</para>
+        </returns>
+        <param name="strHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -331,10 +486,20 @@
         <Parameter Name="strSite" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strSite">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the key being used for Passport encryption and decryption by referring to the site-name label assigned to that key when the key was first installed. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer result code.</para>
+        </returns>
+        <param name="strSite">
+          <attribution license="cc4" from="Microsoft" modified="false" />The site label. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,10 +516,20 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decompresses data that has been compressed by the <see cref="M:System.Web.Security.PassportIdentity.Compress(System.String)" /> method. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decompressed data.</para>
+        </returns>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be decompressed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -371,10 +546,20 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts data using the Passport participant key for the current site. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data decrypted using the Passport participant key for the current site.</para>
+        </returns>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be decrypted. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -391,10 +576,20 @@
         <Parameter Name="strData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts data using the Passport participant key for the current site. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data encrypted using the Passport participant key for the current site.</para>
+        </returns>
+        <param name="strData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to be encrypted. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -408,9 +603,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the error state associated with the current Passport ticket. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,10 +644,20 @@
         <Parameter Name="strAttribute" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strAttribute">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contents of a registry key under the HKLM\SW\Microsoft\Passport hive. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the registry key.</para>
+        </returns>
+        <param name="strAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the registry key. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -465,12 +676,24 @@
         <Parameter Name="strDomain" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strAttribute">To be added: an object of type 'string'</param>
-        <param name="iLCID">To be added: an object of type 'int'</param>
-        <param name="strDomain">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides information for a Passport domain by querying the Passport manager for the requested domain attribute. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the requested attribute.</para>
+        </returns>
+        <param name="strAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute value to retrieve. </param>
+        <param name="iLCID">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language in which various Passport network pages should be displayed to the member. </param>
+        <param name="strDomain">
+          <attribution license="cc4" from="Microsoft" modified="false" />The domain authority name to query for an attribute. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -487,10 +710,20 @@
         <Parameter Name="strMemberName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strMemberName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the Passport domain from the member name string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Passport domain for the specified member.</para>
+        </returns>
+        <param name="strMemberName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the Passport member </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -504,9 +737,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information on a Passport server connection and query string. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -525,12 +764,24 @@
         <Parameter Name="bCheckSecure" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="bForceLogin">To be added: an object of type 'bool'</param>
-        <param name="bCheckSecure">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the user is authenticated by a central site responsible for Passport authentication. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user is authenticated by a Passport authority; otherwise, false.</para>
+        </returns>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on to the calling domain. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="bForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter is used. </param>
+        <param name="bCheckSecure">
+          <attribution license="cc4" from="Microsoft" modified="false" />Enables checking for an encrypted logon. SSL sign-in is not available as an option in the current version Login servers, so the value passed in is ignored at the server. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -549,12 +800,24 @@
         <Parameter Name="iCheckSecure" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="iForceLogin">To be added: an object of type 'int'</param>
-        <param name="iCheckSecure">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the user is authenticated by a Passport authority. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user is authenticated by a central site responsible for Passport authentication; otherwise, false.</para>
+        </returns>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on to the calling domain. A value of -1 indicates that Passport should use the default value, 0 represents false, and 1 represents true. </param>
+        <param name="iForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter is used. A value of -1 indicates that Passport should use the default value, 0 represents false, and 1 represents true. </param>
+        <param name="iCheckSecure">
+          <attribution license="cc4" from="Microsoft" modified="false" />Enables checking for an encrypted logon. A value of -1 indicates that Passport should use the default value, 0 represents false, and 1 represents true.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -569,9 +832,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on, either by generating a 302 redirect URL or initiating a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the Passport Login Challenge.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -588,10 +860,21 @@
         <Parameter Name="strReturnUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on by outputting the appropriate headers to either a 302 redirect URL or the initiation of a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the Passport Login Challenge.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -616,18 +899,36 @@
         <Parameter Name="oExtraParams" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="szRetURL">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'int'</param>
-        <param name="szCOBrandArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <param name="oExtraParams">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on, either by generating a 302 redirect URL or initiating a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the Passport Login Challenge.</para>
+        </returns>
+        <param name="szRetURL">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="szCOBrandArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="oExtraParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />See Passport documentation for IPassportManager3.GetLoginChallenge. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -644,10 +945,20 @@
         <Parameter Name="strOpt" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strOpt">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a specific Passport logon option. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Passport logon option <paramref name="strOpt" />.</para>
+        </returns>
+        <param name="strOpt">
+          <attribution license="cc4" from="Microsoft" modified="false" />Logon option to query. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -664,10 +975,20 @@
         <Parameter Name="strProfileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strProfileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns Passport profile information for the specified profile attribute. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the Passport profile attribute specified by the <paramref name="strProfileName" /> parameter.</para>
+        </returns>
+        <param name="strProfileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Passport profile attribute to return. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -684,10 +1005,20 @@
         <Parameter Name="iFlagMask" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="iFlagMask">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a given flag is set in this user's profile. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the Passport profile flag <paramref name="iFlagMask" /> is set in this user's profile; otherwise, false.</para>
+        </returns>
+        <param name="iFlagMask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Passport profile flag to query. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -704,10 +1035,20 @@
         <Parameter Name="strProfile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strProfile">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a given profile attribute exists in this user's profile. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the profile attribute <paramref name="strProfile" /> exists in this user's profile; otherwise, false.</para>
+        </returns>
+        <param name="strProfile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Passport profile attribute to query. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -721,9 +1062,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information on whether the Passport member's password was saved. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -737,9 +1084,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the query string includes a Passport ticket as a cookie. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -757,11 +1110,22 @@
         <Parameter Name="bNeedBirthdate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="bNeedFullConsent">To be added: an object of type 'bool'</param>
-        <param name="bNeedBirthdate">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether full consent is granted in this user's profile. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if full consent is granted in this user's profile.</para>
+        </returns>
+        <param name="bNeedFullConsent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate full consent is required for Passport Authentication; otherwise, false. </param>
+        <param name="bNeedBirthdate">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the user's birthdate is required for Passport Authentication; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -775,9 +1139,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Passport Unique Identifier (PUID) for the currently authenticated user, in hexadecimal form. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -791,9 +1161,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user is authenticated against a Passport authority. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -828,9 +1204,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on, either by generating a 302 redirect URL or initiating a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer result code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -847,10 +1232,21 @@
         <Parameter Name="strReturnUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on, either by generating a 302 redirect URL or initiating a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer result code.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to which the Login server should redirect users after sign in is complete. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -875,18 +1271,36 @@
         <Parameter Name="oExtraParams" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="szRetURL">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'bool'</param>
-        <param name="szCOBrandArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="fUseSecureAuth">To be added: an object of type 'bool'</param>
-        <param name="oExtraParams">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on, either by generating a 302 redirect URL or by initiating a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer result code.</para>
+        </returns>
+        <param name="szRetURL">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to which the Login server should redirect users after sign in is complete. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time value, in seconds. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to have the Login server compare the <paramref name="iTimeWindow" /> parameter against the time since the user last signed in; false to have the Login server compare <paramref name="iTimeWindow" /> against the last time the Ticket was refreshed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="szCOBrandArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string specifying variables to be appended as query string variables to the URL of the participant's Cobranding Template script page. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />A locale identifier (LCID) specifying the language in which the Login page should be displayed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A domain name space to which you want to direct users without Passports to register. The specified name space must appear as a "domain name" entry in the Partner.xml Component Configuration Document (CCD). The typical default name space is "passport.com". Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Pass -1 to indicate that Passport should use the default value. This parameter is only relevant when implementing Kids Passport service; however, Kids Passport service cannot currently support use of this method. </param>
+        <param name="fUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />SSL sign-in is not available as an option in the current version Login servers. Passport Manager methods include SSL sign-in parameters and they may be required for syntax, but they are currently ignored at the server. Check the Passport Web site for updates on the status of SSL sign-in. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="oExtraParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name-value pairs to be inserted directly into the challenge authentication header, specifically for Passport-aware authentication interaction. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -911,18 +1325,36 @@
         <Parameter Name="oExtraParams" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="szRetURL">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'int'</param>
-        <param name="szCOBrandArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <param name="oExtraParams">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs the user on, either by generating a 302 redirect URL or initiating a Passport-aware client authentication exchange. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer result code.</para>
+        </returns>
+        <param name="szRetURL">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to which the Login server should redirect users after sign in is complete. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time value, in seconds. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the Login server should compare the <paramref name="iTimeWindow" /> parameter against the time since the user last signed in or against the last time the Ticket was refreshed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="szCOBrandArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string specifying variables to be appended as query string variables to the URL of the participant's Cobranding Template script page. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />A locale identifier (LCID) specifying the language in which the Login page should be displayed. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />A domain name space to which you want to direct users without Passports to register. The specified name space must appear as a "domain name" entry in the Partner.xml Component Configuration Document (CCD). The typical default name space is "passport.com". Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Pass -1 to indicate that Passport should use the default value. This parameter is only relevant when implementing Kids Passport service; however, Kids Passport service cannot currently support use of this method. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />SSL sign-in is not available as an option in the current version Login servers. Passport Manager methods include SSL sign-in parameters and they may be required for syntax, but they are currently ignored at the server. Check the Passport Web site for updates on the status of SSL sign-in. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="oExtraParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name-value pairs to be inserted directly into the challenge authentication header, specifically for Passport-aware authentication interaction. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -937,9 +1369,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an image tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -956,10 +1397,21 @@
         <Parameter Name="strReturnUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an HTML &lt;img&gt; tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location to which the Login server should redirect members after they log on. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -984,18 +1436,36 @@
         <Parameter Name="bUseSecureAuth" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'bool'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="fSecure">To be added: an object of type 'bool'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="bUseSecureAuth">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an HTML &lt;img&gt; tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location to which the Login server should redirect members after they log on. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter gets used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended as query string variables to the URL of the participant's Cobranding Template script page. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language to be used for the logon page that is displayed to the member. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fSecure">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether this method is being called from an HTTPS (SSL) page. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="bUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1020,18 +1490,36 @@
         <Parameter Name="iUseSecureAuth" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="iForceLogin">To be added: an object of type 'int'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="iSecure">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an HTML &lt;img&gt; tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location to which the Login server should redirect members after they log on. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter gets used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended as query string variables to the URL of the participant's Cobranding Template script page. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language to be used for the logon page that is displayed to the member. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iSecure">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether this method is being called from an HTTPS (SSL) page. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1046,9 +1534,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an image tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1065,10 +1562,21 @@
         <Parameter Name="strReturnUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an HTML &lt;img&gt; tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location to which the Login server should redirect members after they log on. Pass null to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1093,18 +1601,36 @@
         <Parameter Name="bUseSecureAuth" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="fForceLogin">To be added: an object of type 'bool'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="fSecure">To be added: an object of type 'bool'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="bUseSecureAuth">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an HTML &lt;img&gt; tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location to which the Login server should redirect members after they log on. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter gets used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended as query string variables to the URL of the participant's Cobranding Template script page. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language to be used for the logon page that is displayed to the member. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="fSecure">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether this method is being called from an HTTPS (SSL) page. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="bUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1129,18 +1655,36 @@
         <Parameter Name="iUseSecureAuth" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="strReturnUrl">To be added: an object of type 'string'</param>
-        <param name="iTimeWindow">To be added: an object of type 'int'</param>
-        <param name="iForceLogin">To be added: an object of type 'int'</param>
-        <param name="strCoBrandedArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="iSecure">To be added: an object of type 'int'</param>
-        <param name="strNameSpace">To be added: an object of type 'string'</param>
-        <param name="iKPP">To be added: an object of type 'int'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an HTML fragment containing an HTML &lt;img&gt; tag for a Passport link. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML fragment containing an image tag for a Passport link.</para>
+        </returns>
+        <param name="strReturnUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the URL of the location to which the Login server should redirect members after they log on. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iTimeWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval during which members must have last logged on. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iForceLogin">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how the <paramref name="iTimeWindow" /> parameter gets used. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strCoBrandedArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies variables to be appended as query string variables to the URL of the participant's Cobranding Template script page. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the language to be used for the logon page that is displayed to the member. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iSecure">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether this method is being called from an HTTPS (SSL) page. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strNameSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies the domain in which the Passport should be created. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iKPP">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies data collection policies for purposes of Children's Online Privacy Protection Act (COPPA) compliance. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />Declares whether the actual logon UI should be served HTTPS from the Passport domain authority. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1155,9 +1699,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the Passport logout URL string. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Passport logout URL string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1178,14 +1731,28 @@
         <Parameter Name="iUseSecureAuth" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="szReturnURL">To be added: an object of type 'string'</param>
-        <param name="szCOBrandArgs">To be added: an object of type 'string'</param>
-        <param name="iLangID">To be added: an object of type 'int'</param>
-        <param name="strDomain">To be added: an object of type 'string'</param>
-        <param name="iUseSecureAuth">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the Passport logout URL string using the specified parameters. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Passport logout URL string.</para>
+        </returns>
+        <param name="szReturnURL">
+          <attribution license="cc4" from="Microsoft" modified="false" />See IPassportManager3.LogoutUrl for more details. Pass null to indicate that Passport should use the default value. </param>
+        <param name="szCOBrandArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />See IPassportManager3.LogoutUrl for more details. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iLangID">
+          <attribution license="cc4" from="Microsoft" modified="false" />See IPassportManager3.LogoutUrl for more details. Pass -1 to indicate that Passport should use the default value. </param>
+        <param name="strDomain">
+          <attribution license="cc4" from="Microsoft" modified="false" />See IPassportManager3.LogoutUrl for more details. Pass null to indicate that Passport should use the default value. </param>
+        <param name="iUseSecureAuth">
+          <attribution license="cc4" from="Microsoft" modified="false" />See IPassportManager3.LogoutUrl for more details. Pass -1 to indicate that Passport should use the default value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1199,9 +1766,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the current user. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1219,10 +1792,18 @@
         <Parameter Name="vOpt" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="strOpt">To be added: an object of type 'string'</param>
-        <param name="vOpt">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a specific Passport logon option. This class is deprecated.</para>
+        </summary>
+        <param name="strOpt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The option to set. </param>
+        <param name="vOpt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1239,9 +1820,16 @@
         <Parameter Name="strSignOutDotGifFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strSignOutDotGifFileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs off the given Passport member from the current session. This class is deprecated.</para>
+        </summary>
+        <param name="strSignOutDotGifFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An HTML fragment containing an image for the user to click on to sign out. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1259,8 +1847,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Web.Security.PassportIdentity" /> class. This class is deprecated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ticket">
@@ -1273,10 +1867,20 @@
         <Parameter Name="strAttribute" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="strAttribute">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information on a specific attribute of the Passport authentication ticket. This class is deprecated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing an attribute of the Passport authentication ticket.</para>
+        </returns>
+        <param name="strAttribute">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string identifying the Passport authentication ticket to return. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1290,9 +1894,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time, in seconds, since the last ticket was issued or refreshed. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1306,9 +1916,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the time, in seconds, since a member's logon to the Passport logon server. This class is deprecated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlInputControl" FullName="System.Web.UI.HtmlControls.HtmlInputControl">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class HtmlInputControl : System.Web.UI.HtmlControls.HtmlControl" />
   <AssemblyInfo>
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You cannot create an instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> class directly. Instead, this class is inherited by other classes, such as the <see cref="T:System.Web.UI.HtmlControls.HtmlInputText" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputButton" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputRadioButton" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputCheckBox" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputImage" />, <see cref="T:System.Web.UI.HtmlControls.HtmlInputHidden" />, and <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> classes, to provide common basic functionality.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlInputControl.#ctor(System.String)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the abstract base class that defines the methods, properties, and events common to all HTML input controls, such as the &lt;input type=text&gt;, &lt;input type=submit&gt;, and &lt;input type= file&gt; elements.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +39,134 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> class using the specified input control.</para>
+          <block subset="none" type="note">
+            <para>A new instance of this class is not created directly. This constructor is called from the constructor of other HTML control classes to initialize properties defined in this class.</para>
+          </block>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Type" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="type" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <para>The following table shows the different possible values for <paramref name="type" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>text </para>
+              </term>
+              <description>
+                <para>A text box for data entry. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>password </para>
+              </term>
+              <description>
+                <para>A text box that masks user input. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>checkbox </para>
+              </term>
+              <description>
+                <para>A check box that indicates a true or false condition. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>radio </para>
+              </term>
+              <description>
+                <para>A radio button that indicates a selection from a mutually exclusive group of radio buttons. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>button </para>
+              </term>
+              <description>
+                <para>A command button. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>submit </para>
+              </term>
+              <description>
+                <para>A button that submits the form to the server. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>reset </para>
+              </term>
+              <description>
+                <para>A button that clears the form. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>file </para>
+              </term>
+              <description>
+                <para>A button that uploads a file. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hidden </para>
+              </term>
+              <description>
+                <para>A non-visible field on a Web page used to persist information between posts to the server. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>image </para>
+              </term>
+              <description>
+                <para>An image button. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> class.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of input control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +181,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Name" /> property to determine the unique identifier name for an <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" />. In this implementation, the get accessor returns the value of the <see cref="P:System.Web.UI.Control.UniqueID" /> property. However, the set accessor does not assign a value to this property.</para>
+          <block subset="none" type="note">
+            <para>The set accessor does not assign a value to this property because the <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Name" /> property must have the same value as the <see cref="P:System.Web.UI.Control.UniqueID" /> property for most controls to work properly.</para>
+          </block>
+          <para>Classes that inherit from the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> class can override this implementation, if necessary.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the unique identifier name for the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +218,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlInputControl.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method renders a <paramref name="name" /> attribute and <paramref name="type" /> attribute before calling the base class's <see cref="M:System.Web.UI.HtmlControls.HtmlControl.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the attributes of the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that contains the output stream to render to the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,9 +241,108 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property get the type of an <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" />.</para>
+          <para>The following table shows the different possible values for the <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Type" /> property.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>text </para>
+              </term>
+              <description>
+                <para>A text box for data entry. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>password </para>
+              </term>
+              <description>
+                <para>A text box that masks user input. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>checkbox </para>
+              </term>
+              <description>
+                <para>A check box that indicates a true or false condition. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>radio </para>
+              </term>
+              <description>
+                <para>A radio button that indicates a selection from a mutually exclusive group of radio buttons. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>button </para>
+              </term>
+              <description>
+                <para>A command button. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>submit </para>
+              </term>
+              <description>
+                <para>A button that submits the form to the server. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>reset </para>
+              </term>
+              <description>
+                <para>A button that clears the form. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>file </para>
+              </term>
+              <description>
+                <para>A button that uploads a file. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hidden </para>
+              </term>
+              <description>
+                <para>A non-visible field on a Web page used to persist information between posts to the server. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>image </para>
+              </term>
+              <description>
+                <para>An image button. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of an <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +365,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify or determine the value associated with the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> control. The <see cref="P:System.Web.UI.HtmlControls.HtmlInputControl.Value" /> property is equivalent to the value attribute of HTML elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value associated with the <see cref="T:System.Web.UI.HtmlControls.HtmlInputControl" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

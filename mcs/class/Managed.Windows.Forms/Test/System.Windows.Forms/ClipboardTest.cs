@@ -104,6 +104,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Doesn't work under Xvfb.
 		public void DataRemainsOnClipboard_Xamarin4959 ()
 		{
 			// Compile an app that puts something on the clipboard

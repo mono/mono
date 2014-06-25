@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PointF" FullName="System.Drawing.PointF">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct PointF" />
   <AssemblyInfo>
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To convert a <see cref="T:System.Drawing.PointF" /> to a <see cref="T:System.Drawing.Point" />, use <see cref="M:System.Drawing.Point.Round(System.Drawing.PointF)" /> or <see cref="M:System.Drawing.Point.Truncate(System.Drawing.PointF)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an ordered pair of floating-point x- and y-coordinates that defines a point in a two-dimensional plane.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,10 +38,15 @@
         <Parameter Name="y" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'float'</param>
-        <param name="y">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.PointF" /> class with the specified coordinates.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />The horizontal position of the point. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />The vertical position of the point. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -55,11 +67,22 @@
         <Parameter Name="sz" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.PointF.Add(System.Drawing.PointF,System.Drawing.SizeF)" /> method adds the <see cref="P:System.Drawing.Size.Width" /> of the specified size to the x-coordinate of the <see cref="T:System.Drawing.PointF" /> and the <see cref="P:System.Drawing.Size.Height" /> to the y-coordinate of the <see cref="T:System.Drawing.PointF" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a given <see cref="T:System.Drawing.PointF" /> by the specified <see cref="T:System.Drawing.Size" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> that specifies the numbers to add to the coordinates of <paramref name="pt" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -76,11 +99,22 @@
         <Parameter Name="sz" Type="System.Drawing.SizeF" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.PointF.Add(System.Drawing.PointF,System.Drawing.SizeF)" /> method adds the <see cref="P:System.Drawing.SizeF.Width" /> of the specified size to the x-coordinate of the <see cref="T:System.Drawing.PointF" /> and the <see cref="P:System.Drawing.SizeF.Height" /> to the y-coordinate of the <see cref="T:System.Drawing.PointF" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a given <see cref="T:System.Drawing.PointF" /> by a specified <see cref="T:System.Drawing.SizeF" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.SizeF" /> that specifies the numbers to add to the coordinates of <paramref name="pt" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -91,8 +125,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a new instance of the <see cref="T:System.Drawing.PointF" /> class with member data left uninitialized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -109,10 +146,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether this <see cref="T:System.Drawing.PointF" /> contains the same coordinates as the specified <see cref="T:System.Object" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if <paramref name="obj" /> is a <see cref="T:System.Drawing.PointF" /> and has the same coordinates as this <see cref="T:System.Drawing.Point" />.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to test. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,9 +171,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash code for this <see cref="T:System.Drawing.PointF" /> structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value that specifies a hash value for this <see cref="T:System.Drawing.PointF" /> structure.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,9 +193,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this <see cref="T:System.Drawing.PointF" /> is empty.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -168,11 +221,19 @@
         <Parameter Name="sz" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a <see cref="T:System.Drawing.PointF" /> by a given <see cref="T:System.Drawing.Size" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate. </param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Size" /> that specifies the pair of numbers to add to the coordinates of <paramref name="pt" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,11 +254,22 @@
         <Parameter Name="sz" Type="System.Drawing.SizeF" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.PointF.op_Addition(System.Drawing.PointF,System.Drawing.SizeF)" /> operator adds the <see cref="P:System.Drawing.SizeF.Width" /> of the specified size to the x-coordinate of the <see cref="T:System.Drawing.PointF" /> and the <see cref="P:System.Drawing.SizeF.Height" /> to the y-coordinate of the <see cref="T:System.Drawing.PointF" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates the <see cref="T:System.Drawing.PointF" /> by the specified <see cref="T:System.Drawing.SizeF" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.SizeF" /> that specifies the numbers to add to the x- and y-coordinates of the <see cref="T:System.Drawing.PointF" />.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -211,11 +283,19 @@
         <Parameter Name="right" Type="System.Drawing.PointF" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Drawing.PointF" /> structures. The result specifies whether the values of the <see cref="P:System.Drawing.PointF.X" /> and <see cref="P:System.Drawing.PointF.Y" /> properties of the two <see cref="T:System.Drawing.PointF" /> structures are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Drawing.PointF.X" /> and <see cref="P:System.Drawing.PointF.Y" /> values of the left and right <see cref="T:System.Drawing.PointF" /> structures are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> to compare. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> to compare. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,11 +313,19 @@
         <Parameter Name="right" Type="System.Drawing.PointF" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the coordinates of the specified points are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to indicate the <see cref="P:System.Drawing.PointF.X" /> and <see cref="P:System.Drawing.PointF.Y" /> values of <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false. </para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> to compare.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.PointF" /> to compare.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -255,11 +343,19 @@
         <Parameter Name="sz" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a <see cref="T:System.Drawing.PointF" /> by the negative of a given <see cref="T:System.Drawing.Size" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> that specifies the numbers to subtract from the coordinates of <paramref name="pt" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -280,11 +376,22 @@
         <Parameter Name="sz" Type="System.Drawing.SizeF" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.PointF.op_Subtraction(System.Drawing.PointF,System.Drawing.SizeF)" /> operator subtracts the <see cref="P:System.Drawing.SizeF.Width" /> of the specified size from the x-coordinate of the <see cref="T:System.Drawing.PointF" /> and the <see cref="P:System.Drawing.SizeF.Height" /> from the y-coordinate of the <see cref="T:System.Drawing.PointF" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a <see cref="T:System.Drawing.PointF" /> by the negative of a specified <see cref="T:System.Drawing.SizeF" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.SizeF" /> that specifies the numbers to subtract from the coordinates of <paramref name="pt" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Subtract">
@@ -301,11 +408,22 @@
         <Parameter Name="sz" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.PointF.Subtract(System.Drawing.PointF,System.Drawing.Size)" /> method subtracts the <see cref="P:System.Drawing.Size.Width" /> of the specified size from the x-coordinate of the <see cref="T:System.Drawing.PointF" /> and the <see cref="P:System.Drawing.Size.Height" /> from the y-coordinate of the <see cref="T:System.Drawing.PointF" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a <see cref="T:System.Drawing.PointF" /> by the negative of a specified size.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> that specifies the numbers to subtract from the coordinates of <paramref name="pt" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Subtract">
@@ -322,11 +440,22 @@
         <Parameter Name="sz" Type="System.Drawing.SizeF" />
       </Parameters>
       <Docs>
-        <param name="pt">To be added.</param>
-        <param name="sz">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.PointF.Subtract(System.Drawing.PointF,System.Drawing.SizeF)" /> method subtracts the <see cref="P:System.Drawing.SizeF.Width" /> of the specified size from the x-coordinate of the <see cref="T:System.Drawing.PointF" /> and the <see cref="P:System.Drawing.SizeF.Height" /> from the y-coordinate of the <see cref="T:System.Drawing.PointF" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Translates a <see cref="T:System.Drawing.PointF" /> by the negative of a specified size.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The translated <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
+        <param name="pt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.PointF" /> to translate.</param>
+        <param name="sz">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.SizeF" /> that specifies the numbers to subtract from the coordinates of <paramref name="pt" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -337,9 +466,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Drawing.PointF" /> to a human readable string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Drawing.PointF" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -355,9 +490,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the x-coordinate of this <see cref="T:System.Drawing.PointF" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -373,9 +511,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the y-coordinate of this <see cref="T:System.Drawing.PointF" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

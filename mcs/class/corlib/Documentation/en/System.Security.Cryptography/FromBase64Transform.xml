@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FromBase64Transform" FullName="System.Security.Cryptography.FromBase64Transform">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class FromBase64Transform : System.Security.Cryptography.ICryptoTransform" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FromBase64Transform extends System.Object implements class System.IDisposable, class System.Security.Cryptography.ICryptoTransform" />
@@ -23,9 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Creates a new instance of the Base64 decoder with the default transformation mode (IgnoreWhiteSpaces).
-</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Base 64 Content-Transfer-Encoding represents arbitrary bit sequences in a form that is not human readable.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts a <see cref="T:System.Security.Cryptography.CryptoStream" /> from base 64.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,8 +46,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates a new instance of the Base64 decoder with the default transformation mode (IgnoreWhiteSpaces).</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the default configuration, white spaces are ignored. See <see cref="T:System.Security.Cryptography.FromBase64TransformMode" /> for more details.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +70,13 @@
         <Parameter Name="whitespaces" Type="System.Security.Cryptography.FromBase64TransformMode" />
       </Parameters>
       <Docs>
-        <param name="whitespaces">To be added.</param>
-        <summary>Creates a new instance of the Base64 decoder with the specified transformation mode.
-</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> class with the specified transformation mode.</para>
+        </summary>
+        <param name="whitespaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="CanReuseTransform">
@@ -77,9 +92,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current transform can be reused.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanTransformMultipleBlocks">
@@ -95,9 +113,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the current implementation, only one block can be transformed at a time, so this property is always false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether multiple blocks can be transformed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -114,8 +138,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is a simple call to <see cref="M:System.IDisposable.Dispose" />.</para>
+          <para>Calling Dispose allows the resources used by the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> to be reallocated for other purposes. For more information about Dispose, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Security.Cryptography.FromBase64Transform" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -130,8 +161,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call Dispose when you are finished using the <see cref="T:System.Security.Cryptography.FromBase64Transform" />. The Dispose method leaves the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> in an unusable state. After calling Dispose, you must release all references to the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> was occupying.</para>
+          <para>For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call Dispose before you release your last reference to the <see cref="T:System.Security.Cryptography.FromBase64Transform" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the current instance of the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -150,9 +191,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose() method and the Finalize method. Dispose() invokes the protected Dispose(Boolean) method with the disposing parameter set to true. Finalize invokes Dispose with disposing set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Security.Cryptography.FromBase64Transform" /> references. This method invokes the Dispose() method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.FromBase64Transform" /> and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -169,8 +218,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Security.Cryptography.FromBase64Transform" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InputBlockSize">
@@ -186,9 +238,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns the input block size for the Base64 decoder.</summary>
         <value>The input block size for Base64 decoder is always 1 byte.</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input block size for this transformation is one byte.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the input block size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputBlockSize">
@@ -204,9 +262,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns the output block size for the Base64 decoder.</summary>
         <value>The value returned by this property is always 3.</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The output block size for this transformation is 3 bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the output block size.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
@@ -245,14 +309,25 @@
         <Parameter Name="outputOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="inputBuffer">To be added: an object of type 'byte []'</param>
-        <param name="inputOffset">To be added: an object of type 'int'</param>
-        <param name="inputCount">To be added: an object of type 'int'</param>
-        <param name="outputBuffer">To be added: an object of type 'byte []'</param>
-        <param name="outputOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified region of the input byte array from base 64 and copies the result to the specified region of the output byte array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written.</para>
+        </returns>
+        <param name="inputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to compute from base 64. </param>
+        <param name="inputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the input byte array from which to begin using data. </param>
+        <param name="inputCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the input byte array to use as data. </param>
+        <param name="outputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output to which to write the result. </param>
+        <param name="outputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the output byte array from which to begin writing data. </param>
       </Docs>
     </Member>
     <Member MemberName="TransformFinalBlock">
@@ -273,12 +348,21 @@
         <Parameter Name="inputCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="inputBuffer">To be added: an object of type 'byte []'</param>
-        <param name="inputOffset">To be added: an object of type 'int'</param>
-        <param name="inputCount">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified region of the specified byte array from base 64.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed conversion.</para>
+        </returns>
+        <param name="inputBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input to convert from base 64. </param>
+        <param name="inputOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset into the byte array from which to begin using data. </param>
+        <param name="inputCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes in the byte array to use as data. </param>
       </Docs>
     </Member>
   </Members>

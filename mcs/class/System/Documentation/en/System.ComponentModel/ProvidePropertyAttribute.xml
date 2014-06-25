@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProvidePropertyAttribute" FullName="System.ComponentModel.ProvidePropertyAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ProvidePropertyAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ProvidePropertyAttribute extends System.Attribute" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you mark a class with this attribute, you tell the code generator to create an extender property with the name you provide. The marked class must implement <see cref="T:System.ComponentModel.IExtenderProvider" />. As a result, the new property can be used by other components in a container.</para>
+      <para>Within the marked class, you must implement Get &lt;name&gt; and Set &lt;name&gt; methods. For example, if you mark a class with [ProvideProperty("PropertyName")], you must implement GetPropertyName and SetPropertyName methods. To specify that the new property will be an extender property, you must implement from <see cref="T:System.ComponentModel.IExtenderProvider" />, you must also implement a CanExtend method.</para>
+      <para>For more information, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the name of the property that an implementer of <see cref="T:System.ComponentModel.IExtenderProvider" /> offers to other components. This class cannot be inherited</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,10 +48,15 @@
         <Parameter Name="receiverTypeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added: an object of type 'string'</param>
-        <param name="receiverTypeName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ProvidePropertyAttribute" /> class with the name of the property and the type of its receiver.</para>
+        </summary>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property extending to an object of the specified type. </param>
+        <param name="receiverTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data type this property can extend. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,10 +74,15 @@
         <Parameter Name="receiverType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added: an object of type 'string'</param>
-        <param name="receiverType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ProvidePropertyAttribute" /> class with the name of the property and its <see cref="T:System.Type" />.</para>
+        </summary>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property extending to an object of the specified type. </param>
+        <param name="receiverType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the data type of the object that can receive the property. </param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -82,10 +101,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the value of the given object is equal to the current <see cref="T:System.ComponentModel.ProvidePropertyAttribute" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of the given object is equal to that of the current; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to test the value equality of. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -102,9 +128,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for this instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.ProvidePropertyAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PropertyName">
@@ -120,9 +152,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of a property that this class provides.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiverTypeName">
@@ -138,9 +173,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the data type this property can extend.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeId">
@@ -156,9 +194,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a unique identifier for this attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FilterInvalidBodyAccessException" FullName="System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException">
   <TypeSignature Language="C#" Value="public class FilterInvalidBodyAccessException : System.ServiceModel.Dispatcher.InvalidBodyAccessException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit FilterInvalidBodyAccessException extends System.ServiceModel.Dispatcher.InvalidBodyAccessException" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This exception is thrown when a filter or filter table attempts to access the body of an instance of <see cref="T:System.ServiceModel.Channels.Message" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when a filter or filter table attempts to access the body of an unbuffered message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,8 +49,11 @@
       </Parameters>
       <Docs>
         <param name="msg">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" /> class with a specified error message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,10 +68,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" /> class with data that specifies the source and destination of the stream and the information required to serialize the exception.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that contains all the data required to serialize the exception.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that specifies the source and destination of the stream.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -74,9 +92,13 @@
       </Parameters>
       <Docs>
         <param name="msg">To be added.</param>
-        <param name="filters">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" /> with a specified error message and the filters that attempted to inspect the body of the message.</para>
+        </summary>
+        <param name="filters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> that attempted to inspect the body of the message.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -93,8 +115,11 @@
       <Docs>
         <param name="msg">To be added.</param>
         <param name="inner">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" /> class with a specified error message and the inner exception that caused the current exception. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -112,9 +137,13 @@
       <Docs>
         <param name="msg">To be added.</param>
         <param name="inner">To be added.</param>
-        <param name="filters">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.FilterInvalidBodyAccessException" /> class with a specified error message, the inner exception that caused the current exception, and the collection that contains the filter that attempted to inspect the body. </para>
+        </summary>
+        <param name="filters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> that contains the filter that attempted to inspect the body of the message.</param>
       </Docs>
     </Member>
     <Member MemberName="Filters">
@@ -128,9 +157,15 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the case of a filter table, this collection does not necessarily contain all offending filters. It only contains the filter(s) that caused the violation. It is quite possible there are other filters that would have committed a similar violation had processing not been aborted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of filters that contains the filter that caused the exception to be thrown.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

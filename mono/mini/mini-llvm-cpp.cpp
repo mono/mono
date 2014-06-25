@@ -21,27 +21,30 @@
 //
 
 #include "config.h"
-//undef those as llvm defines them on its own config.h as well.
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
 
 #include <stdint.h>
 
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/Host.h>
 #include <llvm/PassManager.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/JITMemoryManager.h>
 #include <llvm/ExecutionEngine/JITEventListener.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/Target/TargetRegisterInfo.h>
+#if LLVM_API_VERSION >= 1
+#include <llvm/IR/Verifier.h>
+#else
 #include <llvm/Analysis/Verifier.h>
+#endif
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Support/CommandLine.h>
+#if LLVM_API_VERSION >= 1
+#include "llvm/IR/LegacyPassNameParser.h"
+#else
 #include "llvm/Support/PassNameParser.h"
+#endif
 #include "llvm/Support/PrettyStackTrace.h"
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/CodeGen/MachineFunctionPass.h>
@@ -360,7 +363,11 @@ mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef ptr, LLVMValueRef 
 {
 	AtomicCmpXchgInst *ins;
 
+#if LLVM_API_VERSION >= 1
+	ins = unwrap(builder)->CreateAtomicCmpXchg (unwrap(ptr), unwrap (cmp), unwrap (val), SequentiallyConsistent, SequentiallyConsistent);
+#else
 	ins = unwrap(builder)->CreateAtomicCmpXchg (unwrap(ptr), unwrap (cmp), unwrap (val), SequentiallyConsistent);
+#endif
 	return wrap (ins);
 }
 
@@ -594,11 +601,17 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   opts.JITExceptionHandling = 1;
 
   EngineBuilder b (unwrap (MP));
-#ifdef TARGET_AMD64
-  ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setCodeModel (CodeModel::Large).setAllocateGVsWithCode (true).create ();
-#else
-  ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true).create ();
+  EngineBuilder &eb = b;
+  eb = eb.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true);
+#if LLVM_API_VERSION >= 1
+  StringRef cpu_name = sys::getHostCPUName ();
+  eb = eb.setMCPU (cpu_name);
 #endif
+#ifdef TARGET_AMD64
+  eb = eb.setCodeModel (CodeModel::Large);
+#endif
+
+  ExecutionEngine *EE = eb.create ();
   g_assert (EE);
   mono_ee->EE = EE;
 
@@ -610,7 +623,11 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   FunctionPassManager *fpm = new FunctionPassManager (unwrap (MP));
   mono_ee->fpm = fpm;
 
+#if LLVM_API_VERSION >= 1
+  fpm->add(new DataLayoutPass(*EE->getDataLayout()));
+#else
   fpm->add(new DataLayout(*EE->getDataLayout()));
+#endif
 
   if (PassList.size() > 0) {
 	  /* Use the passes specified by the env variable */

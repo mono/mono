@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRemoteWebConfigurationHostServer" FullName="System.Web.Configuration.IRemoteWebConfigurationHostServer">
   <TypeSignature Language="C#" Value="public interface IRemoteWebConfigurationHostServer" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Base class from which <see cref="T:System.Web.Configuration.RemoteWebConfigurationHostServer" /> extends.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used internally to support remote access to configuration data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DoEncryptOrDecrypt">
@@ -40,10 +47,16 @@
         <param name="protection_provider_type">To be added.</param>
         <param name="params_keys">To be added.</param>
         <param name="param_values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Conditionally encrypts or decrypts the value of the string referenced by the <paramref name="xmlString" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing either the encrypted or decrypted value of the <paramref name="xmlString" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,14 +126,24 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="webLevel">To be added.</param>
-        <param name="path">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="locationSubPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally to support remote access to configuration data.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A concatenated string representing the file path of the configuration file.</para>
+        </returns>
+        <param name="webLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The level of the configuration file.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />Path to the remote configuration file to be accessed.</param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />Path to the remote machine.</param>
+        <param name="locationSubPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The subpath of the location of the configuration file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

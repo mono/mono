@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509ChainStatusFlags" FullName="System.Security.Cryptography.X509Certificates.X509ChainStatusFlags">
   <TypeSignature Language="C#" Value="public enum X509ChainStatusFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X509ChainStatusFlags extends System.Enum" />
@@ -15,9 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used in conjunction with the <see cref="T:System.Security.Cryptography.X509Certificates.X509ChainStatus" /> structure and the <see cref="P:System.Security.Cryptography.X509Certificates.X509Chain.ChainStatus" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the status of an X509 chain.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CtlNotSignatureValid">
@@ -32,8 +39,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the certificate trust list (CTL) contains an invalid signature.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CtlNotTimeValid">
@@ -48,8 +58,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the certificate trust list (CTL) is not valid because of an invalid time value, such as one that indicates that the CTL has expired.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CtlNotValidForUsage">
@@ -64,8 +77,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the certificate trust list (CTL) is not valid for this use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cyclic">
@@ -80,8 +96,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain could not be built.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasExcludedNameConstraint">
@@ -96,8 +115,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid because a certificate has excluded a name constraint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasNotDefinedNameConstraint">
@@ -112,8 +134,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the certificate has an undefined name constraint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasNotPermittedNameConstraint">
@@ -128,8 +153,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the certificate has an impermissible name constraint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasNotSupportedNameConstraint">
@@ -144,8 +172,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the certificate does not have a supported name constraint or has a name constraint that is unsupported.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidBasicConstraints">
@@ -160,8 +191,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to invalid basic constraints.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidExtension">
@@ -176,8 +210,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to an invalid extension.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidNameConstraints">
@@ -192,8 +229,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to invalid name constraints.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidPolicyConstraints">
@@ -208,8 +248,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to invalid policy constraints.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoError">
@@ -224,8 +267,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain has no errors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoIssuanceChainPolicy">
@@ -240,8 +286,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that there is no certificate policy extension in the certificate. This error would occur if a group policy has specified that all certificates must have a certificate policy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotSignatureValid">
@@ -256,8 +305,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to an invalid certificate signature.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotTimeNested">
@@ -272,8 +324,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deprecated. Specifies that the CA (certificate authority) certificate and the issued certificate have validity periods that are not nested. For example, the CA cert can be valid from January 1 to December 1 and the issued certificate from January 2 to December 2, which would mean the validity periods are not nested.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotTimeValid">
@@ -288,8 +343,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is not valid due to an invalid time value, such as a value that indicates an expired certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotValidForUsage">
@@ -304,8 +362,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the key usage is not valid.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OfflineRevocation">
@@ -320,8 +381,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the online certificate revocation list (CRL) the X509 chain relies on is currently offline.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PartialChain">
@@ -336,8 +400,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain could not be built up to the root certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RevocationStatusUnknown">
@@ -352,8 +419,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that it is not possible to determine whether the certificate has been revoked. This can be due to the certificate revocation list (CRL) being offline or unavailable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Revoked">
@@ -368,8 +438,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to a revoked certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UntrustedRoot">
@@ -384,8 +457,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509ChainStatusFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the X509 chain is invalid due to an untrusted root certificate.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -313,6 +313,8 @@ type_to_simd_type (int type)
 static LLVMTypeRef
 type_to_llvm_type (EmitContext *ctx, MonoType *t)
 {
+	t = mini_replace_type (t);
+
 	if (t->byref)
 		return LLVMPointerType (LLVMInt8Type (), 0);
 	switch (t->type) {
@@ -1069,11 +1071,13 @@ sig_to_llvm_sig_full (EmitContext *ctx, MonoMethodSignature *sig, LLVMCallInfo *
 	int i, j, pindex, vret_arg_pindex = 0;
 	int *pindexes;
 	gboolean vretaddr = FALSE;
+	MonoType *rtype;
 
 	if (sinfo)
 		memset (sinfo, 0, sizeof (LLVMSigInfo));
 
-	ret_type = type_to_llvm_type (ctx, sig->ret);
+	rtype = mini_replace_type (sig->ret);
+	ret_type = type_to_llvm_type (ctx, rtype);
 	CHECK_FAILURE (ctx);
 
 	if (cinfo && cinfo->ret.storage == LLVMArgVtypeInReg) {
@@ -1086,7 +1090,7 @@ sig_to_llvm_sig_full (EmitContext *ctx, MonoMethodSignature *sig, LLVMCallInfo *
 		} else {
 			g_assert_not_reached ();
 		}
-	} else if (cinfo && mini_type_is_vtype (ctx->cfg, sig->ret)) {
+	} else if (cinfo && mini_type_is_vtype (ctx->cfg, rtype)) {
 		g_assert (cinfo->ret.storage == LLVMArgVtypeRetAddr);
 		vretaddr = TRUE;
 		ret_type = LLVMVoidType ();
@@ -3343,7 +3347,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 		case OP_ATOMIC_CAS_I4:
 		case OP_ATOMIC_CAS_I8: {
-			LLVMValueRef args [3];
+			LLVMValueRef args [3], val;
 			LLVMTypeRef t;
 				
 			if (ins->opcode == OP_ATOMIC_CAS_I4)
@@ -3356,7 +3360,13 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = convert (ctx, values [ins->sreg3], t);
 			/* new value */
 			args [2] = convert (ctx, values [ins->sreg2], t);
-			values [ins->dreg] = mono_llvm_build_cmpxchg (builder, args [0], args [1], args [2]);
+			val = mono_llvm_build_cmpxchg (builder, args [0], args [1], args [2]);
+#if LLVM_API_VERSION >= 1
+			/* cmpxchg returns a pair */
+			values [ins->dreg] = LLVMBuildExtractValue (builder, val, 0, "");
+#else
+			values [ins->dreg] = val;
+#endif
 			break;
 		}
 		case OP_MEMORY_BARRIER: {
@@ -4397,7 +4407,10 @@ mono_llvm_emit_method (MonoCompile *cfg)
 
 	if (cfg->compile_aot) {
 		LLVMSetLinkage (method, LLVMInternalLinkage);
+#if LLVM_API_VERSION == 0
+		/* This causes an assertion in later LLVM versions */
 		LLVMSetVisibility (method, LLVMHiddenVisibility);
+#endif
 	} else {
 		LLVMSetLinkage (method, LLVMPrivateLinkage);
 	}
@@ -4749,10 +4762,15 @@ mono_llvm_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		case LLVMArgInIReg:
 		case LLVMArgInFPReg: {
 			MonoType *t = (sig->hasthis && i == 0) ? &mono_get_intptr_class ()->byval_arg : sig->params [i - sig->hasthis];
+			int opcode;
 
-			if (!t->byref && (t->type == MONO_TYPE_R8 || t->type == MONO_TYPE_R4)) {
+			opcode = mono_type_to_regmove (cfg, t);
+			if (opcode == OP_FMOVE) {
 				MONO_INST_NEW (cfg, ins, OP_FMOVE);
 				ins->dreg = mono_alloc_freg (cfg);
+			} else if (opcode == OP_LMOVE) {
+				MONO_INST_NEW (cfg, ins, OP_LMOVE);
+				ins->dreg = mono_alloc_lreg (cfg);
 			} else {
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);

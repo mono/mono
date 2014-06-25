@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Lookup&lt;TKey,TElement&gt;" FullName="System.Linq.Lookup&lt;TKey,TElement&gt;">
   <TypeSignature Language="C#" Value="public class Lookup&lt;TKey,TElement&gt; : System.Collections.Generic.IEnumerable&lt;System.Linq.IGrouping&lt;TKey,TElement&gt;&gt;, System.Linq.ILookup&lt;TKey,TElement&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Lookup`2&lt;TKey, TElement&gt; extends System.Object implements class System.Collections.Generic.IEnumerable`1&lt;class System.Linq.IGrouping`2&lt;!TKey, !TElement&gt;&gt;, class System.Collections.IEnumerable, class System.Linq.ILookup`2&lt;!TKey, !TElement&gt;" />
@@ -24,8 +25,18 @@
   <Docs>
     <typeparam name="TKey">To be added.</typeparam>
     <typeparam name="TElement">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Linq.Lookup`2" /> resembles a <see cref="T:System.Collections.Generic.Dictionary`2" />. The difference is that a <see cref="T:System.Collections.Generic.Dictionary`2" /> maps keys to single values, whereas a <see cref="T:System.Linq.Lookup`2" /> maps keys to collections of values.</para>
+      <para>You can create an instance of a <see cref="T:System.Linq.Lookup`2" /> by calling <see cref="M:System.Linq.Enumerable.ToLookup``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})" /> on an object that implements <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+      <block subset="none" type="note">
+        <para>There is no public constructor to create a new instance of a <see cref="T:System.Linq.Lookup`2" />. Additionally, <see cref="T:System.Linq.Lookup`2" /> objects are immutable, that is, you cannot add or remove elements or keys from a <see cref="T:System.Linq.Lookup`2" /> object after it has been created.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of keys each mapped to one or more values.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplyResultSelector&lt;TResult&gt;">
@@ -86,9 +97,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Linq.Lookup`2.Count" /> property does not change because items cannot be added to or removed from a <see cref="T:System.Linq.Lookup`2" /> object after it has been created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of key/value collection pairs in the <see cref="T:System.Linq.Lookup`2" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -104,9 +121,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a generic enumerator that iterates through the <see cref="T:System.Linq.Lookup`2" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the <see cref="T:System.Linq.Lookup`2" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -143,9 +166,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the <see cref="T:System.Linq.Lookup`2" />. This class cannot be inherited.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the <see cref="T:System.Linq.Lookup`2" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DebugInfoGenerator" FullName="System.Runtime.CompilerServices.DebugInfoGenerator">
   <TypeSignature Language="C#" Value="public abstract class DebugInfoGenerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DebugInfoGenerator extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Generates debug information for lambda expressions in an expression tree.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DebugInfoGenerator" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreatePdbGenerator">
@@ -39,9 +46,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a program database (PDB) symbol generator.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PDB symbol generator.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MarkSequencePoint">
@@ -60,11 +73,17 @@
         <Parameter Name="sequencePoint" Type="System.Linq.Expressions.DebugInfoExpression" />
       </Parameters>
       <Docs>
-        <param name="method">To be added.</param>
-        <param name="ilOffset">To be added.</param>
-        <param name="sequencePoint">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Marks a sequence point in Microsoft intermediate language (MSIL) code.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lambda expression that is generated.</param>
+        <param name="ilOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset within MSIL code at which to mark the sequence point.</param>
+        <param name="sequencePoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />Debug information that corresponds to the sequence point.</param>
       </Docs>
     </Member>
   </Members>

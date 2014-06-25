@@ -1,5 +1,5 @@
 # ensure LF endings on all checkouts
-configure.in crlf=input
+configure.ac crlf=input
 
 # ensure native line endings on checkout
 *.c	crlf

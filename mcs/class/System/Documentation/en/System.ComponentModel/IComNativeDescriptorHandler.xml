@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComNativeDescriptorHandler" FullName="System.ComponentModel.IComNativeDescriptorHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IComNativeDescriptorHandler" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IComNativeDescriptorHandler" />
@@ -17,8 +18,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>This API is now obsolete. Add a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> to handle a <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" /> instead.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a top-level mapping layer between a COM object and a <see cref="T:System.ComponentModel.TypeDescriptor" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetAttributes">
@@ -37,10 +46,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the attributes for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of attributes for <paramref name="component" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get attributes for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetClassName">
@@ -59,10 +80,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class name for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the class that corresponds with <paramref name="component" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the class name for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetConverter">
@@ -81,10 +114,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type converter for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.TypeConverter" /> for <paramref name="component" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the <see cref="T:System.ComponentModel.TypeConverter" /> for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultEvent">
@@ -103,10 +148,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default event for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that represents <paramref name="component" />'s default event.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default event for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultProperty">
@@ -125,10 +182,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default property for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents <paramref name="component" />'s default property.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default property for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEditor">
@@ -148,11 +217,24 @@
         <Parameter Name="baseEditorType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="baseEditorType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the editor for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The editor for <paramref name="component" />. </para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the editor for.</param>
+        <param name="baseEditorType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base type of the editor for <paramref name="component" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEvents">
@@ -171,10 +253,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the events for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of event descriptors for <paramref name="component" />. </para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get events for.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEvents">
@@ -194,11 +288,24 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the events with the specified attributes for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of event descriptors for <paramref name="component" />. </para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get events for.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes used to filter events. </param>
       </Docs>
     </Member>
     <Member MemberName="GetName">
@@ -217,10 +324,22 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of <paramref name="component" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get the name of.</param>
       </Docs>
     </Member>
     <Member MemberName="GetProperties">
@@ -240,11 +359,24 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="attributes">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This API is now obsolete. The non-obsolete alternative is <see cref="P:System.ComponentModel.TypeDescriptor.ComObjectType" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the properties with the specified attributes for the specified component.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of property descriptors for <paramref name="component" />.</para>
+        </returns>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component to get events for.</param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes used to filter properties.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPropertyValue">

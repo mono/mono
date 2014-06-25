@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StreamUpgradeAcceptor" FullName="System.ServiceModel.Channels.StreamUpgradeAcceptor">
   <TypeSignature Language="C#" Value="public abstract class StreamUpgradeAcceptor" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StreamUpgradeAcceptor extends System.Object" />
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An example of a stream upgrade is to build a compression stream directly on top of the transport stream. </para>
+      <para>This class is used with <see cref="T:System.ServiceModel.Channels.StreamUpgradeInitiator" /> and <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" /> to implement a custom stream upgrade.  </para>
+      <para>For a detailed description of the upgrade process, see <see cref="T:System.ServiceModel.Channels.StreamUpgradeProvider" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To implement a custom upgrade acceptor, inherited from this abstract base class. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.StreamUpgradeAcceptor" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AcceptUpgrade">
@@ -41,10 +53,20 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to wrap the existing transport stream by providing additional capabilities; for example, a compressing stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Upgrades the transport stream and returns the upgraded stream.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the upgraded stream.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to be upgraded.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginAcceptUpgrade">
@@ -63,12 +85,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the remarks for <see cref="M:System.ServiceModel.Channels.StreamUpgradeAcceptor.AcceptUpgrade(System.IO.Stream)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronous version of <see cref="M:System.ServiceModel.Channels.StreamUpgradeAcceptor.AcceptUpgrade(System.IO.Stream)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a result code that is passed into EndAcceptUpgrade to access the upgraded stream.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to be upgraded.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to be called when the AcceptUpgrade call has completed.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />State information for the AcceptUpgrade call.</param>
       </Docs>
     </Member>
     <Member MemberName="CanUpgrade">
@@ -85,10 +119,20 @@
         <Parameter Name="contentType" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="contentType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The developer can inspect the requested content type and determine whether the resulting upgrade can be performed by this upgrade acceptor. This content type comes from the GetNextUpgrade method on the matching upgrade initiator.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the upgrade requested is supported by this upgrade acceptor.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this kind of upgrade is supported; otherwise, false. </para>
+        </returns>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to be checked. </param>
       </Docs>
     </Member>
     <Member MemberName="EndAcceptUpgrade">
@@ -105,10 +149,20 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the remarks in <see cref="M:System.ServiceModel.Channels.StreamUpgradeAcceptor.AcceptUpgrade(System.IO.Stream)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronous version of <see cref="M:System.ServiceModel.Channels.StreamUpgradeAcceptor.AcceptUpgrade(System.IO.Stream)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the upgraded stream.</para>
+        </returns>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult returned from BeginAcceptUpgrade.</param>
       </Docs>
     </Member>
   </Members>

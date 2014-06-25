@@ -2,7 +2,9 @@
 #define __MONO_METADATA_BASIC_BLOCK_H__
 
 #include <glib.h>
-
+#include <mono/metadata/metadata.h>
+#include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-error.h>
 
 G_BEGIN_DECLS
 
@@ -15,7 +17,6 @@ struct _MonoSimpleBasicBlock {
 	unsigned colour   : 1;
 	unsigned dead     : 1;
 };
-
 
 MonoSimpleBasicBlock*
 mono_basic_block_split (MonoMethod *method, MonoError *error) MONO_INTERNAL;

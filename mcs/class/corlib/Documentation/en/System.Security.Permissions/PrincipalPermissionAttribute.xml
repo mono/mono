@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrincipalPermissionAttribute" FullName="System.Security.Permissions.PrincipalPermissionAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PrincipalPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit PrincipalPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
@@ -22,8 +23,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Security.Permissions.PrincipalPermissionAttribute" /> can be used to declaratively demand that users running your code belong to a specified role or have been authenticated. Use of <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" /> creates a <see cref="T:System.Security.Permissions.PrincipalPermission" /> with <see cref="P:System.Security.Permissions.PrincipalPermissionAttribute.Authenticated" /> set to true and <see cref="P:System.Security.Permissions.PrincipalPermissionAttribute.Name" /> and <see cref="P:System.Security.Permissions.PrincipalPermissionAttribute.Role" /> set to null.</para>
+      <para>The scope of the declaration that is allowed depends on the <see cref="T:System.Security.Permissions.SecurityAction" /> that is used. <see cref="T:System.Security.Permissions.PrincipalPermissionAttribute" /> cannot be applied at the assembly level.</para>
+      <para>The security information declared by a security attribute is stored in the metadata of the attribute target and is accessed by the system at run time. Security attributes are used only for declarative security. For imperative security, use the corresponding permission class.</para>
+      <block subset="none" type="note">
+        <para>Before you use this class to demand principal permission, you must set the current application domain's principal policy to the enumeration value <see cref="F:System.Security.Principal.PrincipalPolicy.WindowsPrincipal" />. By default, the principal policy is set to <see cref="F:System.Security.Principal.PrincipalPolicy.UnauthenticatedPrincipal" />. If you do not set the principal policy to <see cref="F:System.Security.Principal.PrincipalPolicy.WindowsPrincipal" />, a demand for principal permission will fail. The following code should be executed before the principal permission is demanded: AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal).</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows security actions for <see cref="T:System.Security.Permissions.PrincipalPermission" /> to be applied to code using declarative security. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +53,16 @@
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
       </Parameters>
       <Docs>
-        <param name="action">To be added: an object of type 'SecurityAction'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Demand, InheritanceDemand, and LinkDemand are the only values of <see cref="T:System.Security.Permissions.SecurityAction" /> that have meaning for this attribute. Other actions do not apply to permissions that are not code access permissions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Permissions.PrincipalPermissionAttribute" /> class with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.SecurityAction" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="Authenticated">
@@ -58,9 +78,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the current principal has been authenticated by the underlying role-based security provider.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreatePermission">
@@ -77,9 +100,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method should only be called by the security system, never by application code.</para>
+          <para>At compile time, attributes convert security declarations to a serialized form in metadata. Declarative security data in metadata is created from the permission that this method returns that corresponds to this attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and returns a new <see cref="T:System.Security.Permissions.PrincipalPermission" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.PrincipalPermission" /> that corresponds to this attribute.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -95,9 +128,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the authentication provider is Windows NT, <see cref="P:System.Security.Permissions.PrincipalPermissionAttribute.Name" /> is the same as the user's Windows NT login name (in the form "DomainName\UserName"). Check the documentation of your host to determine which authentication provider it uses and how it determines the identity of the current principal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the identity associated with the current principal.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Role">
@@ -113,9 +152,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The available roles will differ based on the authentication provider in use by the host. If the authentication provider is Windows NT, roles are Windows NT user groups (in the form "DomainName\GroupName"). Check the documentation of your host to determine which authentication provider it uses and what roles users can belong to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets membership in a specified security role.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

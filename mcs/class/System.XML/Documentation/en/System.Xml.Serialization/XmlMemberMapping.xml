@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlMemberMapping" FullName="System.Xml.Serialization.XmlMemberMapping">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlMemberMapping" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlMemberMapping extends System.Object" />
@@ -14,8 +15,34 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlMemberMapping" /> class is used with the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class, which references an array of <see cref="T:System.Xml.Serialization.XmlMemberMapping" /> objects. </para>
+      <para>An <see cref="T:System.Xml.Serialization.XmlMemberMapping" /> object can represent any one of the following:</para>
+      <list type="bullet">
+        <item>
+          <para>A Web service method input parameter.</para>
+        </item>
+        <item>
+          <para>A Web service method output parameter.</para>
+        </item>
+        <item>
+          <para>A Web service return type, if not void.</para>
+        </item>
+        <item>
+          <para>A SOAP input header.</para>
+        </item>
+        <item>
+          <para>A SOAP output header.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Xml.Serialization.XmlMemberMapping" /> objects are accessible through the indexed operator property.</para>
+      <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for an explanation of the conditions under which an <see cref="T:System.Xml.Serialization.XmlMemberMapping" /> object corresponds to a WSDL message definition's &lt;part&gt; element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Maps a code entity in a .NET Framework Web service method to an element in a Web Services Description Language (WSDL) message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Any">
@@ -31,9 +58,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A true value for the <see cref="P:System.Xml.Serialization.XmlMemberMapping.Any" /> property corresponds to the &lt;any&gt; element declaration and the anyAttribute attribute declaration in an XML Schema document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the .NET Framework type maps to an XML element or attribute of any type. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CheckSpecified">
@@ -49,9 +82,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the XML Schema, an element declared with a minOccurs="0" attribute value indicates that the element is optional. An attribute can be declared with a use="optional" attribute. The .NET Framework, using the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format>, maps either of these constructs to a public field or property that is accompanied by a public field of type bool whose name is the first field's name with "Specified" appended. The <see cref="P:System.Xml.Serialization.XmlMemberMapping.CheckSpecified" /> property checks whether such a bool field exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the accompanying field in the .NET Framework type has a value specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ElementName">
@@ -67,9 +106,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unqualified name of the XML element declaration that applies to this mapping. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypeName">
@@ -87,11 +129,18 @@
         <Parameter Name="codeProvider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="codeProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the type associated with the specified <see cref="T:System.CodeDom.Compiler.CodeDomProvider" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the type.</para>
+        </returns>
+        <param name="codeProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" />  that contains the name of the type.</param>
       </Docs>
     </Member>
     <Member MemberName="MemberName">
@@ -107,9 +156,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web service method member can be an input parameter, output parameter, return type, input header, or output header.</para>
+          <para>See the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> class for cases when a member corresponds to a &lt;part&gt; element defined in a Web Services Description Language (WSDL) document. Note, however, that with a wrapped binding between a WSDL operation and a .NET Framework method, (indicated by the <see cref="F:System.Web.Services.Protocols.SoapParameterStyle.Wrapped" /> enumeration member), the method parameters and return value do not appear in the WSDL document.</para>
+          <para>When a Web service class is being reflected into a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object, the return type's <see cref="P:System.Xml.Serialization.XmlMemberMapping.MemberName" /> property becomes the method name (made unique from other member names, if necessary) with "Result" appended. This convention also is used, in some circumstances, while importing Web service classes from <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects generated from WSDL documents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the Web service method member that is represented by this mapping. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -125,9 +182,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML namespace that applies to this mapping. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeFullName">
@@ -143,9 +203,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified type name of the .NET Framework type for this mapping. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeName">
@@ -161,9 +224,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type name of the .NET Framework type for this mapping. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeNamespace">
@@ -179,9 +245,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the namespace of the .NET Framework type for this mapping.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XsdElementName">
@@ -196,10 +265,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the XML element name as it appears in the service description document.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

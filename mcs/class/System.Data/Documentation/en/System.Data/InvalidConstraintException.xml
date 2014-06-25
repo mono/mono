@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InvalidConstraintException" FullName="System.Data.InvalidConstraintException">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class InvalidConstraintException : System.Data.DataException" />
   <AssemblyInfo>
@@ -14,8 +15,29 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.InvalidConstraintException" /> is thrown when incorrectly invoking the following methods while trying to create or access a relation.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.Data.DataRelationCollection.Add(System.Data.DataRelation)" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Data.DataRowCollection.Clear" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Data.DataRow.GetParentRow(System.String)" /> </para>
+        </item>
+      </list>
+      <para>If you call <see cref="M:System.Data.DataRelationCollection.Add(System.Data.DataRelation)" />, the <see cref="T:System.Data.InvalidConstraintException" /> may be thrown if a relation cannot be created based on the values supplied in the parameters. If you call <see cref="M:System.Data.DataRowCollection.Clear" />, the <see cref="T:System.Data.InvalidConstraintException" /> may be thrown if a <see cref="T:System.Data.ForeignKeyConstraint" /> is enforced on the <see cref="T:System.Data.DataRowCollection" />. If you call <see cref="M:System.Data.DataRow.GetParentRow(System.String)" />, the <see cref="T:System.Data.InvalidConstraintException" /> may be thrown if the columns have different data types or the tables do not belong to the same <see cref="T:System.Data.DataSet" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the exception that is thrown when incorrectly trying to create or access a relation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.InvalidConstraintException" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +65,13 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.InvalidConstraintException" /> class with the specified string.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to display when the exception is thrown. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,10 +87,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.InvalidConstraintException" /> class with serialization information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data that is required to serialize or deserialize an object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Description of the source and destination of the specified serialized stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,10 +113,14 @@
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
         <param name="inner">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.InvalidConstraintException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
       </Docs>
     </Member>
   </Members>

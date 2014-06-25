@@ -3,7 +3,7 @@
 
 struct S
 {
-	int x;
+	public int x;
 	
 	S (dynamic d)
 	{

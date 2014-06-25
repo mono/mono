@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlTextWriterStyle" FullName="System.Web.UI.HtmlTextWriterStyle">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum HtmlTextWriterStyle" />
   <AssemblyInfo>
@@ -12,8 +13,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.UI.HtmlTextWriter" /> and <see cref="T:System.Web.UI.Html32TextWriter" /> objects use these enumeration values to register HTML strings to the proper HTML style.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the HTML styles available to an <see cref="T:System.Web.UI.HtmlTextWriter" /> or <see cref="T:System.Web.UI.Html32TextWriter" /> object output stream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BackgroundColor">
@@ -25,8 +33,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML backgroundcolor style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +53,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML backgroundimage style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +73,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML bordercollapse style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,8 +93,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML bordercolor style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,8 +113,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML borderstyle style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,8 +133,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML borderwidth style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,8 +153,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML color style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -145,7 +174,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML cursor style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -158,7 +190,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML direction style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Display">
@@ -171,7 +206,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML display style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Filter">
@@ -184,7 +222,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML filter style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FontFamily">
@@ -196,8 +237,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML fontfamily style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,8 +257,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML fontsize style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -230,8 +277,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML fontstyle style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -248,7 +298,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML fontvariant style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FontWeight">
@@ -260,8 +313,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML fontheight style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -277,8 +333,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML height style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -295,7 +354,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML left style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListStyleImage">
@@ -308,7 +370,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML liststyleimage style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListStyleType">
@@ -321,7 +386,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML liststyletype style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Margin">
@@ -334,7 +402,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML margin style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MarginBottom">
@@ -347,7 +418,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML marginbottom style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MarginLeft">
@@ -360,7 +434,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML marginleft style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MarginRight">
@@ -373,7 +450,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML marginright style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MarginTop">
@@ -386,7 +466,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML margintop style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Overflow">
@@ -399,7 +482,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML overflow style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OverflowX">
@@ -412,7 +498,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML overflowx style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OverflowY">
@@ -425,7 +514,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML overflowy style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Padding">
@@ -438,7 +530,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML padding style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingBottom">
@@ -451,7 +546,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML paddingbottom style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingLeft">
@@ -464,7 +562,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML paddingleft style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingRight">
@@ -477,7 +578,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML paddingright style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PaddingTop">
@@ -490,7 +594,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML paddingtop style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Position">
@@ -503,7 +610,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML position style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextAlign">
@@ -516,7 +626,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML textalign style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextDecoration">
@@ -528,8 +641,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML textdecoration style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -546,7 +662,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML textoverflow style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Top">
@@ -559,7 +678,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML top style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VerticalAlign">
@@ -572,7 +694,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML verticalalign style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Visibility">
@@ -585,7 +710,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML visibility style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WhiteSpace">
@@ -598,7 +726,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML whitespace style.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Width">
@@ -610,8 +741,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML width style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -628,7 +762,10 @@
         <ReturnType>System.Web.UI.HtmlTextWriterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the HTML zindex style.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

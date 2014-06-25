@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPropertyValueUIService" FullName="System.Drawing.Design.IPropertyValueUIService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IPropertyValueUIService" />
   <AssemblyInfo>
@@ -10,8 +11,17 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A component can use the <see cref="T:System.Drawing.Design.IPropertyValueUIService" /> interface to provide <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> objects for any properties of the component. A <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> associated with a property can provide an image, a ToolTip and an event handler for the event that is raised when the image associated with the property is clicked.</para>
+      <para>The <see cref="T:System.Drawing.Design.IPropertyValueUIService" /> interface provides methods to add, remove, and retrieve <see cref="T:System.Drawing.Design.PropertyValueUIHandler" /> delegates to or from an internal list. When the properties of a component are displayed in a property browser, each <see cref="T:System.Drawing.Design.PropertyValueUIHandler" /> in the list is given an opportunity to provide a <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> for each property of the component.</para>
+      <para>When a property browser is set to display the properties of an object, it calls the <see cref="M:System.Drawing.Design.IPropertyValueUIService.GetPropertyUIValueItems(System.ComponentModel.ITypeDescriptorContext,System.ComponentModel.PropertyDescriptor)" /> method of this interface for each property of the component, passing a <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property. The <see cref="M:System.Drawing.Design.IPropertyValueUIService.GetPropertyUIValueItems(System.ComponentModel.ITypeDescriptorContext,System.ComponentModel.PropertyDescriptor)" /> method calls each <see cref="T:System.Drawing.Design.PropertyValueUIHandler" /> that has been added to the service. Each <see cref="T:System.Drawing.Design.PropertyValueUIHandler" /> can add a <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> to the <see cref="T:System.Collections.ArrayList" /> parameter passed in the <paramref name="valueUIItemList" /> parameter to supply UI items for the property represented by the <see cref="T:System.ComponentModel.PropertyDescriptor" /> passed in the <paramref name="propDesc" /> parameter.</para>
+      <para>A <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> can contain an image to display next to the property name, a ToolTip string, and an event handler to invoke when an image associated with the property is double-clicked.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface to manage the images, ToolTips, and event handlers for the properties of a component displayed in a property browser.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddPropertyValueUIHandler">
@@ -24,9 +34,16 @@
         <Parameter Name="newHandler" Type="System.Drawing.Design.PropertyValueUIHandler" />
       </Parameters>
       <Docs>
-        <param name="newHandler">To be added: an object of type 'PropertyValueUIHandler'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="M:System.Drawing.Design.IPropertyValueUIService.GetPropertyUIValueItems(System.ComponentModel.ITypeDescriptorContext,System.ComponentModel.PropertyDescriptor)" /> is called, each handler added to this service is called and given the opportunity to add an icon for the property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Drawing.Design.PropertyValueUIHandler" /> to this service.</para>
+        </summary>
+        <param name="newHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property value UI handler to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,11 +61,19 @@
         <Parameter Name="propDesc" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'ComponentModel.ITypeDescriptorContext'</param>
-        <param name="propDesc">To be added: an object of type 'ComponentModel.PropertyDescriptor'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PropertyValueUIItem []'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> objects that match the specified context and property descriptor characteristics.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> objects that match the specified parameters.</para>
+        </returns>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to gain additional context information. </param>
+        <param name="propDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that indicates the property to match with the properties to return. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,8 +88,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the <see cref="T:System.Drawing.Design.IPropertyValueUIService" /> implementation that the global list of <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> objects has been modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,8 +107,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Components that serve <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> objects can call <see cref="M:System.Drawing.Design.IPropertyValueUIService.NotifyPropertyValueUIItemsChanged" /> when they change their list of items.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the list of <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> objects is modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,9 +131,13 @@
         <Parameter Name="newHandler" Type="System.Drawing.Design.PropertyValueUIHandler" />
       </Parameters>
       <Docs>
-        <param name="newHandler">To be added: an object of type 'PropertyValueUIHandler'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Drawing.Design.PropertyValueUIHandler" /> from the property value UI service.</para>
+        </summary>
+        <param name="newHandler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

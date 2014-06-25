@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LazyMemberInfo" FullName="System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo">
   <TypeSignature Language="C#" Value="public struct LazyMemberInfo" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit LazyMemberInfo extends System.ValueType" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a <see cref="T:System.Reflection.MemberInfo" /> object that does not load assemblies or create objects until requested.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +29,13 @@
         <Parameter Name="member" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <param name="member">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" /> class, representing the specified member.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to represent.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,10 +50,15 @@
         <Parameter Name="accessorsCreator" Type="System.Func&lt;System.Reflection.MemberInfo[]&gt;" />
       </Parameters>
       <Docs>
-        <param name="memberType">To be added.</param>
-        <param name="accessorsCreator">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" /> class for a member of the specified type with the specified accessors.</para>
+        </summary>
+        <param name="memberType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the represented member.</param>
+        <param name="accessorsCreator">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function whose return value is a collection of the accessors for the represented member.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,10 +79,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="memberType">To be added.</param>
-        <param name="accessors">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" /> class for a member of the specified type with the specified accessors.</para>
+        </summary>
+        <param name="memberType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the represented member.</param>
+        <param name="accessors">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of the accessors for the represented member.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -86,10 +104,11 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The other object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAccessors">
@@ -104,9 +123,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of the accessors for the represented member.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the accessors for the represented member.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -137,9 +162,12 @@
         <ReturnType>System.Reflection.MemberTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the represented member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -157,11 +185,19 @@
         <Parameter Name="right" Type="System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the two specified <see cref="T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" /> objects are equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to test.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to test.</param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -179,11 +215,19 @@
         <Parameter Name="right" Type="System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" />
       </Parameters>
       <Docs>
-        <param name="left">To be added.</param>
-        <param name="right">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the two specified <see cref="T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" /> objects are not equal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are equal; otherwise, false.</para>
+        </returns>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to test.</param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to test.</param>
       </Docs>
     </Member>
   </Members>

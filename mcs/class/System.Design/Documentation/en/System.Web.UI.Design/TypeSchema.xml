@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeSchema" FullName="System.Web.UI.Design.TypeSchema">
   <TypeSignature Language="C#" Value="public sealed class TypeSchema : System.Web.UI.Design.IDataSourceSchema" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.TypeSchema" /> class provides information about a particular class, given an instance of that class. For example, given a <see cref="T:System.Data.DataSet" /> object, a <see cref="T:System.Web.UI.WebControls.GridView" /> object, or an instance of a custom class that you create, the methods and properties provide information about the class from which the object derives. It does not provide information about the specific instance, but about the class.</para>
+      <para>The <see cref="T:System.Web.UI.Design.TypeSchema" /> class is used by custom control designers to assist in preparing sample data for previewing custom controls.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the structure, or schema, of an object type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +35,13 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.Design.TypeSchema" /> class using the provided <see cref="T:System.Type" /> object.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that describes an object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetViews">
@@ -43,9 +55,63 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the <see cref="M:System.Web.UI.Design.TypeSchema.GetViews" /> method always returns an array of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> objects that implement the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> interface, the exact return value is dependent on the object that is provided when creating the instance of the <see cref="T:System.Web.UI.Design.TypeSchema" /> class.</para>
+          <para>The following table provides examples of return values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Underlying Type</para>
+                </term>
+                <description>
+                  <para>Return Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A <see cref="T:System.Data.DataSet" /> </para>
+              </term>
+              <description>
+                <para>An array of type <see cref="T:System.Web.UI.Design.DataSetViewSchema" />, one for each <see cref="T:System.Data.DataTable" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A <see cref="T:System.Data.DataTable" /></para>
+              </term>
+              <description>
+                <para>A one-item array containing a <see cref="T:System.Web.UI.Design.DataSetViewSchema" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An <see cref="T:System.Collections.IEnumerable" /> type</para>
+              </term>
+              <description>
+                <para>A one-item array containing an <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Any other type</para>
+              </term>
+              <description>
+                <para>A one-item array containing an <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of schema descriptors for views into a data source.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of instances of <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" />, or of instances of a class that implements the <see cref="T:System.Web.UI.Design.IDataSourceViewSchema" /> interface.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

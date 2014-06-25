@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileVersionInfo" FullName="System.Diagnostics.FileVersionInfo">
   <TypeSignature Language="C#" Value="public sealed class FileVersionInfo" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FileVersionInfo extends System.Object" />
@@ -15,8 +16,35 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A file version number is a 64-bit number that holds the version number for a file as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMajorPart" /> number.</para>
+        </item>
+        <item>
+          <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMinorPart" /> number.</para>
+        </item>
+        <item>
+          <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileBuildPart" /> number.</para>
+        </item>
+        <item>
+          <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FilePrivatePart" /> number.</para>
+        </item>
+      </list>
+      <para>Use the <see cref="M:System.Diagnostics.FileVersionInfo.GetVersionInfo(System.String)" /> method of this class to get a <see cref="T:System.Diagnostics.FileVersionInfo" /> containing information about a file, then look at the properties for information about the file. The <see cref="P:System.Diagnostics.FileVersionInfo.FileVersion" /> property provides version information about the file. The <see cref="P:System.Diagnostics.FileVersionInfo.ProductMajorPart" />, <see cref="P:System.Diagnostics.FileVersionInfo.ProductMinorPart" />, <see cref="P:System.Diagnostics.FileVersionInfo.ProductBuildPart" />, <see cref="P:System.Diagnostics.FileVersionInfo.ProductPrivatePart" />, and <see cref="P:System.Diagnostics.FileVersionInfo.ProductVersion" /> properties provide version information for the product that the specified file is a part of. Call <see cref="M:System.Diagnostics.FileVersionInfo.ToString" /> to get a partial list of properties and their values for this file.</para>
+      <para>The <see cref="T:System.Diagnostics.FileVersionInfo" /> properties are based on version resource information built into the file. Version resources are often built into binary files such as .exe or .dll files; text files do not have version resource information.</para>
+      <para>Version resources are typically specified in a Win32 resource file, or in assembly attributes. For example the <see cref="P:System.Diagnostics.FileVersionInfo.IsDebug" /> property reflects the VS_FF_DEBUG flag value in the file's VS_FIXEDFILEINFO block, which is built from the VERSIONINFO resource in a Win32 resource file.  For more information about specifying version resources in a Win32 resource file, see "About Resource Files" and "VERSIONINFO Resource" in the Platform SDK. For more information about specifying version resources in a .NET module, see the <format type="text/html"><a href="36a98a81-b5b5-4c19-912a-11f91eff7f4e">Setting Assembly Attributes</a></format> topic.</para>
+      <block subset="none" type="note">
+        <para>This class makes a link demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when the immediate caller does not have full trust permission. For details about link demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format>.</para>
+        <para />
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides version information for a physical file on disk.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Comments">
@@ -32,9 +60,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains additional information that can be displayed for diagnostic purposes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the comments associated with the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CompanyName">
@@ -50,9 +84,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the company that produced the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileBuildPart">
@@ -68,9 +105,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A file version number is a 64-bit number that holds the version number for a file as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FilePrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the third set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the build number of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileDescription">
@@ -86,9 +144,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileMajorPart">
@@ -104,9 +165,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A file version number is a 64-bit number that holds the version number for a file as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FilePrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the first set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major part of the version number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileMinorPart">
@@ -122,9 +204,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A file version number is a 64-bit number that holds the version number for a file as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FilePrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the second set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor part of the version number of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileName">
@@ -140,9 +243,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the file that this instance of <see cref="T:System.Diagnostics.FileVersionInfo" /> describes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FilePrivatePart">
@@ -158,9 +264,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A file version number is a 64-bit number that holds the version number for a file as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FilePrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the last set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file private part number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileVersion">
@@ -176,9 +303,29 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A file version number is a 64-bit number that holds the version number for a file as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FileBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.FilePrivatePart" /> number.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file version number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetVersionInfo">
@@ -197,10 +344,17 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'FileVersionInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Diagnostics.FileVersionInfo" /> representing the version information associated with the specified file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.FileVersionInfo" /> containing information about the file. If the file did not contain version information, the <see cref="T:System.Diagnostics.FileVersionInfo" /> contains only the name of the file requested.</para>
+        </returns>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified path and name of the file to retrieve the version information for. </param>
       </Docs>
     </Member>
     <Member MemberName="InternalName">
@@ -216,9 +370,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the internal name of the file, if one exists.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsDebug">
@@ -234,9 +391,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.FileVersionInfo" /> properties are based on version resource information built into the file. Version resources are often built into binary files such as .exe or .dll files; text files do not have version resource information.</para>
+          <para>Version resources are typically specified in a Win32 resource file, or in assembly attributes. The <see cref="P:System.Diagnostics.FileVersionInfo.IsDebug" /> property reflects the VS_FF_DEBUG flag value in the file's VS_FIXEDFILEINFO block, which is built from the VERSIONINFO resource in a Win32 resource file. For more information about specifying version resources in a Win32 resource file, see the Platform SDK About Resource Files topic and VERSIONINFO Resource topic topics.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the file contains debugging information or is compiled with debugging features enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsPatched">
@@ -252,9 +416,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the file has been modified and is not identical to the original shipping file of the same version number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsPreRelease">
@@ -270,9 +437,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the file is a development version, rather than a commercially released product.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsPrivateBuild">
@@ -288,9 +458,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this value is true, <see cref="P:System.Diagnostics.FileVersionInfo.PrivateBuild" /> will describe how this version of the file differs from the standard version.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the file was built using standard release procedures.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSpecialBuild">
@@ -306,9 +482,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file that is a special build was built using standard release procedures, but the file differs from a standard file of the same version number. If this value is true, the <see cref="P:System.Diagnostics.FileVersionInfo.SpecialBuild" /> property must specify how this file differs from the standard version.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether the file is a special build.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Language">
@@ -324,9 +506,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default language string for the version info block.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LegalCopyright">
@@ -342,9 +527,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This should include the full text of all notices, legal symbols, copyright dates, and so on or null if the file did not contain version information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all copyright notices that apply to the specified file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LegalTrademarks">
@@ -360,9 +551,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The legal trademarks include the full text of all notices, legal symbols, and trademark numbers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the trademarks and registered trademarks that apply to the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OriginalFilename">
@@ -378,9 +575,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property enables an application to determine whether a file has been renamed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name the file was created with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrivateBuild">
@@ -396,9 +599,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This information is present when <see cref="P:System.Diagnostics.FileVersionInfo.IsPrivateBuild" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information about a private version of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProductBuildPart">
@@ -414,9 +623,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A product version number is a 64-bit number that holds the version number as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductPrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the third set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the build number of the product this file is associated with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProductMajorPart">
@@ -432,9 +662,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A product version number is a 64-bit number that holds the version number as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductPrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the first set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major part of the version number for the product this file is associated with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProductMinorPart">
@@ -450,9 +701,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A product version number is a 64-bit number that holds the version number as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductPrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the second set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor part of the version number for the product the file is associated with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProductName">
@@ -468,9 +740,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the product this file is distributed with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProductPrivatePart">
@@ -486,9 +761,30 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A product version number is a 64-bit number that holds the version number as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductPrivatePart" /> number.</para>
+            </item>
+          </list>
+          <para>This property gets the last set of 16 bits.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the private part number of the product this file is associated with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProductVersion">
@@ -504,9 +800,29 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, a version number is displayed as "major number.minor number.build number.private part number". A product version number is a 64-bit number that holds the version number as follows: </para>
+          <list type="bullet">
+            <item>
+              <para>The first 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMajorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The next 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductMinorPart" /> number.</para>
+            </item>
+            <item>
+              <para>The third set of 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductBuildPart" /> number.</para>
+            </item>
+            <item>
+              <para>The last 16 bits are the <see cref="P:System.Diagnostics.FileVersionInfo.ProductPrivatePart" /> number.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the product this file is distributed with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpecialBuild">
@@ -522,9 +838,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Diagnostics.FileVersionInfo.IsSpecialBuild" /> is true, <see cref="P:System.Diagnostics.FileVersionInfo.SpecialBuild" /> must specify how this file differs from the standard version of the file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the special build information for the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -541,9 +863,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a partial list of properties in the <see cref="T:System.Diagnostics.FileVersionInfo" /> and their values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list of the following properties in this class and their values: </para>
+          <para>
+            <see cref="P:System.Diagnostics.FileVersionInfo.FileName" />, <see cref="P:System.Diagnostics.FileVersionInfo.InternalName" />, <see cref="P:System.Diagnostics.FileVersionInfo.OriginalFilename" />, <see cref="P:System.Diagnostics.FileVersionInfo.FileVersion" />, <see cref="P:System.Diagnostics.FileVersionInfo.FileDescription" />, <see cref="P:System.Diagnostics.FileVersionInfo.ProductName" />, <see cref="P:System.Diagnostics.FileVersionInfo.ProductVersion" />, <see cref="P:System.Diagnostics.FileVersionInfo.IsDebug" />, <see cref="P:System.Diagnostics.FileVersionInfo.IsPatched" />, <see cref="P:System.Diagnostics.FileVersionInfo.IsPreRelease" />, <see cref="P:System.Diagnostics.FileVersionInfo.IsPrivateBuild" />, <see cref="P:System.Diagnostics.FileVersionInfo.IsSpecialBuild" />,</para>
+          <para>
+            <see cref="P:System.Diagnostics.FileVersionInfo.Language" />.</para>
+          <para>If the file did not contain version information, this list will contain only the name of the requested file. Boolean values will be false, and all other entries will be null.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

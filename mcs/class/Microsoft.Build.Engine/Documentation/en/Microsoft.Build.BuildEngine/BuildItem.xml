@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildItem" FullName="Microsoft.Build.BuildEngine.BuildItem">
   <TypeSignature Language="C#" Value="public class BuildItem" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <format type="text/html"><a href="dcef5f91-0613-4bfc-8ee9-d7004bb6d3a9">Item</a></format> element in a project can represent multiple items through the use of wildcards. Therefore, each <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> object does not necessarily represent an <unmanagedCodeEntityReference>Item</unmanagedCodeEntityReference> element in the project.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a single item in an vstecmsbuild project. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +29,16 @@
         <Parameter Name="taskItem" Type="Microsoft.Build.Framework.ITaskItem" />
       </Parameters>
       <Docs>
-        <param name="itemName">To be added.</param>
-        <param name="taskItem">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> class based on an <see cref="T:Microsoft.Build.Framework.ITaskItem" /> object.</para>
+        </summary>
+        <param name="itemName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> property of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
+        <param name="taskItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.Framework.ITaskItem" /> from which to create the <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,11 +52,16 @@
         <Parameter Name="itemInclude" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="itemName">To be added.</param>
-        <param name="itemInclude">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> class with the specified <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> and <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property values.</para>
+        </summary>
+        <param name="itemName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Name" /> property of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
+        <param name="itemInclude">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.BuildItem.Include" /> property of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +75,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a shallow copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,10 +97,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <unmanagedCodeEntityReference>Condition</unmanagedCodeEntityReference> attribute value of the item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +119,14 @@
         <Parameter Name="destinationItem" Type="Microsoft.Build.BuildEngine.BuildItem" />
       </Parameters>
       <Docs>
-        <param name="destinationItem">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies all item metadata on this <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> to the specified <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</para>
+        </summary>
+        <param name="destinationItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.BuildItem" /> to which to copy the item metadata.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,10 +139,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <unmanagedCodeEntityReference>Exclude</unmanagedCodeEntityReference> attribute value of the item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +158,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the final specification of the item after all wildcards and properties have been evaluated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -144,11 +180,18 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified item metadata after after all item and property references have been evaluated.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified item metadata after after all item and property references have been evaluated.</para>
+        </returns>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -164,11 +207,18 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified item metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified item metadata.</para>
+        </returns>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -184,11 +234,18 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the item has the specified item metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the item has the specified item metadata; otherwise, false.</para>
+        </returns>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -201,10 +258,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <unmanagedCodeEntityReference>Include</unmanagedCodeEntityReference> attribute that created the <see cref="T:Microsoft.Build.BuildEngine.BuildItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -217,10 +277,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the item was imported into the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -233,10 +296,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the item collection to which the item belongs.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -252,10 +318,14 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified item metadata.</para>
+        </summary>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata name.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -272,11 +342,16 @@
         <Parameter Name="metadataValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <param name="metadataValue">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns the specified value to the specified item metadata.</para>
+        </summary>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata name.</param>
+        <param name="metadataValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -294,12 +369,18 @@
         <Parameter Name="treatMetadataValueAsLiteral" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <param name="metadataValue">To be added.</param>
-        <param name="treatMetadataValueAsLiteral">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns the specified value to the specified item metadata, and optionally treats the metadata as a literal value.</para>
+        </summary>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata name.</param>
+        <param name="metadataValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item metadata value.</param>
+        <param name="treatMetadataValueAsLiteral">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to treat the metadata as a literal value by escaping all vstecmsbuild special characters; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

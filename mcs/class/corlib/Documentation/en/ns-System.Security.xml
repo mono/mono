@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Security" FullName="System.Security" FullNameSP="System.Security" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security" /> namespace provides the underlying structure of the common language runtime security system, including base classes for permissions.</para>
+    </summary>
   </Docs>
 </Namespace>

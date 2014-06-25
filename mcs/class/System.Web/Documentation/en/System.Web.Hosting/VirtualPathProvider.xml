@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VirtualPathProvider" FullName="System.Web.Hosting.VirtualPathProvider">
   <TypeSignature Language="C#" Value="public abstract class VirtualPathProvider : MarshalByRefObject" />
   <AssemblyInfo>
@@ -9,9 +10,57 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class provides a set of methods for implementing a virtual file system for a Web application. In a virtual file system, the files and directories are managed by a data store other than the file system provided by the server's operating system. For example, you can use a virtual file system to store content in a SQL Server database.</para>
+      <para>You can store any file that is processed on request in a virtual file system. This includes:</para>
+      <list type="bullet">
+        <item>
+          <para>ASP.NET pages, master pages, user controls, and other objects.</para>
+        </item>
+        <item>
+          <para>Standard Web pages with extensions such as .htm and .jpg.</para>
+        </item>
+        <item>
+          <para>Any custom extension mapped to a <see cref="T:System.Web.Compilation.BuildProvider" /> instance.</para>
+        </item>
+        <item>
+          <para>Any named theme in the App_Theme folder.</para>
+        </item>
+      </list>
+      <para>You cannot store ASP.NET application folders or files that generate application-level assemblies in a virtual file system. This includes:</para>
+      <list type="bullet">
+        <item>
+          <para>The Global.asax file.</para>
+        </item>
+        <item>
+          <para>Web.config files.</para>
+        </item>
+        <item>
+          <para>Site map data files used by the <see cref="T:System.Web.XmlSiteMapProvider" />.</para>
+        </item>
+        <item>
+          <para>Directories that contain application assemblies or that generate application assemblies: Bin, App_Code, App_GlobalResources, any App_LocalResources.</para>
+        </item>
+        <item>
+          <para>The application data folder, App_Data.</para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>If a Web site is precompiled for deployment, content provided by a <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance is not compiled, and no <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instances are used by the precompiled site.</para>
+      </block>
+      <format type="text/html">
+        <h2>Registering a VirtualPathProvider</h2>
+      </format>
+      <para>A custom <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance should be registered with the ASP.NET compilation system by using the <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterVirtualPathProvider(System.Web.Hosting.VirtualPathProvider)" /> method before any page parsing or compilation is performed by the Web application.</para>
+      <para>Typically, a <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance is registered in an AppInitialize method defined in the App_Code directory, or during the Application_Start event in the Global.asax file. For an example of registering a <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance in an AppInitialize method, see the Example section.</para>
+      <para>You can register a <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance during other events, but pages compiled and cached before the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance is registered will not be invalidated, even if the new <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance would now provide the source for the previously compiled page.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of methods that enable a Web application to retrieve resources from a virtual file system.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +68,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overriding the <see cref="M:System.Web.Hosting.VirtualPathProvider.#ctor" /> constructor, defer any initialization that must occur after the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object is registered to the <see cref="M:System.Web.Hosting.VirtualPathProvider.Initialize" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the class for use by an inherited class instance. This constructor can be called only by an inherited class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,12 +93,24 @@
         <Parameter Name="relativePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="basePath">To be added.</param>
-        <param name="relativePath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Hosting.VirtualPathProvider.CombineVirtualPaths(System.String,System.String)" /> method to inspect the contents of a relative path to a virtual resource and perform any modifications required. </para>
+          <para>The default implementation combines the <paramref name="basePath" /> and <paramref name="relativePath" /> parameters according to standard ASP.NET path processing. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines a base path with a relative path to return a complete path to a virtual resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complete path to a virtual resource.</para>
+        </returns>
+        <param name="basePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base path for the application.</param>
+        <param name="relativePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual resource, relative to the base path.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,11 +126,25 @@
         <Parameter Name="virtualDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualDir">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Web.Hosting.VirtualPathProvider.DirectoryExists(System.String)" /> method to indicate to the compilation system that the resource represented by <paramref name="virtualDir" /> exists in the virtual file system provided by this <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance.</para>
+          <para>If your custom <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class does not support directories, the <see cref="M:System.Web.Hosting.VirtualPathProvider.DirectoryExists(System.String)" /> method should return false.</para>
+          <block subset="none" type="note">
+            <para>If your virtual file system will contain themes for the Web site (by creating a virtual App_Themes directory), your custom <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class must support directories.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a directory exists in the virtual file system.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the directory exists in the virtual file system; otherwise, false.</para>
+        </returns>
+        <param name="virtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual directory.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,11 +160,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Web.Hosting.VirtualPathProvider.FileExists(System.String)" /> method to indicate to the compilation system that the resource represented by <paramref name="virtualPath" /> exists in the virtual file system provided by this <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a file exists in the virtual file system.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the file exists in the virtual file system; otherwise, false.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,13 +192,25 @@
         <Parameter Name="utcStart" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="virtualPathDependencies">To be added.</param>
-        <param name="utcStart">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetCacheDependency(System.String,System.Collections.IEnumerable,System.DateTime)" /> method returns null. To cache virtual resources for later use you must override either the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetCacheDependency(System.String,System.Collections.IEnumerable,System.DateTime)" /> method or the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetFileHash(System.String,System.Collections.IEnumerable)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a cache dependency based on the specified virtual paths.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Caching.CacheDependency" /> object for the specified virtual resources.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the primary virtual resource.</param>
+        <param name="virtualPathDependencies">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths to other resources required by the primary virtual resource.</param>
+        <param name="utcStart">
+          <attribution license="cc4" from="Microsoft" modified="false" />The UTC time at which the virtual resources were read.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,11 +226,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetCacheKey(System.String)" /> method to provide a custom cache key for virtual resources. If you do not override the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetCacheKey(System.String)" /> method, the virtual path is used for the cache key.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a cache key to use for the specified virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cache key for the specified virtual resource.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,11 +256,25 @@
         <Parameter Name="virtualDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualDir">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.VirtualPathProvider.GetDirectory(System.String)" /> method returns a descendent of the <see cref="T:System.Web.Hosting.VirtualDirectory" /> class that contains the file and directories contained in the directory specified in the <paramref name="virtualDir" /> parameter.</para>
+          <para>If your custom <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class does not support directories, the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetDirectory(System.String)" /> method should return null.</para>
+          <block subset="none" type="note">
+            <para>If your virtual file system will contain themes for the Web site (by creating a virtual App_Themes directory), your custom <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class must support directories.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a virtual directory from the virtual file system.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A descendent of the <see cref="T:System.Web.Hosting.VirtualDirectory" /> class that represents a directory in the virtual file system.</para>
+        </returns>
+        <param name="virtualDir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual directory.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -163,11 +290,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.VirtualPathProvider.GetFile(System.String)" /> method returns a descendent of the <see cref="T:System.Web.Hosting.VirtualFile" /> class that represents the file specified by the <paramref name="virtualPath" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a virtual file from the virtual file system.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A descendent of the <see cref="T:System.Web.Hosting.VirtualFile" /> class that represents a file in the virtual file system.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -184,12 +321,23 @@
         <Parameter Name="virtualPathDependencies" Type="System.Collections.IEnumerable" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <param name="virtualPathDependencies">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Hosting.VirtualPathProvider.GetFileHash(System.String,System.Collections.IEnumerable)" /> method to provide a hash of the dependencies for a virtual-file-system resource. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a hash of the specified virtual paths.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash of the specified virtual paths.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the primary virtual resource.</param>
+        <param name="virtualPathDependencies">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of paths to other virtual resources required by the primary virtual resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -203,9 +351,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.VirtualPathProvider.Initialize" /> method is called after the provider is registered with the ASP.NET compilation system. The <see cref="M:System.Web.Hosting.VirtualPathProvider.Initialize" /> method is used to provide any initialization required after the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance is placed into the environment the application occupies.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -219,10 +373,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> method in its base class. It always returns null and thereby prevents a lease from being created that would limit the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object's lifetime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gives the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object an infinite lifetime by preventing a lease from being created.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,11 +401,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.VirtualPathProvider.OpenFile(System.String)" /> method is a convenience method that enables you to get a stream from a virtual file without creating a <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a stream from a virtual file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.IO.Stream" /> object for the specified virtual file or resource.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the virtual file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -258,9 +431,16 @@
         <ReturnType>System.Web.Hosting.VirtualPathProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object is registered with the ASP.NET compilation system, it is added to a chain of providers. Use the <see cref="P:System.Web.Hosting.VirtualPathProvider.Previous" /> property to hand processing off to the previous <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object in the chain if the requested path is not provided by this <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance.</para>
+          <para>The chain of path providers always ends with the default ASP.NET provider, which serves files from the file system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to a previously registered <see cref="T:System.Web.Hosting.VirtualPathProvider" /> object in the compilation system.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

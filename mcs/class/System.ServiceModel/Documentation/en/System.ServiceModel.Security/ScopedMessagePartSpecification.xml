@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ScopedMessagePartSpecification" FullName="System.ServiceModel.Security.ScopedMessagePartSpecification">
   <TypeSignature Language="C#" Value="public class ScopedMessagePartSpecification" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ScopedMessagePartSpecification extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains the <see cref="T:System.ServiceModel.Security.MessagePartSpecification" /> instances of different messages, each distinguished by the message Action.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies which parts are included in a message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.ScopedMessagePartSpecification" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +48,13 @@
         <Parameter Name="other" Type="System.ServiceModel.Security.ScopedMessagePartSpecification" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.ScopedMessagePartSpecification" /> class from another instance of this class.  </para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The other <see cref="T:System.ServiceModel.Security.ScopedMessagePartSpecification" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Actions">
@@ -54,9 +68,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of action keys.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddParts">
@@ -73,9 +90,13 @@
         <Parameter Name="parts" Type="System.ServiceModel.Security.MessagePartSpecification" />
       </Parameters>
       <Docs>
-        <param name="parts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds channel message parts to the collections in the instance of this class. </para>
+        </summary>
+        <param name="parts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.MessagePartSpecification" /> that contains the parts to be added.</param>
       </Docs>
     </Member>
     <Member MemberName="AddParts">
@@ -93,10 +114,15 @@
         <Parameter Name="action" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parts">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds message parts to the MessagePartSpecification that corresponds to the specified action.</para>
+        </summary>
+        <param name="parts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Security.MessagePartSpecification" /> that contains the parts to be added.</param>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action key to match to.</param>
       </Docs>
     </Member>
     <Member MemberName="ChannelParts">
@@ -110,9 +136,15 @@
         <ReturnType>System.ServiceModel.Security.MessagePartSpecification</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The channel parts denote the message parts that are common to all the messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a message part specification that contains the channel parts.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -126,9 +158,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use <see cref="M:System.ServiceModel.Security.ScopedMessagePartSpecification.MakeReadOnly" /> to set this property to true. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the specification is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MakeReadOnly">
@@ -143,8 +181,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specification to read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryGetParts">

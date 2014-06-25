@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessThreadCollection" FullName="System.Diagnostics.ProcessThreadCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ProcessThreadCollection : System.Collections.ReadOnlyCollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ProcessThreadCollection extends System.Collections.ReadOnlyCollectionBase" />
@@ -16,8 +17,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a strongly typed collection of <see cref="T:System.Diagnostics.ProcessThread" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessThreadCollection" /> class, with no associated <see cref="T:System.Diagnostics.ProcessThread" /> instances.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +57,13 @@
         <Parameter Name="processThreads" Type="System.Diagnostics.ProcessThread[]" />
       </Parameters>
       <Docs>
-        <param name="processThreads">To be added: an object of type 'ProcessThread []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.ProcessThreadCollection" /> class, using the specified array of <see cref="T:System.Diagnostics.ProcessThread" /> instances.</para>
+        </summary>
+        <param name="processThreads">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.ProcessThread" /> instances with which to initialize this <see cref="T:System.Diagnostics.ProcessThreadCollection" /> instance. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -71,10 +82,17 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <param name="thread">To be added: an object of type 'ProcessThread'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends a process thread to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the thread in the collection.</para>
+        </returns>
+        <param name="thread">
+          <attribution license="cc4" from="Microsoft" modified="false" />The thread to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -93,10 +111,20 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <param name="thread">To be added: an object of type 'ProcessThread'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A module is identified by its module name and its fully qualified file path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified process thread exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the thread exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="thread">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.ProcessThread" /> instance that indicates the thread to find in this collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -116,10 +144,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'ProcessThread []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies an array of <see cref="T:System.Diagnostics.ProcessThread" /> instances to the collection, at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.ProcessThread" /> instances to add to the collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location at which to add the new instances. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -138,10 +171,17 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <param name="thread">To be added: an object of type 'ProcessThread'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the location of a specified thread within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index that defines the location of the thread within the <see cref="T:System.Diagnostics.ProcessThreadCollection" />.</para>
+        </returns>
+        <param name="thread">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.ProcessThread" /> whose index is retrieved. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -161,10 +201,15 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="thread">To be added: an object of type 'ProcessThread'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a process thread at the specified location in the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index indicating the location at which to insert the thread. </param>
+        <param name="thread">
+          <attribution license="cc4" from="Microsoft" modified="false" />The thread to insert into the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -205,9 +250,13 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <param name="thread">To be added: an object of type 'ProcessThread'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes a process thread from the collection.</para>
+        </summary>
+        <param name="thread">
+          <attribution license="cc4" from="Microsoft" modified="false" />The thread to remove from the collection. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ApplicationManager" FullName="System.Web.Hosting.ApplicationManager">
   <TypeSignature Language="C#" Value="public sealed class ApplicationManager : MarshalByRefObject" />
   <AssemblyInfo>
@@ -9,9 +10,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Hosting.ApplicationManager" /> object provides lifetime management of objects in the hosting environment for an ASP.NET application. It is responsible for:</para>
+      <list type="bullet">
+        <item>
+          <para>Activating and initializing ASP.NET applications.</para>
+        </item>
+        <item>
+          <para>Managing the application lifetime and the lifetime of objects registered in the application.</para>
+        </item>
+        <item>
+          <para>Exposing objects used by the hosting environment to process ASP.NET application requests.</para>
+        </item>
+        <item>
+          <para>Providing a list of applications running in the hosting process at any given moment.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages ASP.NET application domains for an ASP.NET hosting application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -22,9 +43,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a call to the <see cref="M:System.Web.Hosting.ApplicationManager.Close" /> method reduces the reference count of applications using the application manager to 0, the <see cref="M:System.Web.Hosting.ApplicationManager.Close" /> method calls the <see cref="M:System.Web.Hosting.ApplicationManager.ShutdownAll" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shuts down all application domains.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,15 +71,33 @@
         <Parameter Name="failIfExists" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="appId">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="virtualPath">To be added.</param>
-        <param name="physicalPath">To be added.</param>
-        <param name="failIfExists">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method is used to create and register objects in the application. Only one object of each type can be created. If you need to create multiple objects of the same type, you must implement an object factory. For more information, see the code example in this topic.</para>
+          <para>Each application, identified by a unique application identifier, runs in its own application domain. The <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method creates an object of the specified type in the application domain of the application specified in the <paramref name="appID" /> parameter. If an application domain does not exist for the specified application, one is created before the object is created.</para>
+          <para>The <paramref name="failIfExists" /> parameter controls the behavior of the <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method when an object of the specified type already exists in the application. When <paramref name="failIfExists" /> is true, the <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method throws an <see cref="T:System.InvalidOperationException" /> exception.</para>
+          <para>When <paramref name="failIfExists" /> is false, the <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method returns the existing registered object of the specified type.</para>
+          <para>The <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method calls the overload that takes an additional <paramref name="throwOnError" /> parameter with <paramref name="throwOnError" /> set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object for the specified application domain based on type, virtual and physical paths, and a Boolean value indicating failure behavior when an object of the specified type already exists.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object of the specified <paramref name="type" />.</para>
+        </returns>
+        <param name="appId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the application that owns the object.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to create.</param>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the application.</param>
+        <param name="physicalPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical path to the application.</param>
+        <param name="failIfExists">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if an object of the specified type is currently registered; false to return the existing registered object of the specified type.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,16 +118,31 @@
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="appId">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="virtualPath">To be added.</param>
-        <param name="physicalPath">To be added.</param>
-        <param name="failIfExists">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload of the <see cref="Overload:System.Web.Hosting.ApplicationManager.CreateObject" /> method provides the <paramref name="throwOnError" /> parameter, which allows you to control whether hosting initialization exceptions are thrown. The overload of the <see cref="Overload:System.Web.Hosting.ApplicationManager.CreateObject" /> method that does not provide <paramref name="throwOnError" /> calls this overload with the parameter set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an object for the specified application domain based on type, virtual and physical paths, a Boolean value indicating failure behavior when an object of the specified type already exists, and a Boolean value indicating whether hosting initialization error exceptions are thrown.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object of the specified <paramref name="type" />.</para>
+        </returns>
+        <param name="appId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the application that owns the object.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to create.</param>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the application.</param>
+        <param name="physicalPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The physical path to the application.</param>
+        <param name="failIfExists">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if an object of the specified type is currently registered; false to return the existing registered object of the specified type.</param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw exceptions for hosting initialization errors; false to not throw hosting initialization exceptions.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,10 +156,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only one instance of the <see cref="T:System.Web.Hosting.ApplicationManager" /> object is created by an ASP.NET host process in the default application domain. If an instance of the <see cref="T:System.Web.Hosting.ApplicationManager" /> class is not available, the <see cref="M:System.Web.Hosting.ApplicationManager.GetApplicationManager" /> method first creates an instance of the <see cref="T:System.Web.Hosting.ApplicationManager" /> class and then returns the newly created object. If an instance of the <see cref="T:System.Web.Hosting.ApplicationManager" /> class was previously created, the <see cref="M:System.Web.Hosting.ApplicationManager.GetApplicationManager" /> method returns the existing object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the single instance of the <see cref="T:System.Web.Hosting.ApplicationManager" /> object associated with this ASP.NET host process.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single instance of the <see cref="T:System.Web.Hosting.ApplicationManager" /> object associated with the ASP.NET host process that is running.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,12 +185,20 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="appId">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the registered object of the specified type from the specified application.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The registered object of the specified type; or null if the type has not been registered through a call to the <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method.</para>
+        </returns>
+        <param name="appId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the application that owns the object.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to return.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -135,10 +212,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a snapshot of running applications.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.Hosting.ApplicationInfo" /> objects that contain information about the applications managed by this <see cref="T:System.Web.Hosting.ApplicationManager" /> instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -152,10 +235,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> method in its base class. It always returns null and thereby prevents a lease from being created that would limit the application domain's lifetime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gives the application domain an infinite lifetime by preventing a lease from being created.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -169,10 +261,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.ApplicationManager.IsIdle" /> method returns true if all applications hosted by the process are idle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether all applications hosted by the process are idle and not processing requests.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all applications in the process are idle; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -186,9 +287,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Makes a thread-safe increment to the user reference count of the application manager instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,9 +306,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Web.Hosting.ApplicationManager.ShutdownAll" /> method is equivalent to calling the <see cref="M:System.Web.Hosting.HostingEnvironment.InitiateShutdown" /> method in all application domains managed by this <see cref="T:System.Web.Hosting.ApplicationManager" /> instance; however, the <see cref="M:System.Web.Hosting.ApplicationManager.ShutdownAll" /> method can be called from outside the managed application domains.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unloads all application resources.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -220,10 +330,17 @@
         <Parameter Name="appId" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="appId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling the <see cref="M:System.Web.Hosting.ApplicationManager.ShutdownApplication(System.String)" /> method is equivalent to calling the <see cref="M:System.Web.Hosting.HostingEnvironment.InitiateShutdown" /> method for a specific application domain; however, the <see cref="M:System.Web.Hosting.ApplicationManager.ShutdownApplication(System.String)" /> method can be called from outside managed application domains.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unloads the specified application.</para>
+        </summary>
+        <param name="appId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier of the application to unload.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -240,11 +357,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="appId">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified object from the list of registered objects in an application. If the object to be removed is the last remaining object in the list of registered objects in an application, the application is unloaded.</para>
+        </summary>
+        <param name="appId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the application that owns the object.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to unload.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostingEnvironment" FullName="System.Web.Hosting.HostingEnvironment">
   <TypeSignature Language="C#" Value="public sealed class HostingEnvironment : MarshalByRefObject" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each managed application domain contains a static instance of the <see cref="T:System.Web.Hosting.HostingEnvironment" /> class, which provides access to application-management functions and application services. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides application-management functions and application services to a managed application within its application domain. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.HostingEnvironment.#ctor" /> constructor initializes the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object. The <see cref="M:System.Web.Hosting.HostingEnvironment.#ctor" /> constructor is called only once by the application's <see cref="T:System.Web.Hosting.ApplicationManager" /> object. Calling the <see cref="M:System.Web.Hosting.HostingEnvironment.#ctor" /> constructor more than once will cause an <see cref="T:System.InvalidOperationException" /> exception to be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Hosting.HostingEnvironment" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +47,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application must be running with <see cref="T:System.Web.AspNetHostingPermissionLevel" /> set to high trust to access the <see cref="P:System.Web.Hosting.HostingEnvironment.ApplicationId" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique identifier of the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +69,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path on disk to the application's directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +88,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath" /> property always returns "/" as the first character of the returned value. If the application is located in the root of the website, the return value is just "/".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root virtual path of the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,10 +110,13 @@
         <ReturnType>System.Web.Caching.Cache</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Caching.Cache" /> instance for the current application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,9 +130,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a busy registered object finishes its work, it calls the <see cref="M:System.Web.Hosting.HostingEnvironment.DecrementBusyCount" /> method to signal the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object that it has completed processing and to reduce the count of busy objects by one.</para>
+          <para>If the busy count is greater than zero, the hosting application will not time out even if there are no pending requests.</para>
+          <para>There must be a call to the <see cref="M:System.Web.Hosting.HostingEnvironment.DecrementBusyCount" /> method for each call to the <see cref="M:System.Web.Hosting.HostingEnvironment.IncrementBusyCount" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reduces the count of busy objects in the hosted environment by one.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -115,10 +154,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Impersonates the user represented by the application identity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -134,11 +179,18 @@
         <Parameter Name="token" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Impersonates the user represented by the specified user token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle of a Windows account token.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -155,12 +207,23 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="userToken">To be added.</param>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.HostingEnvironment.Impersonate(System.IntPtr,System.String)" /> method impersonates the user that results after applying all <format type="text/html"><a href="6bff1aa6-d7d5-47a8-8f3b-62b05cf2bdcf">identity</a></format> elements in the configuration settings affecting the specified virtual path. If an identity element is not specified for the virtual path, the <see cref="M:System.Web.Hosting.HostingEnvironment.Impersonate(System.IntPtr,System.String)" /> method impersonates the specified Windows account.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Impersonates the user specified by the configuration settings for the specified virtual path, or the specified user token.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
+        <param name="userToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handle of a Windows account token.</param>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the requested resource.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -174,9 +237,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registered objects signal the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object that it is running and to increase the count of busy objects by one.</para>
+          <para>If the busy count is greater than zero, the hosting application will not time out even if there are no pending requests.</para>
+          <para>There must be a call to the <see cref="M:System.Web.Hosting.HostingEnvironment.DecrementBusyCount" /> method for each call to the <see cref="M:System.Web.Hosting.HostingEnvironment.IncrementBusyCount" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Increases the count of busy objects in the hosted environment by one.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,10 +260,13 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets any exception thrown during initialization of the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -206,10 +280,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides the <see cref="M:System.MarshalByRefObject.InitializeLifetimeService" /> method in its base class. It always returns null and prevents a lease from being created that would limit the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object's lifetime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gives the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object an infinite lifetime by preventing a lease from being created.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -223,9 +306,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.Hosting.HostingEnvironment.InitiateShutdown" /> method to stop a web application domain and remove any objects registered with the <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterObject(System.Web.Hosting.IRegisteredObject)" /> method. This method returns immediately, before the shutdown is complete.</para>
+          <para>The <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method is called on each registered object with the passed parameter set to false to allow each registered object to shut down asynchronously. After waiting for the amount of time specified in the shutdownTimeout attribute of the <format type="text/html"><a href="043a75c8-231a-4f8d-9633-501530bd7d40">hostingEnvironment</a></format> configuration element, the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method is called again with the passed parameter set to true for each registered object remaining.</para>
+          <para>Once all registered objects have finished shutting down, the <see cref="T:System.Web.Hosting.HostingEnvironment" /> objects shuts down the application domain.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts shutting down the web application associated with this host and removes registered objects from the system.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,10 +329,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current application domain is being hosted by an <see cref="T:System.Web.Hosting.ApplicationManager" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -257,11 +351,18 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps a virtual path to a physical path on the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path on the server specified by <paramref name="virtualPath" />.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path (absolute or relative).</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -277,10 +378,35 @@
         <Parameter Name="obj" Type="System.Web.Hosting.IRegisteredObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Hosting.ApplicationManager" /> class enables methods outside the current application domain to create, manage, and destroy objects inside the current application domain. The <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterObject(System.Web.Hosting.IRegisteredObject)" /> method is used to register previously created objects with the hosting environment. Objects registered with the <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterObject(System.Web.Hosting.IRegisteredObject)" /> method must implement the <see cref="T:System.Web.Hosting.IRegisteredObject" /> interface.</para>
+          <para>To use a registered object, follow these steps:</para>
+          <list type="ordered">
+            <item>
+              <para>Create a new instance of your registered object by calling the <see cref="M:System.Web.Hosting.ApplicationManager.CreateObject(System.String,System.Type,System.String,System.String,System.Boolean)" /> method.</para>
+            </item>
+            <item>
+              <para>Call a type-specific method to initialize your new object. In the initialization method, call the <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterObject(System.Web.Hosting.IRegisteredObject)" /> method to add the object to the list of registered objects.</para>
+            </item>
+            <item>
+              <para>Call the <see cref="M:System.Web.Hosting.ApplicationManager.GetObject(System.String,System.Type)" /> method to return the registered object when required.</para>
+            </item>
+            <item>
+              <para>When you wish to stop your object, call the <see cref="M:System.Web.Hosting.ApplicationManager.StopObject(System.String,System.Type)" /> method. The <see cref="M:System.Web.Hosting.ApplicationManager.StopObject(System.String,System.Type)" /> method in turn calls the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method. </para>
+            </item>
+            <item>
+              <para>In the <see cref="M:System.Web.Hosting.IRegisteredObject.Stop(System.Boolean)" /> method, have your object call the <see cref="M:System.Web.Hosting.HostingEnvironment.UnregisterObject(System.Web.Hosting.IRegisteredObject)" /> method.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Places an object in the list of registered objects for the application.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -296,10 +422,18 @@
         <Parameter Name="virtualPathProvider" Type="System.Web.Hosting.VirtualPathProvider" />
       </Parameters>
       <Docs>
-        <param name="virtualPathProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.HostingEnvironment.RegisterVirtualPathProvider(System.Web.Hosting.VirtualPathProvider)" /> method adds the specified <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance to the application's list of virtual-path providers.</para>
+          <para>For more information, see the <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a new <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance with the ASP.NET compilation system.</para>
+        </summary>
+        <param name="virtualPathProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance to add to the compilation system.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -313,10 +447,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.HostingEnvironment.SetCultures" /> method sets the current thread to the culture specified in the <format type="text/html"><a href="e2dffc8e-ebd2-439b-a2fd-e3ac5e620da7">globalization</a></format> element in the application's configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current thread to the culture specified in the application configuration file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the culture prior to changing; this object can be used to revert to the previous culture.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -332,11 +475,21 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Hosting.HostingEnvironment.SetCultures(System.String)" /> method sets the current thread to the culture that results after applying all <format type="text/html"><a href="e2dffc8e-ebd2-439b-a2fd-e3ac5e620da7">globalization</a></format> elements in the configuration files affecting the specified virtual path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current thread to the culture of the specified virtual path.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the culture prior to changing; this object can be used to revert to the previous culture.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path that contains the culture information.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -349,10 +502,13 @@
         <ReturnType>System.Web.ApplicationShutdownReason</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerated value that indicates why the application terminated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -365,10 +521,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the site.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -384,10 +543,17 @@
         <Parameter Name="obj" Type="System.Web.Hosting.IRegisteredObject" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Hosting.ApplicationManager" /> class enables methods outside the current application domain to create, manage, and destroy objects inside the current application domain. The <see cref="M:System.Web.Hosting.HostingEnvironment.UnregisterObject(System.Web.Hosting.IRegisteredObject)" /> method is used to remove previously registered objects from the hosting environment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes an object from the list of registered objects for the application.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -400,10 +566,16 @@
         <ReturnType>System.Web.Hosting.VirtualPathProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When more than one <see cref="T:System.Web.Hosting.VirtualPathProvider" /> instance is registered, the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object manages the call chain. You cannot control the order in which virtual path providers are called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual path provider for this application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

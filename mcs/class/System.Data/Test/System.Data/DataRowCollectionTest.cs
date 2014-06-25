@@ -831,5 +831,39 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, dt.Rows.IndexOf (null));
 		}
 #endif
+
+		[Test]
+		public void Find_DoesntThrowWithNullObjectInArray () // Novell bug 519648
+		{
+			var dt = new DataTable ("datatable");
+
+			var column = new DataColumn ();
+			dt.Columns.Add (column);
+			var columns = new DataColumn [] { column };
+			dt.PrimaryKey = columns;
+
+			try {
+				Assert.AreEqual (null, dt.Rows.Find (new object [] { null }));
+			} catch (IndexOutOfRangeException) {
+				Assert.Fail ("Bug #519648 (https://bugzilla.novell.com/show_bug.cgi?id=519648) is not fixed.");
+			}
+		}
+
+		[Test]
+		public void Find_DoesntThrowWithNullObject () // Novell bug 519648
+		{
+			var dt = new DataTable ("datatable");
+
+			var column = new DataColumn ();
+			dt.Columns.Add (column);
+			var columns = new DataColumn [] { column };
+			dt.PrimaryKey = columns;
+
+			try {
+				Assert.AreEqual (null, dt.Rows.Find ( (object)null));
+			} catch (IndexOutOfRangeException) {
+				Assert.Fail ("Bug #519648 (https://bugzilla.novell.com/show_bug.cgi?id=519648) is not fixed.");
+			}
+		}
 	}
 }

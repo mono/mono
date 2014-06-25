@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceEventArgs" FullName="System.Web.UI.WebControls.ObjectDataSourceEventArgs">
   <TypeSignature Language="C#" Value="public class ObjectDataSourceEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,151 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> class is used in the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreating(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> and <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreated(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> methods to provide access to the business object instance before any data operations that are using the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control and business object are performed. The business object is set and accessed using the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceEventArgs.ObjectInstance" /> property. By adding an event handler delegate to handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.ObjectCreating" /> event, you can create an instance of the business object in custom code instead of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> performing the instantiation. This is useful when you want a non-default instance of your business object or to call a non-default constructor to create the instance; the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> always calls the default constructor to create an instance of the business object it works with. You can also add an event handler delegate to handle the  <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreated" /> event, which enables you to access any publicly exposed members of the business object to perform any additional initialization or work. </para>
+      <para>The <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreating(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> and <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnObjectCreated(System.Web.UI.WebControls.ObjectDataSourceEventArgs)" /> methods are not called by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control, if the business object method that performs the data operations is static.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control exposes many events that you can handle to work with the underlying business object at various times in its lifecycle. The following table lists the events and the associated <see cref="T:System.EventArgs" /> classes and event handler delegates.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>EventArgs</para>
+            </description>
+            <description>
+              <para>EventHandler</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreating" />.</para>
+            <para>Occurs immediately before the instance of the business object is created.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreated" />.</para>
+            <para>Occurs immediately after the instance of the business object is created.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" />.</para>
+            <para>Occurs before the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" />.</para>
+            <para>Occur before an insert, update, or delete operation is performed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" />.</para>
+            <para>Occurs after the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" />.</para>
+            <para>Occur after the insert, update, or delete operation is completed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectDisposing" />.</para>
+            <para>Occurs before a business object is destroyed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventHandler" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreating" /> and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreated" /> events of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +164,14 @@
         <Parameter Name="objectInstance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="objectInstance">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" /> class using the specified object.</para>
+        </summary>
+        <param name="objectInstance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The business object with which the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> interacts to perform data operations.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +184,13 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that represents the business object with which the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control performs data operations.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

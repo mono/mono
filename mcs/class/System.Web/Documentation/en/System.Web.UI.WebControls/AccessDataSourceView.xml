@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AccessDataSourceView" FullName="System.Web.UI.WebControls.AccessDataSourceView">
   <TypeSignature Language="C#" Value="public class AccessDataSourceView : System.Web.UI.WebControls.SqlDataSourceView" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> class is intended primarily to be used by data-bound controls and not as a programmable object in page code.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> class is provided because Microsoft Access is a file-based database system and has several unique characteristics that set it apart from other SQL-based relational database products that the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control and <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> classes are used with. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supports the <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control and provides an interface for data-bound controls to perform data retrieval using Structured Query Language (SQL) against a Microsoft Access database.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +31,21 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpContext" /> object is used by the <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control to access the parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.FilterParameters" /> and <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectParameters" /> collections when retrieving data. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> class setting the specified <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control as the owner of the current view.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source control with which the <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> is associated. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique name for the data source view, within the scope of the data source control that owns it. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -47,10 +64,24 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> object overrides the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to ensure that the <see cref="P:System.Web.UI.WebControls.AccessDataSource.DataFile" /> property of its associated <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> control is set before retrieving data. </para>
+          <para>Before the <see cref="M:System.Web.UI.WebControls.AccessDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method is performed, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnSelecting(System.Web.UI.WebControls.SqlDataSourceSelectingEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSourceView.Selecting" /> event. You can handle the <see cref="E:System.Web.UI.WebControls.SqlDataSourceView.Selecting" /> event to examine the values of the parameters and to perform any preprocessing before a data retrieval operation.</para>
+          <para>To perform the data retrieval, the <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> object builds an <see cref="T:System.Data.IDbCommand" /> object using the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" /> text and any associated <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectParameters" /> properties. Then, the <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> object executes the <see cref="T:System.Data.IDbCommand" /> object against the underlying data storage. After the operation completes, the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnSelected(System.Web.UI.WebControls.SqlDataSourceStatusEventArgs)" /> method is called to raise the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selected" /> event. You can handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selected" /> event to examine any return values and error codes and to perform any post-processing.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value and caching is enabled, the <see cref="T:System.Web.UI.WebControls.AccessDataSourceView" /> retrieves data from and saves data to the cache during the data retrieval operation. The cache is created, discarded, or refreshed, based on the caching behavior that is specified by the combination of the <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheDuration" /> and <see cref="P:System.Web.UI.WebControls.SqlDataSource.CacheExpirationPolicy" /> properties.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is set to the <see cref="F:System.Web.UI.WebControls.SqlDataSourceMode.DataSet" /> value and a <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.FilterExpression" /> property has been specified, the <see cref="P:System.Web.UI.WebControls.SqlDataSource.DataSourceMode" /> property is evaluated along with any supplied <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.FilterParameters" /> properties and the resulting filter is applied to the list of data during the <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves data from the underlying data storage using the SQL string in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommand" /> property and any parameters in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectParameters" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> of data rows.</para>
+        </returns>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that is used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
     </Member>
   </Members>

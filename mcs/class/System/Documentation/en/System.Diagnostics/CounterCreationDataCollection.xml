@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CounterCreationDataCollection" FullName="System.Diagnostics.CounterCreationDataCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CounterCreationDataCollection : System.Collections.CollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CounterCreationDataCollection extends System.Collections.CollectionBase" />
@@ -16,8 +17,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a strongly typed collection of <see cref="T:System.Diagnostics.CounterCreationData" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> class, with no associated <see cref="T:System.Diagnostics.CounterCreationData" /> instances.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +57,13 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationData []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> class by using the specified array of <see cref="T:System.Diagnostics.CounterCreationData" /> instances.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.CounterCreationData" /> instances with which to initialize this <see cref="T:System.Diagnostics.CounterCreationDataCollection" />. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,9 +80,13 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationDataCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationDataCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> class by using the specified collection of <see cref="T:System.Diagnostics.CounterCreationData" /> instances.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.CounterCreationDataCollection" /> that holds <see cref="T:System.Diagnostics.CounterCreationData" /> instances with which to initialize this <see cref="T:System.Diagnostics.CounterCreationDataCollection" />. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -90,10 +105,17 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationData'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an instance of the <see cref="T:System.Diagnostics.CounterCreationData" /> class to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the new <see cref="T:System.Diagnostics.CounterCreationData" /> object.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.CounterCreationData" /> object to append to the existing collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -112,9 +134,13 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationData []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified array of <see cref="T:System.Diagnostics.CounterCreationData" /> instances to the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.CounterCreationData" /> instances to append to the existing collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -133,9 +159,13 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationDataCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationDataCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified collection of <see cref="T:System.Diagnostics.CounterCreationData" /> instances to the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.Diagnostics.CounterCreationData" /> instances to append to the existing collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -154,10 +184,17 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationData'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a <see cref="T:System.Diagnostics.CounterCreationData" /> instance exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Diagnostics.CounterCreationData" /> object exists in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterCreationData" /> object to find in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -177,10 +214,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'CounterCreationData []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the <see cref="T:System.Diagnostics.CounterCreationData" /> to an array, starting at the specified index of the array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.CounterCreationData" /> instances to add to the collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location at which to add the new instances. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -199,10 +241,17 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationData'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of a <see cref="T:System.Diagnostics.CounterCreationData" /> object in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified <see cref="T:System.Diagnostics.CounterCreationData" />, if it is found, in the collection; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterCreationData" /> object to locate in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -222,10 +271,15 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'CounterCreationData'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Diagnostics.CounterCreationData" /> object into the collection, at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the location at which the <see cref="T:System.Diagnostics.CounterCreationData" /> is to be inserted. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterCreationData" /> to insert into the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -285,9 +339,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Diagnostics.CounterCreationDataCollection.OnValidate(System.Object)" /> method determines whether the object specified in the <paramref name="value" /> parameter is a <see cref="T:System.Diagnostics.CounterCreationData" /> instance. If not, it throws an <see cref="T:System.ArgumentException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks the specified object to determine whether it is a valid <see cref="T:System.Diagnostics.CounterCreationData" /> type.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that will be validated.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -306,9 +367,13 @@
         <Parameter Name="value" Type="System.Diagnostics.CounterCreationData" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CounterCreationData'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a <see cref="T:System.Diagnostics.CounterCreationData" /> object from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterCreationData" /> to remove from the collection. </param>
       </Docs>
     </Member>
   </Members>

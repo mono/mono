@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISupportInitialize" FullName="System.ComponentModel.ISupportInitialize">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ISupportInitialize" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISupportInitialize" />
@@ -12,8 +13,16 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.ISupportInitialize" /> allows controls to optimize multiple property assignments. As a result, you can initialize co-dependent properties or batch set multiple properties at design time.</para>
+      <para>Call the <see cref="M:System.ComponentModel.ISupportInitialize.BeginInit" /> method to signal the object that initialization is starting. Call the <see cref="M:System.ComponentModel.ISupportInitialize.EndInit" /> method to signal that initialization is complete.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that this object supports a simple, transacted notification for batch initialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginInit">
@@ -30,8 +39,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals the object that initialization is starting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndInit">
@@ -48,8 +60,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Signals the object that initialization is complete.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrintDocument" FullName="System.Drawing.Printing.PrintDocument">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class PrintDocument : System.ComponentModel.Component" />
   <AssemblyInfo>
@@ -25,8 +26,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, you create an instance of the <see cref="T:System.Drawing.Printing.PrintDocument" /> class, set properties such as the <see cref="P:System.Drawing.Printing.PrintDocument.DocumentName" />and <see cref="P:System.Drawing.Printing.PrintDocument.PrinterSettings" />, and call the <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method to start the printing process. Handle the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event where you specify the output to print, by using the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.Graphics" /><see cref="T:System.Drawing.Graphics" /> property of the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" />.</para>
+      <para>For more information about printing from a Windows Form application, see the <format type="text/html"><a href="a4a2960c-eb70-48e2-b641-cfb222704e46">Windows Forms Print Support</a></format>. If you wish to print from a Windows Presentation Foundation application, see the <see cref="N:System.Printing" /> namespace.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a reusable object that sends output to a printer, when printing from a Windows Forms application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +43,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes all fields based upon the default printer. Typically, after creating a new <see cref="T:System.Drawing.Printing.PrintDocument" />, you set printer and page settings that affect the output through the <see cref="P:System.Drawing.Printing.PrintDocument.PrinterSettings" /> and <see cref="P:System.Drawing.Printing.PrintDocument.DefaultPageSettings" /> properties, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PrintDocument" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,8 +65,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you handle the <see cref="E:System.Drawing.Printing.PrintDocument.BeginPrint" /> event to initialize fonts, file streams, and other resources used during the printing process.</para>
+          <para>To associate the event with your event handler, add an instance of the <see cref="T:System.Drawing.Printing.PrintEventHandler" /> delegate to the event. The event handler is called whenever the event occurs. For more information about handling events with delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method is called and before the first page of the document prints.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,9 +89,19 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PageSettings'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify several default page settings through the <see cref="P:System.Drawing.Printing.PrintDocument.DefaultPageSettings" /> property. For example, the <see cref="P:System.Drawing.Printing.PageSettings.Color" /> property specifies whether the page prints in color, the <see cref="P:System.Drawing.Printing.PageSettings.Landscape" /> property specifies landscape or portrait orientation, and the <see cref="P:System.Drawing.Printing.PageSettings.Margins" /> property specifies the margins of the page.</para>
+          <para>To specify settings on a page-by-page basis, handle the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> or <see cref="E:System.Drawing.Printing.PrintDocument.QueryPageSettings" /> event and modify the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.PageSettings" /> argument included in the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> or <see cref="T:System.Drawing.Printing.QueryPageSettingsEventArgs" />, respectively.</para>
+          <block subset="none" type="note">
+            <para>After printing has started, changes to page settings through the <see cref="P:System.Drawing.Printing.PrintDocument.DefaultPageSettings" /> property will not affect pages being printed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets page settings that are used as defaults for all pages to be printed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,9 +125,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Drawing.Printing.PrintDocument.DocumentName" /> property does not specify the file to print. Rather, you specify the output to print by handling the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event. For an example, see the <see cref="T:System.Drawing.Printing.PrintDocument" /> class overview.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the document name to display (for example, in a print status dialog box or printer queue) while printing the document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,8 +153,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, you handle the <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> event to release fonts, file streams, and other resources used during the printing process, like fonts.</para>
+          <para>You indicate that there are no more pages to print by setting the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.HasMorePages" /> property to false in the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event. The <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> event also occurs if the printing process is canceled or an exception occurs during the printing process.</para>
+          <para>To associate the event with your event handler, add an instance of the <see cref="T:System.Drawing.Printing.PrintEventHandler" /> delegate to the event. The event handler is called whenever the event occurs. For more information about handling events with delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the last page of the document has printed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -134,9 +179,17 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'PrintEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Printing.PrintDocument.OnBeginPrint(System.Drawing.Printing.PrintEventArgs)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <para>When a derived class calls the <see cref="M:System.Drawing.Printing.PrintDocument.OnBeginPrint(System.Drawing.Printing.PrintEventArgs)" /> method, it raises the <see cref="E:System.Drawing.Printing.PrintDocument.BeginPrint" /> event by invoking the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Drawing.Printing.PrintDocument.BeginPrint" /> event. It is called after the <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method is called and before the first page of the document prints.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,9 +206,17 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'PrintEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Printing.PrintDocument.OnEndPrint(System.Drawing.Printing.PrintEventArgs)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class. The <see cref="M:System.Drawing.Printing.PrintDocument.OnEndPrint(System.Drawing.Printing.PrintEventArgs)" /> method is also called if the printing process is canceled or an exception occurs during the printing process.</para>
+          <para>When a derived class calls the <see cref="M:System.Drawing.Printing.PrintDocument.OnEndPrint(System.Drawing.Printing.PrintEventArgs)" /> method, it raises the <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> event by invoking the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> event. It is called when the last page of the document has printed.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -172,9 +233,17 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'PrintPageEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Printing.PrintDocument.OnPrintPage(System.Drawing.Printing.PrintPageEventArgs)" /> method allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <para>When a derived class calls the <see cref="M:System.Drawing.Printing.PrintDocument.OnPrintPage(System.Drawing.Printing.PrintPageEventArgs)" /> method, it raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event by invoking the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event. It is called before a page prints.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -191,9 +260,17 @@
         <Parameter Name="e" Type="System.Drawing.Printing.QueryPageSettingsEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'QueryPageSettingsEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Printing.PrintDocument.OnQueryPageSettings(System.Drawing.Printing.QueryPageSettingsEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <para>When a derived class calls the <see cref="M:System.Drawing.Printing.PrintDocument.OnQueryPageSettings(System.Drawing.Printing.QueryPageSettingsEventArgs)" /> method, it raises the <see cref="E:System.Drawing.Printing.PrintDocument.QueryPageSettings" /> event by invoking the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Drawing.Printing.PrintDocument.QueryPageSettings" /> event. It is called immediately before each <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.QueryPageSettingsEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,9 +289,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculating the area available to print requires knowing the physical size of the paper, the margins for the page, and the location of the <see cref="T:System.Drawing.Graphics" /> object origin. When <see cref="P:System.Drawing.Printing.PrintDocument.OriginAtMargins" /> is true, the <see cref="T:System.Drawing.Graphics" /> object location takes into account the <see cref="P:System.Drawing.Printing.PageSettings.Margins" /> property value and the printable area of the page. When <see cref="P:System.Drawing.Printing.PrintDocument.OriginAtMargins" /> is false, only the printable area of the page is used to determine the location of the <see cref="T:System.Drawing.Graphics" /> object origin, the <see cref="P:System.Drawing.Printing.PageSettings.Margins" /> value is ignored.</para>
+          <para>For example, if <see cref="P:System.Drawing.Printing.PrintDocument.OriginAtMargins" /> is true, and <see cref="P:System.Drawing.Printing.PageSettings.Margins" /> is set for 1 inch on each side, the <see cref="T:System.Drawing.Graphics" /> object included in the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> is located 1 inch from the left and top of the page. If the printable area of the page is .25 of an inch on each side and <see cref="P:System.Drawing.Printing.PrintDocument.OriginAtMargins" /> is false, the <see cref="T:System.Drawing.Graphics" /> object is located .25 of an inch from the left and top of the page.</para>
+          <block subset="none" type="note">
+            <para>The printable area of a page varies from printer to printer and is not guaranteed to be symmetrical.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the position of a graphics object associated with a page is located just inside the user-specified margins or at the top-left corner of the printable area of the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,8 +316,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specify the output to print by handling the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event and by using the <see cref="T:System.Drawing.Graphics" /> included in the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" />.</para>
+          <para>Use the <see cref="P:System.Drawing.Printing.PrinterSettings.PrinterName" /> property to specify which printer should print the document.</para>
+          <para>The <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method prints the document without using a print dialog. Use a <see cref="T:System.Windows.Forms.PrintDialog" /> when you want to offer the user the ability to choose print settings.</para>
+          <block subset="none" type="note">
+            <para>If an exception that is not handled by the <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> method is thrown during printing, the printing of the document is aborted.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts the document's printing process.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -246,9 +344,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PrintController'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A print controller guides the printing process in several ways. For example, to print a document, you need to convert it to a <see cref="T:System.Drawing.Graphics" /> object. A <see cref="T:System.Drawing.Printing.PrintController" /> specifies where to draw the graphic in an image for a print preview or on a printer to actually print the document. A print controller can also specify whether to print a document immediately, or wait a specified interval.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the print controller that guides the printing process.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,9 +376,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PrinterSettings'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify several printer settings through the <see cref="P:System.Drawing.Printing.PrintDocument.PrinterSettings" /> property. For example, use the <see cref="P:System.Drawing.Printing.PrinterSettings.Copies" /> property to specify the number of copies you want to print, the <see cref="P:System.Drawing.Printing.PrinterSettings.PrinterName" /> property to specify the printer to use, and the <see cref="P:System.Drawing.Printing.PrinterSettings.PrintRange" /> property to specify the range of pages you want to print.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the printer that prints the document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -297,8 +407,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To specify the output to print, use the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.Graphics" /> property of the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" />. For example, to specify a line of text that should be printed, draw the text using the <see cref="Overload:System.Drawing.Graphics.DrawString" /> method.</para>
+          <para>In addition to specifying the output, you can indicate if there are additional pages to print by setting the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.HasMorePages" /> property to true. The default is false, which indicates that there are no more pages to print. Individual page settings can also be modified through the <see cref="T:System.Drawing.Printing.PageSettings" /> and the print job can be canceled by setting the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.Cancel" /> property to true. To print each page of a document using different page settings, handle the <see cref="E:System.Drawing.Printing.PrintDocument.QueryPageSettings" /> event.</para>
+          <para>To associate the event with your event handler, add an instance of the <see cref="T:System.Drawing.Printing.PrintPageEventHandler" /> delegate to the event. The event handler is called whenever the event occurs. For more information about handling events with delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the output to print for the current page is needed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -312,8 +430,15 @@
         <ReturnType>System.Drawing.Printing.QueryPageSettingsEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is possible to print each page of a document using different page settings. You set page settings by modifying individual properties of the <see cref="P:System.Drawing.Printing.QueryPageSettingsEventArgs.PageSettings" /> property or by setting the property to a <see cref="T:System.Drawing.Printing.PageSettings" />. Changes made to the <see cref="T:System.Drawing.Printing.PageSettings" /> affect only the current page, not the document's default page settings. The print job can also be canceled by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true for the <see cref="T:System.Drawing.Printing.QueryPageSettingsEventArgs" />.</para>
+          <para>To associate the event with your event handler, add an instance of the <see cref="T:System.Drawing.Printing.QueryPageSettingsEventHandler" /> delegate to the event. The event handler is called whenever the event occurs. For more information about handling events with delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs immediately before each <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -328,9 +453,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides information about the print document, in string form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

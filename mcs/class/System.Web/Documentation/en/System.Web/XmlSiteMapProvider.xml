@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSiteMapProvider" FullName="System.Web.XmlSiteMapProvider">
   <TypeSignature Language="C#" Value="public class XmlSiteMapProvider : System.Web.StaticSiteMapProvider, IDisposable" />
   <AssemblyInfo>
@@ -13,9 +14,45 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class loads site map data from an XML file that follows a known schema. The site map data is bounded by &lt;siteMap&gt; tags and consists of nested &lt;siteMapNode&gt; tags. Two constraints are imposed by the <see cref="T:System.Web.SiteMapProvider" /> and <see cref="T:System.Web.XmlSiteMapProvider" /> classes on the structure of the site map data: </para>
+      <list type="bullet">
+        <item>
+          <para>Only one root node can exist.</para>
+        </item>
+        <item>
+          <para>For <see cref="T:System.Web.SiteMapNode" /> objects that specify URLs, the URLs must be unique within the scope of the provider. (For nodes that do not specify URLs, all keys must be unique.)</para>
+        </item>
+      </list>
+      <para>The following code example shows an example of an XML file that can be used with the <see cref="T:System.Web.XmlSiteMapProvider" />.</para>
+      <code>&lt;siteMap&gt;
+  &lt;siteMapNode title="RootNode" description="This is the root node of the site map. There can be only one root node." url="Page1.aspx" &gt;
+    &lt;siteMapNode title="ChildofRootNode" description="Descriptions do not have to be unique." url="Page2.aspx"&gt;
+      &lt;siteMapNode title="ChildOfChildNode" description="SiteMapNode objects can be nested to any level." url="Page3.aspx"/&gt;
+    &lt;/siteMapNode&gt;
+    &lt;siteMapNode title="ChildofRootNode" description="Descriptions do not have to be unique." url="Page4.aspx"/&gt;
+  &lt;/siteMapNode&gt;
+&lt;/siteMap&gt;</code>
+      <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> is the default provider for ASP.NET and it reads XML data from a file named Web.sitemap that is located within the directory structure of the ASP.NET application. By default, the Web.sitemap file is located at the application root; however, if you want to change the name or location of the file from which the <see cref="T:System.Web.XmlSiteMapProvider" /> loads data, you can override the default configuration in your Web.config file. By overriding the default configuration settings in your Web.config file, you can tailor the behavior of the <see cref="T:System.Web.XmlSiteMapProvider" /> for each ASP.NET application, as necessary. </para>
+      <para>The following code example demonstrates an example Web.config file, where the <see cref="T:System.Web.XmlSiteMapProvider" /> is still used, but a different site map file is used. Because all providers in a <see cref="T:System.Web.SiteMapProviderCollection" /> object must be named uniquely, the one that is specified in the Web.config file uses a name other than the default but is also set as the default provider so that it will be used instead of the <see cref="T:System.Web.XmlSiteMapProvider" /> that is specified in the default ASP.NET configuration.</para>
+      <block subset="none" type="note">
+        <para>  You can change the name of the site navigation data file, but you cannot change its extension. The <see cref="T:System.Web.XmlSiteMapProvider" /> only reads data from files that are named with the file name extension .sitemap.</para>
+      </block>
+      <code>&lt;siteMap defaultProvider="MyXmlSiteMapProvider" enabled="true"&gt;
+  &lt;providers&gt;
+    &lt;add name="MyXmlSiteMapProvider"
+      description="SiteMap provider that reads in .sitemap files."
+      type="System.Web.XmlSiteMapProvider, System.Web, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+      siteMapFile="CustomWeb.sitemap" /&gt;
+  &lt;/providers&gt;
+&lt;/siteMap&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class is derived from the <see cref="T:System.Web.SiteMapProvider" /> class and is the default site map provider for ASP.NET. The <see cref="T:System.Web.XmlSiteMapProvider" /> class generates site map trees from XML files with the file name extension .sitemap.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +60,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new, unnamed, instance of the <see cref="T:System.Web.XmlSiteMapProvider" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +85,19 @@
         <Parameter Name="parentNode" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <param name="parentNode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="node" /> parameter is added to an internal collection, and a parent/child relationship is created between it and <paramref name="parentNode" />. </para>
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class, derived from the <see cref="T:System.Web.StaticSiteMapProvider" /> class and the default site map provider for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property of a <see cref="T:System.Web.SiteMapNode" /> object as a lookup key in its internal collections, by default. If the <see cref="P:System.Web.SiteMapNode.Url" /> property of the <see cref="T:System.Web.SiteMapNode" /> is set, it must be unique within the scope of the provider. The <see cref="M:System.Web.XmlSiteMapProvider.FindSiteMapNode(System.String)" /> method attempts to retrieve nodes based on their <see cref="P:System.Web.SiteMapNode.Url" />. Otherwise, you can use the <see cref="P:System.Web.SiteMapNode.Key" /> property, and the corresponding <see cref="M:System.Web.XmlSiteMapProvider.FindSiteMapNodeFromKey(System.String)" /> method, to retrieve nodes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Web.SiteMapNode" /> object to the collections that are maintained by the current provider.</para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to add to the provider.</param>
+        <param name="parentNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> under which to add <paramref name="node" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AddProvider">
@@ -62,11 +111,19 @@
         <Parameter Name="parentNode" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <param name="providerName">To be added.</param>
-        <param name="parentNode">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.AddProvider(System.String,System.Web.SiteMapNode)" /> method links <paramref name="providerName" /> to the current provider as a child of the current provider. The root node of <paramref name="providerName" /> is added to the hierarchy for the current provider as a child node of <paramref name="parentNode" />. Because the parent provider calls the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method on <paramref name="providerName" />, the exceptions that are described in the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method might be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Links a child site map provider to the current provider. </para>
+        </summary>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of one of the <see cref="T:System.Web.SiteMapProvider" /> objects currently registered in the <see cref="P:System.Web.SiteMap.Providers" />.</param>
+        <param name="parentNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A site map node of the current site map provider under which the root node and all nodes of the child provider is added.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -80,10 +137,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method is called to load and build the site map from persistent storage.</para>
+          <para>For the default behavior when security trimming is enabled, see "Remarks" in <see cref="M:System.Web.SiteMapProvider.IsAccessibleToUser(System.Web.HttpContext,System.Web.SiteMapNode)" />.</para>
+          <para>After the <see cref="T:System.Web.XmlSiteMapProvider" /> object parses and loads site map data, all loaded <see cref="T:System.Web.SiteMapNode" /> objects and <see cref="T:System.Web.SiteMapNodeCollection" /> collections are made read-only. When the <see cref="T:System.Web.XmlSiteMapProvider" /> parses the <see cref="P:System.Web.SiteMapNode.Url" /> property from a site map file, it converts application-relative URLs, as well as relative URLs, to application-absolute virtual paths.</para>
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> subscribes to file change notifications for the .sitemap file. If any change is made to the .sitemap file, the <see cref="T:System.Web.XmlSiteMapProvider" /> is reloaded, and the site map structure is rebuilt. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the site map information from an XML file and builds it in memory.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the root <see cref="T:System.Web.SiteMapNode" /> of the site map navigation structure.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -97,9 +166,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class overrides the inherited <see cref="M:System.Web.XmlSiteMapProvider.Clear" /> method to provide additional state cleanup beyond the basic <see cref="M:System.Web.StaticSiteMapProvider.Clear" /> implementation, including clearing its child provider tracking and the <see cref="P:System.Web.XmlSiteMapProvider.RootNode" /> property tracking mechanisms.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all elements in the collections of child and parent site map nodes and site map providers that the <see cref="T:System.Web.XmlSiteMapProvider" /> object internally tracks as part of its state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,9 +188,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class implements the <see cref="M:System.IDisposable.Dispose" /> method of the <see cref="T:System.IDisposable" /> interface to release its associated file monitor when the site map file is unloaded from memory. This overload of the <see cref="Overload:System.Web.XmlSiteMapProvider.Dispose" /> method calls the overload that takes a <see cref="T:System.Boolean" /> parameter and sets the value to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the file monitor of the Web.sitemap file that the <see cref="T:System.Web.XmlSiteMapProvider" /> object no longer requires the file to be monitored.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,10 +212,17 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.Dispose(System.Boolean)" /> method returns true if the <see cref="M:System.Web.XmlSiteMapProvider.Dispose(System.Boolean)" /> method is called by user code. Otherwise it returns false, if the <see cref="M:System.Web.XmlSiteMapProvider.Dispose(System.Boolean)" /> method is called by the finalizer thread during run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the file monitor of the Web.sitemap file that the <see cref="T:System.Web.XmlSiteMapProvider" /> object no longer requires the file to be monitored. The <see cref="M:System.Web.XmlSiteMapProvider.Dispose(System.Boolean)" /> method takes a Boolean parameter indicating whether the method is called by user code.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,11 +238,24 @@
         <Parameter Name="rawUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="rawUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> object overrides the <see cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNode(System.String)" /> method to ensure that any linked child providers are searched for the node if the implementation of the base class does not return a node for the specified URL.</para>
+          <para>The <paramref name="rawUrl" /> parameter should be either an absolute virtual path or an application-relative path, depending on how it is specified in the XML site map data file. </para>
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class and classes that are derived from it use the URL of a <see cref="T:System.Web.SiteMapNode" /> object as a key in the various collections that the class maintains. Therefore, these URLs must be unique within the scope of the site map. If the URL is not found within the immediate site map data that is managed by the <see cref="T:System.Web.XmlSiteMapProvider" />, it calls the <see cref="M:System.Web.XmlSiteMapProvider.FindSiteMapNode(System.String)" /> on each child provider that is linked to it through the provider attribute of its site map nodes. </para>
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.FindSiteMapNode(System.String)" /> method indirectly calls the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method to retrieve the top-level node in the site map. Therefore, any exceptions that occur for the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method can also occur when calling the <see cref="M:System.Web.XmlSiteMapProvider.FindSiteMapNode(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Web.SiteMapNode" /> object that represents the page at the specified URL.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the page identified by <paramref name="rawURL" />.</para>
+        </returns>
+        <param name="rawUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URL that identifies the page for which to retrieve a <see cref="T:System.Web.SiteMapNode" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,11 +271,23 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class overrides the <see cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey(System.String)" /> method to ensure that any linked child providers are searched for the node, if the implementation for the base class does not return a node for <paramref name="key" />.</para>
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> object, derived from the <see cref="T:System.Web.StaticSiteMapProvider" /> class and the default site map provider for ASP.NET, uses the <see cref="P:System.Web.SiteMapNode.Url" /> property of a <see cref="T:System.Web.SiteMapNode" /> object as a lookup key in its internal collections, by default. If the <see cref="P:System.Web.SiteMapNode.Url" /> property of the <see cref="T:System.Web.SiteMapNode" /> is set, it must be unique within the scope of the provider. If no <see cref="P:System.Web.SiteMapNode.Url" /> is specified, the <see cref="T:System.Web.XmlSiteMapProvider" /> automatically generates a <see cref="P:System.Web.SiteMapNode.Key" /> to track the nodes.</para>
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.FindSiteMapNodeFromKey(System.String)" /> method might call the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method on any child providers that are associated with the current provider. Therefore, the exceptions that are described in the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method might be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.Web.SiteMapNode" /> object based on a specified key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the page identified by <paramref name="key" />; otherwise, null, if security trimming is enabled and the node cannot be shown to the current user or the node is not found by <paramref name="key" /> in the node collection.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />A lookup key with which to search for a <see cref="T:System.Web.SiteMapNode" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -191,9 +304,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.GetRootNodeCore" /> method calls the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method to retrieve the top-level node in the site map. Therefore, any exceptions that occur for the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method can also occur when calling the <see cref="M:System.Web.XmlSiteMapProvider.GetRootNodeCore" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the top-level node of the current site map data structure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the top-level node in the current site map data structure.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -207,11 +329,19 @@
         <Parameter Name="attributes" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="attributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> class overrides the inherited <see cref="M:System.Web.XmlSiteMapProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" /> method to apply several attributes, such as the siteMapFile and description attributes, to the <paramref name="attributes" /> collection. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.XmlSiteMapProvider" /> object. The <see cref="M:System.Web.XmlSiteMapProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" /> method does not actually build a site map, it only prepares the state of the <see cref="T:System.Web.XmlSiteMapProvider" /> to do so.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.XmlSiteMapProvider" /> to initialize. </param>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.NameValueCollection" /> that can contain additional attributes to help initialize <paramref name="name" />. These attributes are read from the <see cref="T:System.Web.XmlSiteMapProvider" /> configuration in the Web.config file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -227,10 +357,14 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.SiteMapNode" /> object from all node collections that are tracked by the provider.</para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The node to remove from the node collections.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -246,10 +380,17 @@
         <Parameter Name="providerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="providerName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.XmlSiteMapProvider.RemoveProvider(System.String)" /> method removes <paramref name="providerName" /> from the hierarchy for the current provider, including any parent/child relationships that are established by the <see cref="M:System.Web.XmlSiteMapProvider.AddProvider(System.String,System.Web.SiteMapNode)" /> method between site map nodes of the current provider and the removed provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a linked child site map provider from the hierarchy for the current provider.</para>
+        </summary>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of one of the <see cref="T:System.Web.SiteMapProvider" /> objects currently registered in the <see cref="P:System.Web.SiteMap.Providers" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -262,10 +403,17 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.XmlSiteMapProvider.RootNode" /> property calls the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method to retrieve the top-level node in the site map. Therefore, any exceptions that occur for the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method can also occur when accessing the <see cref="P:System.Web.XmlSiteMapProvider.RootNode" /> property.</para>
+          <para>The <see cref="T:System.Web.SiteMapProvider" /> and <see cref="T:System.Web.XmlSiteMapProvider" /> classes permit only one root <see cref="T:System.Web.SiteMapNode" /> object in a site map. The <see cref="T:System.Web.XmlSiteMapProvider" /> class overrides the abstract <see cref="P:System.Web.SiteMapProvider.RootNode" /> property and provides a simple implementation to track the root node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root node of the site map.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

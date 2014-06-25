@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BinaryClientFormatterSink" FullName="System.Runtime.Remoting.Channels.BinaryClientFormatterSink">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class BinaryClientFormatterSink : System.Runtime.Remoting.Channels.IClientFormatterSink" />
   <AssemblyInfo>
@@ -17,8 +18,37 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The function of the formatter sink is to generate the necessary headers and serialize the message to the stream. After the formatter sink, the <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> is forwarded to all sinks in the chain through the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.ProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)" /> or <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" /> calls. At this stage the message has already been serialized and is provided as information only. Sinks that need to create or modify the message must be placed in the sink chain before the formatter. This is easily achieved by implementing the <see cref="T:System.Runtime.Remoting.Channels.IClientFormatterSink" /> interface, which gives the impression of having a reference to the formatter sink. The real formatter sink can then be placed later in the sink chain.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>includeVersions </para>
+          </term>
+          <description>
+            <para>Specifies whether the formatter will include versioning information. Values are true or false.</para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Using an instance of this object with untrusted data or across an unsecure channel is a security risk. Use this object only with trusted data and across a secure channel. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the implementation for a client formatter sink that uses the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +59,13 @@
         <Parameter Name="nextSink" Type="System.Runtime.Remoting.Channels.IClientChannelSink" />
       </Parameters>
       <Docs>
-        <param name="nextSink">To be added: an object of type 'IClientChannelSink'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BinaryClientFormatterSink" /> class.</para>
+        </summary>
+        <param name="nextSink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,11 +83,19 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
-        <param name="replySink">To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageCtrl'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asynchronously processes the provided message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> that provides a way to control the asynchronous message after it has been dispatched.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
+        <param name="replySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sink that will receive the reply to the provided message. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,12 +115,19 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="sinkStack">To be added: an object of type 'IClientChannelSinkStack'</param>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
-        <param name="headers">To be added: an object of type 'ITransportHeaders'</param>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests asynchronous processing of a method call on the current sink.</para>
+        </summary>
+        <param name="sinkStack">
+          <attribution license="cc4" from="Microsoft" modified="false" />A stack of channel sinks that called the current sink. </param>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The headers to add to the outgoing message that is heading to the server. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that is headed toward the transport sink. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -98,12 +147,19 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="sinkStack">To be added: an object of type 'IClientResponseChannelSinkStack'</param>
-        <param name="state">To be added: an object of type 'object'</param>
-        <param name="headers">To be added: an object of type 'ITransportHeaders'</param>
-        <param name="stream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests asynchronous processing of a response to a method call on the current sink.</para>
+        </summary>
+        <param name="sinkStack">
+          <attribution license="cc4" from="Microsoft" modified="false" />A stack of sinks that called the current sink. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information that is associated with the current sink, generated on the request side and needed on the response side. </param>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The headers that are retrieved from the server response stream. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream that is coming back from the transport sink. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,11 +177,22 @@
         <Parameter Name="headers" Type="System.Runtime.Remoting.Channels.ITransportHeaders" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
-        <param name="headers">To be added: an object of type 'ITransportHeaders'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IO.Stream'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Channels.BinaryClientFormatterSink.GetRequestStream(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)" /> method is called by the formatter sink before it serializes the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.IO.Stream" /> onto which the provided message is to be serialized.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.Stream" /> onto which the provided message is to be serialized.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> that contains details about the method call. </param>
+        <param name="headers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The headers to add to the outgoing message that is heading to the server. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -139,9 +206,12 @@
         <ReturnType>System.Runtime.Remoting.Channels.IClientChannelSink</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IClientChannelSink'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> in the sink chain.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -155,9 +225,12 @@
         <ReturnType>System.Runtime.Remoting.Messaging.IMessageSink</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> in the sink chain.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,9 +271,15 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IDictionary'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="226ECF74-EBBD-4EA0-A701-DCF4441DEEFE">[&lt;topic://cpconchannelformatterconfigurationproperties&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Collections.IDictionary" /> of properties for the current channel sink.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,10 +296,17 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronously processes the provided message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The response to the processed message.</para>
+        </returns>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -56,6 +56,7 @@
         <include name="TestSuite.cs"/>
         <include name="TestSuiteBuilder.cs"/>
         <include name="TextCapture.cs"/>
+        <include name="ThreadUtility.cs"/>
         <include name="ThreadedTestRunner.cs"/>
         <include name="Builders/AbstractFixtureBuilder.cs"/>
         <include name="Builders/AbstractTestCaseBuilder.cs"/>

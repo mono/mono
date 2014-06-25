@@ -1,5 +1,5 @@
 /* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* The architecture this is running on */
 #if defined(_M_IA64)
@@ -11,6 +11,14 @@
 #else
 #error Unknown architecture
 #endif
+
+#if _WIN32_WINNT < 0x0502
+/* Required for Vectored Exception Handling.
+   Interlocked* functions are also not available in XP SP1 and below
+*/
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0502
+#endif /* _WIN32_WINNT < 0x0502 */
 
 /*
  * Features that are not required in the Windows port

@@ -5,8 +5,8 @@ This is a modified version of Boehm GC 6.1 for Mono.
   - Makefile changes:
 
     libgc has a lot of configurable options which are AC_DEFINE()d in its
-    configure.in.  To make it easier to build and bundle it with Mono, I
-    replaced most of the orignal configure.in and the makefiles with custom
+    configure.ac.  To make it easier to build and bundle it with Mono, I
+    replaced most of the orignal configure.ac and the makefiles with custom
     versions which just define what we actually need for Mono.
 
     This means that you can just run configure in this directory and it'll
@@ -58,7 +58,7 @@ This is a modified version of Boehm GC 6.1 for Mono.
 
         cvs diff -u -r LIBGC
 
-  When importing new upstream versions, don't import the new configure.in or any of the
+  When importing new upstream versions, don't import the new configure.ac or any of the
   Makefile.am's; they've been replaced by custom versions.  Just import all the new source
   files and it should be fine.
 

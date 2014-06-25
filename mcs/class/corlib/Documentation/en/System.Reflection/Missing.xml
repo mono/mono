@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Missing" FullName="System.Reflection.Missing">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class Missing : System.Runtime.Serialization.ISerializable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit Missing extends System.Object implements class System.Runtime.Serialization.ISerializable" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Reflection.Missing" /> is used to invoke a method with a default argument.</para>
+      <para>Only one instance of <see cref="T:System.Reflection.Missing" /> ever exists.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a missing <see cref="T:System.Object" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
@@ -43,10 +52,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the logical context information needed to recreate the sole instance of the <see cref="T:System.Reflection.Missing" /> object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object to be populated with serialization information.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> object representing the destination context of the serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -64,8 +78,14 @@
       <Parameters />
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this instance of the <see cref="T:System.Reflection.Missing" /> class to represent missing values, for example, when you invoke methods that have default parameter values. For a code example, see the <see cref="T:System.Reflection.Missing" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the sole instance of the <see cref="T:System.Reflection.Missing" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

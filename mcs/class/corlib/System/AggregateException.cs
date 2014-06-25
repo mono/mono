@@ -63,7 +63,7 @@ namespace System
 		}
 		
 		public AggregateException (params Exception[] innerExceptions)
-			: this (string.Empty, innerExceptions)
+			: this (defaultMessage, innerExceptions)
 		{
 		}
 		

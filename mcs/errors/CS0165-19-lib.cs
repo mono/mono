@@ -1,6 +1,6 @@
 public struct S
 {
-	int private_value;
+	internal int private_value;
 	
 	public void Test ()
 	{

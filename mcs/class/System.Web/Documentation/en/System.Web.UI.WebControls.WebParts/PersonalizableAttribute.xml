@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PersonalizableAttribute" FullName="System.Web.UI.WebControls.WebParts.PersonalizableAttribute">
   <TypeSignature Language="C#" Value="public sealed class PersonalizableAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,34 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The personalization attribute, Personalizable, is applied to public control properties that need to persist personalization information. ASP.NET automatically generates the code to persist or retrieve these values from the underlying data store when the control is in a Web Parts zone on a Web Parts page.</para>
+      <para>The following requirements must be met for a property to be marked as personalizable:</para>
+      <list type="bullet">
+        <item>
+          <para>The property must be public and must have public get and set accessors.</para>
+        </item>
+        <item>
+          <para>The property must be a read/write property.</para>
+        </item>
+        <item>
+          <para>The property must be without parameters.</para>
+        </item>
+        <item>
+          <para>The property cannot be indexed.</para>
+        </item>
+      </list>
+      <para>Code is automatically generated to load and save personalization data for properties. Properties that support personalization are determined based on the existence of this attribute on the property and the fact that the property conforms to the constraints listed above.</para>
+      <para>Note that read-only and write-only properties are not supported for personalization. Applying this attribute to a read-only or write-only property results in an <see cref="T:System.Web.HttpException" /> being thrown. Parameterized properties also throw an <see cref="T:System.Web.HttpException" /> exception.</para>
+      <para>Individual properties without this attribute are excluded from personalization if no special handling through the <see cref="T:System.Web.UI.WebControls.WebParts.IPersonalizable" /> interface is used.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="7dc34f74-52aa-4082-b98d-2bcf9e07e320">Web Parts Personalization</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the personalization attribute. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +50,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor internally sets the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> property to true, the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" />, and the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +71,18 @@
         <Parameter Name="isPersonalizable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="isPersonalizable">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor internally sets the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> property to the value of the Boolean parameter, the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" />, and the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property to false.</para>
+          <para>This constructor is useful if you want a derived type to mark a virtual property that is personalizable on the base type as not-personalizable on the derived type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class using the provided parameter.</para>
+        </summary>
+        <param name="isPersonalizable">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value indicating whether the property can be personalized.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +95,17 @@
         <Parameter Name="scope" Type="System.Web.UI.WebControls.WebParts.PersonalizationScope" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor internally sets the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> property to true, the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property to the parameter specified, and the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class using the provided parameter.</para>
+        </summary>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> indicating the scope of the personalization.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,11 +119,19 @@
         <Parameter Name="isSensitive" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <param name="isSensitive">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor internally sets the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> property to true, the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property to the first parameter specified, and the <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property to the second parameter specified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class using the provided parameters.</para>
+        </summary>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> indicating the scope of the personalization.</param>
+        <param name="isSensitive">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value indicating whether the property information is considered sensitive.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -89,9 +144,16 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is used in conjunction with the <see cref="M:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsDefaultAttribute" /> method.</para>
+          <para>This field and the <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.NotPersonalizable" /> field have the same value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an attribute instance that indicates no support for personalization. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,11 +169,21 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> instances are considered equal if their <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" />, <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" />, and <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property settings are the same.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden, returns a Boolean evaluation of the current instance of <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> and another <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> instance supplied as a parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the values are equal; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> to be compared to the current instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +197,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code is based on an attribute's <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" />, <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" />, and <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden, returns a hash code of the attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code in the form of an integer.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -144,11 +225,22 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a collection containing zero or more <see cref="T:System.Reflection.PropertyInfo" /> objects, with one object in the collection for each property of the type specified that is marked as being personalizable, where <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> equals true.</para>
+          <para>The <paramref name="type" /> parameter is the type on which to look for Personalizable properties. For example, you would pass in "typeof(MyWebPart)" to get the Personalizable properties on the MyWebPart class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a collection of <see cref="T:System.Reflection.PropertyInfo" /> objects for the properties that match the parameter type and are marked as personalizable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of personalizable properties.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type on which to look for Personalizable properties.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -162,10 +254,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Default" /> field indicates no support for personalization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden, returns a value that indicates whether the attribute instance equals the value of the static <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Default" /> field.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute instance equals the static <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Default" /> field; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -178,10 +279,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is set when an instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the setting that indicates whether the attribute can be personalized, as established by one of the constructors.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -194,10 +301,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is set when an instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class is created.</para>
+          <para>This property controls how the property value is exported. If the property is set to true, it will not be exported when the control's <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.ExportMode" /> property is set to <see cref="F:System.Web.UI.WebControls.WebParts.WebPartExportMode.NonSensitiveData" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the setting that indicates whether the attribute is sensitive, as established by one of the constructors.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -213,11 +327,21 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to match properties that have the same <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the current instance of <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> and the specified <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> have the same <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> property value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two attributes have the same <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsPersonalizable" /> value; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> to be compared to the current instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,9 +354,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field and the <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Default" /> field have the same value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an attribute instance that indicates no support for personalization. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -245,9 +375,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute instance has its <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property set to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> and its <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an attribute instance that indicates support for personalization. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,10 +396,17 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizationScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is set when an instance of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class is created.</para>
+          <para>This property controls when the property value is saved and loaded, depending on the <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Scope" /> property of the page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> enumeration value for the class instance, as set by one of the constructors.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -276,9 +419,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute instance has its <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property set to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> and its <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an attribute instance that indicates support for personalization with a shared scope. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -291,9 +440,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizableAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute instance has its <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.Scope" /> property set to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> and its <see cref="P:System.Web.UI.WebControls.WebParts.PersonalizableAttribute.IsSensitive" /> property set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an attribute instance that indicates support for personalization in <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> scope. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

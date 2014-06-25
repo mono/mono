@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SelectedDatesCollection" FullName="System.Web.UI.WebControls.SelectedDatesCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SelectedDatesCollection : System.Collections.ICollection" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this class to programmatically manage a collection of <see cref="T:System.DateTime" /> objects that represent the selected dates in a <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This class is commonly used to add or remove dates from the collection.</para>
+      <para>This collection stores only whole dates. The time portion of each <see cref="T:System.DateTime" /> is removed. The dates are stored in ascending order. If there are duplicate dates, only one date is stored in the collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a collection of <see cref="T:System.DateTime" /> objects that represent the selected dates in a <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +37,19 @@
         <Parameter Name="dateList" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <param name="dateList">a <see cref="T:System.Collections.ArrayList" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a new instance of the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> class.</para>
+          <block subset="none" type="note">
+            <para>This constructor is primarily used by control developers when extending the <see cref="T:System.Web.UI.WebControls.Calendar" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> class with the specified date list.</para>
+        </summary>
+        <param name="dateList">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ArrayList" /> that represents a collection of dates. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,9 +66,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to add the specified <see cref="T:System.DateTime" /> object to the end of the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends the specified <see cref="T:System.DateTime" /> object to the end of the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,8 +90,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove all <see cref="T:System.DateTime" /> objects from the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection and set the <see cref="P:System.Web.UI.WebControls.SelectedDatesCollection.Count" /> property to 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all <see cref="T:System.DateTime" /> objects from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,10 +114,20 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection contains the specified <see cref="T:System.DateTime" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection contains the specified <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> contains the specified <see cref="T:System.DateTime" />; otherwise, false.</para>
+        </returns>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to search for in the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,10 +145,21 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'Array'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to copy the contents of the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection into the specified <see cref="T:System.Array" />, starting at the specified index.</para>
+          <block subset="none" type="note">
+            <para>The <paramref name="array" /> parameter must be a zero-based <see cref="T:System.Array" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the items from the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection to the specified <see cref="T:System.Array" />, starting with the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />A zero-based <see cref="T:System.Array" /> that receives the copied items from the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" />. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first index in the specified <see cref="T:System.Array" /> to receive the items. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,9 +173,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine the number of dates in the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection. The <see cref="P:System.Web.UI.WebControls.SelectedDatesCollection.Count" /> property is often used when iterating through the collection to determine the upper bound.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of <see cref="T:System.DateTime" /> objects in the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,9 +196,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to create an <see cref="T:System.Collections.IEnumerator" />-implemented object that can be easily iterated through to get each item in the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+          <para>Use the <see cref="P:System.Collections.IEnumerator.Current" /> property to get the item currently pointed to in the collection.</para>
+          <para>Use the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method to move to the next item in the collection.</para>
+          <para>Use the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator back to the initial position.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Collections.IEnumerator.MoveNext" /> method needs to be called after creating an <see cref="T:System.Collections.IEnumerator" />-implemented object or using the <see cref="M:System.Collections.IEnumerator.Reset" /> method to move the enumerator to the first item in the collection. Otherwise, the item represented by the <see cref="P:System.Collections.IEnumerator.Current" /> property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" />-implemented object that contains all <see cref="T:System.DateTime" /> objects within the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" />-implemented object that contains all <see cref="T:System.DateTime" /> objects within the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,9 +227,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property always returns false to indicate that the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection can be written to in all cases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -170,9 +249,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is derived from <see cref="T:System.Collections.ICollection" /> and is overridden to always return false.</para>
+          <para>For more information on the <see cref="P:System.Web.UI.WebControls.SelectedDatesCollection.IsSynchronized" /> property, see the <see cref="P:System.Collections.ICollection.IsSynchronized" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether access to the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection is synchronized (thread safe).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -209,9 +295,16 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="date">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove the specified <see cref="T:System.DateTime" /> object from the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.DateTime" /> object from the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to remove from the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -229,10 +322,18 @@
         <Parameter Name="toDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="fromDate">To be added: an object of type 'DateTime'</param>
-        <param name="toDate">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to add the specified range of dates to the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified range of dates to the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </summary>
+        <param name="fromDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> that specifies the initial date to add to the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" />. </param>
+        <param name="toDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> that specifies the end date to add to the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -246,9 +347,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned in this implementation is the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> object itself.</para>
+          <para>For more information on the <see cref="P:System.Web.UI.WebControls.SelectedDatesCollection.SyncRoot" /> property, see the <see cref="P:System.Collections.ICollection.SyncRoot" /> property of the <see cref="T:System.Collections.ICollection" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that can be used to synchronize access to the <see cref="T:System.Web.UI.WebControls.SelectedDatesCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

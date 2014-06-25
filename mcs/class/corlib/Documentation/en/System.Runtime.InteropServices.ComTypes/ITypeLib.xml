@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypeLib" FullName="System.Runtime.InteropServices.ComTypes.ITypeLib">
   <TypeSignature Language="C#" Value="public interface ITypeLib" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeLib" />
@@ -16,9 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about the ITypeLib interface, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the managed definition of the ITypeLib interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FindName">
@@ -157,10 +165,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeLib::GetTypeInfoCount, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of type descriptions in the type library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of type descriptions in the type library.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTypeInfoOfGuid">
@@ -225,12 +242,24 @@
         <Parameter Name="lHashVal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="szNameBuf">To be added.</param>
-        <param name="lHashVal">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type library contains the string specified by the <paramref name="szNameBuf" /> parameter, <paramref name="szNameBuf" /> is overwritten with the name found in the type library, using the casing found in the type library. For example, if the type library contains the string "aBc" and the <see cref="M:System.Runtime.InteropServices.ComTypes.ITypeLib.FindName(System.String,System.Int32,System.Runtime.InteropServices.ComTypes.ITypeInfo[],System.Int32[],System.Int16@)" /> method passes "abc" as the <paramref name="szNameBuf" /> parameter, <paramref name="szNameBuf" /> becomes "aBc" when the method returns.</para>
+          <para>For additional information about ITypeLib::IsName, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a passed-in string contains the name of a type or member described in the library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="szNameBuf" /> was found in the type library; otherwise, false.</para>
+        </returns>
+        <param name="szNameBuf">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to test. This is an in/out parameter.</param>
+        <param name="lHashVal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The hash value of <paramref name="szNameBuf" />. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseTLibAttr">
@@ -248,10 +277,17 @@
         <Parameter Name="pTLibAttr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pTLibAttr">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeLib::ReleaseTLibAttr, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the <see cref="T:System.Runtime.InteropServices.TYPELIBATTR" /> structure originally obtained from the <see cref="M:System.Runtime.InteropServices.ComTypes.ITypeLib.GetLibAttr(System.IntPtr@)" /> method.</para>
+        </summary>
+        <param name="pTLibAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TLIBATTR structure to release. </param>
       </Docs>
     </Member>
   </Members>

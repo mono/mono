@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceExpressionEditor" FullName="System.Web.UI.Design.ResourceExpressionEditor">
   <TypeSignature Language="C#" Value="public class ResourceExpressionEditor : System.Web.UI.Design.ExpressionEditor" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> class derives from the <see cref="T:System.Web.UI.Design.ExpressionEditor" /> class and provides an implementation for evaluating and associating a resource reference with a control property at design time. For example, you can bind the value of a control property to the resource expression Resources:submitText, which indicates that the control property value is set using the resource named submitText.</para>
+      <para>A visual designer host, such as vsprvslong, uses the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> class to specify a resource class, key, and designer default value for a resource expression, and then evaluate the selected resource expression for design-time rendering.</para>
+      <para>When you browse the <see cref="P:System.Web.UI.Design.HtmlControlDesigner.Expressions" /> property for a control in the design-time properties grid, the visual designer displays a dialog box to set expressions that provide the run-time value for a control property. You can select the expression type based on a list of expression prefixes. When you select the <ui>Resources</ui> expression prefix in the list, the visual designer uses the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> methods to set, evaluate, and convert the expression based on the resource expression syntax. The visual designer uses the evaluated expression result to assign control property values that are rendered on the design surface.</para>
+      <para>The base <see cref="P:System.Web.Configuration.ExpressionBuilder.ExpressionPrefix" /> property for a <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> returns the string Resources. The <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class is associated with the expression prefix Resources and the <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> implementation.</para>
+      <para>The <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method evaluates an input resource expression. The <see cref="M:System.Web.UI.Design.ExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns the <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> implementation that is used to select the resource name, class, and designer default value, and to form a resource expression from the selected resource values.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties and methods for evaluating and editing a resource expression at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +30,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> object is configured by the base class together with an <see cref="P:System.Web.UI.Design.ExpressionEditor.ExpressionPrefix" /> property set to Resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of a <see cref="T:System.Web.UI.Design.ResourceExpressionEditor" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,14 +57,29 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="parseTimeData">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method looks up the resource that is specified by <paramref name="expression" />, and then returns the resource.</para>
+          <para>The visual designer uses the <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method to evaluate a resource expression and provide the design-time value for an associated control property. At run time, the page parser uses the <see cref="M:System.Web.Compilation.ResourceExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> and <see cref="M:System.Web.Compilation.ResourceExpressionBuilder.GetCodeExpression(System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> methods of the corresponding <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> implementation to evaluate an expression and provide the run-time value for an associated control property.</para>
+          <para>The visual designer uses the <see cref="M:System.Web.Compilation.ResourceExpressionBuilder.ParseExpression(System.String)" /> method to parse the expression string at design time, and then calls the <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.EvaluateExpression(System.String,System.Object,System.Type,System.IServiceProvider)" /> method with the parsed expression data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Evaluates a resource expression and provides the design-time value for a control property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by the evaluated expression string, if the expression evaluation succeeded; otherwise, null.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource expression to evaluate. <paramref name="expression" /> does not include the Resources expression prefix.</param>
+        <param name="parseTimeData">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object supplying additional parse data, in the form of a <see cref="T:System.Web.Compilation.ResourceExpressionFields" /> value.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the control property.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to obtain additional design-time services.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,12 +96,23 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="serviceProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ResourceExpressionEditor.GetExpressionEditorSheet(System.String,System.IServiceProvider)" /> method returns an expression editor sheet implementation for resource expressions. The visual designer host uses the expression editor sheet in its expressions dialog box. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a resource expression editor sheet that is initialized with the input expression string and service provider implementation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" /> that defines the resource expression properties.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A resource expression, used to initialize the expression editor sheet.</param>
+        <param name="serviceProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A service provider implementation supplied by the designer host, used to initialize the expression editor sheet.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

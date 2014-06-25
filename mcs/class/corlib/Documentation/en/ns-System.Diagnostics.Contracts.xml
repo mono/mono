@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Diagnostics.Contracts">
   <Docs>
-    <summary>This namespace contains classes for specifying code contracts.</summary>
     <remarks>To enforce the code contracts at runtime use the ccrewrite tool. To statically check the code contracts use the cccheck tool.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Diagnostics.Contracts" /> namespace contains static classes for representing program contracts such as preconditions, postconditions, and invariants.</para>
+    </summary>
   </Docs>
 </Namespace>

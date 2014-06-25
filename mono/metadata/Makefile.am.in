@@ -75,7 +75,7 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLA
 #  mono-config.c uses MONO_CFG_DIR
 #
 # This won't result in many more false positives than AC_DEFINEing them
-# in configure.in.
+# in configure.ac.
 #
 assembly.lo mono-config.lo: Makefile
 
@@ -85,6 +85,9 @@ libmonoruntime_static_la_LIBADD = $(bundle_obj) $(libmonoruntime_la_LIBADD)
 
 null_sources = \
 	console-null.c
+
+null_gc_sources = \
+	null-gc.c
 
 common_sources = \
 	$(platform_sources)	\
@@ -159,7 +162,6 @@ common_sources = \
 	monitor.h		\
 	nacl-stub.c		\
 	normalization-tables.h	\
-	null-gc.c		\
 	number-formatter.h	\
 	object-internals.h	\
 	opcodes.c		\
@@ -190,7 +192,12 @@ common_sources = \
 	threadpool-internals.h	\
 	verify.c		\
 	verify-internals.h	\
-	wrapper-types.h
+	wrapper-types.h	\
+	reflection-internals.h	\
+	file-mmap-posix.c	\
+	file-mmap-windows.c	\
+	file-mmap.h
+
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
@@ -219,6 +226,9 @@ sgen_sources = \
 	sgen-protocol.c \
 	sgen-bridge.c		\
 	sgen-bridge.h		\
+	sgen-old-bridge.c		\
+	sgen-new-bridge.c		\
+	sgen-tarjan-bridge.c		\
 	sgen-toggleref.c		\
 	sgen-toggleref.h		\
 	sgen-gc.h		\
@@ -258,7 +268,7 @@ sgen_sources = \
 	sgen-qsort.c	\
 	sgen-qsort.h
 
-libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(boehm_sources)
+libmonoruntime_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)
 
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(gc_dependent_sources) $(sgen_sources)

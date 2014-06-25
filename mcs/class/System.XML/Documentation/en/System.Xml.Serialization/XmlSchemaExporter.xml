@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaExporter" FullName="System.Xml.Serialization.XmlSchemaExporter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaExporter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaExporter extends System.Object" />
@@ -14,8 +15,24 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class provides a programmatic representation of an XML Schema Definition language (XSD) document. Instead of using <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> directly, use the <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class or the <format type="text/html"><a href="a6e6e65c-347f-4494-9457-653bf29baac2">XML Schema Definition Tool (Xsd.exe)</a></format>.</para>
+      <para>The <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class creates <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects from classes that are identified as Web services. It uses the <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class when a Web service class specifies: </para>
+      <list type="bullet">
+        <item>
+          <para>Literal use, indicating that the contents of SOAP message parameters and return values (or request and response documents) are literally specified with XML schema definitions.</para>
+        </item>
+        <item>
+          <para>Non-SOAP implementations of Web services using the HTTP-GET and HTTP-POST operations.</para>
+        </item>
+      </list>
+      <para>Xsd.exe generates XML schema documents from one or more types in a run-time assembly file using the <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class and reflection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Populates <see cref="T:System.Xml.Schema.XmlSchema" /> objects with XML schema element declarations that are found in type mapping objects. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,9 +49,16 @@
         <Parameter Name="schemas" Type="System.Xml.Serialization.XmlSchemas" />
       </Parameters>
       <Docs>
-        <param name="schemas">To be added: an object of type 'XmlSchemas'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class supplies the collection of <see cref="T:System.Xml.Schema.XmlSchema" /> objects to which XML schema element declarations are to be added. You do not need to create an instance of the <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.XmlSchemaExporter" /> class. </para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.Xml.Schema.XmlSchema" /> objects to which element declarations obtained from type mappings are added.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportAnyType">
@@ -53,10 +77,22 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You do not need to call the method directly.</para>
+          <para>The <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> creates <see cref="T:System.Web.Services.Description.ServiceDescription" /> objects from classes that are identified as Web services.</para>
+          <para>A field or property of type <see cref="T:System.Xml.XmlElement" />, with an attribute <see cref="T:System.Xml.Serialization.XmlAnyElementAttribute" />, is translated into an &lt;any&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Exports an &lt;any&gt; element to the <see cref="T:System.Xml.Schema.XmlSchema" /> object that is identified by the specified namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An arbitrary name assigned to the &lt;any&gt; element declaration.</para>
+        </returns>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the XML schema document to which to add an <ui>&lt;any&gt;</ui> element.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportAnyType">
@@ -74,11 +110,18 @@
         <Parameter Name="members" Type="System.Xml.Serialization.XmlMembersMapping" />
       </Parameters>
       <Docs>
-        <param name="members">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element declaration for an object or type to a SOAP message or to an <see cref="T:System.Xml.Schema.XmlSchema" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string "any" with an appended integer. </para>
+        </returns>
+        <param name="members">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Serialization.XmlMembersMapping" />  that contains mappings to export.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportMembersMapping">
@@ -97,9 +140,17 @@
         <Parameter Name="xmlMembersMapping" Type="System.Xml.Serialization.XmlMembersMapping" />
       </Parameters>
       <Docs>
-        <param name="xmlMembersMapping">To be added: an object of type 'XmlMembersMapping'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For each SOAP message part, the <see cref="M:System.Xml.Serialization.XmlSchemaExporter.ExportMembersMapping(System.Xml.Serialization.XmlMembersMapping)" /> method adds an XML schema element declaration to the <see cref="T:System.Xml.Schema.XmlSchema" /> that uses the same namespace as the part. A literal message definition normally contains a single part.</para>
+          <para>Use the <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element declaration to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> for each of the element parts of a literal SOAP message definition. </para>
+        </summary>
+        <param name="xmlMembersMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The internal .NET Framework type mappings for the element parts of a Web Services Description Language (WSDL) message definition.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportMembersMapping">
@@ -118,11 +169,16 @@
         <Parameter Name="exportEnclosingType" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="xmlMembersMapping">To be added.</param>
-        <param name="exportEnclosingType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element declaration to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> for each of the element parts of a literal SOAP message definition, and specifies whether enclosing elements are included.</para>
+        </summary>
+        <param name="xmlMembersMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The internal mapping between a .NET Framework type and an XML schema element.</param>
+        <param name="exportEnclosingType">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the schema elements that enclose the schema are to be included; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportTypeMapping">
@@ -141,10 +197,21 @@
         <Parameter Name="xmlMembersMapping" Type="System.Xml.Serialization.XmlMembersMapping" />
       </Parameters>
       <Docs>
-        <param name="xmlMembersMapping">To be added: an object of type 'XmlMembersMapping'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'System.Xml.XmlQualifiedName'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload adds an XML schema element declaration to the <see cref="T:System.Xml.Schema.XmlSchema" /> that uses the same namespace as the SOAP message part. The literal message definition must contain a single part.</para>
+          <para>Use the <see cref="T:System.Web.Services.Description.ServiceDescriptionReflector" /> class instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element declaration to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> object for a single element part of a literal SOAP message definition.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlQualifiedName" /> that represents the qualified XML name of the exported element declaration.</para>
+        </returns>
+        <param name="xmlMembersMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal .NET Framework type mappings for the element parts of a Web Services Description Language (WSDL) message definition.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportTypeMapping">
@@ -163,9 +230,13 @@
         <Parameter Name="xmlTypeMapping" Type="System.Xml.Serialization.XmlTypeMapping" />
       </Parameters>
       <Docs>
-        <param name="xmlTypeMapping">To be added: an object of type 'XmlTypeMapping'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an element declaration for a .NET Framework type to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> object. </para>
+        </summary>
+        <param name="xmlTypeMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />The internal mapping between a .NET Framework type and an XML schema element.</param>
       </Docs>
     </Member>
   </Members>

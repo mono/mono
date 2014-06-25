@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RenderMethod" FullName="System.Web.UI.RenderMethod">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void RenderMethod(HtmlTextWriter output, Control container);" />
   <AssemblyInfo>
@@ -14,8 +15,11 @@
   <Docs>
     <param name="output">To be added.</param>
     <param name="container">To be added.</param>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that renders the specified <see cref="T:System.Web.UI.Control" /> container to the specified <see cref="T:System.Web.UI.HtmlTextWriter" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PreviewPrintController" FullName="System.Drawing.Printing.PreviewPrintController">
   <TypeSignature Language="C#" Value="public class PreviewPrintController : System.Drawing.Printing.PrintController" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, to use the print preview feature, you create an instance of a <see cref="T:System.Windows.Forms.PrintPreviewControl" /> or <see cref="T:System.Windows.Forms.PrintPreviewDialog" /> class and set its <see cref="P:System.Windows.Forms.PrintPreviewControl.Document" /> property. The <see cref="T:System.Drawing.Printing.PreviewPrintController" /> is used by the <see cref="T:System.Windows.Forms.PrintPreviewControl" /> and <see cref="T:System.Windows.Forms.PrintPreviewDialog" /> classes, though you can use the <see cref="T:System.Drawing.Printing.PreviewPrintController" /> when managing the display of your own print preview window.</para>
+      <para>
+        <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> creates the <see cref="T:System.Drawing.Graphics" /> that is displayed during the print preview. After <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> to a graphic of a single page. The <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" />, while the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+      <para>For more information about printing, see the <see cref="N:System.Drawing.Printing" /> namespace overview.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a print controller that displays a document on a screen as a series of images.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +33,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PreviewPrintController" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +52,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'PreviewPageInfo []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="T:System.Drawing.Printing.PrintDocument" /> image representation contained in a <see cref="T:System.Drawing.Printing.PreviewPageInfo" /> to implement your own print preview form.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Captures the pages of a document as a series of images.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Drawing.Printing.PreviewPageInfo" /> that contains the pages of a <see cref="T:System.Drawing.Printing.PrintDocument" /> as a series of images.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +80,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this controller is used for print preview. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnEndPage">
@@ -74,10 +99,21 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'PrintDocument'</param>
-        <param name="e">To be added: an object of type 'PrintPageEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> is called immediately after the <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event. If an exception is thrown inside a <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event of a <see cref="T:System.Drawing.Printing.PrintDocument" />, this method is not called.</para>
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> creates the <see cref="T:System.Drawing.Graphics" /> that is displayed during the print preview. After <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> to a graphic of a single page. The <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" />, while the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the control sequence that determines when and how to preview a page in a print document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document being previewed. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> that contains data about how to preview a page in the print document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,10 +131,20 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'PrintDocument'</param>
-        <param name="e">To be added: an object of type 'PrintEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called immediately after <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.EndPrint" /> event. Even if an uncaught exception was thrown during the print preview process, <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called.</para>
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> creates the <see cref="T:System.Drawing.Graphics" /> that is displayed during the print preview. After <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> to a graphic of a single page. The <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" />, while the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes the control sequence that determines when and how to preview a print document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document being previewed. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintEventArgs" /> that contains data about how to preview the print document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,11 +162,28 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'PrintDocument'</param>
-        <param name="e">To be added: an object of type 'PrintPageEventArgs'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Drawing.Graphics'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> is called immediately before <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event.</para>
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> creates the <see cref="T:System.Drawing.Graphics" /> that is displayed during the print preview. After <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> to a graphic of a single page. The <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" />, while the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+          <block subset="none" type="note">
+            <para>Anti-aliasing, also known as gray scaling, makes the print preview look better. However, the use of anti-aliasing can slow down the rendering speed. For more information about anti-aliasing, see the <see cref="P:System.Drawing.Printing.PreviewPrintController.UseAntiAlias" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the control sequence that determines when and how to preview a page in a print document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Graphics" /> that represents a page from a <see cref="T:System.Drawing.Printing.PrintDocument" />.</para>
+        </returns>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document being previewed. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> that contains data about how to preview a page in the print document. Initially, the <see cref="P:System.Drawing.Printing.PrintPageEventArgs.Graphics" /> property of this parameter will be null. The value returned from this method will be used to set this property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -138,10 +201,23 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintEventArgs" />
       </Parameters>
       <Docs>
-        <param name="document">To be added: an object of type 'PrintDocument'</param>
-        <param name="e">To be added: an object of type 'PrintEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called immediately after <see cref="T:System.Drawing.Printing.PrintDocument" /> raises the <see cref="E:System.Drawing.Printing.PrintDocument.BeginPrint" /> event.</para>
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> creates the <see cref="T:System.Drawing.Graphics" /> that is displayed during the print preview. After <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> is called, the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method sets the <see cref="T:System.Drawing.Graphics" /> to a graphic of a single page. The <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method clears the <see cref="T:System.Drawing.Graphics" />, while the <see cref="M:System.Drawing.Printing.PreviewPrintController.OnEndPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> method deallocates the object.</para>
+          <para>
+            <see cref="M:System.Drawing.Printing.PreviewPrintController.OnStartPrint(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintEventArgs)" /> verifies that the printer settings are valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins the control sequence that determines when and how to preview a print document.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document being previewed. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintEventArgs" /> that contains data about how to print the document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -157,9 +233,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Anti-aliasing, also known as gray scaling, uses several shades of gray around areas of curves and diagonals in text to give the text a smoother appearance.</para>
+          <block subset="none" type="note">
+            <para>While using anti-aliasing makes the print preview look better, it can slow down the rendering speed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to use anti-aliasing when displaying the print preview.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

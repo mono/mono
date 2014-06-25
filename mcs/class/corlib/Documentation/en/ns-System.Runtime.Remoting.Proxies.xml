@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Proxies" FullName="System.Runtime.Remoting.Proxies" FullNameSP="System.Runtime.Remoting.Proxies" Maintainer="Mono">
   <Docs>
     <summary>
-        To be added.
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Proxies" /> namespace contains classes that control and provide functionality for proxies. A proxy is a local object that is an image of a remote object. Proxies enable clients to access objects across remoting boundaries.</para>
     </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>One of the most important classes of the <see cref="N:System.Runtime.Remoting.Proxies" /> namespace is the <see cref="T:System.Runtime.Remoting.Proxies.RealProxy" /> class, which provides the base functionality for all remoting proxies, and can be used to create custom proxies.</para>
     </remarks>
   </Docs>
 </Namespace>

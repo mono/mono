@@ -385,7 +385,7 @@ namespace System.Windows.Forms
 
 		public static int MonitorCount {
 			get {
-				return 1;		// Why bother...
+				return Screen.AllScreens.Length;
 			}
 		}
 
@@ -479,13 +479,15 @@ namespace System.Windows.Forms
 
 		public static Size PrimaryMonitorMaximizedWindowSize {
 			get {
-				return new Size(WorkingArea.Width, WorkingArea.Height);
+				var workingArea = Screen.PrimaryScreen.WorkingArea;
+				return new Size (workingArea.Width, workingArea.Height);
 			}
 		}
 
 		public static Size PrimaryMonitorSize {
 			get {
-				return new Size(WorkingArea.Width, WorkingArea.Height);
+				var bounds = Screen.PrimaryScreen.Bounds;
+				return new Size (bounds.Width, bounds.Height);
 			}
 		}
 
@@ -593,13 +595,16 @@ namespace System.Windows.Forms
 
 		public static Rectangle VirtualScreen {
 			get {
-				return XplatUI.VirtualScreen;
+				var rect = new Rectangle ();
+				foreach (var screen in Screen.AllScreens)
+					rect = Rectangle.Union (rect, screen.Bounds);
+				return rect;
 			}
 		}
 
 		public static Rectangle WorkingArea {
 			get {
-				return XplatUI.WorkingArea;
+				return Screen.PrimaryScreen.WorkingArea;
 			}
 		}
 	}

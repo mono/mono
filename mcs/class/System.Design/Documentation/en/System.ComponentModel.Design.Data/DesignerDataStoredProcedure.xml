@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerDataStoredProcedure" FullName="System.ComponentModel.Design.Data.DesignerDataStoredProcedure">
   <TypeSignature Language="C#" Value="public abstract class DesignerDataStoredProcedure" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Data.DesignerDataStoredProcedure" /> class is one of several types that represent the schema of a data store at design-time. These schema items are made available to controls by designers implementing the <see cref="T:System.ComponentModel.Design.Data.IDataEnvironment" /> interface. Controls access schema objects by calling the <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.GetConnectionSchema(System.ComponentModel.Design.Data.DesignerDataConnection)" /> method of the interface.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Data.DesignerDataStoredProcedure" /> class represents a single table in the data store. A collection of <see cref="T:System.ComponentModel.Design.Data.DesignerDataStoredProcedure" /> objects is returned when you call the <see cref="M:System.ComponentModel.Design.Data.IDesignerDataSchema.GetSchemaItems(System.ComponentModel.Design.Data.DesignerDataSchemaClass)" /> method with the <paramref name="schemaClass" /> parameter set to <see cref="F:System.ComponentModel.Design.Data.DesignerDataSchemaClass.StoredProcedures" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a stored procedure in the data store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +31,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DesignerDataStoredProcedure" /> class with the specified name. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the stored procedure.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +51,15 @@
         <Parameter Name="owner" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DesignerDataStoredProcedure" /> class with the specified name and owner. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the stored procedure.</param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data store owner of the stored procedure.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateParameters">
@@ -56,9 +73,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Data.DesignerDataStoredProcedure.CreateParameters" /> method is called the first time the <see cref="P:System.ComponentModel.Design.Data.DesignerDataStoredProcedure.Parameters" /> property is accessed to populate the collection of stored-procedure parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, returns a collection of parameters for the stored procedure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ComponentModel.Design.Data.DesignerDataParameter" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -71,9 +97,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the stored procedure.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Owner">
@@ -86,9 +115,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the owner of the stored procedure.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parameters">
@@ -101,9 +133,15 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Data.DesignerDataStoredProcedure.Parameters" /> property is populated by the <see cref="M:System.ComponentModel.Design.Data.DesignerDataStoredProcedure.CreateParameters" /> method the first time the <see cref="P:System.ComponentModel.Design.Data.DesignerDataStoredProcedure.Parameters" /> property is accessed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of parameters required for a stored procedure.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

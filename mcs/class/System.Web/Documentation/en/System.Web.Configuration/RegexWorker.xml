@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegexWorker" FullName="System.Web.Configuration.RegexWorker">
   <TypeSignature Language="C#" Value="public class RegexWorker" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used internally at run time by <see cref="T:System.Web.Configuration.BrowserCapabilitiesFactory" /> and <see cref="T:System.Web.Configuration.BrowserCapabilitiesCodeGenerator" /> to parse request data and identify the browser.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +25,14 @@
         <Parameter Name="browserCaps" Type="System.Web.HttpBrowserCapabilities" />
       </Parameters>
       <Docs>
-        <param name="browserCaps">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of <see cref="T:System.Web.Configuration.RegexWorker" />.</para>
+        </summary>
+        <param name="browserCaps">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> object to be configured.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,12 +69,20 @@
         <Parameter Name="regexExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="regexExpression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used internally at run time to determine whether the specified request-header value matches any of the capabilities of an internal collection of browsers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified request-header value matches any of the capabilities of an internal collection of browsers; otherwise, false. The default is false.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The capabilities value from an internal collection of browsers.</param>
+        <param name="regexExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified request-header value.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -59,6 +59,9 @@ boehm_thread_unregister (MonoThreadInfo *p);
 static void
 register_test_toggleref_callback (void);
 
+#define BOEHM_GC_BIT_FINALIZER_AWARE 1
+static MonoGCFinalizerCallbacks fin_callbacks;
+
 static void
 mono_gc_warning (char *msg, GC_word arg)
 {
@@ -161,7 +164,7 @@ mono_gc_base_init (void)
 		for (ptr = opts; *ptr; ++ptr) {
 			char *opt = *ptr;
 			if (g_str_has_prefix (opt, "max-heap-size=")) {
-				glong max_heap;
+				size_t max_heap;
 
 				opt = strchr (opt, '=') + 1;
 				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &max_heap)) {
@@ -375,7 +378,8 @@ boehm_thread_unregister (MonoThreadInfo *p)
 
 	tid = mono_thread_info_get_tid (p);
 
-	mono_threads_add_joinable_thread ((gpointer)tid);
+	if (p->runtime_thread)
+		mono_threads_add_joinable_thread ((gpointer)tid);
 }
 
 gboolean
@@ -686,6 +690,16 @@ mono_gc_get_suspend_signal (void)
 {
 #ifdef USE_INCLUDED_GC
 	return GC_get_suspend_signal ();
+#else
+	return -1;
+#endif
+}
+
+int
+mono_gc_get_restart_signal (void)
+{
+#ifdef USE_INCLUDED_GC
+	return GC_get_restart_signal ();
 #else
 	return -1;
 #endif
@@ -1231,6 +1245,7 @@ void
 mono_gc_pthread_exit (void *retval)
 {
 	pthread_exit (retval);
+	g_assert_not_reached ();
 }
 
 #endif
@@ -1249,6 +1264,10 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 guint
 mono_gc_get_vtable_bits (MonoClass *class)
 {
+	if (fin_callbacks.is_class_finalization_aware) {
+		if (fin_callbacks.is_class_finalization_aware (class))
+			return BOEHM_GC_BIT_FINALIZER_AWARE;
+	}
 	return 0;
 }
 
@@ -1326,6 +1345,31 @@ static void
 register_test_toggleref_callback (void)
 {
 	mono_gc_toggleref_register_callback (test_toggleref_callback);
+}
+
+static gboolean
+is_finalization_aware (MonoObject *obj)
+{
+	MonoVTable *vt = obj->vtable;
+	return (vt->gc_bits & BOEHM_GC_BIT_FINALIZER_AWARE) == BOEHM_GC_BIT_FINALIZER_AWARE;
+}
+
+static void
+fin_notifier (MonoObject *obj)
+{
+	if (is_finalization_aware (obj))
+		fin_callbacks.object_queued_for_finalization (obj);
+}
+
+void
+mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
+{
+	if (callbacks->version != MONO_GC_FINALIZER_EXTENSION_VERSION)
+		g_error ("Invalid finalizer callback version. Expected %d but got %d\n", MONO_GC_FINALIZER_EXTENSION_VERSION, callbacks->version);
+
+	fin_callbacks = *callbacks;
+
+	GC_set_finalizer_notify_proc ((void (*) (GC_PTR))fin_notifier);
 }
 
 #endif /* no Boehm GC */

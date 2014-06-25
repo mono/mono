@@ -3,7 +3,7 @@
 
 public struct Test
 {
-	private int x;
+	internal int x;
 
 	public Test (int x)
 	{

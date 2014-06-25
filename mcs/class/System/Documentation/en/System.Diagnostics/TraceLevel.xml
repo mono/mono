@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceLevel" FullName="System.Diagnostics.TraceLevel">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum TraceLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TraceLevel extends System.Enum" />
@@ -14,8 +15,89 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by the <see cref="T:System.Diagnostics.TraceSwitch" /> class.</para>
+      <para>You must enable tracing or debugging to use a switch. The following syntax is compiler specific. If you use compilers other than C# or Visual Basic, refer to the documentation for your compiler.</para>
+      <list type="bullet">
+        <item>
+          <para>To enable debugging in C#, add the /d:DEBUG flag to the compiler command line when you compile your code, or you can add #define DEBUG to the top of your file. In Visual Basic, add the /d:DEBUG=True flag to the compiler command line.</para>
+        </item>
+        <item>
+          <para>To enable tracing in C#, add the /d:TRACE flag to the compiler command line when you compile your code, or add #define TRACE to the top of your file. In Visual Basic, add the /d:TRACE=True flag to the compiler command line.</para>
+        </item>
+      </list>
+      <para>For more information on instrumenting your application, see <see cref="T:System.Diagnostics.Debug" /> and <see cref="T:System.Diagnostics.Trace" />.</para>
+      <block subset="none" type="note">
+        <para>In the .NET Framework version 2.0, you can use text to specify the value for a switch. For example, true for a <see cref="T:System.Diagnostics.BooleanSwitch" /> or the text representing an enumeration value such as Error for a <see cref="T:System.Diagnostics.TraceSwitch" />. The line &lt;add name="mySwitch" value="Error" /&gt; is equivalent to &lt;add name="mySwitch" value="1" /&gt;.</para>
+      </block>
+      <para>In the .NET Framework versions 1.0 and 1.1, trace levels in configuration files are set using the integer value corresponding to the enumeration member, rather than the enumeration member itself, as the following example demonstrates.</para>
+      <code> &lt;configuration&gt;
+     &lt;system.diagnostics&gt;
+        &lt;switches&gt;
+           &lt;add name="mySwitch" value="4" /&gt;
+        &lt;/switches&gt;
+     &lt;/system.diagnostics&gt;
+ &lt;/configuration&gt;</code>
+      <para>In addition to setting trace levels using the integer value of the enumeration, the .NET Framework version 2.0 trace levels can be set using the text representation of the enumeration value. For example, Verbose for a <see cref="T:System.Diagnostics.TraceSwitch" />. The line &lt;add name="mySwitch" value="Verbose" /&gt; is equivalent to &lt;add name="mySwitch" value="4" /&gt;.</para>
+      <para>The following table shows the relationship between the <see cref="T:System.Diagnostics.TraceLevel" /> enumeration members and their corresponding configuration file entries.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Trace Level </para>
+            </term>
+            <description>
+              <para>Configuration File Value </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Off </para>
+          </term>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Error </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Warning </para>
+          </term>
+          <description>
+            <para>2 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Info </para>
+          </term>
+          <description>
+            <para>3 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Verbose </para>
+          </term>
+          <description>
+            <para>4 </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies what messages to output for the <see cref="T:System.Diagnostics.Debug" />, <see cref="T:System.Diagnostics.Trace" /> and <see cref="T:System.Diagnostics.TraceSwitch" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Error">
@@ -32,8 +114,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Output error-handling messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Info">
@@ -50,8 +135,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Output informational messages, warnings, and error-handling messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Off">
@@ -68,8 +156,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Output no tracing and debugging messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Verbose">
@@ -86,8 +177,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Output all debugging and tracing messages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Warning">
@@ -104,8 +198,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Output warnings and error-handling messages.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

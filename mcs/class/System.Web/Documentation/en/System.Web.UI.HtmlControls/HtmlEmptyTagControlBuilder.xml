@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlEmptyTagControlBuilder" FullName="System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder">
   <TypeSignature Language="C#" Value="public sealed class HtmlEmptyTagControlBuilder : System.Web.UI.ControlBuilder" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder" /> control interacts with the page parser to build HTML server controls that do not have a body or closing tag, such as &lt;img&gt;, &lt;link&gt;, &lt;input&gt;, and &lt;meta&gt;. The <see cref="M:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder.HasBody" /> property always returns false, indicating that controls built with the <see cref="T:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder" /> control do not have closing tags.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Interacts with the page parser to build HTML server controls that do not have a body or closing tag. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder.#ctor" /> method is used internally by the ASP.NET page framework and is not intended to be called from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,10 +48,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder.HasBody" /> method overrides the base class's <see cref="M:System.Web.UI.ControlBuilder.HasBody" /> method to always return false, because the <see cref="T:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder" /> class represents controls that do not have closing tags. The <see cref="M:System.Web.UI.ControlBuilder.HasBody" /> method of the <see cref="T:System.Web.UI.ControlBuilder" /> class determines whether a control has both an opening and a closing tag.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the controls built with the <see cref="T:System.Web.UI.HtmlControls.HtmlEmptyTagControlBuilder" /> control do not have closing tags.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false in all cases.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

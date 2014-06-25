@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextInfo" FullName="System.Globalization.TextInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class TextInfo : ICloneable, System.Runtime.Serialization.IDeserializationCallback" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit TextInfo extends System.Object implements class System.ICloneable, class System.Runtime.Serialization.IDeserializationCallback" />
@@ -26,8 +27,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A writing system is the collection of scripts and orthographic rules required to represent a language as text. The <see cref="T:System.Globalization.TextInfo" /> class represents a writing system.  </para>
+      <para>The application should use the <see cref="P:System.Globalization.CultureInfo.TextInfo" /> property to obtain the <see cref="T:System.Globalization.TextInfo" /> object for a particular <see cref="T:System.Globalization.CultureInfo" /> object. If a security decision depends on a string comparison or a case-change operation, the application should use the <see cref="P:System.Globalization.CultureInfo.TextInfo" /> property of the object returned by the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to ensure that the behavior of the operation is consistent regardless of the operating system culture settings.  </para>
+      <format type="text/html">
+        <h2>Overrides</h2>
+      </format>
+      <para>The user might use the regional and language options portion of Control Panel to override the values associated with the current culture of Windows. For example, the user might choose to display the date in a different format or to use a currency other than the default for the culture. If the <see cref="P:System.Globalization.CultureInfo.UseUserOverride" /> property is set to true, the property values of the objects returned by the <see cref="P:System.Globalization.CultureInfo.DateTimeFormat" />, <see cref="P:System.Globalization.CultureInfo.NumberFormat" />, and <see cref="P:System.Globalization.CultureInfo.TextInfo" /> properties are also retrieved from the user settings. If the user settings are incompatible with the culture associated with the <see cref="T:System.Globalization.CultureInfo" />, for example, if the selected calendar is not one of the <see cref="P:System.Globalization.CultureInfo.OptionalCalendars" />, the results of the methods and the values of the properties are undefined.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines text properties and behaviors, such as casing, that are specific to a writing system. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ANSICodePage">
@@ -43,9 +55,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the American National Standards Institute (ANSI) code page used by the writing system represented by the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -66,10 +81,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new memberwise clone is not read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new object that is a copy of the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Object" /> that is the memberwise clone of the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CultureName">
@@ -89,10 +113,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.TextInfo" /> object is created from a specific culture, and the <see cref="P:System.Globalization.TextInfo.CultureName" /> property returns the name of that culture. </para>
+          <para>The <see cref="P:System.Globalization.TextInfo.CultureName" /> property always reflects a specific culture rather than a neutral culture. If <see cref="P:System.Globalization.CultureInfo.Name" /> has a neutral culture as its value, then the corresponding <see cref="P:System.Globalization.TextInfo.CultureName" /> has as its value an arbitrary specific culture that uses the same language. For example, the <see cref="P:System.Globalization.CultureInfo.Name" /> property returns "en" for the English neutral culture, but the corresponding <see cref="P:System.Globalization.TextInfo.CultureName" /> property might return "en-US" for the English (United States) culture. If the <see cref="T:System.Globalization.TextInfo" /> object is associated with a specific culture instead of a neutral culture, the value of its <see cref="P:System.Globalization.TextInfo.CultureName" /> property is always identical to the <see cref="P:System.Globalization.CultureInfo.Name" /> property value of its associated <see cref="T:System.Globalization.CultureInfo" /> object. </para>
+          <para>Similarly, the <see cref="P:System.Globalization.TextInfo.CultureName" /> property never reflects a particular sort. It always corresponds to a default sort order. For example, the default sort order for Spanish (Spain) is the international sort order. If <see cref="P:System.Globalization.CultureInfo.Name" /> is es-ES_tradnl (Spanish with the traditional sort order) then the corresponding <see cref="P:System.Globalization.TextInfo.CultureName" /> is es-ES (Spanish with the default international sort order).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the culture associated with the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EBCDICCodePage">
@@ -108,9 +140,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Extended Binary Coded Decimal Interchange Code (EBCDIC) code page used by the writing system represented by the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -129,10 +164,20 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object represents the same writing system as the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> represents the same writing system as the current <see cref="T:System.Globalization.TextInfo" />; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Globalization.TextInfo" />. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -149,9 +194,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
+          <para>This method generates the same hash code for two objects that are equal according to the <see cref="M:System.Globalization.TextInfo.Equals(System.Object)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for the current <see cref="T:System.Globalization.TextInfo" />, suitable for hashing algorithms and data structures, such as a hash table.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -171,10 +226,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Globalization.TextInfo.IsReadOnly" /> property is true, the application cannot change any of the properties of the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current <see cref="T:System.Globalization.TextInfo" /> object is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsRightToLeft">
@@ -194,10 +255,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Globalization.TextInfo.IsRightToLeft" /> property indicates the dominant direction of written text and the relative position of user interface elements such as buttons and scroll bars.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current <see cref="T:System.Globalization.TextInfo" /> object represents a writing system where text flows from right to left.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LCID">
@@ -217,10 +284,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Certain predefined culture names and identifiers are accepted and used by this and other classes in the <see cref="N:System.Globalization" /> namespace, as well as the Windows API. The detailed culture information is defined in the <see cref="../../../../Users/a-bewilk/Documents/~tmp/NLS%20information%20page%20at%20the%20Go%20Global%20Developer%20Center">NLS information page at the Go Global Developer Center</see><see cref=""> (</see><see cref="http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx">http://msdn.microsoft.com/en-us/goglobal/bb896001.aspx</see>.</para>
+          <para>The <see cref="P:System.Globalization.TextInfo.LCID" /> property always reflects a specific culture identifier instead of a neutral culture identifier. If <see cref="P:System.Globalization.CultureInfo.LCID" /> is set to a neutral culture identifier, the corresponding <see cref="P:System.Globalization.TextInfo.LCID" /> has as its value an arbitrary specific culture identifier that uses the same language. For example, the <see cref="P:System.Globalization.CultureInfo.LCID" /> property returns 0x0009 for the English neutral culture, named "en". However, the corresponding <see cref="P:System.Globalization.TextInfo.LCID" /> property might return 0x0409 for the English (United States) culture, named en-US. </para>
+          <para>Similarly, the <see cref="P:System.Globalization.TextInfo.LCID" /> property always corresponds to a default sort order, and never reflects a specific sort order. For example, the default sort order for Spanish (Spain) is the international sort order. If <see cref="P:System.Globalization.CultureInfo.LCID" /> is set to "0x040A" (Spanish with the traditional sort order), the corresponding <see cref="P:System.Globalization.TextInfo.LCID" />  value is "0x0C0A" (Spanish with the default international sort order). </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the culture identifier for the culture associated with the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListSeparator">
@@ -241,9 +316,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that separates items in a list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MacCodePage">
@@ -259,9 +337,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Macintosh code page used by the writing system represented by the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OEMCodePage">
@@ -277,9 +358,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the original equipment manufacturer (OEM) code page used by the writing system represented by the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -302,11 +386,20 @@
         <Parameter Name="textInfo" Type="System.Globalization.TextInfo" />
       </Parameters>
       <Docs>
-        <param name="textInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a read-only version of the specified <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.TextInfo" /> object specified by the <paramref name="textInfo" /> parameter, if <paramref name="textInfo" /> is read-only.</para>
+          <para>-or-</para>
+          <para>A read-only memberwise clone of the <see cref="T:System.Globalization.TextInfo" /> object specified by <paramref name="textInfo" />, if <paramref name="textInfo" /> is not read-only.</para>
+        </returns>
+        <param name="textInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.TextInfo" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.IDeserializationCallback.OnDeserialization">
@@ -325,9 +418,13 @@
         <Parameter Name="sender" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the deserialization event when deserialization is complete.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the deserialization event. </param>
       </Docs>
     </Member>
     <Member MemberName="ToLower">
@@ -346,10 +443,22 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="c">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Casing semantics depend on the culture in use. For the invariant culture, the casing semantics are not culture-sensitive. For a specific culture, the casing semantics are sensitive to that culture.</para>
+          <para>If a security decision depends on a string comparison or a case-change operation, the application should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to ensure that the behavior is consistent regardless of the culture settings of the system. However, the invariant culture must be used only by processes that require culture-independent results, such as system services. Otherwise, it produces results that might be linguistically incorrect or culturally inappropriate.</para>
+          <para>For more information on cultures, see <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified character to lowercase.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified character converted to lowercase.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to convert to lowercase. </param>
       </Docs>
     </Member>
     <Member MemberName="ToLower">
@@ -368,10 +477,23 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned string might differ in length from the input string. For more information on casing, refer to the Unicode Technical Report #21 "Case Mappings," published by the Unicode Consortium (http://www.unicode.org). The current implementation preserves the length of the string. However, this behavior is not guaranteed and could change in future implementations.</para>
+          <para>Casing semantics depend on the culture in use. For the invariant culture, the casing semantics are not culture-sensitive. For a specific culture, the casing semantics are sensitive to that culture.</para>
+          <para>If a security decision depends on a string comparison or a case-change operation, the application should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to ensure that the behavior is consistent regardless of the culture settings of the system. However, the invariant culture must be used only by processes that require culture-independent results, such as system services. Otherwise, it produces results that might be linguistically incorrect or culturally inappropriate.</para>
+          <para>For more information on cultures, see <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string to lowercase.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified string converted to lowercase.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert to lowercase. </param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -388,9 +510,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToTitleCase">
@@ -409,10 +540,82 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generally, title casing converts the first character of a word to uppercase and the rest of the characters to lowercase. However, this method does not currently provide proper casing to convert a word that is entirely uppercase, such as an acronym. The following table shows the way the method renders several strings.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Input</para>
+                </term>
+                <description>
+                  <para>Language</para>
+                </description>
+                <description>
+                  <para>Expected result</para>
+                </description>
+                <description>
+                  <para>Actual result</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>war and peace</para>
+              </term>
+              <description>
+                <para>English</para>
+              </description>
+              <description>
+                <para>War and Peace</para>
+              </description>
+              <description>
+                <para>War And Peace</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Per anhalter durch die Galaxis</para>
+              </term>
+              <description>
+                <para>German</para>
+              </description>
+              <description>
+                <para>Per Anhalter durch die Galaxis</para>
+              </description>
+              <description>
+                <para>Per Anhalter Durch Die Galaxis</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>les naufragés d'ythaq</para>
+              </term>
+              <description>
+                <para>French</para>
+              </description>
+              <description>
+                <para>Les Naufragés d'Ythaq</para>
+              </description>
+              <description>
+                <para>Les Naufragés D'ythaq</para>
+              </description>
+            </item>
+          </list>
+          <para>As illustrated above, the <see cref="M:System.Globalization.TextInfo.ToTitleCase(System.String)" /> method provides an arbitrary casing behavior which is not necessarily linguistically correct. A linguistically correct solution would require additional rules, and the current algorithm is somewhat simpler and faster. We reserve the right to make this API slower in the future.</para>
+          <para>The current implementation of the <see cref="M:System.Globalization.TextInfo.ToTitleCase(System.String)" /> method yields an output string that is the same length as the input string. However, this behavior is not guaranteed and could change in a future implementation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string to title case (except for words that are entirely in uppercase, which are considered to be acronyms)..</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified string converted to title case.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert to title case. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUpper">
@@ -431,10 +634,22 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="c">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Casing semantics depend on the culture in use. For the invariant culture, the casing semantics are not culture-sensitive. For a specific culture, the casing semantics are sensitive to that culture.</para>
+          <para>If a security decision depends on a string comparison or a case-change operation, the application should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to ensure that the behavior is consistent regardless of the culture settings of the system. However, the invariant culture must be used only by processes that require culture-independent results, such as system services. Otherwise, it produces results that might be linguistically incorrect or culturally inappropriate.</para>
+          <para>For more information on cultures, see <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified character to uppercase.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified character converted to uppercase.</para>
+        </returns>
+        <param name="c">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to convert to uppercase. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUpper">
@@ -453,10 +668,23 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned string might differ in length from the input string. For more information on casing, refer to the Unicode Technical Report #21 "Case Mappings," published by the Unicode Consortium (http://www.unicode.org). The current implementation preserves the length of the string. However, this behavior is not guaranteed and could change in future implementations.</para>
+          <para>Casing semantics depend on the culture in use. For the invariant culture, the casing semantics are not culture-sensitive. For a specific culture, the casing semantics are sensitive to that culture.</para>
+          <para>If a security decision depends on a string comparison or a case-change operation, the application should use the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> to ensure that the behavior is consistent regardless of the culture settings of the system. However, the invariant culture must be used only by processes that require culture-independent results, such as system services. Otherwise, it produces results that might be linguistically incorrect or culturally inappropriate.</para>
+          <para>For more information on cultures, see <see cref="T:System.Globalization.CultureInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string to uppercase.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified string converted to uppercase.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert to uppercase. </param>
       </Docs>
     </Member>
   </Members>

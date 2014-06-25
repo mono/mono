@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MaskedTextBox" FullName="System.Windows.Forms.MaskedTextBox">
   <TypeSignature Language="C#" Value="public class MaskedTextBox : System.Windows.Forms.TextBoxBase" />
   <AssemblyInfo>
@@ -29,8 +30,162 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.MaskedTextBox" /> class is an enhanced <see cref="T:System.Windows.Forms.TextBox" /> control that supports a declarative syntax for accepting or rejecting user input. Using the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property, you can specify the following input without writing any custom validation logic in your application:</para>
+      <list type="bullet">
+        <item>
+          <para>Required input characters.</para>
+        </item>
+        <item>
+          <para>Optional input characters.</para>
+        </item>
+        <item>
+          <para>The type of input expected at a given position in the mask; for example, a digit, or an alphabetic or alphanumeric character.</para>
+        </item>
+        <item>
+          <para>Mask literals, or characters that should appear directly in the <see cref="T:System.Windows.Forms.MaskedTextBox" />; for example, the hyphens (-) in a phone number, or the currency symbol in a price.</para>
+        </item>
+        <item>
+          <para>Special processing for input characters; for example, to convert alphabetic characters to uppercase.</para>
+        </item>
+      </list>
+      <para>When a <see cref="T:System.Windows.Forms.MaskedTextBox" /> control is displayed at run time, it represents the mask as a series of prompt characters and optional literal characters. Each editable mask position, representing a required or optional input, is shown with a single prompt character. For example, the number sign (#) is often used as a placeholder for a numeric character input. You can use the <see cref="P:System.Windows.Forms.MaskedTextBox.PromptChar" /> property to specify a custom prompt character. The <see cref="P:System.Windows.Forms.MaskedTextBox.HidePromptOnLeave" /> property determines if the user sees the prompt characters when the control loses input focus.</para>
+      <para>As the user types input into the masked text box, valid input characters replace their respective prompt characters in a sequential fashion. If the user types an invalid input character, no replacement occurs, but instead a beep is issued if the <see cref="P:System.Windows.Forms.MaskedTextBox.BeepOnError" /> property is set to true, and the <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event is raised. You can provide your own custom error logic by handing this event. </para>
+      <para>When the current insertion point is at a literal character, the user has a number of options:</para>
+      <list type="bullet">
+        <item>
+          <para>If a character other than the prompt character is typed, the literal will automatically be skipped and the input character will be applied to the next editable position, represented by the next prompt character.</para>
+        </item>
+        <item>
+          <para>If the prompt character is typed and the <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" /> property is true, the input will overtype the prompt character and insertion point will be moved to the next position in the mask.</para>
+        </item>
+        <item>
+          <para>As is always the case, the arrow keys can be used to navigate to a previous or subsequent position.</para>
+        </item>
+      </list>
+      <para>You can use the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskFull" /> property to verify whether or not the user has entered all of the required input. The <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property will always retrieve the user's input formatted according to the mask and the <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> property.</para>
+      <para>The <see cref="T:System.Windows.Forms.MaskedTextBox" /> control actually defers all mask processing to the <see cref="T:System.ComponentModel.MaskedTextProvider" /> class specified by the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" /> property. This standard provider supports all Unicode characters except for surrogates and vertically combined characters; however, the <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" /> property can be used to restrict input to the characters sets a-z, A-Z, and 0-9.</para>
+      <para>Masks do not necessarily guarantee that a user's input will represent a valid value for a given type; for example, -9 could be entered for an age in years. You can verify that a user's input represents a valid value by assigning an instance of that value's type to the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property. You can detect whether the user removes focus from <see cref="T:System.Windows.Forms.MaskedTextBox" /> when it contains an invalid value by monitoring for the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event. If type validation succeeds, the object representing the value will be available through the <see cref="P:System.Windows.Forms.TypeValidationEventArgs.ReturnValue" /> property of the <see cref="T:System.Windows.Forms.TypeValidationEventArgs" /> parameter.</para>
+      <para>As with the <see cref="T:System.Windows.Forms.TextBox" /> control, several common keyboard shortcuts do not work with <see cref="T:System.Windows.Forms.MaskedTextBox" />. In particular, CTRL-R (right justify text), CTRL-L (left justify text), and CTRL-L (center text) have no effect. </para>
+      <format type="text/html">
+        <h2>Compatibility with Visual Basic 6.0</h2>
+      </format>
+      <para>
+        <see cref="T:System.Windows.Forms.MaskedTextBox" /> was designed to retain most of the functionality of the Masked Edit control in vbprvb 6.0. The following table lists common properties on the Masked Edit control and gives their equivalents on <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Masked Edit control (vbprvb 6.0) property</para>
+            </term>
+            <description>
+              <para>Equivalent MaskedTextBox (dnprdnshort) property</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>AllowPrompt property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AutoTab property</para>
+          </term>
+          <description>
+            <para>None</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ClipMode property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.CutCopyMaskFormat" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ClipText property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> (when <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> is set to <see cref="F:System.Windows.Forms.MaskFormat.ExcludePromptAndLiterals" />)</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Format property</para>
+          </term>
+          <description>
+            <para>None</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>FormattedText property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> (when <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> is set to <see cref="F:System.Windows.Forms.MaskFormat.IncludePromptAndLiterals" />)</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Mask property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>PromptChar property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.PromptChar" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>PromptInclude property</para>
+          </term>
+          <description>
+            <para>
+              <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnPrompt" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>ValidationError event</para>
+          </term>
+          <description>
+            <para>
+              <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" />
+            </para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration or undo functionality. However, while the members associated with these features have been retained for compatibility with the <see cref="T:System.Windows.Forms.TextBoxBase" /> base class, their implementations perform no actions.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Uses a mask to distinguish between proper and improper user input.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +196,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="M:System.Windows.Forms.MaskedTextBox.#ctor" /> constructor sets the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" /> property to a null mask, represented by the string "&lt;&gt;". A null mask will accept any combination of characters as input.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class using defaults.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,9 +216,17 @@
         <Parameter Name="maskedTextProvider" Type="System.ComponentModel.MaskedTextProvider" />
       </Parameters>
       <Docs>
-        <param name="maskedTextProvider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="maskedTextProvider" /> parameter defines the masking language used by <see cref="T:System.Windows.Forms.MaskedTextBox" />. It is responsible for parsing the mask and determining whether user input conforms to the current mask position. You can derive a new class from <see cref="T:System.ComponentModel.MaskedTextProvider" /> to define your own custom masking language, and use the <see cref="M:System.Windows.Forms.MaskedTextBox.#ctor(System.ComponentModel.MaskedTextProvider)" /> constructor to replace the standard <see cref="T:System.ComponentModel.MaskedTextProvider" />. </para>
+          <para>If you want to use the default masking language and supply your own input mask, you do not need to use this constructor. Instead, you can either use the <see cref="M:System.Windows.Forms.MaskedTextBox.#ctor(System.String)" /> constructor, or use the default constructor then set the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class using the specified custom mask language provider.</para>
+        </summary>
+        <param name="maskedTextProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A custom mask language provider, derived from the <see cref="T:System.ComponentModel.MaskedTextProvider" /> class. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -70,9 +239,17 @@
         <Parameter Name="mask" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="mask">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.#ctor(System.String)" /> constructor uses the standard <see cref="T:System.ComponentModel.MaskedTextProvider" /> with the input <paramref name="mask" /> to parse user input into the <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+          <para>If you assign a new mask to the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property, it will override the value set by this constructor. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class using the specified input mask.</para>
+        </summary>
+        <param name="mask">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the input mask. The initial value of the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property.</param>
       </Docs>
     </Member>
     <Member MemberName="AcceptsTab">
@@ -96,9 +273,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.AcceptsTab" /> property is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this property is not supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value determining how TAB keys are handled for multiline configurations. This property is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AcceptsTabChanged">
@@ -122,8 +305,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.AcceptsTabChanged" /> event is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this event is not supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.MaskedTextBox.AcceptsTab" /> property has changed. This event is not raised by <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowPromptAsInput">
@@ -141,9 +330,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Even when <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" /> is true, the prompt character must be valid for the current location in the mask in order to be accepted. For example, if <see cref="P:System.Windows.Forms.MaskedTextBox.PromptChar" /> is "*", and the current location in the mask demands the user enter a digit, entering an asterisk (*) will fail and cause the <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event to occur. </para>
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnPrompt" /> property takes precedence over <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether <see cref="P:System.Windows.Forms.MaskedTextBox.PromptChar" /> can be entered as valid data by the user. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AsciiOnly">
@@ -164,9 +360,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" /> restricts user input to the characters a-z and A-Z. ASCII control characters are not allowed. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control accepts characters outside of the ASCII character set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeepOnError">
@@ -184,9 +386,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event will still occur if the <see cref="P:System.Windows.Forms.MaskedTextBox.BeepOnError" /> property is set to true. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the masked text box control raises the system beep for each user key stroke that it rejects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanUndo">
@@ -210,9 +418,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.CanUndo" /> property is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because <see cref="T:System.Windows.Forms.MaskedTextBox" /> does not support undo functionality, this property always has a value of false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user can undo the previous operation. This property is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClearUndo">
@@ -231,8 +445,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.ClearUndo" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, <see cref="T:System.Windows.Forms.MaskedTextBox" /> does not support undo functionality.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears information about the most recent operation from the undo buffer of the text box. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateHandle">
@@ -251,8 +471,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a handle for the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateParams">
@@ -265,9 +488,12 @@
         <ReturnType>System.Windows.Forms.CreateParams</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the required creation parameters when the control handle is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Culture">
@@ -285,9 +511,12 @@
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the culture information associated with the masked text box.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CutCopyMaskFormat">
@@ -308,9 +537,18 @@
         <ReturnType>System.Windows.Forms.MaskFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.CutCopyMaskFormat" /> property determines how text, selected within the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control, is interpreted when it is copied to the clipboard or retrieved through the <see cref="P:System.Windows.Forms.MaskedTextBox.SelectedText" /> property. Specifically, it determines whether literal characters, prompt characters, or both are included when selected text is accessed. When prompt characters are excluded, they are transformed into spaces in the copied string.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> property serves a similar purpose with respect to how the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property is interpreted.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether literals and prompt characters are copied to the clipboard.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FormatProvider">
@@ -331,9 +569,16 @@
         <ReturnType>System.IFormatProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> determines which symbols are used for the currency, date, and other culture-specific mask placeholders when type validation occurs and the control has a non-null <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.IFormatProvider" /> to use when performing type validation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetCharFromPosition">
@@ -392,10 +637,20 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="lineNumber">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.GetFirstCharIndexFromLine(System.Int32)" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is not supported. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the first character of a given line. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will always return 0. </para>
+        </returns>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFirstCharIndexOfCurrentLine">
@@ -414,9 +669,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.GetFirstCharIndexOfCurrentLine" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is not supported. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the index of the first character of the current line. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will always return 0. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLineFromCharIndex">
@@ -437,10 +701,20 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.GetLineFromCharIndex(System.Int32)" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is not supported. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the line number from the specified character position within the text of the control. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will always return 0.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPositionFromCharIndex">
@@ -480,9 +754,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the prompt characters in the input mask are hidden when the masked text box loses focus.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InsertKeyMode">
@@ -500,9 +777,17 @@
         <ReturnType>System.Windows.Forms.InsertKeyMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> property controls the character insertion behavior of the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control. The state of this property is defined by the <see cref="T:System.Windows.Forms.InsertKeyMode" /> enumeration, which can be always on, always off or set to respect the setting of the user's keyboard. This property supersedes the insertion mode of the keyboard. For example, if the keyboard is set to overwrite, but <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> is set to Insert, the <see cref="T:System.Windows.Forms.MaskedTextBox" /> will operate in insert mode. The <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> property will access the true insertion mode of the <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+          <para>If changing <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> changes the value of <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" />, <see cref="T:System.Windows.Forms.MaskedTextBox" /> will raise the <see cref="E:System.Windows.Forms.MaskedTextBox.IsOverwriteModeChanged" /> event.</para>
+          <para>This property has no effect if no mask has been set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text insertion mode of the masked text box control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsInputKey">
@@ -518,10 +803,14 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <param name="keyData">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified key is an input key or a special key that requires preprocessing.</para>
+        </summary>
+        <param name="keyData">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="IsOverwriteMode">
@@ -539,9 +828,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> takes into account both the value of the <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> property and the state of the user's keyboard. If <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> is set to either <see cref="F:System.Windows.Forms.InsertKeyMode.Insert" /> or <see cref="F:System.Windows.Forms.InsertKeyMode.Overwrite" />, <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> will return false or true, respectively. If <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> is set to <see cref="F:System.Windows.Forms.InsertKeyMode.Default" />, it will return the state of the INSERT key. </para>
+          <para>When <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> is false, <see cref="T:System.Windows.Forms.MaskedTextBox" /> will reject as invalid any character entry that would result in a violation anywhere in the mask. In explanation, if inserting a character would cause a character to be shifted over into a mask position where it would not be valid, the character insertion will be rejected. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies whether new user input overwrites existing input.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsOverwriteModeChanged">
@@ -554,8 +851,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.IsOverwriteModeChanged" /> event is raised after value of the <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> property is changed.</para>
+          <para>This event is required to properly bind data to a <see cref="T:System.Windows.Forms.MaskedTextBox" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the insert mode has changed. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Lines">
@@ -579,9 +883,15 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.Lines" /> property is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this property is not supported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lines of text in multiline configurations. This property is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mask">
@@ -611,9 +921,234 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> is the default property for the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> must be a string composed of one or more of the masking elements, as shown in the following table. The masking language used by <see cref="T:System.Windows.Forms.MaskedTextBox" /> is defined by its associated <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" />. The standard provider specifies a masking language based upon the one used by the Masked Edit control in vbprvb 6.0, and should be very familiar to users migrating from that platform.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Masking element</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>Digit, required. This element will accept any single digit between 0 and 9.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>9</para>
+              </term>
+              <description>
+                <para>Digit or space, optional. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>#</para>
+              </term>
+              <description>
+                <para>Digit or space, optional. If this position is blank in the mask, it will be rendered as a space in the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property. Plus (+) and minus (-) signs are allowed.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>L</para>
+              </term>
+              <description>
+                <para>Letter, required. Restricts input to the ASCII letters a-z and A-Z. This mask element is equivalent to [a-zA-Z] in regular expressions. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>?</para>
+              </term>
+              <description>
+                <para>Letter, optional. Restricts input to the ASCII letters a-z and A-Z. This mask element is equivalent to [a-zA-Z]? in regular expressions. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>&amp;</para>
+              </term>
+              <description>
+                <para>Character, required. If the <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" /> property is set to true, this element behaves like the "L" element. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>C</para>
+              </term>
+              <description>
+                <para>Character, optional. Any non-control character. If the <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" /> property is set to true, this element behaves like the "?" element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A</para>
+              </term>
+              <description>
+                <para>Alphanumeric, required. If the <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" /> property is set to true, the only characters it will accept are the ASCII letters a-z and A-Z. This mask element behaves like the "a" element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>a</para>
+              </term>
+              <description>
+                <para>Alphanumeric, optional. If the <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" /> property is set to true, the only characters it will accept are the ASCII letters a-z and A-Z. This mask element behaves like the "A" element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>.</para>
+              </term>
+              <description>
+                <para>Decimal placeholder. The actual display character used will be the decimal symbol appropriate to the format provider, as determined by the control's <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>,</para>
+              </term>
+              <description>
+                <para>Thousands placeholder. The actual display character used will be the thousands placeholder appropriate to the format provider, as determined by the control's <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>:</para>
+              </term>
+              <description>
+                <para>Time separator. The actual display character used will be the time symbol appropriate to the format provider, as determined by the control's <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>/</para>
+              </term>
+              <description>
+                <para>Date separator. The actual display character used will be the date symbol appropriate to the format provider, as determined by the control's <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>$</para>
+              </term>
+              <description>
+                <para>Currency symbol. The actual character displayed will be the currency symbol appropriate to the format provider, as determined by the control's <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>&lt;</para>
+              </term>
+              <description>
+                <para>Shift down. Converts all characters that follow to lowercase. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>&gt; </para>
+              </term>
+              <description>
+                <para>Shift up. Converts all characters that follow to uppercase.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>|</para>
+              </term>
+              <description>
+                <para>Disable a previous shift up or shift down.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>\</para>
+              </term>
+              <description>
+                <para>Escape. Escapes a mask character, turning it into a literal. "\\" is the escape sequence for a backslash. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>All other characters</para>
+              </term>
+              <description>
+                <para>Literals. All non-mask elements will appear as themselves within <see cref="T:System.Windows.Forms.MaskedTextBox" />. Literals always occupy a static position in the mask at run time, and cannot be moved or deleted by the user.</para>
+              </description>
+            </item>
+          </list>
+          <para>If you change a mask when <see cref="T:System.Windows.Forms.MaskedTextBox" /> already contains user input filtered by a previous mask, <see cref="T:System.Windows.Forms.MaskedTextBox" /> will attempt to migrate that input into the new mask definition. If it fails, it will clear the existing input. Assigning a zero-length string as the mask will preserve any existing data in the control. When used with a zero-length mask, <see cref="T:System.Windows.Forms.MaskedTextBox" /> behaves like a single-line <see cref="T:System.Windows.Forms.TextBox" /> control.</para>
+          <para>The decimal (.), thousandths (,), time (:), date (/), and currency ($) symbols default to displaying those symbols as defined by the application's culture. You can force them to display symbols for another culture by using the <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" /> property.</para>
+          <para>Character insertion into the mask at run time is controlled by the <see cref="P:System.Windows.Forms.MaskedTextBox.InsertKeyMode" /> property. Users can navigate through the mask by using the left and right arrow keys or the mouse cursor, and can skip optional positions in the mask by entering a space. </para>
+          <block subset="none" type="note">
+            <para>
+              <see cref="T:System.Windows.Forms.MaskedTextBox" /> supports all Unicode characters except for surrogates and vertically combined characters.</para>
+          </block>
+          <para>The following table shows example masks. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Mask</para>
+                </term>
+                <description>
+                  <para>Behavior</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>00/00/0000</para>
+              </term>
+              <description>
+                <para>A date (day, numeric month, year) in international date format. The "/" character is a logical date separator, and will appear to the user as the date separator appropriate to the application's current culture. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>00-&gt;L&lt;LL-0000</para>
+              </term>
+              <description>
+                <para>A date (day, month abbreviation, and year) in United States format in which the three-letter month abbreviation is displayed with an initial uppercase letter followed by two lowercase letters.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>(999)-000-0000</para>
+              </term>
+              <description>
+                <para>United States phone number, area code optional. If users do not want to enter the optional characters, they can either enter spaces or place the mouse pointer directly at the position in the mask represented by the first 0. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>$999,999.00</para>
+              </term>
+              <description>
+                <para>A currency value in the range of 0 to 999999. The currency, thousandth, and decimal characters will be replaced at run time with their culture-specific equivalents. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the input mask to use at run time. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaskChanged">
@@ -626,8 +1161,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.MaskChanged" /> event is raised after the value of the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property is changed. This event is also raised if the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" /> is indirectly altered by a member such as <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" />, <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" />, <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" />, and <see cref="P:System.Windows.Forms.MaskedTextBox.Culture" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the input mask is changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaskCompleted">
@@ -645,9 +1186,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.MaskCompleted" /> checks only required input elements. To determine whether all required and optional input elements have been filled in, use the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskFull" /> property instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether all required inputs have been entered into the input mask.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaskedTextProvider">
@@ -668,9 +1216,17 @@
         <ReturnType>System.ComponentModel.MaskedTextProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" /> property defines the mask-parsing engine and the masking language used by the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control. The default provider is the <see cref="T:System.ComponentModel.MaskedTextProvider" /> class; however, a custom provider can be specified using the <see cref="M:System.Windows.Forms.MaskedTextBox.#ctor(System.ComponentModel.MaskedTextProvider)" /> constructor. </para>
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" /> cannot be set directly. However, setting some of the properties of <see cref="T:System.Windows.Forms.MaskedTextBox" />—such as <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" />, <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" />, <see cref="P:System.Windows.Forms.MaskedTextBox.AsciiOnly" />, and <see cref="P:System.Windows.Forms.MaskedTextBox.Culture" />—may internally cause the creation of a new <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a clone of the mask provider associated with this instance of the masked text box control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaskFull">
@@ -688,9 +1244,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskFull" /> property within the <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event handler to determine if the user's input was rejected because there are no remaining inputs in the mask. To determine whether only required input elements have been entered, use the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskCompleted" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether all required and optional inputs have been entered into the input mask. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaskInputRejected">
@@ -703,8 +1265,35 @@
         <ReturnType>System.Windows.Forms.MaskInputRejectedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> is the default event for the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class.</para>
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event occurs when a character is rejected by the input mask. The input mask, represented by the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property, is interpreted by the masked text provider associated with the control through the <see cref="P:System.Windows.Forms.MaskedTextBox.MaskedTextProvider" /> property. <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> is raised in the following situations:</para>
+          <list type="bullet">
+            <item>
+              <para>An input character does not match the corresponding format element. For example, the user enters an alphabetic character when a digit is required. This is probably the most common reason why this event is raised.</para>
+            </item>
+            <item>
+              <para>The user is trying to input extraneous characters beyond the end of the mask either because the mask has already been filled or the current caret position has been moved to the very end of the displayed input mask string.</para>
+            </item>
+            <item>
+              <para>A paste operation either inserts a character that does not match its associated format element, or if the <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> property is false, it shifts existing characters into new positions where they do not match their format elements.</para>
+            </item>
+            <item>
+              <para>A cut operation shifts existing characters to the left, and one or more characters do not match their newly associated format elements.</para>
+            </item>
+            <item>
+              <para>An assignment was made to the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property and the assigned string caused one or more mask violations.</para>
+            </item>
+          </list>
+          <para>If a string was assigned to the control that causes <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> to occur, no part of the string will appear in <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+          <para>The default handling for <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> will play a beep sound if the <see cref="P:System.Windows.Forms.MaskedTextBox.BeepOnError" /> property is set to true. This event is often handled to implement custom error handling, for example, to move to the next user input control if the mask is full, or to display a custom error dialog box or ToolTip if the input character is invalid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user's input or assigned character does not match the corresponding format element of the input mask.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxLength">
@@ -728,9 +1317,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property and the <see cref="P:System.Windows.Forms.MaskInputRejectedEventArgs.Position" /> property in the <see cref="T:System.Windows.Forms.MaskInputRejectedEventArgs" /> class for information about how to determine the maximum length of a string in a <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of characters the user can type or paste into the text box control. This property is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multiline">
@@ -754,9 +1349,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.AcceptsTab" /> property is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this property is not fully supported; it cannot be set and it always resolves to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether this is a multiline text box control. This property is not fully supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultilineChanged">
@@ -780,8 +1381,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.MultilineChanged" /> event is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this event is not implemented in <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically occurs when the value of the <see cref="P:System.Windows.Forms.MaskedTextBox.Multiline" /> property has changed; however, this event is not raised by <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBackColorChanged">
@@ -797,9 +1404,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.Control.BackColor" /> property changes.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnHandleCreated">
@@ -815,9 +1426,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnIsOverwriteModeChanged">
@@ -838,9 +1453,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnIsOverwriteModeChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MaskedTextBox.IsOverwriteModeChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnKeyDown">
@@ -915,9 +1538,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnMaskChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MaskedTextBox.MaskChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnMultilineChanged">
@@ -938,9 +1569,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnMultilineChanged(System.EventArgs)" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is overridden to perform no actions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically raises the <see cref="E:System.Windows.Forms.MaskedTextBox.MultilineChanged" /> event, but disabled for <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnTextAlignChanged">
@@ -956,9 +1594,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnTextAlignChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.MaskedTextBox.TextAlignChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnTextChanged">
@@ -974,9 +1620,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnTextChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.TextChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnValidating">
@@ -997,9 +1651,21 @@
         <Parameter Name="e" Type="System.ComponentModel.CancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnValidating(System.ComponentModel.CancelEventArgs)" /> method causes the input string to be validated against the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property, if a <see cref="T:System.Type" /> has been specified for this property. It will then also raise the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event.</para>
+          <block subset="none" type="note">
+            <para>To ensure consistency with text-based controls, validation will occur even if the <see cref="T:System.Windows.Forms.MaskedTextBox" /> is read-only (its <see cref="P:System.Windows.Forms.MaskedTextBox.ReadOnly" /> property is set to true).</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.OnValidating(System.ComponentModel.CancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.Validating" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains event data. </param>
       </Docs>
     </Member>
     <Member MemberName="PasswordChar">
@@ -1010,7 +1676,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(&apos;\0&apos;)</AttributeName>
+          <AttributeName>System.ComponentModel.DefaultValue('\0')</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.Repaint)</AttributeName>
@@ -1020,9 +1686,19 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For sensitive user input, it is common practice to conceal the actual information entered by the user. If the <see cref="P:System.Windows.Forms.MaskedTextBox.PasswordChar" /> property is set to a non-null character, <see cref="T:System.Windows.Forms.MaskedTextBox" /> will display this character for all input into the control. Setting this property to null will disable this functionality.</para>
+          <para>If you want to use the operating system supplied password character, which is defined in COMCTL32.dll, use the <see cref="P:System.Windows.Forms.MaskedTextBox.UseSystemPasswordChar" /> property instead. If both the <see cref="P:System.Windows.Forms.MaskedTextBox.PasswordChar" /> and <see cref="P:System.Windows.Forms.MaskedTextBox.UseSystemPasswordChar" /> properties are activated, the latter takes precedence.</para>
+          <block subset="none" type="note">
+            <para>As a security consideration, the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control disables cut and copy operations on password-protected strings. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character to be displayed in substitute for user input.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessCmdKey">
@@ -1086,9 +1762,17 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.PromptChar" /> will be displayed in <see cref="T:System.Windows.Forms.MaskedTextBox" /> for any mask position that the user has not yet filled in. </para>
+          <para>Use the <see cref="P:System.Windows.Forms.MaskedTextBox.HidePromptOnLeave" /> property to specify whether the prompt is displayed when <see cref="T:System.Windows.Forms.MaskedTextBox" /> does not have focus. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character used to represent the absence of user input in <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -1101,9 +1785,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether text in the text box is read-only. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RejectInputOnFirstFailure">
@@ -1121,9 +1808,26 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sometimes the user will enter several characters into a <see cref="T:System.Windows.Forms.MaskedTextBox" /> in a single input operation, typically by copying and pasting a string. If the entire string only contains valid characters, according to their paste position in the input mask, then the entire operation will succeed. However, when a parsing error occurs, the behavior of <see cref="T:System.Windows.Forms.MaskedTextBox" /> depends on the value of <see cref="P:System.Windows.Forms.MaskedTextBox.RejectInputOnFirstFailure" />, as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If this property is true, then processing of the input string stops at the invalid character. All subsequent characters are ignored. A single <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event is raised.</para>
+            </item>
+            <item>
+              <para>If this property is false, then the invalid character is rejected, but parsing continues with the next character in the input string. A <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event is raised for every invalid character in the input string.</para>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnPrompt" />, <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnSpace" /> and <see cref="P:System.Windows.Forms.MaskedTextBox.SkipLiterals" /> properties can also influence the interpretation of the user input.</para>
+          <para>If the <see cref="P:System.Windows.Forms.MaskedTextBox.IsOverwriteMode" /> property is false, then any characters already in the input mask to the right of the insertion point will be displaced by the accepted number of characters. This shifting may cause additional parsing errors.</para>
+          <para>A pasting operation can be mimicked programmatically by setting the <see cref="P:System.Windows.Forms.MaskedTextBox.SelectedText" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the parsing of user input should stop after the first invalid character is reached.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetOnPrompt">
@@ -1141,9 +1845,76 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MaskedTextBox" /> can treat two categories of characters—spaces and prompt characters—specially. Typically, each input character will be tested against the mask and either accepted or rejected. Assuming that the <see cref="P:System.Windows.Forms.MaskedTextBox.PromptChar" /> property is set to non-null, then setting the <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnPrompt" /> property to true will result in special processing for the prompt character. When the user enters the prompt character into the mask, it causes the current mask character position to be cleared and the current position to be advanced to the next editable character.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnPrompt" /> takes precedence over the <see cref="P:System.Windows.Forms.MaskedTextBox.AllowPromptAsInput" /> property, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>ResetOnPrompt value</para>
+                </term>
+                <description>
+                  <para>AllowPromptAsInput value</para>
+                </description>
+                <description>
+                  <para>Resulting behavior</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>true</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>The prompt character can be entered and it causes the current mask position to be reset. This is the default.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true</para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>The prompt character can be entered and it causes the current mask position to be reset. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>false</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>The prompt character is processed as a standard input character.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>false</para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>The prompt character is not valid and raises a <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines how an input character that matches the prompt character should be handled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResetOnSpace">
@@ -1161,9 +1932,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MaskedTextBox" /> can treat two categories of characters—spaces and prompt characters—specially. Typically, each input character will be tested against the mask and either accepted or rejected. Setting the <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnSpace" /> property to true will result in the current mask character position to be cleared and the current position to be advanced to the next editable character. </para>
+          <para>The type of character input will determine whether the masking engine moves forward to the next character in the mask, or stays at the current position and waits for a matching character. If the input character is a space, and does not match the current non-editable character in the mask, the masking engine will skip ahead to the next character in the mask. If the input character is not a space, and does not match the current non-editable character in the mask, the masking engine will remain at the current mask position, and attempt to match the next input character against it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines how a space input character should be handled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScrollToCaret">
@@ -1182,8 +1960,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.ScrollToCaret" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, because the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control does not support multiline configuration, this method is overridden to perform no actions. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Scrolls the contents of the control to the current caret position. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectedText">
@@ -1196,9 +1980,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selections retrieved using this property are formatted according to the control's formatting properties, such as <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" />, <see cref="P:System.Windows.Forms.MaskedTextBox.FormatProvider" />, <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> and <see cref="P:System.Windows.Forms.MaskedTextBox.CutCopyMaskFormat" />. Selections set using this property behave like a Paste operation: each character is matched against the mask, and the <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event is raised for invalid characters. If <see cref="P:System.Windows.Forms.MaskedTextBox.CutCopyMaskFormat" /> is true, literals and prompt characters are allowed when setting <see cref="P:System.Windows.Forms.MaskedTextBox.SelectedText" />, and will be removed silently unless they violate the mask. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current selection in the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SkipLiterals">
@@ -1216,9 +2006,33 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Input masks commonly contain literals. When the user enters characters into the <see cref="T:System.Windows.Forms.MaskedTextBox" /> at runtime, the current character position will sometimes fall on a literal. The <see cref="P:System.Windows.Forms.MaskedTextBox.SkipLiterals" /> property describes how user input for the next character is to be handled, as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>If this property is true, the user can either redundantly enter the same character as the literal at the current position, or can enter the next editable character, thereby jumping the current position to that position.</para>
+            </item>
+            <item>
+              <para>If this property is false, the user can only enter the next editable character. If the next position in the mask will not accept the literal character (for example, the user types "/" and the next position only accepts digits), the control will raise the <see cref="E:System.Windows.Forms.MaskedTextBox.MaskInputRejected" /> event.</para>
+            </item>
+          </list>
+          <para>As an example, in the "90/90/0000" date entry mask, the forward slash characters are literals. Assume that the user has entered two initial digits, "11", so the current position in the mask is at the first forward slash (/) literal. If <see cref="P:System.Windows.Forms.MaskedTextBox.SkipLiterals" /> is true, then the user has the following valid choices:</para>
+          <list type="bullet">
+            <item>
+              <para>The user can enter a "/" character. This results in the position being moved to the next character, which in this example is the fourth position, a 9 masking element. </para>
+            </item>
+            <item>
+              <para>The user can enter the next editable character, which in this example is a digit. The digit would be validated and the current position would automatically be moved to the fifth position, which is a 0 masking element.</para>
+            </item>
+          </list>
+          <para>If <see cref="P:System.Windows.Forms.MaskedTextBox.SkipLiterals" /> is false, then only a valid data input is allowed, which in this example would be a digit.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the user is allowed to reenter literal values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -1248,9 +2062,22 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> is the default binding property for the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class.</para>
+          <para>Strings retrieved using this property are formatted according to the control's formatting properties, such as <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> and <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" />.</para>
+          <para>You can assign a string with or without literal characters to <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> depending on the values of <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnPrompt" />, <see cref="P:System.Windows.Forms.MaskedTextBox.ResetOnSpace" />, and <see cref="P:System.Windows.Forms.MaskedTextBox.SkipLiterals" />.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> is the default binding property for <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+          <para>
+            <see cref="T:System.Windows.Forms.MaskedTextBox" /> will raise the <see cref="E:System.Windows.Forms.Control.TextChanged" /> event whenever the formatted text value changes. Different properties may or may not cause this value to change. For example, changing the <see cref="P:System.Windows.Forms.MaskedTextBox.PasswordChar" /> property will not raise the <see cref="E:System.Windows.Forms.Control.TextChanged" /> event, but changing the <see cref="P:System.Windows.Forms.MaskedTextBox.Mask" /> property will. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text as it is currently displayed to the user. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextAlign">
@@ -1271,9 +2098,15 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Windows.Forms.MaskedTextBox.TextAlign" /> property to align the displayed text within a <see cref="T:System.Windows.Forms.MaskedTextBox" /> to match the layout of visual elements on your form. For example, if your controls are all located on the right side of the form, you can set the <see cref="P:System.Windows.Forms.MaskedTextBox.TextAlign" /> property to <see cref="F:System.Windows.Forms.HorizontalAlignment.Right" />, and the text will be aligned with the right side of the control instead of the default left alignment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how text is aligned in a masked text box control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextAlignChanged">
@@ -1286,8 +2119,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.TextAlignChanged" /> event is raised after the <see cref="P:System.Windows.Forms.MaskedTextBox.TextAlign" /> property is changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the text alignment is changed. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextLength">
@@ -1305,9 +2144,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the length of the displayed text. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextMaskFormat">
@@ -1328,9 +2170,18 @@
         <ReturnType>System.Windows.Forms.MaskFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> property determines how the literal and prompt characters in the mask are processed when the generating the formatted string. More specifically, it determines whether literal characters, prompt characters, or both are included in the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property. When prompt characters are excluded, they are transformed into spaces in the formatted string.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.CutCopyMaskFormat" /> property serves a similar purpose with respect to how the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property is interpreted.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether literals and prompt characters are included in the formatted string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1344,9 +2195,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This version of the <see cref="M:System.Windows.Forms.MaskedTextBox.ToString" /> method calls the base class implementation of this method, <see cref="M:System.Windows.Forms.TextBoxBase.ToString" />, then appends the input string after processing by the mask. This method honors properties that alter the appearance of the formatted string, with the following exceptions:</para>
+          <list type="bullet">
+            <item>
+              <para>The returned string always includes prompt and literal characters, regardless of the values of the <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> property.</para>
+            </item>
+            <item>
+              <para>Password characters are ignored, so that the actual user-typed characters are returned. In other words, the values of the <see cref="P:System.Windows.Forms.MaskedTextBox.PasswordChar" /> and <see cref="P:System.Windows.Forms.MaskedTextBox.UseSystemPasswordChar" /> properties are ignored.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the current masked text box. This method overrides <see cref="M:System.Windows.Forms.TextBoxBase.ToString" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains information about the current <see cref="T:System.Windows.Forms.MaskedTextBox" />. The string includes the type, a simplified view of the input string, and the formatted input string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeValidationCompleted">
@@ -1359,8 +2227,44 @@
         <ReturnType>System.Windows.Forms.TypeValidationEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.MaskedTextBox" /> control will optionally validate user input against the type defined by its <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property. When this property is not null, the following series of events occurs:</para>
+          <list type="ordered">
+            <item>
+              <para>The validation sequence begins when one of the following occurs:</para>
+              <list type="bullet">
+                <item>
+                  <para>
+                    <see cref="T:System.Windows.Forms.MaskedTextBox" /> control looses focus.</para>
+                </item>
+                <item>
+                  <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property is retrieved.</para>
+                </item>
+                <item>
+                  <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.ValidateText" /> method is called. </para>
+                </item>
+              </list>
+            </item>
+            <item>
+              <para>Any of these events result in a call to the Parse method of the type specified with the <see cref="P:System.Windows.Forms.TypeValidationEventArgs.ValidatingType" /> property. Parse is responsible for the conversion of the formatted input string to the target type. A successful conversion equates to a successful validation.</para>
+            </item>
+            <item>
+              <para>After Parse returns, the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event is raised. The event handler for this event is most commonly implemented to perform type or mask validation processing. It receives a <see cref="T:System.Windows.Forms.TypeValidationEventArgs" /> parameter containing information about the conversion; for example, the <see cref="P:System.Windows.Forms.TypeValidationEventArgs.IsValidInput" /> member indicates whether the conversion was successful. </para>
+            </item>
+            <item>
+              <para>After the event handler for the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event returns, the standard validation event, <see cref="E:System.Windows.Forms.Control.Validating" />, is raised. A handler can be implemented to perform standard validation, perhaps including canceling the event.</para>
+            </item>
+            <item>
+              <para>If the event is not canceled in step 3, the standard control validation event <see cref="E:System.Windows.Forms.Control.Validated" /> is raised.</para>
+            </item>
+          </list>
+          <para>If the <see cref="P:System.Windows.Forms.TypeValidationEventArgs.Cancel" /> property is set to true in the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event handler, the event will be canceled and the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control retains focus, unless the subsequent <see cref="E:System.Windows.Forms.Control.Validating" /> event sets its version of the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property back to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when <see cref="T:System.Windows.Forms.MaskedTextBox" /> has finished parsing the current value using the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Undo">
@@ -1379,8 +2283,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.Undo" /> method is inherited from the base <see cref="T:System.Windows.Forms.TextBoxBase" /> class. However, <see cref="T:System.Windows.Forms.MaskedTextBox" /> does not support undo functionality.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Undoes the last edit operation in the text box. This method is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseSystemPasswordChar">
@@ -1401,9 +2311,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.MaskedTextBox.UseSystemPasswordChar" /> property determines whether user-supplied input should be displayed in the <see cref="T:System.Windows.Forms.MaskedTextBox" /> as multiple occurrences of a password character defined by the operating system. <see cref="P:System.Windows.Forms.MaskedTextBox.UseSystemPasswordChar" /> functions similarly to the <see cref="P:System.Windows.Forms.MaskedTextBox.PasswordChar" /> property, but instead of using a programmer-supplied character for the prompt, <see cref="P:System.Windows.Forms.MaskedTextBox.UseSystemPasswordChar" /> uses a prompt defined by the operating system. This property has precedence over <see cref="P:System.Windows.Forms.MaskedTextBox.PasswordChar" />.</para>
+          <block subset="none" type="note">
+            <para>As a security consideration, the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control disables cut and copy operations on password-protected strings. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the operating system-supplied password character should be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValidateText">
@@ -1417,9 +2336,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.MaskedTextBox.ValidateText" /> method attempts to convert the formatted string contained in the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property to an instance of the type that is specified by the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property. Prompt characters are ignored in the formatted string, but literals are handled in accordance with the current value of the <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> property.</para>
+          <para>
+            <see cref="M:System.Windows.Forms.MaskedTextBox.ValidateText" /> raises the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event after the conversion is attempted, regardless of its success. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the user input string to an instance of the validating type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Object" /> of the type specified by the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property; otherwise, null to indicate conversion failure.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidatingType">
@@ -1440,9 +2370,23 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Masks do not in themselves guarantee that a user's input will represent a valid value for a given type. The following C# code shows a mask:</para>
+          <code>maskedTextBox1.Mask = "99/99/9999";</code>
+          <para>The following vbprvb code shows a mask:</para>
+          <para>MaskedTextBox1.Mask = "99/99/9999"</para>
+          <para>This mask can demand that the user enter eight digits, but cannot verify that the user enters month, date, and year values in the correct range; "12/20/2003" and "70/90/0000" are equally valid as far as the mask is concerned. </para>
+          <para>You can use <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> to verify whether the data entered by the user falls within the correct range—in the previously mentioned case, by assigning it an instance of the <see cref="T:System.DateTime" /> type. The current text in the control will be validated either when the user leaves the control. You can determine whether or not the data fails validation by monitoring for the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event. <see cref="T:System.Windows.Forms.MaskedTextBox" /> will only perform the check against <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> if <see cref="P:System.Windows.Forms.MaskedTextBox.MaskCompleted" /> is true.</para>
+          <para>If you want to use your own custom data types with <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" />, you must implement a static Parse method that takes a string as a parameter. This method must be implemented with one or both of the following signatures:</para>
+          <para>public static Object Parse(string) </para>
+          <para>public static Object Parse(string, IFormatProvider) </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type used to verify the data input by the user. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WndProc">
@@ -1484,9 +2428,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because <see cref="T:System.Windows.Forms.MaskedTextBox" /> does not support multiple lines of input, the <see cref="P:System.Windows.Forms.MaskedTextBox.WordWrap" /> property is ignored. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether a multiline text box control automatically wraps words to the beginning of the next line when necessary. This property is not supported by <see cref="T:System.Windows.Forms.MaskedTextBox" />. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

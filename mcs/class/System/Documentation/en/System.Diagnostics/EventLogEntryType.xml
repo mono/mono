@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventLogEntryType" FullName="System.Diagnostics.EventLogEntryType">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum EventLogEntryType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed EventLogEntryType extends System.Enum" />
@@ -14,8 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The type of an event log entry provides additional information for the entry.  Applications set the entry type when they write the entry to the event log.</para>
+      <para>Each event must be of a single type; the event types cannot be combined for an entry.  The Event Viewer uses this type to determine which icon to display in the list view of the log.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the event type of an event log entry.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Error">
@@ -32,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An error event. This indicates a significant problem the user should know about; usually a loss of functionality or data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FailureAudit">
@@ -50,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A failure audit event. This indicates a security event that occurs when an audited access attempt fails; for example, a failed attempt to open a file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Information">
@@ -68,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An information event. This indicates a significant, successful operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuccessAudit">
@@ -86,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A success audit event. This indicates a security event that occurs when an audited access attempt is successful; for example, logging on successfully.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Warning">
@@ -104,8 +124,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A warning event. This indicates a problem that is not immediately significant, but that may signify conditions that could cause future problems.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

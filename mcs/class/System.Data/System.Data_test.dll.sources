@@ -91,6 +91,8 @@ System.Data.Common/DBDataPermissionTest.cs
 System.Data.Common/DbCommandBuilderTest.cs
 System.Data.Common/DbConnectionStringBuilderTest.cs
 System.Data.Common/DbDataAdapterTest.cs
+System.Data.Common/DbDataReaderMock.cs
+System.Data.Common/DbDataReaderTest.cs
 System.Data.Common/DbProviderFactoriesConfigurationHandlerTest.cs
 System.Data.Common/DbTransactionTest.cs
 System.Data.Odbc/OdbcCommandBuilderTest.cs

@@ -196,9 +196,10 @@ namespace System.Windows.Forms
 				
 				if (height != value) {
 					if (value < minimumHeight) {
-						throw new ArgumentOutOfRangeException("Height can't be less than MinimumHeight.");
+						height = minimumHeight;
+					} else {
+						height = value;
 					}
-					height = value;
 					if (DataGridView != null) {
 						DataGridView.Invalidate ();
 						DataGridView.OnRowHeightChanged(new DataGridViewRowEventArgs(this));
@@ -253,6 +254,10 @@ namespace System.Windows.Forms
 				if (minimumHeight != value) {
 					if (value < 2 || value > Int32.MaxValue) {
 						throw new ArgumentOutOfRangeException("MinimumHeight should be between 2 and Int32.MaxValue.");
+					}
+					if (height < value) {
+						// don't let height get less than minimumHeight!
+						Height = value;
 					}
 					minimumHeight = value;
 					if (DataGridView != null) {

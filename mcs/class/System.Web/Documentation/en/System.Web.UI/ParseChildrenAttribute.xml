@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParseChildrenAttribute" FullName="System.Web.UI.ParseChildrenAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ParseChildrenAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class allows you to specify parsing logic for a custom server control by marking the server control with the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> metadata attribute. </para>
+      <para>Marking your server control with the metadata attribute ParseChildren(true) instructs the parser to interpret the elements that are contained within the server control's tags as properties. In this scenario, the <see cref="P:System.Web.UI.ParseChildrenAttribute.ChildrenAsProperties" /> property is true. </para>
+      <para>Marking your server control with the metadata attribute ParseChildren(true,"&lt;Default Property&gt;") sets the <see cref="P:System.Web.UI.ParseChildrenAttribute.DefaultProperty" /> property to the name of the property that is passed into the attribute.</para>
+      <para>Marking your server control with the metadata attribute ParseChildren(false), the default value, instructs the parser to interpret the elements that are contained within the server control's tags as content that will be parsed with an associated <see cref="T:System.Web.UI.ControlBuilder" /> that is, as controls. In this scenario, the <see cref="P:System.Web.UI.ParseChildrenAttribute.ChildrenAsProperties" /> property is false.</para>
+      <para>For information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a metadata attribute that you can use when developing ASP.NET server controls. Use the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class to indicate how the page parser should treat content nested inside a server control tag declared on a page. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +39,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class is created with the <see cref="P:System.Web.UI.ParseChildrenAttribute.ChildrenAsProperties" /> property set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +61,16 @@
         <Parameter Name="childrenAsProperties" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="childrenAsProperties">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="childrenAsProperties" /> is false, the elements that are contained within the server control are parsed as a control. false is the default for <see cref="T:System.Web.UI.ParseChildrenAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class using the <see cref="P:System.Web.UI.ParseChildrenAttribute.ChildrenAsProperties" /> property to determine if the elements that are contained within a server control are parsed as properties of the server control.</para>
+        </summary>
+        <param name="childrenAsProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to parse the elements as properties of the server control; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,9 +87,13 @@
         <Parameter Name="childControlType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="childControlType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class using the <see cref="P:System.Web.UI.ParseChildrenAttribute.ChildControlType" /> property to determine which elements that are contained within a server control are parsed as controls.</para>
+        </summary>
+        <param name="childControlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control type to parse as a property. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -77,10 +105,18 @@
         <Parameter Name="defaultProperty" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="childrenAsProperties">To be added: an object of type 'bool'</param>
-        <param name="defaultProperty">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="childrenAsProperties" /> is false, the elements are parsed as controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class using the <paramref name="childrenAsProperties" /> and <paramref name="defaultProperty" /> parameters.</para>
+        </summary>
+        <param name="childrenAsProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to parse the elements as properties of the server control; otherwise, false. </param>
+        <param name="defaultProperty">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that defines a collection property of the server control into which nested content is parsed by default. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,9 +133,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the allowed control type is null, meaning that it has not been specified, the default type, which is a <see cref="T:System.Web.UI.Control" /> control, is returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the allowed type of a control. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChildrenAsProperties">
@@ -110,9 +152,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.UI.ParseChildrenAttribute.ChildrenAsProperties" /> property is set to false, the elements that are contained within a server control are parsed as a control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to parse the elements that are contained within a server control as properties.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,8 +175,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="F:System.Web.UI.ParseChildrenAttribute.Default" /> field is false, which means that elements are not parsed as properties of the server control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines the default value for the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class. This field is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -143,9 +197,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.ParseChildrenAttribute.DefaultProperty" /> property is used only if a string is passed to the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> constructor. When the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class is created, the <see cref="P:System.Web.UI.ParseChildrenAttribute.DefaultProperty" /> property defines the default property for the server control that is being parsed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default property for the server control into which the elements are parsed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -162,10 +222,17 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is equal to the current object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is equal to the current object; otherwise, false.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -180,9 +247,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serves as a hash function for the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Web.UI.ParseChildrenAttribute" /> object. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,9 +270,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Boolean" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class is the <see cref="F:System.Web.UI.ParseChildrenAttribute.ParseAsChildren" /> field. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether the value of the current instance of the <see cref="T:System.Web.UI.ParseChildrenAttribute" /> class is the default value of the derived class.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.Web.UI.ParseChildrenAttribute" /> value is the default instance; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -216,8 +298,14 @@
         <ReturnType>System.Web.UI.ParseChildrenAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="F:System.Web.UI.ParseChildrenAttribute.ParseAsChildren" /> field is called, the nested content that are contained within the server control are not parsed as properties; rather, they are parsed as a control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the nested content that is contained within the server control is parsed as controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParseAsProperties">
@@ -230,8 +318,14 @@
         <ReturnType>System.Web.UI.ParseChildrenAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="F:System.Web.UI.ParseChildrenAttribute.ParseAsProperties" /> field is called, the nested content contained within a server control is parsed as properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the nested content that is contained within a server control is parsed as properties of the control. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

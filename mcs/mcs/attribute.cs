@@ -258,19 +258,22 @@ namespace Mono.CSharp {
 			Report.Error (1970, loc, "Do not use `{0}' directly. Use `dynamic' keyword instead", GetSignatureForError ());
 		}
 
-		/// <summary>
-		/// This is rather hack. We report many emit attribute error with same error to be compatible with
-		/// csc. But because csc has to report them this way because error came from ilasm we needn't.
-		/// </summary>
-		public void Error_AttributeEmitError (string inner)
+		void Error_AttributeEmitError (string inner)
 		{
 			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'",
 				      Type.GetSignatureForError (), inner);
 		}
 
+		public void Error_InvalidArgumentValue (TypeSpec attributeType)
+		{
+			Report.Error (591, Location, "Invalid value for argument to `{0}' attribute", attributeType.GetSignatureForError ());
+		}
+
 		public void Error_InvalidSecurityParent ()
 		{
-			Error_AttributeEmitError ("it is attached to invalid parent");
+			Report.Error (7070, Location,
+				"Security attribute `{0}' is not valid on this declaration type. Security attributes are only valid on assembly, type and method declarations",
+				Type.GetSignatureForError ());
 		}
 
 		Attributable Owner {
@@ -412,7 +415,7 @@ namespace Mono.CSharp {
 			return ((MethodImplOptions) value | all) == all;
 		}
 
-		static bool IsValidArgumentType (TypeSpec t)
+		public static bool IsValidArgumentType (TypeSpec t)
 		{
 			if (t.IsArray) {
 				var ac = (ArrayContainer) t;
@@ -831,6 +834,7 @@ namespace Mono.CSharp {
 		{
 			SecurityAction action = GetSecurityActionValue ();
 			bool for_assembly = Target == AttributeTargets.Assembly || Target == AttributeTargets.Module;
+			var c = (Constant)pos_args [0].Expr;
 
 			switch (action) {
 #pragma warning disable 618
@@ -853,11 +857,22 @@ namespace Mono.CSharp {
 #pragma warning restore 618
 
 			default:
-				Error_AttributeEmitError ("SecurityAction is out of range");
+				Report.Error (7049, c.Location, "Security attribute `{0}' has an invalid SecurityAction value `{1}'",
+					Type.GetSignatureForError (), c.GetValueAsLiteral());
 				return false;
 			}
 
-			Error_AttributeEmitError (String.Concat ("SecurityAction `", action, "' is not valid for this declaration"));
+			switch (Target) {
+			case AttributeTargets.Assembly:
+				Report.Error (7050, c.Location, "SecurityAction value `{0}' is invalid for security attributes applied to an assembly",
+					c.GetSignatureForError ());
+				break;
+			default:
+				Report.Error (7051, c.Location, "SecurityAction value `{0}' is invalid for security attributes applied to a type or a method",
+					c.GetSignatureForError ());
+				break;
+			}
+
 			return false;
 		}
 
@@ -1026,44 +1041,42 @@ namespace Mono.CSharp {
 									return;
 								}
 							} else if (Type == predefined.Guid) {
+								string v = ((StringConstant) arg_expr).Value;
 								try {
-									string v = ((StringConstant) arg_expr).Value;
 									new Guid (v);
-								} catch (Exception e) {
-									Error_AttributeEmitError (e.Message);
+								} catch {
+									Error_InvalidArgumentValue (Type);
 									return;
 								}
 							} else if (Type == predefined.AttributeUsage) {
 								int v = ((IntConstant) ((EnumConstant) arg_expr).Child).Value;
-								if (v == 0) {
-									context.Module.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
-										"System.AttributeUsage");
-								}
+								if (v == 0)
+									Error_InvalidArgumentValue (Type);
 							} else if (Type == predefined.MarshalAs) {
 								if (pos_args.Count == 1) {
 									var u_type = (UnmanagedType) System.Enum.Parse (typeof (UnmanagedType), ((Constant) pos_args[0].Expr).GetValue ().ToString ());
 									if (u_type == UnmanagedType.ByValArray && !(Owner is FieldBase)) {
-										Error_AttributeEmitError ("Specified unmanaged type is only valid on fields");
+										Report.Error (7055, pos_args [0].Expr.Location, "Unmanaged type `ByValArray' is only valid for fields");
 									}
 								}
 							} else if (Type == predefined.DllImport) {
 								if (pos_args.Count == 1 && pos_args[0].Expr is Constant) {
 									var value = ((Constant) pos_args[0].Expr).GetValue () as string;
 									if (string.IsNullOrEmpty (value))
-										Error_AttributeEmitError ("DllName cannot be empty or null");
+										Error_InvalidArgumentValue (Type);
 								}
 							} else if (Type == predefined.MethodImpl) {
 								if (pos_args.Count == 1) {
 									var value = (int) ((Constant) arg_expr).GetValueAsLong ();
 
 									if (!IsValidMethodImplOption (value)) {
-										Error_AttributeEmitError ("Incorrect argument value");
+										Error_InvalidArgumentValue (Type);
 									}
 								}
 							}
 						}
 
-						arg_expr.EncodeAttributeValue (context, encoder, pt);
+						arg_expr.EncodeAttributeValue (context, encoder, pt, pt);
 					}
 				}
 
@@ -1077,7 +1090,7 @@ namespace Mono.CSharp {
 
 						encoder.Encode (na.Key.Type);
 						encoder.Encode (na.Value.Name);
-						na.Value.Expr.EncodeAttributeValue (context, encoder, na.Key.Type);
+						na.Value.Expr.EncodeAttributeValue (context, encoder, na.Key.Type, na.Key.Type);
 					}
 				} else {
 					encoder.EncodeEmptyNamedArguments ();
@@ -1527,7 +1540,7 @@ namespace Mono.CSharp {
 			Encode ((byte) 0x54); // property
 			Encode (property.MemberType);
 			Encode (property.Name);
-			value.EncodeAttributeValue (null, this, property.MemberType);
+			value.EncodeAttributeValue (null, this, property.MemberType, property.MemberType);
 		}
 
 		//
@@ -1539,7 +1552,7 @@ namespace Mono.CSharp {
 			Encode ((byte) 0x53); // field
 			Encode (field.MemberType);
 			Encode (field.Name);
-			value.EncodeAttributeValue (null, this, field.MemberType);
+			value.EncodeAttributeValue (null, this, field.MemberType, field.MemberType);
 		}
 
 		public void EncodeNamedArguments<T> (T[] members, Constant[] values) where T : MemberSpec, IInterfaceMemberSpec
@@ -1559,7 +1572,7 @@ namespace Mono.CSharp {
 
 				Encode (member.MemberType);
 				Encode (member.Name);
-				values [i].EncodeAttributeValue (null, this, member.MemberType);
+				values [i].EncodeAttributeValue (null, this, member.MemberType, member.MemberType);
 			}
 		}
 

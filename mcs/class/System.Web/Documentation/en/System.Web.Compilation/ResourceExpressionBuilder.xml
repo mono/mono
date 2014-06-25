@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceExpressionBuilder" FullName="System.Web.Compilation.ResourceExpressionBuilder">
   <TypeSignature Language="C#" Value="public class ResourceExpressionBuilder : System.Web.Compilation.ExpressionBuilder" />
   <AssemblyInfo>
@@ -17,9 +18,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class creates code to retrieve resource values when the page is executed. A resource file typically contains information localized for a particular language or culture.</para>
+      <para>A resource expression takes the form &lt;%$ Resources: ClassKey, ResourceKey %&gt; within the page. The part of the expression before the colon (:) designates the type of expression builder to use, and the part after the colon signifies the class name and resource key. The preceding expression would retrieve the following value from a file named ClassKey.resx:</para>
+      <code>&lt;data name="ResourceKey"&gt;&lt;value xml:space="preserve"&gt;Hello!&lt;/value&gt;&lt;/data&gt;</code>
+      <para>When the page parser encounters an expression with the Resources prefix, it creates an instance of the <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class. The <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class either evaluates the expression or generates code to return a value for the expression when the page is executed.</para>
+      <para>If the expression is encountered in a page that will be compiled, the <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> object generates code that retrieves the specified value from the resource file. If the expression is encountered in a page that will not be compiled, the <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> object returns the value from the resource file when the page is parsed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides code to the page parser for assigning property values on a control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +38,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,14 +62,27 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="entry">To be added.</param>
-        <param name="parsedData">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called when an expression of the form &lt;%$ Resources: someResourceKey %&gt; is encountered in a page that uses the no-compile feature. It retrieves the appropriate value from a key/value pair in a resource file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value from a resource file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> associated with the parsed expression. The parsed expression contains the class name and resource key.</para>
+        </returns>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing the expression.</param>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that represents information about the property bound to by the expression.</param>
+        <param name="parsedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object containing parsed data as returned by the <see cref="Overload:System.Web.Compilation.ResourceExpressionBuilder.ParseExpression" /> method.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contextual information for the evaluation of the expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,13 +100,25 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="entry">To be added.</param>
-        <param name="parsedData">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called during the CodeDOM creation for a page or control. The <see cref="T:System.CodeDom.CodeExpression" /> object returned is of the type <see cref="T:System.CodeDom.CodeMethodInvokeExpression" /> and represents the method to call when retrieving a resource value during page execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a code expression to evaluate during page execution.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> that invokes a method.</para>
+        </returns>
+        <param name="entry">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property name of the object.</param>
+        <param name="parsedData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parsed value of the expression.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Properties for the control or page.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,11 +134,21 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method parses the expression and returns a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property value in the returned <see cref="T:System.Web.Compilation.ResourceExpressionFields" /> object, if these properties are provided in the expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the parsed expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Compilation.ResourceExpressionFields" /> for the expression.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression value to be parsed.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,13 +166,25 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="propertyType">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Object" /> is of type <see cref="T:System.Web.Compilation.ResourceExpressionFields" />. This method parses the expression and returns a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property value in the returned <see cref="T:System.Web.Compilation.ResourceExpressionFields" /> object, if those properties are provided in the expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object that represents the parsed expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the parsed expression.</para>
+        </returns>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the declarative expression.</param>
+        <param name="propertyType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the property bound to by the expression.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Contextual information for the evaluation of the expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -136,10 +197,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.ResourceExpressionBuilder.SupportsEvaluate" /> property indicates whether the <see cref="M:System.Web.Compilation.ResourceExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> method has been implemented in the class. <see cref="M:System.Web.Compilation.ResourceExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" /> must be implemented within an expression builder for an expression to be evaluated in a page that uses the no-compile feature. <see cref="T:System.Web.Compilation.ResourceExpressionBuilder" /> supports evaluation of resource values in non-compiled pages, so this property always returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether an expression can be evaluated in a page that uses the no-compile feature.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

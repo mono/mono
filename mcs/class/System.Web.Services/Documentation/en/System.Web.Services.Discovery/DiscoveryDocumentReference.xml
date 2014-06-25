@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscoveryDocumentReference" FullName="System.Web.Services.Discovery.DiscoveryDocumentReference">
   <TypeSignature Language="C#" Value="public sealed class DiscoveryDocumentReference : System.Web.Services.Discovery.DiscoveryReference" Maintainer="auto" />
   <AssemblyInfo>
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XML Web services discovery involves discovering the available XML Web services given an URL. The URL typically points to a discovery document, which usually has a.disco file name extension. The discovery document contains references to information about the existance of XML Web services, such as Service Descriptions, XML Schema Definition language (XSD) schemas, or other discovery documents. This class represents a reference to a discovery document.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference to a discovery document. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +54,13 @@
         <Parameter Name="href" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="href">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> class, setting the <see cref="P:System.Web.Services.Discovery.DiscoveryDocumentReference.Ref" /> property to the value of <paramref name="href" />.</para>
+        </summary>
+        <param name="href">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference to a discovery document. The <see cref="P:System.Web.Services.Discovery.DiscoveryDocumentReference.Ref" /> property is set to the value of <paramref name="href" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,9 +75,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the default file to use when saving the referenced discovery document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +99,15 @@
         <ReturnType>System.Web.Services.Discovery.DiscoveryDocument</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DiscoveryDocument'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the discovery document has not been downloaded and added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> property of <see cref="P:System.Web.Services.Discovery.DiscoveryReference.ClientProtocol" />, an attempt to download and resolve the document is made.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contents of the referenced discovery document as a <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -106,10 +129,18 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads and returns the discovery document from the passed <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> containing the contents of the referenced discovery document.</para>
+        </returns>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.IO.Stream" /> containing the discovery document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +155,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most references, the <see cref="P:System.Web.Services.Discovery.DiscoveryDocumentReference.Ref" /> property is a URL, such as http://www.contoso.com/MyWebService.disco.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the reference to a discovery document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -153,10 +190,19 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="contentType">To be added.</param>
-        <param name="stream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the MIME type is text/xml and the content of <paramref name="stream" /> is a discovery document, then the contents of <paramref name="stream" /> are added to the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> and <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.Documents" /> properties of <see cref="P:System.Web.Services.Discovery.DiscoveryReference.ClientProtocol" />.</para>
+          <para>Before invoking the <see cref="M:System.Web.Services.Discovery.DiscoveryDocumentReference.Resolve(System.String,System.IO.Stream)" /> method, the <see cref="P:System.Web.Services.Discovery.DiscoveryReference.ClientProtocol" /> property must be set to a valid instance of <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves whether the referenced document is valid.</para>
+        </summary>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The MIME type of <paramref name="stream" />. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> containing the referenced document. </param>
       </Docs>
     </Member>
     <Member MemberName="ResolveAll">
@@ -167,8 +213,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless you specifically need to resolve the individual references of a <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> object, you should invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveAll" /> or <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ResolveOneLevel" /> methods of <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol" />.</para>
+          <para>This method resolves all references to discovery documents, XSD schemas, and Service Descriptions in the <see cref="P:System.Web.Services.Discovery.DiscoveryClientProtocol.References" /> property of <see cref="P:System.Web.Services.Discovery.DiscoveryReference.ClientProtocol" /> and any references found in referring discovery documents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies that all referenced documents within the discovery document are valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -183,9 +236,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the <see cref="P:System.Web.Services.Discovery.DiscoveryDocumentReference.Ref" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the referenced discovery document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -208,10 +267,15 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="document">a <see cref="T:System.Object" /></param>
-        <param name="stream">a <see cref="T:System.IO.Stream" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the passed <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> into the passed <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="document">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> to write into <paramref name="stream" />. </param>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> into which the serialized discovery document is written. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

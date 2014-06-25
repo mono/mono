@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceHostBase" FullName="System.ServiceModel.ServiceHostBase">
   <TypeSignature Language="C#" Value="public abstract class ServiceHostBase : System.ServiceModel.Channels.CommunicationObject, IDisposable, System.ServiceModel.IExtensibleObject&lt;System.ServiceModel.ServiceHostBase&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ServiceHostBase extends System.ServiceModel.Channels.CommunicationObject implements class System.IDisposable, class System.ServiceModel.IExtensibleObject`1&lt;class System.ServiceModel.ServiceHostBase&gt;" />
@@ -17,8 +18,29 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.ServiceHostBase" /> class to create hosts that provide a custom programming model. The indigo1 service programming model uses the <see cref="T:System.ServiceModel.ServiceHost" /> class.</para>
+      <para>Special note for Managed C++ users deriving from this class:</para>
+      <list type="bullet">
+        <item>
+          <para>Put your cleanup code in (On)(Begin)Close (and/or OnAbort), not in a destructor.</para>
+        </item>
+        <item>
+          <para>Avoid destructors; they cause the compiler to auto-generate <see cref="T:System.IDisposable" />.</para>
+        </item>
+        <item>
+          <para>Avoid non-reference members; they can cause the compiler to auto-generate <see cref="T:System.IDisposable" />.</para>
+        </item>
+        <item>
+          <para>Avoid finalizers; but if you include one, you should suppress the build warning and call <see cref="M:System.GC.SuppressFinalize(System.Object)" /> and the finalizer itself from (On)(Begin)Close (and/or OnAbort) to emulate what would have been the auto-generated <see cref="T:System.IDisposable" /> behavior.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Extends the <see cref="T:System.ServiceModel.ServiceHostBase" /> class to implement hosts that expose custom programming models.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +52,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.ServiceHostBase" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddBaseAddress">
@@ -48,9 +73,16 @@
         <Parameter Name="baseAddress" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="baseAddress">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property allows users extending <see cref="T:System.ServiceModel.ServiceHostBase" /> to provide the base address after the host is constructed. <see cref="M:System.ServiceModel.ServiceHostBase.AddBaseAddress(System.Uri)" /> can be used to add base addresses to an existing host, but throws an exception if the description is already initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a base address to the service host.</para>
+        </summary>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> that contains the base address for services hosted on the current host.</param>
       </Docs>
     </Member>
     <Member MemberName="AddServiceEndpoint">
@@ -67,9 +99,18 @@
         <Parameter Name="endpoint" Type="System.ServiceModel.Description.ServiceEndpoint" />
       </Parameters>
       <Docs>
-        <param name="endpoint">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using the method, the service host does a "by-configuration-name" validation on the contract description. In other words, the host verifies that <see cref="T:System.ServiceModel.Description.ServiceEndpoint.Contract.ConfigurationName" /> exists in the list of configuration names of the service contracts implemented by the service. If the validation passes, the description in the <see cref="T:System.ServiceModel.Description.ServiceEndpoint " /> is used as it is, even if the <see cref="T:System.ServiceModel.Description.ContractDescription " /> reflected from the service is different. </para>
+          <para>As an example, assume that the description in the ServiceEndpoint and the contract description reflected from the service have the same name, but different operation behaviors. The implication of only “by-configuration-name” validation is that there is no validation that the behaviors are the same and there are one updates to one description because of another description.</para>
+          <para>If the <paramref name="address" /> is a relative URI, one of the base addresses of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified service endpoint to the hosted service.</para>
+        </summary>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service endpoint.</param>
       </Docs>
     </Member>
     <Member MemberName="AddServiceEndpoint">
@@ -88,12 +129,21 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="implementedContract">To be added.</param>
-        <param name="binding">To be added.</param>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, and endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address for the endpoint added. This can be an absolute or relative URI. If it is a relative URI, one of the base address of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</param>
       </Docs>
     </Member>
     <Member MemberName="AddServiceEndpoint">
@@ -112,12 +162,21 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="implementedContract">To be added.</param>
-        <param name="binding">To be added.</param>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, and a URI that contains the endpoint address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the address for the endpoint added. This can be an absolute or relative URI. If it is a relative URI, one of the base address of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</param>
       </Docs>
     </Member>
     <Member MemberName="AddServiceEndpoint">
@@ -137,13 +196,26 @@
         <Parameter Name="listenUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="implementedContract">To be added.</param>
-        <param name="binding">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="listenUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="address" /> is a relative URI, one of the base addresses of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with a specified contract, binding, endpoint address and URI that contains the address at which it listens.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The address for the endpoint added. This address can be an absolute or relative URI. If it is a relative URI, one of the base address of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</param>
+        <param name="listenUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the address which the endpoint listens to for incoming messages. This URI can be relative or absolute.</param>
       </Docs>
     </Member>
     <Member MemberName="AddServiceEndpoint">
@@ -163,13 +235,23 @@
         <Parameter Name="listenUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="implementedContract">To be added.</param>
-        <param name="binding">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="listenUri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a service endpoint to the hosted service with the specified contract, binding, and URIs that contain the endpoint and listening addresses.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service. This URI can be absolute or relative.</para>
+        </returns>
+        <param name="implementedContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint added.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the address for the endpoint added. If it is a relative URI, one of the base address of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</param>
+        <param name="listenUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> that contains the address at which the endpoint listens for incoming messages.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -184,8 +266,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the service description information from the configuration file and applies it to the runtime being constructed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Authorization">
@@ -199,9 +284,12 @@
         <ReturnType>System.ServiceModel.Description.ServiceAuthorizationBehavior</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the authorization behavior for the service hosted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BaseAddresses">
@@ -215,9 +303,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Uri&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the base addresses used by the hosted service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChannelDispatchers">
@@ -231,9 +322,12 @@
         <ReturnType>System.ServiceModel.Dispatcher.ChannelDispatcherCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of channel dispatchers used by the service host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseTimeout">
@@ -247,9 +341,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time allowed for the service host to close.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateDescription">
@@ -283,9 +380,12 @@
         <ReturnType>System.ServiceModel.Description.ServiceCredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the credential for the service hosted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultCloseTimeout">
@@ -299,9 +399,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time allowed for the service host to close.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultOpenTimeout">
@@ -315,9 +418,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default interval of time allowed for the service host to open.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Description">
@@ -331,9 +437,12 @@
         <ReturnType>System.ServiceModel.Description.ServiceDescription</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the service hosted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Extensions">
@@ -347,9 +456,12 @@
         <ReturnType>System.ServiceModel.IExtensionCollection&lt;System.ServiceModel.ServiceHostBase&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the extensions for the current specified service host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImplementedContracts">
@@ -363,9 +475,12 @@
         <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.ServiceModel.Description.ContractDescription&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the contracts implemented by the service hosted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeDescription">
@@ -382,9 +497,13 @@
         <Parameter Name="baseAddresses" Type="System.ServiceModel.UriSchemeKeyedCollection" />
       </Parameters>
       <Docs>
-        <param name="baseAddresses">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and initializes the service host with the contract and service descriptions.</para>
+        </summary>
+        <param name="baseAddresses">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.UriSchemeKeyedCollection" /> that contains the base addresses for the service hosted.</param>
       </Docs>
     </Member>
     <Member MemberName="InitializeRuntime">
@@ -399,8 +518,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the runtime for the service host.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadConfigurationSection">
@@ -418,8 +540,11 @@
       </Parameters>
       <Docs>
         <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the service element from the configuration file of the hosted service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ManualFlowControlLimit">
@@ -433,9 +558,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This limit can be incremented using the <see cref="M:System.ServiceModel.ServiceHostBase.IncrementManualFlowControlLimit(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the flow control limit for messages received by the service hosted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAbort">
@@ -450,8 +581,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Aborts the service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBeginClose">
@@ -470,12 +604,21 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation invoked on the close of the service host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on-close operation. </para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-close operation has to complete before timing out.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous operation on-close completion.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous on-close operation.</param>
       </Docs>
     </Member>
     <Member MemberName="OnBeginOpen">
@@ -494,12 +637,21 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation invoked on the opening of the service host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on-open operation. </para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-open operation has to complete before timing out.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives the notification of the asynchronous operation on-open completion.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object, specified by the application, that contains state information associated with the asynchronous on-open operation.</param>
       </Docs>
     </Member>
     <Member MemberName="OnClose">
@@ -516,9 +668,30 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.ServiceModel.ServiceHostBase.OnClose(System.TimeSpan)" /> does the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Closes all input to <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" />, which also closes their associated <see cref="T:System.ServiceModel.Channels.IChannelListener" /> instances. This stops any new channels from being accepting.</para>
+            </item>
+            <item>
+              <para>Calls <see cref="M:System.ServiceModel.Dispatcher.ChannelDispatcher.CloseInput" /> on all <see cref="T:System.ServiceModel.InstanceContext" /> objects, which mean they stop accepting new messages.</para>
+            </item>
+            <item>
+              <para>Waits for all <see cref="T:System.ServiceModel.InstanceContext" /> objects to close down, which happens when their associated channels finish sending all pending messages.</para>
+            </item>
+            <item>
+              <para>Closes the <see cref="T:System.ServiceModel.Dispatcher.ChannelDispatcher" /> objects associated with the host.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes down the hosted service, including their channel dispatchers and associated instance contexts and listeners.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-close operation has to complete before timing out.</param>
       </Docs>
     </Member>
     <Member MemberName="OnEndClose">
@@ -535,9 +708,13 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation invoked on the closing of the service host.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="M:System.ServiceModel.ServiceHostBase.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="OnEndOpen">
@@ -554,9 +731,13 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation invoked on the opening of the service host.</para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to the <see cref="M:System.ServiceModel.ServiceHostBase.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
     </Member>
     <Member MemberName="OnOpen">
@@ -573,9 +754,13 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens the channel dispatchers.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-open operation has to complete before timing out.</param>
       </Docs>
     </Member>
     <Member MemberName="OnOpened">
@@ -590,8 +775,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Once these behaviors are initialized when opening the service, they cannot be changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the service credentials,service authentication and authorization behavior for the hosted service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OpenTimeout">
@@ -605,9 +796,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time allowed for the service host to open.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReleasePerformanceCounters">
@@ -622,8 +816,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is invoked when calling <see cref="M:System.ServiceModel.ServiceHostBase.OnClose(System.TimeSpan)" /> and </para>
+          <para>
+            <see cref="M:System.ServiceModel.ServiceHostBase.OnEndClose(System.IAsyncResult)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the service and channel dispatcher performance counters for the hosted service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
@@ -638,8 +840,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the service host. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnknownMessageReceived">
@@ -653,8 +858,17 @@
         <ReturnType>System.EventHandler&lt;System.ServiceModel.UnknownMessageReceivedEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>When using <see cref="T:System.ServiceModel.WorkflowServiceHost" />, exposing a hosting endpoint, and a <see cref="E:System.ServiceModel.ServiceHostBase.UnknownMessageReceived" /> exception is thrown, the host passes the message to the event handler. If an attempt is made to read this message an <see cref="T:System.InvalidOperationException" /> is thrown. The description of the exception will say “This message cannot support the operation because it has been read.”  The WCF infrastructure reads the message while extracting the message parameters. This message is then passed to the event handler and any attempt to read it causes an exception. If you need to access message parameters in your <see cref="T:System.InvalidOperationException" /> handler from a hosting endpoint, define the hosting endpoint contract using MessageContract and place the needed data into a message header. crabout hosting endpoints see <format type="text/html"><a href="c0e8f7bb-cb13-49ec-852f-b85d7c23972f">Workflow Service Host Extensibility</a></format></para>
+          </block>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an unknown message is received.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

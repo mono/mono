@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpUtility" FullName="System.Web.HttpUtility">
   <TypeSignature Language="C#" Value="public sealed class HttpUtility" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.HttpUtility" /> class is used internally by the <see cref="T:System.Web.HttpServerUtility" /> class, whose methods and properties are exposed through the intrinsic ASP.NET <see cref="P:System.Web.HttpContext.Server" /> object. Additionally, the <see cref="T:System.Web.HttpUtility" /> class contains encoding and decoding utility methods that are not accessible from the <see cref="P:System.Web.HttpContext.Server" />. </para>
+      <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for encoding and decoding URLs when processing Web requests. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpUtility" /> class exposes methods for encoding and decoding string based URLs, URL tokens, and paths. The <see cref="T:System.Web.HttpUtility" /> is used internally by the <see cref="T:System.Web.HttpServerUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpUtility" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +55,21 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String)" /> method converts only quotation marks ("), ampersands (&amp;), and left angle brackets (&lt;) to equivalent character entities. It is considerably faster than the <see cref="M:System.Web.HttpUtility.HtmlEncode(System.String)" /> method. </para>
+          <para>The string result from the <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String)" /> method should be used only for double-quoted attributes. Security issues might arise when using the <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String)" /> method with single-quoted attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimally converts a string to an HTML-encoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded string.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,10 +87,19 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String,System.IO.TextWriter)" /> method converts only quotation marks ("), ampersands (&amp;), and left angle brackets (&lt;) to equivalent character entities. It is considerably faster than the <see cref="M:System.Web.HttpUtility.HtmlEncode(System.String,System.IO.TextWriter)" /> method.</para>
+          <para>The string result from the <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String,System.IO.TextWriter)" /> method should be used only for double-quoted attributes. Security issues might arise when using the <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String,System.IO.TextWriter)" /> method with single-quoted attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Minimally converts a string into an HTML-encoded string and sends the encoded string to a <see cref="T:System.IO.TextWriter" /> output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode </param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> output stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,10 +116,21 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. HTML encoding converts characters that are not allowed in HTML into character-entity equivalents; HTML decoding reverses the encoding. For example, when embedded in a block of text, the characters &lt; and &gt; are encoded as &amp;lt; and &amp;gt; for HTTP transmission.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string that has been HTML-encoded for HTTP transmission into a decoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to decode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -103,10 +148,19 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. HTML encoding converts characters that are not allowed in HTML into character-entity equivalents; HTML decoding reverses the encoding. For example, when embedded in a block of text, the characters &lt; and &gt; are encoded as &amp;lt; and &amp;gt; for HTTP transmission.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string that has been HTML-encoded into a decoded string, and sends the decoded string to a <see cref="T:System.IO.TextWriter" /> output stream.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to decode. </param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> stream of output. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -123,10 +177,21 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. HTML encoding converts characters that are not allowed in HTML into character-entity equivalents; HTML decoding reverses the encoding. For example, when embedded in a block of text, the characters &lt; and &gt; are encoded as &amp;lt; and &amp;gt; for HTTP transmission.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string to an HTML-encoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded string.</para>
+        </returns>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,10 +209,19 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.String" /></param>
-        <param name="output">a <see cref="T:System.IO.TextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. HTML encoding converts characters that are not allowed in HTML into character-entity equivalents; HTML decoding reverses the encoding. For example, when embedded in a block of text, the characters &lt; and &gt;, are encoded as &amp;lt; and &amp;gt; for HTTP transmission.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string into an HTML-encoded string, and returns the output as a <see cref="T:System.IO.TextWriter" /> stream of output.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode </param>
+        <param name="output">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> output stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,10 +241,23 @@
         <Parameter Name="query" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="query">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpUtility.ParseQueryString(System.String)" /> method uses <see cref="P:System.Text.Encoding.UTF8" /> format to parse the query string In the returned <see cref="T:System.Collections.Specialized.NameValueCollection" />, URL-encoded characters are decoded and multiple occurrences of the same query string parameter are listed as a single entry with a comma separating each value. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.HttpUtility.ParseQueryString(System.String)" /> method uses query strings that might contain user input, which is a potential security threat. By default, ASP.NET Web pages validate that user input does not include script or HTML elements. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses a query string into a <see cref="T:System.Collections.Specialized.NameValueCollection" /> using <see cref="P:System.Text.Encoding.UTF8" /> encoding.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.NameValueCollection" /> of query parameters and values.</para>
+        </returns>
+        <param name="query">
+          <attribution license="cc4" from="Microsoft" modified="false" />The query string to parse.</param>
       </Docs>
     </Member>
     <Member MemberName="ParseQueryString">
@@ -187,11 +274,25 @@
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="query">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the returned <see cref="T:System.Collections.Specialized.NameValueCollection" />, URL-encoded characters are decoded and multiple occurrences of the same query string parameter are listed as a single entry with a comma separating each value. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.HttpUtility.ParseQueryString(System.String,System.Text.Encoding)" /> method uses query strings that might contain user input, which is a potential security threat. By default, ASP.NET Web pages validate that user input does not include script or HTML elements. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parses a query string into a <see cref="T:System.Collections.Specialized.NameValueCollection" /> using the specified <see cref="T:System.Text.Encoding" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.NameValueCollection" /> of query parameters and values.</para>
+        </returns>
+        <param name="query">
+          <attribution license="cc4" from="Microsoft" modified="false" />The query string to parse.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> to use.</param>
       </Docs>
     </Member>
     <Member MemberName="UrlDecode">
@@ -204,16 +305,21 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">The URL to decode</param>
-        <summary>To be added</summary>
-        <returns>The decoded URL</returns>
         <remarks>
-          <example>
-            <code lang="C#">
-	HttpUtility.UrlDecode("two%20words"); //returns "two words"
-  </code>
-          </example>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string that has been encoded for transmission in a URL into a decoded string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to decode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -231,11 +337,23 @@
         <Parameter Name="e" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="bytes">a <see cref="T:System.Byte[]" /></param>
-        <param name="e">a <see cref="T:System.Text.Encoding" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded byte array into a decoded string using the specified decoding object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to decode. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> that specifies the decoding scheme. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,10 +372,21 @@
       </Parameters>
       <Docs>
         <param name="s">a <see cref="T:System.String" /></param>
-        <param name="e">a <see cref="T:System.Text.Encoding" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded string into a decoded string, using the specified encoding object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> that specifies the decoding scheme. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -277,13 +406,27 @@
         <Parameter Name="e" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="bytes">a <see cref="T:System.Byte[]" /></param>
-        <param name="offset">a <see cref="T:System.Int32" /></param>
-        <param name="count">a <see cref="T:System.Int32" /></param>
-        <param name="e">a <see cref="T:System.Text.Encoding" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded byte array into a decoded string using the specified encoding object, starting at the specified position in the array, and continuing for the specified number of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded string.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to decode. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the byte to begin decoding. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> object that specifies the decoding scheme. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -300,10 +443,21 @@
         <Parameter Name="bytes" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded array of bytes into a decoded array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded array of bytes.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to decode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -320,10 +474,21 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded string into a decoded array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded array of bytes.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to decode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -341,11 +506,23 @@
         <Parameter Name="e" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="str">a <see cref="T:System.String" /></param>
-        <param name="e">a <see cref="T:System.Text.Encoding" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Byte[]" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded string into a decoded array of bytes using the specified decoding object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded array of bytes.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to decode. </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> object that specifies the decoding scheme. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,12 +541,25 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added: an object of type 'byte []'</param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL-encoded array of bytes into a decoded array of bytes, starting at the specified position in the array and continuing for the specified number of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decoded array of bytes.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to decode. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the byte array at which to begin decoding. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -386,10 +576,21 @@
         <Parameter Name="bytes" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpUtility.UrlEncode(System.Byte[])" /> method can be used to encode the entire URL, including query-string values. If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when the characters &lt; and &gt; are embedded in a block of text to be transmitted in a URL, they are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a byte array into an encoded URL string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded string.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -406,10 +607,25 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method can be used to encode the entire URL, including query-string values. If characters such as blanks and punctuation are passed in an HTTP stream without encoding, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when the characters &lt; and &gt; are embedded in a block of text to be transmitted in a URL, they are encoded as %3c and %3e.</para>
+          <para>You can encode a URL using with the <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method or the <see cref="M:System.Web.HttpUtility.UrlPathEncode(System.String)" /> method. However, the methods return different results. The <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method converts each space character to a plus character (+). The <see cref="M:System.Web.HttpUtility.UrlPathEncode(System.String)" /> method converts each space character into the string "%20", which represents a space in hexadecimal notation. Use the <see cref="M:System.Web.HttpUtility.UrlPathEncode(System.String)" /> method when you encode the path portion of a URL in order to guarantee a consistent decoded URL, regardless of which platform or browser performs the decoding.</para>
+          <para>The <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method uses UTF-8 encoding by default. Therefore, using the <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method provides the same results as using the <see cref="M:System.Web.HttpUtility.UrlEncode(System.String,System.Text.Encoding)" /> method and specifying <see cref="P:System.Text.Encoding.UTF8" /> as the second parameter.</para>
+          <para>
+            <see cref="M:System.Web.HttpServerUtility.UrlEncode(System.String)" /> is a convenient way to access the <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method at run time from an ASP.NET application. Internally, <see cref="M:System.Web.HttpServerUtility.UrlEncode(System.String)" /> uses the <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method to encode strings.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes a URL string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded string.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -429,9 +645,19 @@
       <Docs>
         <param name="s">a <see cref="T:System.String" /></param>
         <param name="Enc">a <see cref="T:System.Text.Encoding" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.String" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to encode the entire URL, including query-string values. If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when the characters &lt; and &gt; are embedded in a block of text to be transmitted in a URL, they are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encodes a URL string using the specified encoding object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded string.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -450,12 +676,25 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added: an object of type 'byte []'</param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" /> method can be used to encode the entire URL, including query-string values. If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when the characters &lt; and &gt; are embedded in a block of text to be transmitted in a URL, they are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a byte array into a URL-encoded string, starting at the specified position in the array and continuing for the specified number of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded string.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to encode. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the byte array at which to begin encoding. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -472,10 +711,21 @@
         <Parameter Name="bytes" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an array of bytes into a URL-encoded array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded array of bytes.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -492,10 +742,21 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string into a URL-encoded array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded array of bytes.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -513,11 +774,23 @@
         <Parameter Name="e" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="str">a <see cref="T:System.String" /></param>
-        <param name="e">a <see cref="T:System.Text.Encoding" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Byte[]" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string into a URL-encoded array of bytes using the specified encoding object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded array of bytes.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to encode </param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Text.Encoding" /> that specifies the encoding scheme. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -536,12 +809,25 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added: an object of type 'byte []'</param>
-        <param name="offset">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not allowed in a URL into character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+          <para>To encode or decode values outside of a web application, use the <see cref="T:System.Net.WebUtility" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an array of bytes into a URL-encoded array of bytes, starting at the specified position in the array and continuing for the specified number of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An encoded array of bytes.</para>
+        </returns>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes to encode. </param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in the byte array at which to begin encoding. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to encode. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -558,10 +844,20 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not valid in a URL to character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string into a Unicode string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Unicode string in %<paramref name="UnicodeValue" /> notation.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -578,10 +874,20 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte []'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If characters such as blanks and punctuation are passed in an HTTP stream, they might be misinterpreted at the receiving end. URL encoding converts characters that are not valid in a URL to character-entity equivalents; URL decoding reverses the encoding. For example, when embedded in a block of text to be transmitted in a URL, the characters &lt; and &gt; are encoded as %3c and %3e.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a Unicode string into an array of bytes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array.</para>
+        </returns>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -599,9 +905,15 @@
       </Parameters>
       <Docs>
         <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use; intended only for browser compatibility. Use <see cref="M:System.Web.HttpUtility.UrlEncode(System.String)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encoded text.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

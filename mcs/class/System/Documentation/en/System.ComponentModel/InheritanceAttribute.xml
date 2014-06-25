@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InheritanceAttribute" FullName="System.ComponentModel.InheritanceAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class InheritanceAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InheritanceAttribute extends System.Attribute" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.InheritanceAttribute" /> represents the type and level of inheritance of a member.</para>
+      <para>When the <see cref="M:System.ComponentModel.Design.IInheritanceService.AddInheritedComponents(System.ComponentModel.IComponent,System.ComponentModel.IContainer)" /> method of the <see cref="T:System.ComponentModel.Design.IInheritanceService" /> searches the component fields of a component to identify fields that are inherited from a base class, the method represents the inheritance level of each component using an <see cref="T:System.ComponentModel.InheritanceAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates whether the component associated with this attribute has been inherited from a base class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.InheritanceAttribute" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +66,13 @@
         <Parameter Name="inheritanceLevel" Type="System.ComponentModel.InheritanceLevel" />
       </Parameters>
       <Docs>
-        <param name="inheritanceLevel">To be added: an object of type 'InheritanceLevel'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.InheritanceAttribute" /> class with the specified inheritance level.</para>
+        </summary>
+        <param name="inheritanceLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.InheritanceLevel" /> that indicates the level of inheritance to set this attribute to. </param>
       </Docs>
     </Member>
     <Member MemberName="Default">
@@ -73,8 +89,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field creates a new <see cref="T:System.ComponentModel.InheritanceAttribute" /> that indicates that the associated component is not inherited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the default value for <see cref="T:System.ComponentModel.InheritanceAttribute" /> is <see cref="F:System.ComponentModel.InheritanceAttribute.NotInherited" />. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -94,9 +116,15 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override to test for equality.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is the same; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -113,9 +141,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hashcode for this object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.InheritanceAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InheritanceLevel">
@@ -131,9 +165,12 @@
         <ReturnType>System.ComponentModel.InheritanceLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'InheritanceLevel'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current inheritance level stored in this attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Inherited">
@@ -150,8 +187,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field creates a new <see cref="T:System.ComponentModel.InheritanceAttribute" /> that indicates that the associated component is inherited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the component is inherited. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InheritedReadOnly">
@@ -168,8 +211,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field creates a new <see cref="T:System.ComponentModel.InheritanceAttribute" /> that indicates that the associated component is inherited and read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the component is inherited and is read-only. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsDefaultAttribute">
@@ -186,9 +235,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current value of the attribute is the default value for the attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current value of the attribute is the default; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="NotInherited">
@@ -205,8 +260,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field creates a new <see cref="T:System.ComponentModel.InheritanceAttribute" /> that indicates that the associated component is not inherited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the component is not inherited. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -223,9 +284,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this attribute to a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.ComponentModel.InheritanceAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

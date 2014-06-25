@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBinarySerialize" FullName="Microsoft.SqlServer.Server.IBinarySerialize">
   <TypeSignature Language="C#" Value="public interface IBinarySerialize" />
   <AssemblyInfo>
@@ -6,9 +7,18 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>User-defined types (UDTs) and user-defined aggregates are required to define a storage format, which can be either <see cref="T:Microsoft.SqlServer.Server.Format" />.Native or <see cref="T:Microsoft.SqlServer.Server.Format" />.UserDefined.</para>
+      <para>
+        <see cref="T:Microsoft.SqlServer.Server.Format" />.Native allows SQL Server to handle serialization and deserialization automatically, but the format has restrictions on the kind of types it can handle. <see cref="T:Microsoft.SqlServer.Server.Format" />.UserDefined allows user-defined types and aggregates to handle their own serialization. User-defined types and aggregates must be marked with <see cref="T:Microsoft.SqlServer.Server.Format" />.UserDefined in the SqlUserDefinedType or SqlUserDefinedAggregate attribute, and must implement the <see cref="T:Microsoft.SqlServer.Server.IBinarySerialize" /> interface.</para>
+      <para>Note that even with custom serialization, the total size of each instance must be under the maximum allowed limit, currently 8000 bytes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides custom implementation for user-defined type (UDT) and user-defined aggregate serialization and deserialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Read">
@@ -21,10 +31,17 @@
         <Parameter Name="r" Type="System.IO.BinaryReader" />
       </Parameters>
       <Docs>
-        <param name="r">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:Microsoft.SqlServer.Server.IBinarySerialize.Read(System.IO.BinaryReader)" /> method must reconstitute your object using the information written by the <see cref="M:Microsoft.SqlServer.Server.IBinarySerialize.Write(System.IO.BinaryWriter)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a user-defined type (UDT) or user-defined aggregate from its binary form.</para>
+        </summary>
+        <param name="r">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.BinaryReader" /> stream from which the object is deserialized.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,9 +58,15 @@
       </Parameters>
       <Docs>
         <param name="r">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write sufficient information to the binary stream to allow the <see cref="M:Microsoft.SqlServer.Server.IBinarySerialize.Read(System.IO.BinaryReader)" /> method to reconstitute your UDT or user-defined aggregate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a user-defined type (UDT) or user-defined aggregate into its binary format so that it may be persisted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

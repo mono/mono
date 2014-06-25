@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessModule" FullName="System.Diagnostics.ProcessModule">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ProcessModule : System.ComponentModel.Component" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ProcessModule extends System.ComponentModel.Component" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A module is an executable file or a dynamic link library (DLL). Each process consists of one or more modules. You can use this class to get information about the module.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a.dll or .exe file that is loaded into a particular process.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BaseAddress">
@@ -43,9 +50,12 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IntPtr'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the memory address where the module was loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EntryPointAddress">
@@ -66,9 +76,18 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IntPtr'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The module's entry point is the location of the function that is called during process startup, thread startup, process shutdown, and thread shutdown. While the entry point is not the address of the DllMain function, it should be close enough for most purposes.</para>
+          <block subset="none" type="note">
+            <para>Due to changes in the way that Windows loads assemblies, <see cref="P:System.Diagnostics.ProcessModule.EntryPointAddress" /> will always return 0 on win8 or win81 and should not be relied on for those platforms.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the memory address for the function that runs when the system loads and runs the module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileName">
@@ -89,9 +108,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the file name is longer than the maximum number of characters allowed, the file name is truncated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the full path to the module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileVersionInfo">
@@ -112,9 +137,12 @@
         <ReturnType>System.Diagnostics.FileVersionInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FileVersionInfo'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets version information about the module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ModuleMemorySize">
@@ -135,9 +163,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Diagnostics.ProcessModule.ModuleMemorySize" /> does not include any additional memory allocations that the module makes once it is running; it includes only the size of the static code and data in the module file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the amount of memory that is required to load the module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ModuleName">
@@ -158,9 +193,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the name is longer than the maximum number of characters allowed, it is truncated. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the process module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -177,9 +218,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the name of the module to a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Diagnostics.ProcessModule.ModuleName" /> property.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

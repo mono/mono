@@ -705,7 +705,7 @@ static gboolean file_setendoffile(gpointer handle)
 	}
 	
 #ifdef FTRUNCATE_DOESNT_EXTEND
-	/* I haven't bothered to write the configure.in stuff for this
+	/* I haven't bothered to write the configure.ac stuff for this
 	 * because I don't know if any platform needs it.  I'm leaving
 	 * this code just in case though
 	 */
@@ -3783,7 +3783,9 @@ add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
 			ignore_entry = TRUE;
 		else
 			ignore_entry = FALSE;
-	} else
+	} else if (state->fstype_index == 3 && memcmp ("nfs", state->fstype, state->fstype_index) == 0)
+		ignore_entry = FALSE;
+	else
 		ignore_entry = TRUE;
 
 	if (!ignore_entry) {

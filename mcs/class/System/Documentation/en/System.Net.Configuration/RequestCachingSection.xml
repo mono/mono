@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RequestCachingSection" FullName="System.Net.Configuration.RequestCachingSection">
   <TypeSignature Language="C#" Value="public sealed class RequestCachingSection : System.Configuration.ConfigurationSection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RequestCachingSection extends System.Configuration.ConfigurationSection" />
@@ -11,9 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class corresponds to the <format type="text/html"><a href="9962a2fe-cbda-41a6-9377-571811eaea84">RequestCaching Element (Network Settings)</a></format> configuration element.</para>
+      <para>This class is used to access information about default caching behavior for resources requested by using the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebClient" /> classes. </para>
+      <para>This class provides programmatic access to information that can be stored in configuration files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration section for cache behavior. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +35,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.RequestCachingSection" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultFtpCachePolicy">
@@ -48,10 +60,13 @@
         <ReturnType>System.Net.Configuration.FtpCachePolicyElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default FTP caching behavior for the local computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultHttpCachePolicy">
@@ -71,10 +86,16 @@
         <ReturnType>System.Net.Configuration.HttpCachePolicyElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless the <see cref="P:System.Net.Configuration.RequestCachingSection.DisableAllCaching" /> property is set to true, the policy returned by this property overrides the policy set in the <see cref="P:System.Net.Configuration.RequestCachingSection.DefaultPolicyLevel" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default caching behavior for the local computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultPolicyLevel">
@@ -94,10 +115,13 @@
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default cache policy level.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeserializeElement">
@@ -145,10 +169,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this configuration attribute is set to true in any configuration file, caching is disabled globally, and all other cache related settings are ignored. In addition, caching cannot be enabled programmatically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that enables caching on the local computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsPrivateCache">
@@ -168,10 +198,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On client machines, this value is typically set to true indicating that one user cannot use resources cached by another user. For middle-tier applications, this value is typically set to false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that indicates whether the local computer cache is private.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostDeserialize">
@@ -232,10 +268,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property ensures that a resource that does not have expiration header information does not remain fresh in the cache indefinitely.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value used as the maximum age for cached resources that do not have expiration information.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

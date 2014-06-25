@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GlyphCollection" FullName="System.Windows.Forms.Design.Behavior.GlyphCollection">
   <TypeSignature Language="C#" Value="public class GlyphCollection : System.Collections.CollectionBase" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects in a strongly typed collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +25,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -35,9 +42,13 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> class with the given <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> array.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to populate the collection.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +61,13 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.GlyphCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> class based on another <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> to populate the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -68,10 +83,17 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> with the specified value to the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to add to the end of the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -87,9 +109,13 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of an array to the end of the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to copy to the end of the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -105,9 +131,13 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.GlyphCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of another <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> to the end of the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> to add to the end of the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -123,10 +153,17 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> contains the specified <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is contained in the collection; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to locate.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -143,10 +180,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> values to a one-dimensional <see cref="T:System.Array" /> at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the values copied from <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index in <paramref name="array" /> where copying begins. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -162,10 +204,17 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the index of a <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> in the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> of <paramref name="value" /> in the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />, if found; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to locate.</param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -182,10 +231,15 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> into the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index where <paramref name="value" /> should be inserted. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to insert.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -220,9 +274,13 @@
         <Parameter Name="value" Type="System.Windows.Forms.Design.Behavior.Glyph" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specific <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> from the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> to remove from the <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" />.</param>
       </Docs>
     </Member>
   </Members>

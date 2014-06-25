@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRootDesigner" FullName="System.ComponentModel.Design.IRootDesigner">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IRootDesigner : IDisposable, System.ComponentModel.Design.IDesigner" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRootDesigner implements class System.ComponentModel.Design.IDesigner, class System.IDisposable" />
@@ -24,8 +25,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A root designer is the designer that is in the top position, or root, of the current design-time document object hierarchy. A root designer must implement the <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface. A root designer typically manages the background view in designer view mode, and usually displays the controls within the base container of the current design time project.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for root-level designer view technologies.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetView">
@@ -44,10 +51,23 @@
         <Parameter Name="technology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <param name="technology">To be added: an object of type 'ViewTechnology'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a view object that can present a user interface to the user. The returned data type is an <see cref="T:System.Object" />, because there can be a variety of different user interface technologies. Development environments typically support more than one technology.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.ComponentModel.Design.ViewTechnology.Passthrough" /> and <see cref="F:System.ComponentModel.Design.ViewTechnology.WindowsForms" /> fields are obsolete. Use <see cref="F:System.ComponentModel.Design.ViewTechnology.Default" /> for new designer implementations.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a view object for the specified view technology.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the view for this designer.</para>
+        </returns>
+        <param name="technology">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ViewTechnology" /> that indicates a particular view technology.</param>
       </Docs>
     </Member>
     <Member MemberName="SupportedTechnologies">
@@ -63,9 +83,18 @@
         <ReturnType>System.ComponentModel.Design.ViewTechnology[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ViewTechnology []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.ViewTechnology" /> enumeration indicates the supported view technologies.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.ComponentModel.Design.ViewTechnology.Passthrough" /> and <see cref="F:System.ComponentModel.Design.ViewTechnology.WindowsForms" /> fields are obsolete. Use <see cref="F:System.ComponentModel.Design.ViewTechnology.Default" /> for new designer implementations.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the set of technologies that this designer can support for its display.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

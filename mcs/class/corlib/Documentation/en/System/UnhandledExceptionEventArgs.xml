@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnhandledExceptionEventArgs" FullName="System.UnhandledExceptionEventArgs" FullNameSP="System_UnhandledExceptionEventArgs" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable UnhandledExceptionEventArgs extends System.EventArgs" />
   <TypeSignature Language="C#" Value="public class UnhandledExceptionEventArgs : EventArgs" />
@@ -21,16 +22,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Provides data for the event that is raised when an exception is not caught by the program code executing in an application
-      domain.</para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>
-        <see cref="T:System.UnhandledExceptionEventArgs" /> provides access to the
-   uncaught <see cref="T:System.Exception" /> and a property indicating whether the system will terminate the current
-   process. </para>
+        <see cref="T:System.UnhandledExceptionEventArgs" /> provides access to the exception object and a flag indicating whether the common language runtime is terminating. The <see cref="T:System.UnhandledExceptionEventArgs" /> is one of the parameters passed into <see cref="T:System.UnhandledExceptionEventHandler" /> for the <see cref="E:System.AppDomain.UnhandledException" /> event.</para>
+      <para>For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the event that is raised when there is an exception that is not handled in any application domain.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -49,15 +50,17 @@
         <Parameter Name="isTerminating" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="exception">The exception that was not caught.</param>
-        <param name="isTerminating">
-          <see langword="true" /> if the system will terminate the current process; otherwise, <see langword="false" />.</param>
-        <summary>
-          <para>Constructs and initializes a new instance of the <see cref="T:System.UnhandledExceptionEventArgs" /> class.</para>
-        </summary>
         <remarks>
           <para>This constructor initializes the <see cref="P:System.UnhandledExceptionEventArgs.ExceptionObject" /> property using <paramref name="exception" />, and the <see cref="P:System.UnhandledExceptionEventArgs.IsTerminating" /> property using <paramref name="isTerminating" />.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UnhandledExceptionEventArgs" /> class with the exception object and a common language runtime termination flag.</para>
+        </summary>
+        <param name="exception">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is not handled. </param>
+        <param name="isTerminating">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the runtime is terminating; otherwise, false. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -81,15 +84,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets the uncaught exception.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Object" />, typically a <see cref="T:System.Exception" />, that is the cause of the current event.</para>
         </value>
         <remarks>
           <para>This property is read-only.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unhandled exception object.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -113,9 +117,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets a <see cref="T:System.Boolean" /> value indicating whether the system is terminating the current process.</para>
-        </summary>
         <value>
           <para>
             <see langword="true" /> if the
@@ -124,17 +125,17 @@
    current unhandled exception; otherwise, <see langword="false" />.</para>
         </value>
         <remarks>
-          <para>This property is read-only.</para>
-          <block subset="none" type="note">This property returns
-   <see langword="true" />
-   when an exception is received in, but not handled by, an application's
-   main thread. This property also returns <see langword="true" />
-   if an unmanaged thread is executing managed code and receives an unhandled
-   exception. <see cref="P:System.UnhandledExceptionEventArgs.IsTerminating" />
-   returns <see langword="false" /> for managed threads created
-   by an application, and for unhandled exceptions thrown
-   during object finalization.</block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Beginning with the .NET Framework version 2.0, this property returns true for most unhandled exceptions, unless an application compatibility flag is used to revert to the behavior of versions 1.0 and 1.1. The reason is that most unhandled exceptions in threads, including thread pool threads, are allowed to proceed naturally, which normally results in termination of the application. For more information, including a list of cases in which the runtime does not terminate, see <format type="text/html"><a href="11294769-2e89-43cb-890e-ad4ad79cfbee">Exceptions in Managed Threads</a></format>.</para>
+          <format type="text/html">
+            <h2>Version Information</h2>
+          </format>
+          <para>The following applies to the .NET Framework versions 1.0 and 1.1: This property returns true when an exception is received in, but not handled by, an application's main thread. This property also returns true if an unmanaged thread is executing managed code and receives an unhandled exception. Finally, this property returns false for thread pool threads and managed threads created by an application, because versions 1.0 and 1.1 catch unhandled exceptions in such threads and ignore them.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the common language runtime is terminating.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

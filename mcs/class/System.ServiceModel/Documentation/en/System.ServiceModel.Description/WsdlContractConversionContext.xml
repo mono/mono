@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WsdlContractConversionContext" FullName="System.ServiceModel.Description.WsdlContractConversionContext">
   <TypeSignature Language="C#" Value="public class WsdlContractConversionContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WsdlContractConversionContext extends System.Object" />
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.WsdlContractConversionContext" /> object to examine and modify items that are to be converted to or from WSDL. </para>
+      <para>When exporting metadata a <see cref="T:System.ServiceModel.Description.WsdlContractConversionContext" /> object is passed to the <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportContract(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlContractConversionContext)" /> and <see cref="M:System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(System.ServiceModel.Description.WsdlExporter,System.ServiceModel.Description.WsdlEndpointConversionContext)" /> methods. Use the various methods and properties to obtain metadata objects that you can use to examine and modify to alter the published WSDL.</para>
+      <para>When importing metadata a <see cref="T:System.ServiceModel.Description.WsdlContractConversionContext" /> object is passed to the <see cref="M:System.ServiceModel.Description.IWsdlImportExtension.ImportContract(System.ServiceModel.Description.WsdlImporter,System.ServiceModel.Description.WsdlContractConversionContext)" /> and <see cref="M:System.ServiceModel.Description.IWsdlImportExtension.ImportEndpoint(System.ServiceModel.Description.WsdlImporter,System.ServiceModel.Description.WsdlEndpointConversionContext)" /> methods. Use the various methods and properties to obtain metadata objects that you can use to examine and modify the imported metadata.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Passed to custom WSDL exporters and importers to enable customization of the metadata export and import processes for a contract.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Contract">
@@ -25,9 +34,15 @@
         <ReturnType>System.ServiceModel.Description.ContractDescription</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.ServiceModel.Description.WsdlContractConversionContext.Contract" /> property to obtain the contract description on export or import.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Description.ContractDescription" /> being exported or imported.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetMessageDescription">
@@ -44,10 +59,17 @@
         <Parameter Name="operationMessage" Type="System.Web.Services.Description.OperationMessage" />
       </Parameters>
       <Docs>
-        <param name="operationMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the message description for the specified message.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message description for the specified message.</para>
+        </returns>
+        <param name="operationMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.OperationMessage" /> for the requested <see cref="T:System.ServiceModel.Description.MessageDescription" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetOperation">
@@ -64,10 +86,17 @@
         <Parameter Name="operation" Type="System.ServiceModel.Description.OperationDescription" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the operation for the specified operation description.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operation for the specified operation description.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.OperationDescription" /> for the requested <see cref="T:System.Web.Services.Description.Operation" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetOperationDescription">
@@ -84,10 +113,17 @@
         <Parameter Name="operation" Type="System.Web.Services.Description.Operation" />
       </Parameters>
       <Docs>
-        <param name="operation">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the operation description associated with the operation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operation description associated with the operation.</para>
+        </returns>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.Operation" /> for the requested <see cref="T:System.ServiceModel.Description.OperationDescription" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GetOperationMessage">
@@ -104,10 +140,17 @@
         <Parameter Name="message" Type="System.ServiceModel.Description.MessageDescription" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Services.Description.OperationMessage" /> object for the specified <paramref name="message" /> that represents a message type passed by the action of an XML Web service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.OperationMessage" /> object that represents a message type passed by the action of an XML Web service.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessageDescription" /> for the requested <see cref="T:System.Web.Services.Description.OperationMessage" />.</param>
       </Docs>
     </Member>
     <Member MemberName="WsdlPortType">
@@ -121,9 +164,12 @@
         <ReturnType>System.Web.Services.Description.PortType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Description.PortType" /> that represents the contract.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

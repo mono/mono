@@ -542,6 +542,23 @@ public class DebuggerTests
 		assert_location (e, "step_through_3");
 		req.Disable ();
 
+		// Check DebuggerNonUserCode support
+		e = run_until ("ss_non_user_code");
+		req = create_step (e);
+		req.Filter = StepFilter.DebuggerNonUserCode;
+		e = step_into ();
+		// Step through non_user_code_1 ()
+		e = step_into ();
+		assert_location (e, "ss_non_user_code");
+		// Step through StepThroughClass.non_user_code_2 ()
+		e = step_into ();
+		assert_location (e, "ss_non_user_code");
+		req.Disable ();
+		req.Filter = StepFilter.None;
+		e = step_into ();
+		assert_location (e, "non_user_code_3");
+		req.Disable ();
+
 		// Check that step-over doesn't stop at inner frames with recursive functions
 		e = run_until ("ss_recursive");
 		req = create_step (e);
@@ -1446,6 +1463,12 @@ public class DebuggerTests
 		Assert.AreEqual ("static_foo", (e as StepEvent).Method.Name);
 		obj = frame.GetThis ();
 		AssertValue (null, obj);
+
+		// vtypes which reference themselves recursively
+		e = run_until ("vtypes4_2");
+		frame = e.Thread.GetFrames () [0];
+
+		Assert.IsTrue (frame.GetArgument (0) is StructMirror);
 	}
 
 	[Test]
@@ -3487,6 +3510,16 @@ public class DebuggerTests
 		AssertThrows<ArgumentException> (delegate {
 				e.Thread.SetIP (invalid_loc);
 			});
+	}
+
+	[Test]
+	public void NewInstanceNoCtor () {
+		var bevent = run_until ("Main");
+
+		var stype = bevent.Method.DeclaringType.Assembly.GetType ("AStruct");
+		var obj = stype.NewInstance ();
+		Assert.IsTrue (obj is ObjectMirror);
+		Assert.AreEqual ("AStruct", (obj as ObjectMirror).Type.Name);
 	}
 }
 

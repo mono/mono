@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlClientPermission" FullName="System.Data.SqlClient.SqlClientPermission">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SqlClientPermission : System.Data.Common.DBDataPermission" />
   <AssemblyInfo>
@@ -14,8 +15,17 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="M:System.Data.Common.DBDataPermission.IsUnrestricted" /> property takes precedence over the <see cref="P:System.Data.Common.DBDataPermission.AllowBlankPassword" /> property. Therefore, if you set <see cref="P:System.Data.Common.DBDataPermission.AllowBlankPassword" /> to false, you must also set <see cref="M:System.Data.Common.DBDataPermission.IsUnrestricted" /> to false to prevent a user from making a connection using a blank password.</para>
+      <block subset="none" type="note">
+        <para>When using code access security permissions for ADO.NET, the correct pattern is to start with the most restrictive case (no permissions at all) and then add the specific permissions that are needed for the particular task that the code needs to perform. The opposite pattern, starting with all permissions and then denying a specific permission, is not secure, because there are many ways of expressing the same connection string. For example, if you start with all permissions and then attempt to deny the use of the connection string "server=someserver", the string "server=someserver.mycompany.com" would still be allowed. By always starting by granting no permissions at all, you reduce the chances that there are holes in the permission set.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables the .NET Framework Data Provider for SQL Server to help make sure that a user has a security level sufficient to access a data source. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,9 +58,13 @@
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'Security.Permissions.PermissionState'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> class.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,10 +80,18 @@
         <Parameter Name="allowBlankPassword" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'Security.Permissions.PermissionState'</param>
-        <param name="allowBlankPassword">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Permissions.PermissionState" /> enumeration takes precedence over the <see cref="P:System.Data.Common.DBDataPermission.AllowBlankPassword" /> property. Therefore, if you set <see cref="P:System.Data.Common.DBDataPermission.AllowBlankPassword" /> to false, you must also set <see cref="T:System.Security.Permissions.PermissionState" /> to None to prevent a user from making a connection using a blank password. For an example demonstrating how to use security demands, see <format type="text/html"><a href="93e099eb-daa1-4f1e-b031-c1e10a996f88">Code Access Security and ADO.NET</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> class.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values. </param>
+        <param name="allowBlankPassword">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether a blank password is allowed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -94,11 +119,28 @@
         <Parameter Name="behavior" Type="System.Data.KeyRestrictionBehavior" />
       </Parameters>
       <Docs>
-        <param name="connectionString">To be added.</param>
-        <param name="restrictions">To be added.</param>
-        <param name="behavior">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to configure which connection strings are allowed by a particular permission object. For example, use the following code fragment if you want to only allow a specific connection string and nothing else:</para>
+          <para>permission.Add("server=MyServer; database=MyDatabase; Integrated Security=true", "", KeyRestrictionBehavior.AllowOnly)</para>
+          <para>The following example allows connection strings that use any database, but only on the server named MyServer, with any user and password combination and containing no other connection string keywords:</para>
+          <para>permission.Add("server=MyServer;", "database=; user id=; password=;", KeyRestrictionBehavior.AllowOnly)</para>
+          <para>The following example uses the same scenario as above but allows for a failover partner that can be used when connecting to servers configured for mirroring:</para>
+          <para>permission.Add("server=MyServer; failover partner=MyMirrorServer", "database=; user id=; password=;", KeyRestrictionBehavior.AllowOnly)</para>
+          <block subset="none" type="note">
+            <para>When using code access security permissions for ADO.NET, the correct pattern is to start with the most restrictive case (no permissions at all) and then add the specific permissions that are needed for the particular task that the code needs to perform. The opposite pattern, starting with all permissions and then trying to deny a specific permission, is not secure, because there are many ways of expressing the same connection string. For example, if you start with all permissions and then attempt to deny the use of the connection string "server=someserver", the string "server=someserver.mycompany.com" would still be allowed. By always starting by granting no permissions at all, you reduce the chances that there are holes in the permission set.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new connection string and a set of restricted keywords to the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> object.</para>
+        </summary>
+        <param name="connectionString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection string.</param>
+        <param name="restrictions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key restrictions.</param>
+        <param name="behavior">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.KeyRestrictionBehavior" /> enumerations.</param>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -113,9 +155,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Data.SqlClient.SqlClientPermission" /> as an <see cref="T:System.Security.IPermission" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

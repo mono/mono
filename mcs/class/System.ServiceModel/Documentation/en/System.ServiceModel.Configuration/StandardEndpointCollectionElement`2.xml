@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StandardEndpointCollectionElement&lt;TStandardEndpoint,TEndpointConfiguration&gt;" FullName="System.ServiceModel.Configuration.StandardEndpointCollectionElement&lt;TStandardEndpoint,TEndpointConfiguration&gt;">
   <TypeSignature Language="C#" Value="public class StandardEndpointCollectionElement&lt;TStandardEndpoint,TEndpointConfiguration&gt; : System.ServiceModel.Configuration.EndpointCollectionElement where TStandardEndpoint : ServiceEndpoint where TEndpointConfiguration : StandardEndpointElementnew()" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi StandardEndpointCollectionElement`2&lt;(class System.ServiceModel.Description.ServiceEndpoint) TStandardEndpoint, .ctor (class System.ServiceModel.Configuration.StandardEndpointElement) TEndpointConfiguration&gt; extends System.ServiceModel.Configuration.EndpointCollectionElement" />
@@ -25,8 +26,11 @@
   <Docs>
     <typeparam name="TStandardEndpoint">To be added.</typeparam>
     <typeparam name="TEndpointConfiguration">To be added.</typeparam>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles a default collection of standard endpoint elements in a configuration file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +42,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Configuration.StandardEndpointCollectionElement`2" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConfiguredEndpoints">
@@ -53,9 +60,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.ServiceModel.Configuration.StandardEndpointElement&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only version of the current collection of standard endpoint elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainsKey">
@@ -72,10 +82,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an element with the specified name exists in the collection of standard endpoint elements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the endpoint collection of elements contains a match for the specified element name; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of an endpoint element.</param>
       </Docs>
     </Member>
     <Member MemberName="Endpoints">
@@ -94,9 +111,12 @@
         <ReturnType>System.ServiceModel.Configuration.StandardEndpointElementCollection&lt;TEndpointConfiguration&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a default collection of standard endpoint elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndpointType">
@@ -110,9 +130,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the standard endpoint in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultStandardEndpointElement">
@@ -127,9 +150,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a local instance of the <see cref="T:System.ServiceModel.Configuration.StandardEndpointElement" /> class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A standard endpoint element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -143,9 +172,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores the properties for the Endpoints property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryAdd">
@@ -164,12 +196,21 @@
         <Parameter Name="config" Type="System.Configuration.Configuration" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="endpoint">To be added.</param>
-        <param name="config">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to add an endpoint element to the collection of standard endpoints elements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was added to the collection; otherwise, false.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier of the element to add to the collection.</param>
+        <param name="endpoint">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint element to add.</param>
+        <param name="config">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration file – not implemented.</param>
       </Docs>
     </Member>
   </Members>

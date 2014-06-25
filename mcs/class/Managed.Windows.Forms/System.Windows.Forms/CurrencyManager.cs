@@ -390,7 +390,8 @@ namespace System.Windows.Forms {
 				else if (e.NewIndex <= listposition) {
 					/* the deleted row was either the current one, or one earlier in the list.
 					   Update the index and emit PositionChanged, CurrentChanged, and ItemChanged. */
-					ChangeRecordState (listposition+1,
+					// FIXME: this looks wrong, shouldn't it be (listposition - 1) instead of e.NewIndex ?
+					ChangeRecordState (e.NewIndex,
 							   false, false, e.NewIndex != listposition, false);
 				}
 				else {
@@ -412,7 +413,7 @@ namespace System.Windows.Forms {
 				}
 				else {
 					if (e.NewIndex <= listposition) {
-						ChangeRecordState (e.NewIndex,
+						ChangeRecordState (listposition + 1,
 								   false, false, false, false);
 						OnItemChanged (new ItemChangedEventArgs (-1));
 						OnListChanged (e);

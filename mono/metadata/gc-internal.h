@@ -289,6 +289,10 @@ gsize* mono_gc_get_bitmap_for_descr (void *descr, int *numbits) MONO_INTERNAL;
    or -1 if not applicable. */
 int mono_gc_get_suspend_signal (void) MONO_INTERNAL;
 
+/* Return the suspend signal number used by the GC to suspend threads,
+   or -1 if not applicable. */
+int mono_gc_get_restart_signal (void) MONO_INTERNAL;
+
 /*
  * Return a human readable description of the GC in malloc-ed memory.
  */
@@ -329,7 +333,7 @@ void mono_gc_register_mach_exception_thread (pthread_t thread) MONO_INTERNAL;
 pthread_t mono_gc_get_mach_exception_thread (void) MONO_INTERNAL;
 #endif
 
-gboolean mono_gc_parse_environment_string_extract_number (const char *str, glong *out) MONO_INTERNAL;
+gboolean mono_gc_parse_environment_string_extract_number (const char *str, size_t *out) MONO_INTERNAL;
 
 gboolean mono_gc_precise_stack_mark_enabled (void) MONO_INTERNAL;
 
@@ -352,6 +356,19 @@ struct _MonoReferenceQueue {
 	gboolean should_be_deleted;
 };
 
+enum {
+	MONO_GC_FINALIZER_EXTENSION_VERSION = 1,
+};
+
+typedef struct {
+	int version;
+	gboolean (*is_class_finalization_aware) (MonoClass *klass);
+	void (*object_queued_for_finalization) (MonoObject *object);
+} MonoGCFinalizerCallbacks;
+
+void mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks);
+
+
 #ifdef HOST_WIN32
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved) MONO_INTERNAL;
 #endif
@@ -365,7 +382,7 @@ void mono_gc_bzero_aligned (void *dest, size_t size) MONO_INTERNAL;
 void mono_gc_memmove_atomic (void *dest, const void *src, size_t size) MONO_INTERNAL;
 void mono_gc_memmove_aligned (void *dest, const void *src, size_t size) MONO_INTERNAL;
 
-guint mono_gc_get_vtable_bits (MonoClass *class) MONO_INTERNAL;
+guint mono_gc_get_vtable_bits (MonoClass *klass) MONO_INTERNAL;
 
 void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size) MONO_INTERNAL;
 

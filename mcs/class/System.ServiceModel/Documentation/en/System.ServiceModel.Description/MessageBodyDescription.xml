@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MessageBodyDescription" FullName="System.ServiceModel.Description.MessageBodyDescription">
   <TypeSignature Language="C#" Value="public class MessageBodyDescription" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageBodyDescription extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.MessageBodyDescription" /> class to construct or modify a SOAP message body when added to the description tree. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the body of a SOAP message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MessageBodyDescription" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parts">
@@ -38,9 +48,12 @@
         <ReturnType>System.ServiceModel.Description.MessagePartDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parts for the body of the SOAP message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnValue">
@@ -54,9 +67,12 @@
         <ReturnType>System.ServiceModel.Description.MessagePartDescription</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the portion of the SOAP message that contains the return value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WrapperName">
@@ -70,9 +86,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the wrapper element inside the SOAP body element if there is one.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WrapperNamespace">
@@ -86,9 +105,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the namespace of the wrapper element in the SOAP body if there is one.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

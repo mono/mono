@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IAppDomainSetup" FullName="System.IAppDomainSetup">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IAppDomainSetup" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IAppDomainSetup" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Members of this interface are used with the <see cref="M:System.AppDomain.GetData(System.String)" /> and <see cref="M:System.AppDomain.SetData(System.String,System.Object)" /> methods to identify the <see cref="T:System.AppDomain" /> data to use.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents assembly binding information that can be added to an instance of <see cref="T:System.AppDomain" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplicationBase">
@@ -41,9 +48,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used when getting or setting the assembly cache manager's APPBASE variable. This is the directory where the assembly manager should begin probing for assemblies. This property cannot be changed after the <see cref="T:System.AppDomain" /> has finished its first bind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the directory containing the application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationName">
@@ -61,9 +74,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CachePath">
@@ -81,9 +97,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the name of an area specific to the application where files are shadow copied.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConfigurationFile">
@@ -101,9 +120,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The configuration file describes the search rules and configuration data for the application domain. The host that creates the application domain is responsible for supplying this data because the meaningful values vary from situation to situation.</para>
+          <para>For example, the configuration data for ASP.NET applications is stored for each application, site, and computer, while the configuration data for an executable is stored for each application, user, and computer. Only the host knows the specifics of the configuration data for a particular circumstance.</para>
+          <para>This property cannot be changed after the <see cref="T:System.AppDomain" /> has finished its first bind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the name of the configuration file for an application domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DynamicBase">
@@ -121,9 +148,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an <see cref="T:System.AppDomain" /> is created, a directory called the Dynamic Directory can be specified to store dynamic assemblies. This directory is logically located under the <see cref="P:System.AppDomainSetup.ApplicationBase" />, although it can reside in another part of the directory.</para>
+          <para>This property cannot be changed after the <see cref="T:System.AppDomain" /> has finished its first bind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the directory where dynamically generated files are stored and accessed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LicenseFile">
@@ -141,9 +175,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the location of the license file associated with this domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrivateBinPath">
@@ -161,9 +198,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Private assemblies are deployed in the same directory structure as the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the list of directories that is combined with the <see cref="P:System.AppDomainSetup.ApplicationBase" /> directory to probe for private assemblies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrivateBinPathProbe">
@@ -181,9 +224,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to exclude the application directory path from the search for the application. The search is restricted to private and global binary directory paths, and the global assembly cache.</para>
+          <para>This property cannot be changed after the <see cref="T:System.AppDomain" /> has finished its first bind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the private binary directory path used to locate an application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShadowCopyDirectories">
@@ -201,9 +251,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All directories specified by <see cref="P:System.AppDomainSetup.PrivateBinPath" />, including the directory specified by <see cref="P:System.AppDomainSetup.ApplicationBase" />, are shadow copied by default if this property is not set.</para>
+          <para>If an executable file is in use, updates to the executable file are stored in a shadow copy directory. Existing users continue using the original executable file until it terminates, while new users use the shadow copied executable file.</para>
+          <para>This property cannot be changed after the <see cref="T:System.AppDomain" /> has finished its first bind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the names of the directories containing assemblies to be shadow copied.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShadowCopyFiles">
@@ -221,9 +279,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property cannot be changed after the <see cref="T:System.AppDomain" /> has finished its first bind.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that indicates whether shadow copying is turned on or off.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

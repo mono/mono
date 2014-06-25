@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CollectionsUtil" FullName="System.Collections.Specialized.CollectionsUtil">
   <TypeSignature Language="C#" Value="public class CollectionsUtil" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CollectionsUtil extends System.Object" />
@@ -15,8 +16,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These methods generate a case-insensitive instance of the collection using case-insensitive implementations of the hash code provider and the comparer. The resulting instance can be used like any other instances of that class, although it may behave differently.</para>
+      <para>For example, suppose two objects with the keys "hello" and "HELLO" are to be added to a hash table. A case-sensitive hash table would create two different entries; whereas, a case-insensitive hash table would throw an exception when adding the second object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates collections that ignore the case in strings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Collections.Specialized.CollectionsUtil" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateCaseInsensitiveHashtable">
@@ -49,9 +60,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.Hashtable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instead of using the <see cref="M:System.Collections.Specialized.CollectionsUtil.CreateCaseInsensitiveHashtable" /> method, use the <see cref="M:System.Collections.Hashtable.#ctor(System.Collections.IEqualityComparer)" /> constructor to create a case-insensitive <see cref="T:System.Collections.Hashtable" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new case-insensitive instance of the <see cref="T:System.Collections.Hashtable" /> class with the default initial capacity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new case-insensitive instance of the <see cref="T:System.Collections.Hashtable" /> class with the default initial capacity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCaseInsensitiveHashtable">
@@ -70,10 +90,20 @@
         <Parameter Name="d" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="d">To be added: an object of type 'Collections.IDictionary'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.Hashtable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instead of using the <see cref="M:System.Collections.Specialized.CollectionsUtil.CreateCaseInsensitiveHashtable(System.Collections.IDictionary)" /> method, use the <see cref="M:System.Collections.Hashtable.#ctor(System.Collections.IDictionary,System.Collections.IEqualityComparer)" /> constructor to create a case-insensitive <see cref="T:System.Collections.Hashtable" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entries from the specified dictionary to a new case-insensitive instance of the <see cref="T:System.Collections.Hashtable" /> class with the same initial capacity as the number of entries copied.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new case-insensitive instance of the <see cref="T:System.Collections.Hashtable" /> class containing the entries from the specified <see cref="T:System.Collections.IDictionary" />.</para>
+        </returns>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IDictionary" /> to copy to a new case-insensitive <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateCaseInsensitiveHashtable">
@@ -92,10 +122,20 @@
         <Parameter Name="capacity" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="capacity">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.Hashtable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instead of using the <see cref="M:System.Collections.Specialized.CollectionsUtil.CreateCaseInsensitiveHashtable(System.Int32)" /> method, use the <see cref="M:System.Collections.Hashtable.#ctor(System.Int32,System.Collections.IEqualityComparer)" /> constructor to create a case-insensitive <see cref="T:System.Collections.Hashtable" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new case-insensitive instance of the <see cref="T:System.Collections.Hashtable" /> class with the specified initial capacity.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new case-insensitive instance of the <see cref="T:System.Collections.Hashtable" /> class with the specified initial capacity.</para>
+        </returns>
+        <param name="capacity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The approximate number of entries that the <see cref="T:System.Collections.Hashtable" /> can initially contain. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateCaseInsensitiveSortedList">
@@ -112,9 +152,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Collections.SortedList'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Collections.SortedList" /> instance is sorted according to the <see cref="T:System.Collections.CaseInsensitiveComparer" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Collections.SortedList" /> class that ignores the case of strings.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Collections.SortedList" /> class that ignores the case of strings.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

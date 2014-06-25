@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICollectData" FullName="System.Diagnostics.ICollectData">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ICollectData" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICollectData" />
@@ -20,8 +21,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Prepares performance data for the performance DLL the system loads when working with performance counters.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CloseData">
@@ -38,8 +42,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the performance DLL's close performance data function.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CollectData">

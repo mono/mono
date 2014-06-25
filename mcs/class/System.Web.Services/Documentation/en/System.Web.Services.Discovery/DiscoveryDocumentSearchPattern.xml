@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscoveryDocumentSearchPattern" FullName="System.Web.Services.Discovery.DiscoveryDocumentSearchPattern">
   <TypeSignature Language="C#" Value="public sealed class DiscoveryDocumentSearchPattern : System.Web.Services.Discovery.DiscoverySearchPattern" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentSearchPattern" />  class inherits from the abstract <see cref="T:System.Web.Services.Discovery.DiscoverySearchPattern" /> class and is employed by the <see cref="T:System.Web.Services.Discovery.DiscoveryRequestHandler" /> class's <see cref="M:System.Web.Services.Discovery.DiscoveryRequestHandler.ProcessRequest(System.Web.HttpContext)" /> method, which handles an HTTP request for a discovery document. Normally, none of these classes need to be used directly by a developer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Obtains the file locations of Web services discovery documents for use in populating another Web services discovery document. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentSearchPattern" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,10 +51,21 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">a <see cref="T:System.String" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concrete <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> class inherits from the abstract <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> class. </para>
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> instance contains the location of the .vsdisco file, which is also the file system directory corresponding to the HTTP request passed to the <see cref="M:System.Web.Services.Discovery.DiscoveryRequestHandler.ProcessRequest(System.Web.HttpContext)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> object for a given discovery document.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> object that specifies the location of a .vsdisco file.</para>
+        </returns>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file system path of the discovery document.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +80,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.String" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The pattern "*.vsdisco" indicates a .vsdisco Web services discovery document extension. The <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentLinksPattern" /> class, on the other hand, indicates a .disco extension.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file name pattern to use as a search target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

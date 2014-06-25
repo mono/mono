@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OperationMessageCollection" FullName="System.Web.Services.Description.OperationMessageCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class OperationMessageCollection : System.Web.Services.Description.ServiceDescriptionBaseCollection" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An instance of this class will be returned by the <see cref="P:System.Web.Services.Description.Operation.Messages" /> property of the parent <see cref="T:System.Web.Services.Description.Operation" />. As such, it can have exactly two members, one an <see cref="T:System.Web.Services.Description.OperationInput" /> and the other an <see cref="T:System.Web.Services.Description.OperationOutput" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.Services.Description.OperationInput" /> and <see cref="T:System.Web.Services.Description.OperationOutput" /> messages related to an XML Web service. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -28,10 +35,17 @@
         <Parameter Name="operationMessage" Type="System.Web.Services.Description.OperationMessage" />
       </Parameters>
       <Docs>
-        <param name="operationMessage">To be added: an object of type 'OperationMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> to the end of the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index where the <paramref name="operationMessage" /> parameter has been added.</para>
+        </returns>
+        <param name="operationMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.OperationMessage" /> to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,10 +62,17 @@
         <Parameter Name="operationMessage" Type="System.Web.Services.Description.OperationMessage" />
       </Parameters>
       <Docs>
-        <param name="operationMessage">To be added: an object of type 'OperationMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> is a member of the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="operationMessage" /> parameter is a member of the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />; otherwise, false.</para>
+        </returns>
+        <param name="operationMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.OperationMessage" /> for which to check collection membership.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +90,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'OperationMessage []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire <see cref="T:System.Web.Services.Description.OperationMessageCollection" /> to a compatible one-dimensional array of type <see cref="T:System.Web.Services.Description.OperationMessage" />, starting at the specified zero-based index of the target array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Web.Services.Description.OperationMessage" /> serving as the destination for the copy action.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to start placing the copied collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,9 +112,12 @@
         <ReturnType>System.Web.Services.Description.OperationFlow</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OperationFlow'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of transmission supported by the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,10 +134,17 @@
         <Parameter Name="operationMessage" Type="System.Web.Services.Description.OperationMessage" />
       </Parameters>
       <Docs>
-        <param name="operationMessage">To be added: an object of type 'OperationMessage'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> and returns the zero-based index of the first occurrence within the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified operation message, or -1 if the element was not found in the collection.</para>
+        </returns>
+        <param name="operationMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.OperationMessage" /> for which to search in the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,9 +158,12 @@
         <ReturnType>System.Web.Services.Description.OperationInput</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OperationInput'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first occurrence of an <see cref="T:System.Web.Services.Description.OperationInput" /> within the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,10 +181,20 @@
         <Parameter Name="operationMessage" Type="System.Web.Services.Description.OperationMessage" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="operationMessage">To be added: an object of type 'OperationMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the number of items in the collection already equals the collection's capacity, the capacity is doubled by automatically reallocating the internal array before the new element is inserted.</para>
+          <para>If the <paramref name="index" /> parameter is equal to <see cref="P:System.Collections.CollectionBase.Count" />, the <paramref name="operationMessage" /> parameter is added to the end of the collection.</para>
+          <para>The elements after the insertion point move down to accommodate the new element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> to the <see cref="T:System.Web.Services.Description.OperationMessageCollection" /> at the specified zero-based index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index at which to insert the <paramref name="operationMessage" /> parameter.</param>
+        <param name="operationMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.OperationMessage" /> to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -242,9 +291,12 @@
         <ReturnType>System.Web.Services.Description.OperationOutput</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'OperationOutput'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first occurrence of an <see cref="T:System.Web.Services.Description.OperationOutput" /> within the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -261,9 +313,17 @@
         <Parameter Name="operationMessage" Type="System.Web.Services.Description.OperationMessage" />
       </Parameters>
       <Docs>
-        <param name="operationMessage">To be added: an object of type 'OperationMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method performs a linear search; therefore, the average execution time is proportional to <see cref="P:System.Collections.CollectionBase.Count" />.</para>
+          <para>The elements that follow the removed <see cref="T:System.Web.Services.Description.OperationMessage" /> move up to occupy the vacated spot.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the first occurrence of the specified <see cref="T:System.Web.Services.Description.OperationMessage" /> from the <see cref="T:System.Web.Services.Description.OperationMessageCollection" />.</para>
+        </summary>
+        <param name="operationMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.OperationMessage" /> to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

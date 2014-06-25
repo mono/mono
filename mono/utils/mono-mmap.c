@@ -65,8 +65,8 @@ malloc_shared_area (int pid)
 static char*
 aligned_address (char *mem, size_t size, size_t alignment)
 {
-	char *aligned = (char*)((gulong)(mem + (alignment - 1)) & ~(alignment - 1));
-	g_assert (aligned >= mem && aligned + size <= mem + size + alignment && !((gulong)aligned & (alignment - 1)));
+	char *aligned = (char*)((size_t)(mem + (alignment - 1)) & ~(alignment - 1));
+	g_assert (aligned >= mem && aligned + size <= mem + size + alignment && !((size_t)aligned & (alignment - 1)));
 	return aligned;
 }
 
@@ -483,6 +483,8 @@ mono_mprotect (void *addr, size_t length, int flags)
 }
 #endif // HAVE_MMAP
 
+#if defined(HAVE_SHM_OPEN) && !defined (DISABLE_SHARED_PERFCOUNTERS)
+
 static int use_shared_area;
 
 static gboolean
@@ -496,8 +498,6 @@ shared_area_disabled (void)
 	}
 	return use_shared_area == -1;
 }
-
-#if defined(HAVE_SHM_OPEN) && !defined (DISABLE_SHARED_PERFCOUNTERS)
 
 static int
 mono_shared_area_instances_slow (void **array, int count, gboolean cleanup)

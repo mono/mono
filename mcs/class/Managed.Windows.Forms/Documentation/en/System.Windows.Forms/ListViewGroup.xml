@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListViewGroup" FullName="System.Windows.Forms.ListViewGroup">
   <TypeSignature Language="C#" Value="public sealed class ListViewGroup : System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -27,9 +28,28 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ListView" /> grouping feature lets you create visual groups of logically related <see cref="T:System.Windows.Forms.ListView" /> items. Each group consists of a text-based header followed by a horizontal line and the items assigned to that group. You can align the header text to the left, right, or center of the control. Any groups assigned to a <see cref="T:System.Windows.Forms.ListView" /> control appear whenever the <see cref="P:System.Windows.Forms.ListView.View" /> property is set to a value other than <see cref="F:System.Windows.Forms.View.List" />.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.ListView" /> groups help your users find the items they are looking for by separating the items into useful categories. You can create whatever categories you need. One typical way to group the items is by the way they are sorted. For example, you can group the items by the initial letter of the item name when they are sorted alphabetically, or by subitems such as type or date when the list is sorted by clicking a column header in the details view. Windows Explorer uses this type of grouping.</para>
+      <para>To use the grouping feature, add one or more <see cref="T:System.Windows.Forms.ListViewGroup" /> objects to the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection of a <see cref="T:System.Windows.Forms.ListView" /> control. Set the group header text and header alignment in the <see cref="M:System.Windows.Forms.ListViewGroup.#ctor" /> constructor, or set them using the <see cref="P:System.Windows.Forms.ListViewGroup.Header" /> and <see cref="P:System.Windows.Forms.ListViewGroup.HeaderAlignment" /> properties.</para>
+      <para>You can assign an item to a group by specifying the group in the <see cref="M:System.Windows.Forms.ListViewItem.#ctor" /> constructor, by setting the <see cref="P:System.Windows.Forms.ListViewItem.Group" /> property, or by directly adding the item to the <see cref="P:System.Windows.Forms.ListViewGroup.Items" /> collection of a group. All items should be assigned to groups before they are displayed. Any items that are not assigned to a group will appear in the default group, which has the header label "DefaultGroup{0}". The default group is not contained in the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection, and cannot be altered. It is primarily useful in debugging to ensure that all items have been properly added to groups.</para>
+      <para>An item can only be in one group at a time. You can change the group to which an item belongs by setting the <see cref="P:System.Windows.Forms.ListViewItem.Group" /> property at run time or by adding it to the <see cref="P:System.Windows.Forms.ListViewGroup.Items" /> collection of another group, which automatically removes it from the previous group.</para>
+      <block subset="none" type="note">
+        <para>The insertion mark feature is disabled when using groups. This is because the grouping feature orders items by group membership, while the insertion mark feature is used with drag-and-drop repositioning in a <see cref="T:System.Windows.Forms.ListView" /> control that does not already order its items.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.Windows.Forms.ListView" /> groups are available only on Windows XP and the Windows Server 2003 family when your application calls the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method. On earlier operating systems, any code relating to groups will be ignored and the groups will not appear. As a result, any code that depends on the grouping feature might not work correctly. You might want to include a test that determines whether the grouping feature is available, and provide alternate functionality when it is unavailable. For example, you might want to provide alternate sorting when running on operating systems that do not support sorting by group.</para>
+        <para>The insertion mark feature is provided by the same library that provides the operating system themes feature. To check for the availability of this library, call the <see cref="M:System.Windows.Forms.FeatureSupport.IsPresent(System.Object)" /> method overload and pass in the <see cref="F:System.Windows.Forms.OSFeature.Themes" /> value.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a group of items displayed within a <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +57,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListViewGroup" /> class using the default header text of "ListViewGroup" and the default left header alignment.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -52,10 +75,14 @@
         <Parameter Name="header" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="header">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListViewGroup" /> class using the specified value to initialize the <see cref="P:System.Windows.Forms.ListViewGroup.Header" /> property and using the default left header alignment.</para>
+        </summary>
+        <param name="header">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to display for the group header. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,11 +96,16 @@
         <Parameter Name="headerText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="headerText">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListViewGroup" /> class using the specified values to initialize the <see cref="P:System.Windows.Forms.ListViewGroup.Name" /> and <see cref="P:System.Windows.Forms.ListViewGroup.Header" /> properties. </para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial value of the <see cref="P:System.Windows.Forms.ListViewGroup.Name" /> property.</param>
+        <param name="headerText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The initial value of the <see cref="P:System.Windows.Forms.ListViewGroup.Header" /> property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,11 +119,16 @@
         <Parameter Name="headerAlignment" Type="System.Windows.Forms.HorizontalAlignment" />
       </Parameters>
       <Docs>
-        <param name="header">To be added.</param>
-        <param name="headerAlignment">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListViewGroup" /> class using the specified header text and the specified header alignment.</para>
+        </summary>
+        <param name="header">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to display for the group header. </param>
+        <param name="headerAlignment">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.HorizontalAlignment" /> values that specifies the alignment of the header text. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,10 +141,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to retrieve the header text or to change the header value at run time. You can also set the header text in the <see cref="M:System.Windows.Forms.ListViewGroup.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the header text for the group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +168,16 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to retrieve the header alignment or to change the alignment at run time. You can also set the header alignment in the <see cref="M:System.Windows.Forms.ListViewGroup.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the alignment of the group header text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +195,20 @@
         <ReturnType>System.Windows.Forms.ListView+ListViewItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can assign an item to a group by specifying the group in the <see cref="M:System.Windows.Forms.ListViewItem.#ctor" /> constructor, by setting the <see cref="P:System.Windows.Forms.ListViewItem.Group" /> property, or by directly adding the item to the <see cref="P:System.Windows.Forms.ListViewGroup.Items" /> collection of a group. All items should be assigned to groups before they are displayed. Any items that are not assigned to a group will appear in the default group, which has the header label "DefaultGroup{0}". The default group is not contained in the <see cref="P:System.Windows.Forms.ListView.Groups" /> collection, and cannot be altered. It is primarily useful in debugging to ensure that all items have been properly added to groups.</para>
+          <para>An item can only be in one group at a time. You can change the group to which an item belongs by setting the <see cref="P:System.Windows.Forms.ListViewItem.Group" /> property at run time or by adding it to the <see cref="P:System.Windows.Forms.ListViewGroup.Items" /> collection of another group, which automatically removes it from the previous group.</para>
+          <block subset="none" type="note">
+            <para>An item can be present within the <see cref="P:System.Windows.Forms.ListViewGroup.Items" /> collection of a group, but if it is not also present within the <see cref="P:System.Windows.Forms.ListView.Items" /> collection of the <see cref="T:System.Windows.Forms.ListView" /> control itself, it will not appear in the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection containing all items associated with this group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,10 +229,13 @@
         <ReturnType>System.Windows.Forms.ListView</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ListView" /> control that contains this group. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -194,10 +256,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -217,10 +282,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data needed to serialize the target object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
       </Docs>
     </Member>
     <Member MemberName="Tag">
@@ -244,10 +314,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any type derived from the <see cref="T:System.Object" /> class can be assigned to this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that contains data about the group.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

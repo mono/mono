@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlTokenizedType" FullName="System.Xml.XmlTokenizedType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlTokenizedType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlTokenizedType extends System.Enum" />
@@ -13,8 +14,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The XML types are based on the World Wide Web Consortium (W3C) Extensible Markup Language (XML) 1.0 recommendation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the XML type for the string. This allows the string to be read as a particular XML type, for example a CDATA section type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CDATA">
@@ -31,8 +38,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>CDATA type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ENTITIES">
@@ -49,8 +59,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ENTITIES type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ENTITY">
@@ -67,8 +80,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ENTITY type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ENUMERATION">
@@ -85,8 +101,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ENUMERATION type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ID">
@@ -103,8 +122,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ID type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IDREF">
@@ -121,8 +143,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IDREF type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IDREFS">
@@ -139,8 +164,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IDREFS type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NCName">
@@ -157,8 +185,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>NCName type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NMTOKEN">
@@ -175,8 +206,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>NMTOKEN type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NMTOKENS">
@@ -193,8 +227,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>NMTOKENS type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -211,8 +248,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NOTATION">
@@ -229,8 +269,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>NOTATION type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QName">
@@ -247,8 +290,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>QName type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

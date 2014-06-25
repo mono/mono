@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MutexRights" FullName="System.Security.AccessControl.MutexRights">
   <TypeSignature Language="C#" Value="public enum MutexRights" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MutexRights extends System.Enum" />
@@ -15,9 +16,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Security.AccessControl.MutexRights" /> enumeration to specify access control rights when you create <see cref="T:System.Security.AccessControl.MutexSecurity" /> objects. To apply access rights to a named system mutex, use <see cref="T:System.Security.AccessControl.MutexSecurity" /> objects with the <see cref="M:System.Threading.Mutex.#ctor(System.Boolean,System.String,System.Boolean@,System.Security.AccessControl.MutexSecurity)" /> constructor and the <see cref="M:System.Threading.Mutex.SetAccessControl(System.Security.AccessControl.MutexSecurity)" /> method. </para>
+      <block subset="none" type="note">
+        <para>Security on synchronization objects is not supported for Windows 98 or Windows Millennium Edition.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the access control rights that can be applied to named system mutex objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChangePermissions">
@@ -32,8 +42,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to change the security and audit rules associated with a named mutex.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -48,8 +61,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to delete a named mutex.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FullControl">
@@ -64,8 +80,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to exert full control over a named mutex, and to modify its access rules and audit rules.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Modify">
@@ -80,8 +99,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to release a named mutex.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadPermissions">
@@ -96,8 +118,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to open and copy the access rules and audit rules for a named mutex.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Synchronize">
@@ -112,8 +137,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to wait on a named mutex.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TakeOwnership">
@@ -128,8 +156,11 @@
         <ReturnType>System.Security.AccessControl.MutexRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right to change the owner of a named mutex.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ButtonBorderStyle" FullName="System.Windows.Forms.ButtonBorderStyle">
   <TypeSignature Language="C#" Value="public enum ButtonBorderStyle" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by <see cref="M:System.Windows.Forms.ControlPaint.DrawBorder(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.ButtonBorderStyle)" />.</para>
+      <para>
+        <see cref="M:System.Windows.Forms.ControlPaint.DrawBorder(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Color,System.Windows.Forms.ButtonBorderStyle)" /> updates the display of the button when controls are initially drawn or refreshed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the border style for a button control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Dashed">
@@ -20,7 +29,10 @@
         <ReturnType>System.Windows.Forms.ButtonBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dashed border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,7 +46,10 @@
         <ReturnType>System.Windows.Forms.ButtonBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dotted-line border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,7 +63,10 @@
         <ReturnType>System.Windows.Forms.ButtonBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sunken border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,7 +80,10 @@
         <ReturnType>System.Windows.Forms.ButtonBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,7 +97,10 @@
         <ReturnType>System.Windows.Forms.ButtonBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A raised border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,7 +114,10 @@
         <ReturnType>System.Windows.Forms.ButtonBorderStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A solid border.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

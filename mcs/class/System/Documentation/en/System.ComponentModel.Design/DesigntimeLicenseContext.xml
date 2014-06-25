@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesigntimeLicenseContext" FullName="System.ComponentModel.Design.DesigntimeLicenseContext">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DesigntimeLicenseContext : System.ComponentModel.LicenseContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DesigntimeLicenseContext extends System.ComponentModel.LicenseContext" />
@@ -16,8 +17,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides methods for managing license keys of the associated context and a property for representing the licensing mode of the associated context.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a design-time license context that can support a license provider at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesigntimeLicenseContext" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetSavedLicenseKey">
@@ -53,11 +63,19 @@
         <Parameter Name="resourceAssembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="resourceAssembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a saved license key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The saved license key that matches the specified type.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the license key. </param>
+        <param name="resourceAssembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to get the key from. </param>
       </Docs>
     </Member>
     <Member MemberName="SetSavedLicenseKey">
@@ -77,10 +95,18 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="key">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method sets the specified license key to this license context. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a saved license key.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the license key. </param>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The license key. </param>
       </Docs>
     </Member>
     <Member MemberName="UsageMode">
@@ -96,9 +122,12 @@
         <ReturnType>System.ComponentModel.LicenseUsageMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ComponentModel.LicenseUsageMode'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the license usage mode.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IImplicitResourceProvider" FullName="System.Web.Compilation.IImplicitResourceProvider">
   <TypeSignature Language="C#" Value="public interface IImplicitResourceProvider" />
   <AssemblyInfo>
@@ -6,9 +7,17 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Resources can be declared explicitly or implicitly within a page. Implicit resources allow the developer to assign a collection of resource values to a control in one statement rather than assigning each value individually. When the page parser encounters an implicit resource in the form of meta:resourcekey="WelcomeLabel", it assigns all the values with the WelcomeLabel resource key prefix to the corresponding values in the control. For example, if a resource file defines values for WelcomeLabel.Text and WelcomeLabel.ToolTip, those values would be assigned to a Label control with an implicit reference to WelcomeLabel.</para>
+      <para>The <see cref="T:System.Web.Compilation.IImplicitResourceProvider" /> interface defines the methods a resource provider implements to access implicit resources. You can obtain a particular value using the <see cref="M:System.Web.Compilation.IImplicitResourceProvider.GetObject(System.Web.Compilation.ImplicitResourceKey,System.Globalization.CultureInfo)" /> method.</para>
+      <para>If you create a custom resource provider, you do not need to provide customized support for implicit resource localization. Implicit localization will work with your resource provider.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods a class implements to act as an implicit resource provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetImplicitResourceKeys">
@@ -21,11 +30,21 @@
         <Parameter Name="keyPrefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="keyPrefix">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, the method returns a collection of implicit resource keys for a particular prefix. For example, WelcomeLabel is specified as the prefix in the expression meta:resourcekey="WelcomeLabel". Any properties in a local resource file with WelcomeLabel as a prefix should be returned with this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of implicit resource keys as specified by the prefix.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of implicit resource keys.</para>
+        </returns>
+        <param name="keyPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the implicit resource keys to be collected.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,12 +61,23 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, the method returns the object for the value represented by the implicit resource key. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an object representing the value of the specified resource key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the localized value of an implicit resource key.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The resource key containing the prefix, filter, and property.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> that represents the culture for which the resource is localized.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

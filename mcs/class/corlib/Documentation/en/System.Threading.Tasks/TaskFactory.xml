@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TaskFactory" FullName="System.Threading.Tasks.TaskFactory">
   <TypeSignature Language="C#" Value="public class TaskFactory" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TaskFactory extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.Tasks.TaskFactory" /> class encodes some common <see cref="T:System.Threading.Tasks.Task" /> patterns into methods that pick up default settings, which are configurable through its constructors. A default instance of <see cref="T:System.Threading.Tasks.TaskFactory" /> is available through the <see cref="P:System.Threading.Tasks.Task.Factory" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for creating and scheduling <see cref="T:System.Threading.Tasks.Task" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with a default configuration. The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskCreationOptions.None" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskContinuationOptions.None" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with the default configuration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +51,16 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with a default configuration. The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskCreationOptions.None" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskContinuationOptions.None" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to tasks created by this <see cref="T:System.Threading.Tasks.TaskFactory" /> unless another CancellationToken is explicitly specified while calling the factory methods.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +74,16 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With this constructor, the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskCreationOptions.None" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <see cref="F:System.Threading.Tasks.TaskContinuationOptions.None" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to <paramref name="scheduler" />, unless it's null, in which case the property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> to use to schedule any tasks created with this TaskFactory. A null value indicates that the current TaskScheduler should be used.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -71,10 +98,18 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="creationOptions">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With this constructor, the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <paramref name="creationOptions" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <paramref name="continuationOptions" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> to use when creating tasks with this TaskFactory.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> to use when creating continuation tasks with this TaskFactory.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -91,12 +126,22 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>With this constructor, the <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> property is initialized to <paramref name="creationOptions" />, the <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> property is initialized to <paramref name="continuationOptions" />, and the <see cref="T:System.Threading.Tasks.TaskScheduler" /> property is initialized to <paramref name="scheduler" />, unless it's null, in which case the property is initialized to the current scheduler (see <see cref="P:System.Threading.Tasks.TaskScheduler.Current" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a <see cref="T:System.Threading.Tasks.TaskFactory" /> instance with the specified configuration.</para>
+        </summary>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to tasks created by this <see cref="T:System.Threading.Tasks.TaskFactory" /> unless another CancellationToken is explicitly specified while calling the factory methods.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> to use when creating tasks with this TaskFactory.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> to use when creating continuation tasks with this TaskFactory.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The default <see cref="T:System.Threading.Tasks.TaskScheduler" /> to use to schedule any Tasks created with this TaskFactory. A null value indicates that TaskScheduler.Current should be used.</param>
       </Docs>
     </Member>
     <Member MemberName="CancellationToken">
@@ -110,9 +155,15 @@
         <ReturnType>System.Threading.CancellationToken</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the default <see cref="T:System.Threading.CancellationToken" /> that will be assigned to all tasks created by this factory, unless another <see cref="T:System.Threading.CancellationToken" /> value is explicitly specified during the call to the factory methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default cancellation token for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContinuationOptions">
@@ -126,9 +177,15 @@
         <ReturnType>System.Threading.Tasks.TaskContinuationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value is used to create all continuation tasks, unless other options are explicitly specified during calls to this factory's methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default task continuation options for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll">
@@ -146,11 +203,23 @@
         <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task[]&gt;" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Tasks.TaskFactory.ContinueWhenAll(System.Threading.Tasks.Task[],System.Action{System.Threading.Tasks.Task[]})" /> method executes the <paramref name="continuationAction" /> delegate when all tasks in the <paramref name="tasks" /> array have completed, regardless of their completion status. </para>
+          <para>Exceptions thrown by tasks in the <paramref name="tasks" /> array are not available to the continuation task through structured exception handling. You can determine which exceptions were thrown by examining the <see cref="P:System.Threading.Tasks.Task.Exception" /> property of each task in the <paramref name="tasks" /> array. To use structured exception handling to handle exceptions thrown by tasks in the <paramref name="tasks" /> array, call the <see cref="M:System.Threading.Tasks.Task.WaitAll(System.Threading.Tasks.Task[])" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll">
@@ -169,12 +238,24 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Threading.Tasks.TaskFactory.ContinueWhenAll(System.Threading.Tasks.Task[],System.Action{System.Threading.Tasks.Task[]},System.Threading.CancellationToken)" /> method executes the <paramref name="continuationAction" /> delegate when all tasks in the <paramref name="tasks" /> array have completed, regardless of their completion status. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll">
@@ -193,12 +274,21 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported. </param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll">
@@ -219,14 +309,25 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation toke to assign to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that is used to schedule the new continuation task.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult&gt;">
@@ -247,12 +348,21 @@
         <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TAntecedentResult&gt;[]&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult&gt;">
@@ -274,13 +384,23 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult&gt;">
@@ -302,13 +422,23 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported. </param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult&gt;">
@@ -332,15 +462,27 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that is used to schedule the new continuation task.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TResult&gt;">
@@ -361,12 +503,21 @@
         <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task[],TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TResult&gt;">
@@ -388,13 +539,23 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TResult&gt;">
@@ -416,13 +577,23 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported. </param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TResult&gt;">
@@ -446,15 +617,27 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that is used to schedule the new continuation task.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult,TResult&gt;">
@@ -476,13 +659,23 @@
         <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TAntecedentResult&gt;[],TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult,TResult&gt;">
@@ -505,14 +698,25 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult,TResult&gt;">
@@ -535,14 +739,25 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported. </param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAll&lt;TAntecedentResult,TResult&gt;">
@@ -567,16 +782,29 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation task that starts when a set of specified tasks has completed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation task.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when all tasks in the <paramref name="tasks" /> array have completed.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cancellation token to assign to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that control the behavior of the new continuation task. The NotOn* and OnlyOn* members are not supported. </param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that is used to schedule the new continuation task.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created task.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny">
@@ -594,11 +822,19 @@
         <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task&gt;" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny">
@@ -617,12 +853,21 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny">
@@ -641,12 +886,24 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny">
@@ -667,14 +924,25 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created continuation <see cref="T:System.Threading.Tasks.Task" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult&gt;">
@@ -695,12 +963,21 @@
         <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task&lt;TAntecedentResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult&gt;">
@@ -722,13 +999,23 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult&gt;">
@@ -750,13 +1037,26 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult&gt;">
@@ -780,15 +1080,30 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationAction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TResult&gt;">
@@ -809,12 +1124,21 @@
         <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TResult&gt;">
@@ -836,13 +1160,23 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TResult&gt;">
@@ -864,13 +1198,26 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TResult&gt;">
@@ -894,15 +1241,30 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult,TResult&gt;">
@@ -924,13 +1286,23 @@
         <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TAntecedentResult&gt;,TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult,TResult&gt;">
@@ -953,14 +1325,25 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult,TResult&gt;">
@@ -983,14 +1366,28 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContinueWhenAny&lt;TAntecedentResult,TResult&gt;">
@@ -1015,16 +1412,32 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TAntecedentResult">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="tasks">To be added.</param>
-        <param name="continuationFunction">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="continuationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NotOn* and OnlyOn* <see cref="T:System.Threading.Tasks.TaskContinuationOptions" />, which constrain for which <see cref="T:System.Threading.Tasks.TaskStatus" /> states a continuation will be executed, are illegal with ContinueWhenAny.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a continuation <see cref="T:System.Threading.Tasks.Task`1" /> that will be started upon the completion of any Task in the provided set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new continuation <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="tasks">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of tasks from which to continue when one task completes.</param>
+        <param name="continuationFunction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate to execute asynchronously when one task in the <paramref name="tasks" /> array completes.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.CancellationToken" /> that will be assigned to the new continuation task.</param>
+        <param name="continuationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> value that controls the behavior of the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created continuation <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TAntecedentResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result of the antecedent <paramref name="tasks" />.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result that is returned by the <paramref name="continuationFunction" /> delegate and associated with the created <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CreationOptions">
@@ -1038,9 +1451,15 @@
         <ReturnType>System.Threading.Tasks.TaskCreationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value is used to create all tasks, unless other options are explicitly specified during calls to this factory's methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default task creation options for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromAsync">
@@ -1058,11 +1477,24 @@
         <Parameter Name="endMethod" Type="System.Action&lt;System.IAsyncResult&gt;" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> overloads that take an <paramref name="asyncResult" /> parameter are not as efficient as the overloads that take a <paramref name="beginMethod" /> parameter. If performance is an issue, use the overloads that provide the <paramref name="beginMethod" />/<paramref name="endMethod" /> pattern.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that executes an end method action when a specified <see cref="T:System.IAsyncResult" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult whose completion should trigger the processing of the <paramref name="endMethod" />.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate that processes the completed <paramref name="asyncResult" />.</param>
       </Docs>
     </Member>
     <Member MemberName="FromAsync">
@@ -1081,12 +1513,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on.  This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
       </Docs>
     </Member>
     <Member MemberName="FromAsync">
@@ -1105,12 +1549,26 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> overloads that take an <paramref name="asyncResult" /> parameter are not as efficient as the overloads that take a <paramref name="beginMethod" /> parameter. If performance is an issue, use the overloads that provide the <paramref name="beginMethod" />/<paramref name="endMethod" /> pattern.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that executes an end method action when a specified <see cref="T:System.IAsyncResult" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult whose completion should trigger the processing of the <paramref name="endMethod" />.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate that processes the completed <paramref name="asyncResult" />.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" />.</param>
       </Docs>
     </Member>
     <Member MemberName="FromAsync">
@@ -1130,13 +1588,26 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />. The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> values <see cref="F:System.Threading.Tasks.TaskCreationOptions.PreferFairness" />, <see cref="F:System.Threading.Tasks.TaskCreationOptions.LongRunning" /> and <see cref="F:System.Threading.Tasks.TaskCreationOptions.AttachedToParent" /> are all mutually exclusive. In the FromAsync methods, either LongRunning or AttachedToParent by themselves will cause an <see cref="T:System.ArgumentOutOfRangeException" /> to be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" />.</param>
       </Docs>
     </Member>
     <Member MemberName="FromAsync">
@@ -1156,13 +1627,28 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="asyncResult">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> overloads that take an <paramref name="asyncResult" /> parameter are not as efficient as the overloads that take a <paramref name="beginMethod" /> parameter. If performance is an issue, use the overloads that provide the <paramref name="beginMethod" />/<paramref name="endMethod" /> pattern.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that executes an end method action when a specified <see cref="T:System.IAsyncResult" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult whose completion should trigger the processing of the <paramref name="endMethod" />.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate that processes the completed <paramref name="asyncResult" />.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the task that executes the end method.</param>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1&gt;">
@@ -1185,14 +1671,28 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1&gt;">
@@ -1216,15 +1716,30 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TResult&gt;">
@@ -1245,12 +1760,26 @@
         <Parameter Name="endMethod" Type="System.Func&lt;System.IAsyncResult,TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="asyncResult">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> overloads that take an <paramref name="asyncResult" /> parameter are not as efficient as the overloads that take a <paramref name="beginMethod" /> parameter. If performance is an issue, use the overloads that provide the <paramref name="beginMethod" />/<paramref name="endMethod" /> pattern.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that executes an end method function when a specified <see cref="T:System.IAsyncResult" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult whose completion should trigger the processing of the <paramref name="endMethod" />.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that processes the completed <paramref name="asyncResult" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TResult&gt;">
@@ -1272,13 +1801,26 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TResult&gt;">
@@ -1300,13 +1842,28 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="asyncResult">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> overloads that take an <paramref name="asyncResult" /> parameter are not as efficient as the overloads that take a <paramref name="beginMethod" /> parameter. If performance is an issue, use the overloads that provide the <paramref name="beginMethod" />/<paramref name="endMethod" /> pattern.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that executes an end method function when a specified <see cref="T:System.IAsyncResult" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult whose completion should trigger the processing of the <paramref name="endMethod" />.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that processes the completed <paramref name="asyncResult" />.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TResult&gt;">
@@ -1329,14 +1886,28 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TResult&gt;">
@@ -1359,14 +1930,30 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="asyncResult">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> overloads that take an <paramref name="asyncResult" /> parameter are not as efficient as the overloads that take a <paramref name="beginMethod" /> parameter. If performance is an issue, use the overloads that provide the <paramref name="beginMethod" />/<paramref name="endMethod" /> pattern.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that executes an end method function when a specified <see cref="T:System.IAsyncResult" /> completes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="asyncResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The IAsyncResult whose completion should trigger the processing of the <paramref name="endMethod" />.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function delegate that processes the completed <paramref name="asyncResult" />.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the task that executes the end method.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2&gt;">
@@ -1391,16 +1978,32 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2&gt;">
@@ -1426,17 +2029,34 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TResult&gt;">
@@ -1460,15 +2080,30 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TResult&gt;">
@@ -1493,16 +2128,32 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2,TArg3&gt;">
@@ -1529,18 +2180,36 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <typeparam name="TArg3">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="arg3">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the third argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2,TArg3&gt;">
@@ -1568,19 +2237,38 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <typeparam name="TArg3">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="arg3">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" />.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the third argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2,TResult&gt;">
@@ -1606,17 +2294,34 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2,TResult&gt;">
@@ -1643,18 +2348,36 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2,TArg3,TResult&gt;">
@@ -1682,19 +2405,38 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <typeparam name="TArg3">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="arg3">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the third argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FromAsync&lt;TArg1,TArg2,TArg3,TResult&gt;">
@@ -1723,20 +2465,40 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TArg1">To be added.</typeparam>
-        <typeparam name="TArg2">To be added.</typeparam>
-        <typeparam name="TArg3">To be added.</typeparam>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="beginMethod">To be added.</param>
-        <param name="endMethod">To be added.</param>
-        <param name="arg1">To be added.</param>
-        <param name="arg2">To be added.</param>
-        <param name="arg3">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="beginMethod" /> delegate is started on the thread that <see cref="Overload:System.Threading.Tasks.TaskFactory.FromAsync" /> is running on. This method throws any exceptions thrown by the <paramref name="beginMethod" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Threading.Tasks.Task`1" /> that represents a pair of begin and end methods that conform to the Asynchronous Programming Model pattern.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Threading.Tasks.Task`1" /> that represents the asynchronous operation.</para>
+        </returns>
+        <param name="beginMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that begins the asynchronous operation.</param>
+        <param name="endMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate that ends the asynchronous operation.</param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="arg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The third argument passed to the <paramref name="beginMethod" /> delegate.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="beginMethod" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TArg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the second argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the third argument passed to <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TArg3">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the first argument passed to the <paramref name="beginMethod" /> delegate.</typeparam>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Scheduler">
@@ -1750,9 +2512,16 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property value is used to schedule all tasks, unless another scheduler is explicitly specified during calls to this factory's methods. </para>
+          <para>If this property value is null, the value of the <see cref="P:System.Threading.Tasks.TaskScheduler.Current" /> property is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default task scheduler for this task factory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1769,10 +2538,20 @@
         <Parameter Name="action" Type="System.Action" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action)" /> is functionally equivalent to creating a task by using one of its constructors, and then calling the <see cref="M:System.Threading.Tasks.Task.Start" /> method to schedule the task for execution. Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a task.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started task.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1790,11 +2569,22 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution. Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new task.</param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1812,11 +2602,23 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" /></param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1834,11 +2636,23 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para>Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="action" /> delegate.</param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1857,12 +2671,25 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="action" /> delegate.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new <see cref="T:System.Threading.Tasks.Task" /></param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1881,12 +2708,25 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="action" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" /></param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1906,13 +2746,27 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new <see cref="T:System.Threading.Tasks.Task" /></param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" /></param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created <see cref="T:System.Threading.Tasks.Task" />.</param>
       </Docs>
     </Member>
     <Member MemberName="StartNew">
@@ -1933,14 +2787,29 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="action">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a Task using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as  a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs Task.Factory.StartNew</see> in the Parallel Programming with .NET blog. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task" />.</para>
+        </returns>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action delegate to execute asynchronously.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="action" /> delegate.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new task.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task" /></param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created <see cref="T:System.Threading.Tasks.Task" />.</param>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -1960,11 +2829,23 @@
         <Parameter Name="function" Type="System.Func&lt;TResult&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -1985,12 +2866,25 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="function" /> delegate.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -2011,12 +2905,25 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new <see cref="T:System.Threading.Tasks.Task" /></param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -2037,12 +2944,25 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -2064,13 +2984,27 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="function" /> delegate.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new <see cref="T:System.Threading.Tasks.Task" /></param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -2092,13 +3026,27 @@
         <Parameter Name="creationOptions" Type="System.Threading.Tasks.TaskCreationOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="function" /> delegate.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -2121,14 +3069,29 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new task.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="StartNew&lt;TResult&gt;">
@@ -2152,15 +3115,31 @@
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
-        <param name="function">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <param name="creationOptions">To be added.</param>
-        <param name="scheduler">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling StartNew is functionally equivalent to creating a <see cref="T:System.Threading.Tasks.Task`1" /> using one of its constructors and then calling <see cref="M:System.Threading.Tasks.Task.Start" /> to schedule it for execution.</para>
+          <para> Starting with the net_v45, you can use the <see cref="Overload:System.Threading.Tasks.Task.Run" /> method with an <see cref="System.Action" /> object as a quick way to call <see cref="Overload:System.Threading.Tasks.TaskFactory.StartNew" /> with default parameters. For more information and code examples, see the entry <see cref="http://blogs.msdn.com/b/pfxteam/archive/2011/10/24/10229468.aspx">Task.Run vs. Task.Factory.StartNew</see> in the Parallel Programming with .NET blog.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and starts a <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The started <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
+        <param name="function">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function delegate that returns the future result to be available through the <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object containing data to be used by the <paramref name="function" /> delegate.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that will be assigned to the new task.</param>
+        <param name="creationOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A TaskCreationOptions value that controls the behavior of the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <param name="scheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.Tasks.TaskScheduler" /> that is used to schedule the created <see cref="T:System.Threading.Tasks.Task`1" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the result available through the <see cref="T:System.Threading.Tasks.Task`1" />.</typeparam>
       </Docs>
     </Member>
   </Members>

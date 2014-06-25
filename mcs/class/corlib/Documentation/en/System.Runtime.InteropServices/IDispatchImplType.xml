@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDispatchImplType" FullName="System.Runtime.InteropServices.IDispatchImplType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum IDispatchImplType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed IDispatchImplType extends System.Enum" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>See <see cref="T:System.Runtime.InteropServices.IDispatchImplAttribute" /> for more information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates which IDispatch implementation to use for a particular class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompatibleImpl">
@@ -39,8 +46,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the IDispatch implementation is supplied by passing the type information for the object to the COM CreateStdDispatch API method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InternalImpl">
@@ -57,8 +67,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the IDispatch implemenation is supplied by the runtime.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SystemDefinedImpl">
@@ -75,8 +88,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the common language runtime decides which IDispatch implementation to use.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

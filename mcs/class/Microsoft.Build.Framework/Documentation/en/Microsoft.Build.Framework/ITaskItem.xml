@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITaskItem" FullName="Microsoft.Build.Framework.ITaskItem">
   <TypeSignature Language="C#" Value="public interface ITaskItem" />
   <AssemblyInfo>
@@ -14,9 +15,23 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The number of <see cref="T:Microsoft.Build.Framework.ITaskItem" /> objects created during a build may not correspond exactly to items declared in a project file for the following reasons:</para>
+      <list type="bullet">
+        <item>
+          <para>Tasks sometimes create items that were not declared in the project file.</para>
+        </item>
+        <item>
+          <para>An item collection can be declared in the project file with wildcards, which could create many items when built.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an vstecmsbuild item that can be consumed and emitted by tasks. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CloneCustomMetadata">
@@ -27,10 +42,29 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <list type="bullet">
+            <item>
+              <para>Does not include built-in metadata.</para>
+            </item>
+            <item>
+              <para>This method should return a clone of the metadata. </para>
+            </item>
+            <item>
+              <para>Writing to this dictionary should not be reflected in the underlying item.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of custom metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of custom metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,10 +80,28 @@
         <Parameter Name="destinationItem" Type="Microsoft.Build.Framework.ITaskItem" />
       </Parameters>
       <Docs>
-        <param name="destinationItem">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Follow the guidelines below when implementing this method.</para>
+          <list type="bullet">
+            <item>
+              <para>Do not overwrite the <see cref="P:Microsoft.Build.Framework.ITaskItem.ItemSpec" /> property.</para>
+            </item>
+            <item>
+              <para>Do not overwrite existing metadata entries.</para>
+            </item>
+            <item>
+              <para>Do not copy metadata entries that do not make sense on the destination item.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the custom metadata entries to another item.</para>
+        </summary>
+        <param name="destinationItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to copy the metadata entries to.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -65,11 +117,18 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified metadata entry.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="attributeName" /> metadata.</para>
+        </returns>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the metadata entry.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,10 +141,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item specification is an arbitrary string. If the item represents a file on disk, the item specification will be the path of that file.</para>
+          <para>The <see cref="P:Microsoft.Build.Framework.ITaskItem.ItemSpec" /> for the following item declaration in a project file is File.cs.</para>
+          <code>&lt;ItemGroup&gt;
+    &lt;Compile Include="File.cs"/&gt;
+&lt;/ItemGroup&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the item specification.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,10 +167,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of metadata entries associated with the item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,10 +186,13 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the names of the metadata entries associated with the item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,10 +208,14 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified metadata entry from the item.</para>
+        </summary>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the metadata entry to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,11 +232,16 @@
         <Parameter Name="metadataValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="metadataName">To be added.</param>
-        <param name="metadataValue">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds or changes a custom metadata entry to the item.</para>
+        </summary>
+        <param name="metadataName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the metadata entry.</param>
+        <param name="metadataValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the metadata entry.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Engine" FullName="Microsoft.Build.BuildEngine.Engine">
   <TypeSignature Language="C#" Value="public class Engine" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a system of project-to-project dependencies, the <see cref="T:Microsoft.Build.BuildEngine.Engine" /> maintains the building projects, making it possible to avoid building the same target in the same project more than once in a given build.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the vstecmsbuild engine.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.BuildEngine.Engine" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +44,14 @@
         <Parameter Name="binPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="binPath">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.BuildEngine.Engine" /> class that has the specified <see cref="P:Microsoft.Build.BuildEngine.Engine.BinPath" />.</para>
+        </summary>
+        <param name="binPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to MSBuild.exe.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +64,37 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In vstecmsbuild 3.5, the "BinPath" is superseded by the "ToolsPath." Therefore, in the .Targets file, use MSBuildToolsPath rather than MBBuildBinPath. In the vstecmsbuild object model, "BinPath" relates to the Toolset you are running. The steps to get the path from the build engine are as follows:</para>
+          <list type="ordered">
+            <item>
+              <para>Get the default tools version.</para>
+            </item>
+            <item>
+              <para>Get the Toolset map.</para>
+            </item>
+            <item>
+              <para>Find the Toolset, based on the string in the map.</para>
+            </item>
+            <item>
+              <para>Get the Toolset.</para>
+            </item>
+            <item>
+              <para>Get the path from the Toolset.</para>
+            </item>
+          </list>
+          <para>This procedure is not required if you are creating the engine. In that case, you already know the Toolset path.</para>
+          <para>Because projects in a solution can use different Toolsets, you can also obtain the MSBuild.exe path from the project, as follows.</para>
+          <code>project.EvaluatedProperties[ReservedPropertyNames.toolsPath].FinalValue </code>
+          <para>For more information about Toolsets, see MSBuild Tool Set (ToolsVersion).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path to MSBuild.exe.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +107,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the building of targets in the project is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,11 +129,18 @@
         <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
       </Parameters>
       <Docs>
-        <param name="project">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="project">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,12 +157,20 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="project">To be added.</param>
-        <param name="targetName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the specified target of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="project">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
+        <param name="targetName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Name attribute of the Target element to build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -128,12 +187,20 @@
         <Parameter Name="targetNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="project">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the specified targets of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="project">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,13 +218,22 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="project">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <param name="targetOutputs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the specified targets of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />, and returns the outputs of the targets.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="project">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
+        <param name="targetOutputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outputs of the built targets. This parameter can be a null reference (Nothing in vbprvb) if outputs are not required.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,14 +252,24 @@
         <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
       </Parameters>
       <Docs>
-        <param name="project">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <param name="targetOutputs">To be added.</param>
-        <param name="buildFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Builds the specified targets of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" /> with the specified <see cref="T:Microsoft.Build.BuildEngine.BuildSettings" />, and returns the outputs of the targets.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="project">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
+        <param name="targetOutputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outputs of the built targets. This parameter can be a null reference (Nothing in vbprvb) if outputs are not required.</param>
+        <param name="buildFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.BuildSettings" /> to apply to the build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,11 +285,18 @@
         <Parameter Name="projectFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified project file and builds the project.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -220,12 +313,20 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <param name="targetName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified project file and builds the specified target of the project.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
+        <param name="targetName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Name attribute of the Target element to build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -242,12 +343,20 @@
         <Parameter Name="targetNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified project file and builds the specified targets of the project.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -265,13 +374,22 @@
         <Parameter Name="globalProperties" Type="Microsoft.Build.BuildEngine.BuildPropertyGroup" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <param name="globalProperties">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified project file and builds the specified targets of the project with the specified <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" />, and returns the outputs of the targets.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
+        <param name="globalProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" /> to apply to the build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -290,14 +408,24 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <param name="globalProperties">To be added.</param>
-        <param name="targetOutputs">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified project file and builds the specified targets of the project with the specified <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" />, and returns the outputs of the targets.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
+        <param name="globalProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" /> to apply to the build.</param>
+        <param name="targetOutputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outputs of the built targets. This parameter can be a null reference (Nothing in vbprvb) if outputs are not required.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -317,15 +445,26 @@
         <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <param name="targetNames">To be added.</param>
-        <param name="globalProperties">To be added.</param>
-        <param name="targetOutputs">To be added.</param>
-        <param name="buildFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the specified project file and builds the specified targets of the project with the specified <see cref="T:Microsoft.Build.BuildEngine.BuildSettings" /> and <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" />, and returns the outputs of the targets.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
+        <param name="targetNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the Name attributes of the Target elements to build.</param>
+        <param name="globalProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" /> to apply to the build.</param>
+        <param name="targetOutputs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The outputs of the built targets. This parameter can be a null reference (Nothing in vbprvb) if outputs are not required.</param>
+        <param name="buildFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.BuildSettings" /> to apply to the build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -339,10 +478,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an empty <see cref="T:Microsoft.Build.BuildEngine.Project" /> object that is associated with this <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:Microsoft.Build.BuildEngine.Project" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -358,11 +503,18 @@
         <Parameter Name="projectFullFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="projectFullFileName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:Microsoft.Build.BuildEngine.Project" /> object that is associated with the specified project file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:Microsoft.Build.BuildEngine.Project" /> object that associated with the specified project file. If no <see cref="T:Microsoft.Build.BuildEngine.Project" /> object is associated with the specified project file, the method returns a null reference (Nothing in vbprvb).</para>
+        </returns>
+        <param name="projectFullFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified file path to the project file of the <see cref="T:Microsoft.Build.BuildEngine.Project" /> object.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -375,10 +527,13 @@
         <ReturnType>Microsoft.Build.BuildEngine.Engine</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:Microsoft.Build.BuildEngine.Engine" /> that is global (shared) for this <see cref="T:System.AppDomain" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -391,10 +546,16 @@
         <ReturnType>Microsoft.Build.BuildEngine.BuildPropertyGroup</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Global properties are properties that are set by using the <system>/property</system> switch on the command line, or properties that are set by the integrated development environment (IDE) before a project is built. These global properties are applied to all projects that are built by using this <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of the global properties for the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -407,10 +568,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to only log critical events, such as warnings and errors, during the build.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -426,10 +590,18 @@
         <Parameter Name="logger" Type="Microsoft.Build.Framework.ILogger" />
       </Parameters>
       <Docs>
-        <param name="logger">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a logger is registered with the <see cref="T:Microsoft.Build.BuildEngine.Engine" />, it receives all build events.</para>
+          <para>To unregister loggers, use the <see cref="M:Microsoft.Build.BuildEngine.Engine.UnregisterAllLoggers" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers the specified logger with the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </summary>
+        <param name="logger">
+          <attribution license="cc4" from="Microsoft" modified="false" />The logger to associate with the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -443,9 +615,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all references to <see cref="T:Microsoft.Build.BuildEngine.Project" /> objects from the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -461,10 +636,14 @@
         <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
       </Parameters>
       <Docs>
-        <param name="project">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the reference to the specified <see cref="T:Microsoft.Build.BuildEngine.Project" /> from the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </summary>
+        <param name="project">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to remove from the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -478,9 +657,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:Microsoft.Build.BuildEngine.Engine.UnregisterAllLoggers" /> method calls the <see cref="M:Microsoft.Build.Framework.ILogger.Shutdown" /> method on every registered logger before unregistering each of them from the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unregisters all loggers from the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -493,10 +678,13 @@
         <ReturnType>System.Version</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version of the <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

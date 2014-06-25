@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SortDirection" FullName="System.DirectoryServices.SortDirection">
   <TypeSignature Language="C#" Value="public sealed enum SortDirection" />
   <AssemblyInfo>
@@ -87,8 +88,11 @@
       </ReturnValue>
       <MemberValue>Ascending</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sort from smallest to largest. For example, A to Z.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Descending">
@@ -99,13 +103,19 @@
       </ReturnValue>
       <MemberValue>Descending</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sort from largest to smallest. For example, Z to A.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.SortDirection" /> enumeration specifies how to sort the results of an Active Directory Domain Services query.</para>
+    </summary>
   </Docs>
 </Type>

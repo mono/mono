@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridTextBoxColumn" FullName="System.Windows.Forms.DataGridTextBoxColumn">
   <TypeSignature Language="C#" Value="public class DataGridTextBoxColumn : System.Windows.Forms.DataGridColumnStyle" />
   <AssemblyInfo>
@@ -10,8 +11,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> class derives from the abstract class <see cref="T:System.Windows.Forms.DataGridColumnStyle" />. At run time, the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> hosts a <see cref="T:System.Windows.Forms.DataGridTextBox" /> control that allows users to edit text.</para>
+      <para>Special properties added to the class include <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" />, and <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.HideEditBox" />. These properties allow you to access the hosted <see cref="T:System.Windows.Forms.DataGridTextBox" /> control and its attributes, and set the format for displaying values.</para>
+      <para>If the data source is a <see cref="T:System.Data.DataTable" /> containing <see cref="T:System.Data.DataColumn" /> objects, the <see cref="P:System.Data.DataColumn.DataType" /> property of the <see cref="T:System.Data.DataColumn" /> should be set to a data type that can logically be edited in a text box control. The following data types are automatically associated with a <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> : <see cref="T:System.Byte" />, <see cref="T:System.DateTime" />, <see cref="T:System.Decimal" />, <see cref="T:System.Double" />, <see cref="T:System.Int16" />, <see cref="T:System.Int32" />, <see cref="T:System.Int64" />, <see cref="T:System.UInt16" />, <see cref="T:System.UInt32" />, <see cref="T:System.UInt64" />, <see cref="T:System.Single" />, and <see cref="T:System.String" />.</para>
+      <para>[Visual Basic]</para>
+      <block subset="none" type="note">
+        <para>The following types are not fully supported by Visual Basic: <see cref="T:System.DateTime" />, <see cref="T:System.UInt16" />, <see cref="T:System.UInt32" />, <see cref="T:System.UInt64" />, and <see cref="T:System.TimeSpan" />. (Operators are not allowed.) </para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Hosts a <see cref="T:System.Windows.Forms.TextBox" /> control in a cell of a <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> for editing strings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +32,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +50,16 @@
         <Parameter Name="prop" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> uses a <see cref="T:System.ComponentModel.PropertyDescriptor" /> to determine the type of data displayed in the column. To return a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" />, use the <see cref="M:System.Windows.Forms.BindingManagerBase.GetItemProperties" /> method of the <see cref="T:System.Windows.Forms.BindingManagerBase" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of a <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> with a specified <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> for the column with which the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> will be associated. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,10 +74,18 @@
         <Parameter Name="isDefault" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="isDefault">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> uses a <see cref="T:System.ComponentModel.PropertyDescriptor" /> to determine the type of data displayed in the column. To return a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" />, use the <see cref="M:System.Windows.Forms.BindingManagerBase.GetItemProperties" /> method of the <see cref="T:System.Windows.Forms.BindingManagerBase" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> class using the specified <see cref="T:System.ComponentModel.PropertyDescriptor" />. Specifies whether the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> is a default column.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to be associated with the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" />. </param>
+        <param name="isDefault">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> is a default column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +100,20 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create a custom format for the displayed data.</para>
+          <para>The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> uses a <see cref="T:System.ComponentModel.PropertyDescriptor" /> to determine the type of data displayed in the column. To return a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" />, use the <see cref="M:System.Windows.Forms.BindingManagerBase.GetItemProperties" /> method of the <see cref="T:System.Windows.Forms.BindingManagerBase" /> class.</para>
+          <para>For more information about formatting characters, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Types</a></format> and <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom DateTime Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of a <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> with the specified <see cref="T:System.ComponentModel.PropertyDescriptor" /> and format.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> for the column with which the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> will be associated. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format used to format the column values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,11 +129,20 @@
         <Parameter Name="isDefault" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="prop">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="isDefault">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> uses a <see cref="T:System.ComponentModel.PropertyDescriptor" /> to determine the type of data displayed in the column. To return a <see cref="T:System.ComponentModel.PropertyDescriptorCollection" />, use the <see cref="M:System.Windows.Forms.BindingManagerBase.GetItemProperties" /> method of the <see cref="T:System.Windows.Forms.BindingManagerBase" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> class with a specified <see cref="T:System.ComponentModel.PropertyDescriptor" /> and format. Specifies whether the column is the default column.</para>
+        </summary>
+        <param name="prop">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to be associated with the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" />. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format used. </param>
+        <param name="isDefault">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> is the default column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -113,9 +163,16 @@
         <Parameter Name="rowNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowNum">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method rolls back any change made to the column and invokes the <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.HideEditBox" /> and <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.EndEdit" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initiates a request to interrupt an edit procedure.</para>
+        </summary>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row in which an edit operation is being interrupted. </param>
       </Docs>
     </Member>
     <Member MemberName="Commit">
@@ -133,11 +190,23 @@
         <Parameter Name="rowNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dataSource">To be added.</param>
-        <param name="rowNum">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method checks to ensure that an edit is indeed occurring. If so, it formats the value appropriately. If the value is null, the method enters <see cref="F:System.Convert.DBNull" /> into the column; otherwise, it uses the <see cref="M:System.Windows.Forms.DataGridColumnStyle.SetColumnValueAtRow(System.Windows.Forms.CurrencyManager,System.Int32,System.Object)" /> method to commit the value.</para>
+          <para>The method is called by the <see cref="T:System.Windows.Forms.DataGrid" /> when an editing operation is committed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inititates a request to complete an editing procedure.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value was successfully committed; otherwise, false.</para>
+        </returns>
+        <param name="dataSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> of the <see cref="T:System.Windows.Forms.DataGrid" /> control the column belongs to. </param>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the edited row. </param>
       </Docs>
     </Member>
     <Member MemberName="ConcedeFocus">
@@ -152,8 +221,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In this overridden method, the <see cref="T:System.Windows.Forms.TextBox" /> control hosted by the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> is hidden.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs the column that the focus is being conceded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Edit">
@@ -175,14 +250,26 @@
         <Parameter Name="cellIsVisible" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="rowNum">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="readOnly">To be added.</param>
-        <param name="displayText">To be added.</param>
-        <param name="cellIsVisible">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridColumnStyle.Edit(System.Windows.Forms.CurrencyManager,System.Int32,System.Drawing.Rectangle,System.Boolean)" /> sites a <see cref="T:System.Windows.Forms.TextBox" /> control on the grid at the location of the cell being edited. The method is called by the <see cref="T:System.Windows.Forms.DataGrid" /> class's <see cref="M:System.Windows.Forms.DataGrid.BeginEdit(System.Windows.Forms.DataGridColumnStyle,System.Int32)" /> method when an editing operation is about to begin.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prepares a cell for editing.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> of the <see cref="T:System.Windows.Forms.DataGrid" /> control the column belongs to. </param>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row number in this column being edited. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounding <see cref="T:System.Drawing.Rectangle" /> in which the control is to be sited. </param>
+        <param name="readOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether the column is a read-only. true if the value is read-only; otherwise, false. </param>
+        <param name="displayText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the control. </param>
+        <param name="cellIsVisible">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether the cell is visible. true if the cell is visible; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="EndEdit">
@@ -193,8 +280,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To edit the value of a cell, call the <see cref="T:System.Data.DataRow" /> object's <see cref="M:System.Data.DataRow.BeginEdit" /> before changing the value. You must invoke the <see cref="M:System.Data.DataRow.AcceptChanges" /> method on both the <see cref="T:System.Data.DataRow" /> and <see cref="T:System.Data.DataTable" /> objects before the change is committed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends an edit operation on the <see cref="T:System.Windows.Forms.DataGridColumnStyle" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,8 +306,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enters the <see cref="P:System.Windows.Forms.DataGridColumnStyle.NullText" /> value into the cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enters a <see cref="F:System.DBNull.Value" /> in the column.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Format">
@@ -232,9 +331,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" /> property specifies how values are displayed in the column. For example, set the property to "c" to specify that the values will be formatted as the local currency. The <see cref="T:System.Globalization.CultureInfo" /> for the computer is used to determine the actual currency format. The values are automatically unformatted to the native type when data is changed.</para>
+          <para>For more information about formatting characters, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Types</a></format> and <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom DateTime Format Strings</a></format>.</para>
+          <para>The format you apply should be appropriate to the data type. For example, if the data is numeric in nature use one of the numeric format strings.</para>
+          <para>You can change the <see cref="T:System.Globalization.CultureInfo" /> for a <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> by setting the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.FormatInfo" /> property to a new <see cref="T:System.Globalization.CultureInfo" /> instance constructed with an appropriate culture ID.</para>
+          <para>To set the <see cref="T:System.Globalization.CultureInfo" /> for the application, set the <see cref="P:System.Windows.Forms.Application.CurrentCulture" /> property of the <see cref="T:System.Windows.Forms.Application" /> object to a new <see cref="T:System.Globalization.CultureInfo" /> instance constructed with an appropriate culture ID.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character(s) that specify how text is formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -256,9 +365,16 @@
         <ReturnType>System.IFormatProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When setting the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" /> property to one of the formatting characters, the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" /> uses the information provided by the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.FormatInfo" /> property to further specify what cultural-specific formatting to use. For example, when the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" /> property is set to the format character "c" (for currency), you can further specify that the symbol for the lira be used. To do this, create a new <see cref="T:System.Globalization.CultureInfo" /> object with the locale ID for Italy, and set the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.FormatInfo" /> property to the new <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+          <para>For more information about formatting characters, see <format type="text/html"><a href="0D1364DA-5B30-4D42-8E6B-03378343343F">Formatting Types</a></format> and <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom DateTime Format Strings</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the culture specific information used to determine how values are formatted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -277,9 +393,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.GetMinimumHeight" /> is calculated by adding the size of the column's font plus a margin value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height of a cell in a <see cref="T:System.Windows.Forms.DataGridColumnStyle" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height of a cell.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredHeight">
@@ -297,11 +422,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height to be used in for automatically resizing columns.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height the cells automatically resize to.</para>
+        </returns>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object used to draw shapes on the screen. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to draw. </param>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredSize">
@@ -319,11 +452,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The optimum width and height is calculated by measuring the string size, taking into account its font and attributes, and adding margin values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the optimum width and height of the cell in a specified row relative to the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that contains the dimensions of the cell.</para>
+        </returns>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object used to draw shapes on the screen. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to draw. </param>
       </Docs>
     </Member>
     <Member MemberName="HideEditBox">
@@ -334,8 +478,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Hides the <see cref="T:System.Windows.Forms.DataGridTextBox" /> control and moves the focus to the <see cref="T:System.Windows.Forms.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -359,12 +506,19 @@
         <Parameter Name="rowNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="rowNum">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the a <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> with the specified <see cref="T:System.Drawing.Graphics" />, <see cref="T:System.Drawing.Rectangle" />, <see cref="T:System.Windows.Forms.CurrencyManager" />, and row number.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object to draw to. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounding <see cref="T:System.Drawing.Rectangle" /> to paint into. </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> of the <see cref="T:System.Windows.Forms.DataGrid" /> the that contains the column. </param>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row in the underlying data table. </param>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -385,13 +539,24 @@
         <Parameter Name="alignToRight" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="rowNum">To be added.</param>
-        <param name="alignToRight">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.Paint(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.CurrencyManager,System.Int32)" /> method uses the <see cref="M:System.Windows.Forms.DataGridColumnStyle.GetColumnValueAtRow(System.Windows.Forms.CurrencyManager,System.Int32)" /> to determine the value to draw in the cell. The <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.PaintText(System.Drawing.Graphics,System.Drawing.Rectangle,System.String,System.Boolean)" /> method is called to draw the cell and its contents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints a <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> with the specified <see cref="T:System.Drawing.Graphics" />, <see cref="T:System.Drawing.Rectangle" />, <see cref="T:System.Windows.Forms.CurrencyManager" />, row number, and alignment.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object to draw to. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounding <see cref="T:System.Drawing.Rectangle" /> to paint into. </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> of the <see cref="T:System.Windows.Forms.DataGrid" /> the that contains the column. </param>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row in the underlying data table. </param>
+        <param name="alignToRight">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether to align the column's content to the right. true if the content should be aligned to the right; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -414,15 +579,28 @@
         <Parameter Name="alignToRight" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="rowNum">To be added.</param>
-        <param name="backBrush">To be added.</param>
-        <param name="foreBrush">To be added.</param>
-        <param name="alignToRight">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.Paint(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.CurrencyManager,System.Int32)" /> method uses the <see cref="M:System.Windows.Forms.DataGridColumnStyle.GetColumnValueAtRow(System.Windows.Forms.CurrencyManager,System.Int32)" /> to determine the value to draw in the cell. The <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.PaintText(System.Drawing.Graphics,System.Drawing.Rectangle,System.String,System.Boolean)" /> method is called to draw the cell and its contents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints a <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> with the specified <see cref="T:System.Drawing.Graphics" />, <see cref="T:System.Drawing.Rectangle" />, <see cref="T:System.Windows.Forms.CurrencyManager" />, row number, <see cref="T:System.Drawing.Brush" />, and foreground color.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object to draw to. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounding <see cref="T:System.Drawing.Rectangle" /> to paint into. </param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> of the <see cref="T:System.Windows.Forms.DataGrid" /> the that contains the column. </param>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the row in the underlying data table. </param>
+        <param name="backBrush">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Brush" /> that paints the background. </param>
+        <param name="foreBrush">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Brush" /> that paints the foreground color. </param>
+        <param name="alignToRight">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether to align the column's content to the right. true if the content should be aligned to the right; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="PaintText">
@@ -438,12 +616,23 @@
         <Parameter Name="alignToRight" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="alignToRight">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.PaintText(System.Drawing.Graphics,System.Drawing.Rectangle,System.String,System.Boolean)" /> method uses the <see cref="T:System.Windows.Forms.DataFormats.Format" /> object set with the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" /> property to format the value before drawing it to the screen.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGridColumnStyle.Paint(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.CurrencyManager,System.Int32)" /> method calls the <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.PaintText(System.Drawing.Graphics,System.Drawing.Rectangle,System.String,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the text and rectangle at the given location with the specified alignment.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object used to draw the string. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> which contains the boundary data of the rectangle. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to be drawn to the screen. </param>
+        <param name="alignToRight">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether the text is right-aligned. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -465,14 +654,27 @@
         <Parameter Name="alignToRight" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="textBounds">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="backBrush">To be added.</param>
-        <param name="foreBrush">To be added.</param>
-        <param name="alignToRight">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.PaintText(System.Drawing.Graphics,System.Drawing.Rectangle,System.String,System.Boolean)" /> method uses the <see cref="P:System.Windows.Forms.DataGridTextBoxColumn.Format" /> property to format the value before drawing it to the screen.</para>
+          <para>The <see cref="M:System.Windows.Forms.DataGridColumnStyle.Paint(System.Drawing.Graphics,System.Drawing.Rectangle,System.Windows.Forms.CurrencyManager,System.Int32)" /> method calls the <see cref="M:System.Windows.Forms.DataGridTextBoxColumn.PaintText(System.Drawing.Graphics,System.Drawing.Rectangle,System.String,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the text and rectangle at the specified location with the specified colors and alignment.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object used to draw the string. </param>
+        <param name="textBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> which contains the boundary data of the rectangle. </param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to be drawn to the screen. </param>
+        <param name="backBrush">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Brush" /> that determines the rectangle's background color </param>
+        <param name="foreBrush">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Brush" /> that determines the rectangles foreground color. </param>
+        <param name="alignToRight">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value indicating whether the text is right-aligned. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -491,9 +693,12 @@
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ComponentModel.PropertyDescriptor" /> for the <see cref="T:System.Windows.Forms.DataGridTextBoxColumn" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -507,9 +712,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets a value indicating whether the text box column is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -528,8 +736,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method removes the reference that the <see cref="T:System.Windows.Forms.DataGrid" /> holds to the <see cref="T:System.Windows.Forms.DataGridTextBox" /> control, in order to free system resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the reference that the <see cref="T:System.Windows.Forms.DataGrid" /> holds to the control used to edit data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetDataGridInColumn">
@@ -542,9 +756,16 @@
         <Parameter Name="value" Type="System.Windows.Forms.DataGrid" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this methods is called, the hosted <see cref="T:System.Windows.Forms.TextBox" /> control is added to the <see cref="T:System.Windows.Forms.DataGrid" /> control's <see cref="T:System.Windows.Forms.Control.ControlCollection" />. This allows the <see cref="T:System.Windows.Forms.CurrencyManager" /> to associate both controls with the same data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Windows.Forms.TextBox" /> control to the <see cref="T:System.Windows.Forms.DataGrid" /> control's <see cref="T:System.Windows.Forms.Control.ControlCollection" />.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGrid" /> control the <see cref="T:System.Windows.Forms.TextBox" /> control is added to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -563,9 +784,12 @@
         <ReturnType>System.Windows.Forms.TextBox</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hosted <see cref="T:System.Windows.Forms.TextBox" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -588,11 +812,17 @@
         <Parameter Name="displayText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="rowNum">To be added.</param>
-        <param name="displayText">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the user interface.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> that supplies the data. </param>
+        <param name="rowNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row to update. </param>
+        <param name="displayText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text that will be displayed in the cell. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStorage" FullName="System.IO.IsolatedStorage.IsolatedStorage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class IsolatedStorage : MarshalByRefObject" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit IsolatedStorage extends System.MarshalByRefObject" />
@@ -19,8 +20,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For information about file-based isolated storage, see the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFile" /> class. </para>
+      <block subset="none" type="note">
+        <para>Isolated storage is not available for win8_appname_long apps. Instead, use the application data classes in the Windows.Storage namespaces included in the wrt API to store local data and files. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=229175">Application data</see> in the Windows Dev Center.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all isolated storage implementations must derive. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationIdentity">
@@ -56,10 +69,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Since the definition of an application includes all assemblies associated with the application, you can use this type of identity to ensure that only assemblies associated with the application have access to the isolated storage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an application identity that scopes isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyIdentity">
@@ -75,9 +94,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an assembly identity used to scope isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AvailableFreeSpace">
@@ -96,9 +118,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.IsolatedStorage.IsolatedStorageFile.AvailableFreeSpace" /> property overrides this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the available free space for isolated storage, in bytes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentSize">
@@ -122,9 +150,15 @@
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ulong'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents the total usage of all storage resources within the isolated storage scope. <see cref="P:System.IO.IsolatedStorage.IsolatedStorageFile.CurrentSize" /> implements this property. In the case of <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFile" /> objects, this value is in bytes. In the case of implementations of other storage objects, such as a database, this value might be in other units of storage.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value representing the current size of isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DomainIdentity">
@@ -140,9 +174,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a domain identity that scopes isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetPermission">
@@ -161,10 +198,20 @@
         <Parameter Name="ps" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <param name="ps">To be added: an object of type 'Security.PermissionSet'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Security.Permissions.IsolatedStoragePermission'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You call this method on derived classes to determine what permission type governs their use, and to return the permission of the type that has been granted. Use this information to determine the allowable quota and any other derived class-specific isolated storage settings.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by a derived class, returns a permission that represents access to isolated storage from within a permission set.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Permissions.IsolatedStoragePermission" /> object.</para>
+        </returns>
+        <param name="ps">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.PermissionSet" /> object that contains the set of permissions granted to code attempting to use isolated storage. </param>
       </Docs>
     </Member>
     <Member MemberName="IncreaseQuotaTo">
@@ -186,10 +233,20 @@
         <Parameter Name="newQuotaSize" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="newQuotaSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.IncreaseQuotaTo(System.Int64)" /> method overrides this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, prompts a user to approve a larger quota size, in bytes, for isolated storage.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false in all cases.</para>
+        </returns>
+        <param name="newQuotaSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The requested new quota size, in bytes, for the user to approve.</param>
       </Docs>
     </Member>
     <Member MemberName="InitStore">
@@ -208,11 +265,19 @@
         <Parameter Name="appEvidenceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added.</param>
-        <param name="appEvidenceType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived classes use this method to initialize a new object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> object.</para>
+        </summary>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" /> values. </param>
+        <param name="appEvidenceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.Security.Policy.Evidence" /> that you can choose from the list of <see cref="T:System.Security.Policy.Evidence" /> for the calling application. null lets the <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> object choose the evidence. </param>
       </Docs>
     </Member>
     <Member MemberName="InitStore">
@@ -233,11 +298,20 @@
         <Parameter Name="assemblyEvidenceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="scope">To be added: an object of type 'IsolatedStorageScope'</param>
-        <param name="domainEvidenceType">To be added: an object of type 'Type'</param>
-        <param name="assemblyEvidenceType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Derived classes use this method to initialize a new object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> object.</para>
+        </summary>
+        <param name="scope">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" /> values. </param>
+        <param name="domainEvidenceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.Security.Policy.Evidence" /> that you can choose from the list of <see cref="T:System.Security.Policy.Evidence" /> present in the domain of the calling application. null lets the <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> object choose the evidence. </param>
+        <param name="assemblyEvidenceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.Security.Policy.Evidence" /> that you can choose from the list of <see cref="T:System.Security.Policy.Evidence" /> present in the assembly of the calling application. null lets the <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> object choose the evidence. </param>
       </Docs>
     </Member>
     <Member MemberName="MaximumSize">
@@ -261,9 +335,16 @@
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ulong'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default implementation of the <see cref="P:System.IO.IsolatedStorage.IsolatedStorage.MaximumSize" /> property returns the value of <see cref="P:System.Security.Permissions.IsolatedStoragePermission.UserQuota" />, which is expressed in bytes. Derived classes can express the value in other units of measure. A potential example of such an implementation is an isolated storage database.</para>
+          <para>You cannot set <see cref="P:System.IO.IsolatedStorage.IsolatedStorage.MaximumSize" />, but the quota is configured in the security policy, and can be set. Code receives a quota of space on the basis of its evidence, so the same code can receive a different quota if it is run with different evidence (for example, the same application run locally and from a share on an intranet can receive different quotas). <see cref="P:System.IO.IsolatedStorage.IsolatedStorageFile.MaximumSize" /> implements this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value representing the maximum amount of space available for isolated storage. When overridden in a derived class, this value can take different units of measure.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Quota">
@@ -282,9 +363,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.IsolatedStorage.IsolatedStorageFile.Quota" /> property overrides this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value that represents the maximum amount of space available for isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -301,8 +388,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.Remove" /> implements this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, removes the individual isolated store and all contained data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scope">
@@ -318,9 +412,15 @@
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IsolatedStorageScope'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stores are isolated by a combination of factors (user, assembly, domain, and so on).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" /> enumeration value specifying the scope used to isolate the store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SeparatorExternal">
@@ -336,9 +436,15 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'char'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to get a character that is used in a directory string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a backslash character that can be used in a directory string. When overridden in a derived class, another character might be returned.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SeparatorInternal">
@@ -354,9 +460,15 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'char'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to get a character that is used in a directory string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a period character that can be used in a directory string. When overridden in a derived class, another character might be returned.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UsedSize">
@@ -375,9 +487,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.IO.IsolatedStorage.IsolatedStorageFile.UsedSize" /> property overrides this property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value that represents the amount of the space used for isolated storage.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeLibVersionAttribute" FullName="System.Runtime.InteropServices.TypeLibVersionAttribute">
   <TypeSignature Language="C#" Value="public sealed class TypeLibVersionAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeLibVersionAttribute extends System.Attribute" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to assemblies.</para>
+      <para>By default, the <format type="text/html"><a href="A487D61B-D166-467B-A7CA-D8B52FBFF42D">[&lt;topic://cpgrfTypeLibraryExporterTlbexpexe&gt;]</a></format> generates a type library version from the first two numbers of an assembly version. For example, Tlb.exe exports assembly version 1.2.5000.0 as a type library version 1.2, eliminating the build and revision numbers of the assembly. If this behavior is undesirable, you can control the generation of the type library number explicitly by applying the <see cref="T:System.Runtime.InteropServices.TypeLibVersionAttribute" />.</para>
+      <para>It is useful to control the generation of a type library version explicitly when two assembly versions produce the same type library version. For example, assembly version 1.2.0.0 and assembly version 1.2.500.0 both produce a type library version of 1.2, which can cause problems when you uninstall one of the assemblies. To differentiate the type library versions, you can force the second assembly (version 1.2.500.0) to produce a type library version of 1.25.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the version number of an exported type library.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,10 +47,15 @@
         <Parameter Name="minor" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.TypeLibVersionAttribute" /> class with the major and minor version numbers of the type library.</para>
+        </summary>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number of the type library. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number of the type library. </param>
       </Docs>
     </Member>
     <Member MemberName="MajorVersion">
@@ -57,9 +71,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major version number of the type library.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinorVersion">
@@ -75,9 +92,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor version number of the type library.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

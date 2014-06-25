@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ChannelProtectionRequirements" FullName="System.ServiceModel.Security.ChannelProtectionRequirements">
   <TypeSignature Language="C#" Value="public class ChannelProtectionRequirements" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ChannelProtectionRequirements extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When extending the <see cref="T:System.ServiceModel.Channels.BindingElement" /> class, you must implement the <see cref="M:System.ServiceModel.Channels.BindingElement.GetProperty``1(System.ServiceModel.Channels.BindingContext)" /> so that it returns an instance of this class corresponding to the binding element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes encryption and signature requirements that apply to different parts of messages that are transmitted on this channel.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,32 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default constructor sets the following properties to a new instance of <see cref="T:System.ServiceModel.Security.ScopedMessagePartSpecification" />, which is a class that specifies which parts are included in a message:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.IncomingEncryptionParts" />,</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.IncomingSignatureParts" />,</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.OutgoingEncryptionParts" />, and</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.OutgoingSignatureParts" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +69,34 @@
         <Parameter Name="other" Type="System.ServiceModel.Security.ChannelProtectionRequirements" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the following properties to a new instance of <see cref="T:System.ServiceModel.Security.ScopedMessagePartSpecification" />, using the <see cref="M:System.ServiceModel.Security.ScopedMessagePartSpecification.#ctor(System.ServiceModel.Security.ScopedMessagePartSpecification)" /> constructor, with <paramref name="other" /> as the input parameter. <see cref="T:System.ServiceModel.Security.ScopedMessagePartSpecification" /> is a class that specifies which parts are included in a message:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.IncomingEncryptionParts" />,</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.IncomingSignatureParts" />,</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.OutgoingEncryptionParts" />, and</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.OutgoingSignatureParts" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" /> class from another instance of this class.  </para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The other instance of <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -57,9 +113,13 @@
         <Parameter Name="protectionRequirements" Type="System.ServiceModel.Security.ChannelProtectionRequirements" />
       </Parameters>
       <Docs>
-        <param name="protectionRequirements">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the parts collections in the specified <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" /> to the current instance of this class. </para>
+        </summary>
+        <param name="protectionRequirements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -77,10 +137,15 @@
         <Parameter Name="channelScopeOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="protectionRequirements">To be added.</param>
-        <param name="channelScopeOnly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the various parts collections in the specified <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" /> to the current instance of this class. </para>
+        </summary>
+        <param name="protectionRequirements">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified <see cref="T:System.ServiceModel.Security.ChannelProtectionRequirements" />.</param>
+        <param name="channelScopeOnly">
+          <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether the scope is channel-only.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateInverse">
@@ -95,9 +160,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Incoming parts of the current instance of this class become outgoing parts of the new instance. Outgoing parts of the current instance of this class become incoming parts of the new instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of this class with incoming and outgoing parts reversed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of this class with incoming and outgoing parts reversed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IncomingEncryptionParts">
@@ -111,9 +185,15 @@
         <ReturnType>System.ServiceModel.Security.ScopedMessagePartSpecification</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of message parts that are encrypted for messages from client to server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IncomingSignatureParts">
@@ -127,9 +207,15 @@
         <ReturnType>System.ServiceModel.Security.ScopedMessagePartSpecification</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of message parts that are signed for messages from client to server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -143,9 +229,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether this instance of the class is read-only. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MakeReadOnly">
@@ -160,8 +249,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.ServiceModel.Security.ChannelProtectionRequirements.IsReadOnly" /> is set to true, as are the corresponding properties on the parts collections.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets this class and its part collections to read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutgoingEncryptionParts">
@@ -175,9 +271,15 @@
         <ReturnType>System.ServiceModel.Security.ScopedMessagePartSpecification</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of message parts that are encrypted for messages from server to client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutgoingSignatureParts">
@@ -191,9 +293,15 @@
         <ReturnType>System.ServiceModel.Security.ScopedMessagePartSpecification</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of message parts that are signed for messages from server to client.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -459,6 +459,14 @@ namespace System.Windows.Forms
 				OnLinkClicked (new LinkLabelLinkClickedEventArgs (clicked_link, e.Button));
 		}
 
+		protected override void OnClick (EventArgs e)
+		{
+			if (active_link != null && this.Capture) {
+				this.Capture = false;
+			}
+			base.OnClick (e);
+		}
+
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			// We need to invoke paintbackground because control is opaque

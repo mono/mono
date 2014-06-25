@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignerLoaderHost" FullName="System.ComponentModel.Design.Serialization.IDesignerLoaderHost">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesignerLoaderHost : IServiceProvider, System.ComponentModel.Design.IDesignerHost" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerLoaderHost implements class System.ComponentModel.Design.IDesignerHost, class System.ComponentModel.Design.IServiceContainer, class System.IServiceProvider" />
@@ -19,8 +20,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.ComponentModel.Design.IDesignerHost" /> can implement this interface to enable support for loading by a <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />.</para>
+      <para>The designer loader informs the designer host that it needs to invoke a load or reload so that the designer host can perform additional tasks at these times.</para>
+      <para>This class is isolated from <see cref="T:System.ComponentModel.Design.IDesignerHost" /> to emphasize that the designer loader, not the designer host, must initiate all loading and reloading of the design document.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that can extend a designer host to support loading from a serialized state.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EndLoad">
@@ -41,11 +50,21 @@
         <Parameter Name="errorCollection" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="baseClassName">To be added: an object of type 'string'</param>
-        <param name="successful">To be added: an object of type 'bool'</param>
-        <param name="errorCollection">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" /> that loads the design document calls this method to indicate that the load terminated.</para>
+          <para>If errors are encountered during loading, they must be passed in the <paramref name="errorCollection" /> parameter as a collection of exceptions. If they are not exceptions, the designer loader host can call <see cref="M:System.Object.ToString" /> on them and pass them as a collection. If the load is successful, then the <paramref name="errorCollection" /> parameter must be either null or an empty collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ends the designer loading operation.</para>
+        </summary>
+        <param name="baseClassName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the base class of the document that this designer is designing. </param>
+        <param name="successful">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the designer is successfully loaded; otherwise, false. </param>
+        <param name="errorCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection containing the errors encountered during load, if any. If no errors were encountered, pass either an empty collection or null. </param>
       </Docs>
     </Member>
     <Member MemberName="Reload">
@@ -62,8 +81,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" /> calls this method to reload the design document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reloads the design document.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

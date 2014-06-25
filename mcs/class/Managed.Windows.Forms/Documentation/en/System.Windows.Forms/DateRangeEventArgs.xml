@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DateRangeEventArgs" FullName="System.Windows.Forms.DateRangeEventArgs">
   <TypeSignature Language="C#" Value="public class DateRangeEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -10,8 +11,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.MonthCalendar.DateChanged" /> event occurs when the currently selected date or range of dates changes; for example, when the user explicitly changes a selection within the current month or when the selection is implicitly changed in response to next/previous month navigation. The <see cref="E:System.Windows.Forms.MonthCalendar.DateSelected" /> event occurs when the user explicitly changes a selection. The <see cref="M:System.Windows.Forms.DateRangeEventArgs.#ctor(System.DateTime,System.DateTime)" /> constructor specifies the start and end for the new date range that has been selected.</para>
+      <block subset="none" type="note">
+        <para>If a single date is selected, the <see cref="P:System.Windows.Forms.DateRangeEventArgs.Start" /> and <see cref="P:System.Windows.Forms.DateRangeEventArgs.End" /> property values will be equal.</para>
+      </block>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.MonthCalendar.DateChanged" /> or <see cref="E:System.Windows.Forms.MonthCalendar.DateSelected" /> events of the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,10 +33,18 @@
         <Parameter Name="end" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="end">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DateRangeEventArgs.Start" /> and <see cref="P:System.Windows.Forms.DateRangeEventArgs.End" /> property values are set by the <paramref name="start" /> and <paramref name="end" /> parameter values of this constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DateRangeEventArgs" /> class.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first date/time value in the range that the user has selected. </param>
+        <param name="end">
+          <attribution license="cc4" from="Microsoft" modified="false" />The last date/time value in the range that the user has selected. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +58,12 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last date/time value in the range that the user has selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -55,9 +77,12 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first date/time value in the range that the user has selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

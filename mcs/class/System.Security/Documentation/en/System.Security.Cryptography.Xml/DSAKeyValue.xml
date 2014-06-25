@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DSAKeyValue" FullName="System.Security.Cryptography.Xml.DSAKeyValue">
   <TypeSignature Language="C#" Value="public class DSAKeyValue : System.Security.Cryptography.Xml.KeyInfoClause" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DSAKeyValue extends System.Security.Cryptography.Xml.KeyInfoClause" />
@@ -14,8 +15,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Represent the XMLDSIG DSAKeyValue element which contains an XML representation of a DSA public key.</summary>
-    <remarks>The &lt;DSAKeyValue&gt; element is detailled in section 4.4.2.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> class represents the &lt;KeyInfo&gt; element, which contains a <see cref="T:System.Security.Cryptography.DSA" /> public key. </para>
+      <para>Use <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> to identify the public key that corresponds to the <see cref="T:System.Security.Cryptography.DSA" /> private key that was used to create the digital signature.</para>
+      <para>If a key is not explicitly supplied to the constructor, a new <see cref="T:System.Security.Cryptography.DSA" /> key pair is randomly generated.</para>
+      <para>The <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> class is used with XML signatures. For more information about the W3C specification, see http://www.w3.org/TR/xmldsig-core/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the <see cref="T:System.Security.Cryptography.DSA" /> private key of the &lt;KeyInfo&gt; element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +40,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When creating a new <see cref="T:System.Security.Cryptography.DSA" /> key, this constructor uses the default implementation of <see cref="T:System.Security.Cryptography.DSA" /> as defined by the <see cref="T:System.Security.Cryptography.CryptoConfig" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> class with a new, randomly-generated <see cref="T:System.Security.Cryptography.DSA" /> public key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,9 +64,13 @@
         <Parameter Name="key" Type="System.Security.Cryptography.DSA" />
       </Parameters>
       <Docs>
-        <param name="key">a <see cref="T:System.Security.Cryptography.DSA" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> class with the specified <see cref="T:System.Security.Cryptography.DSA" /> public key.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of an implementation of the <see cref="T:System.Security.Cryptography.DSA" /> class that holds the public key. </param>
       </Docs>
     </Member>
     <Member MemberName="GetXml">
@@ -67,9 +87,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to output XML for a <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML representation of a <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Key">
@@ -86,9 +115,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Security.Cryptography.DSA" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property represents the DSA key used to sign the XML.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key value represented by a <see cref="T:System.Security.Cryptography.DSA" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">
@@ -107,9 +142,16 @@
         <Parameter Name="value" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="value">a <see cref="T:System.Xml.XmlElement" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to add XML elements to a <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> state from an XML element.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML element to load the <see cref="T:System.Security.Cryptography.Xml.DSAKeyValue" /> state from. </param>
       </Docs>
     </Member>
   </Members>

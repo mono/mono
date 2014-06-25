@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventAttributes" FullName="System.Reflection.EventAttributes" FullNameSP="System_Reflection_EventAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable EventAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum EventAttributes" />
@@ -22,18 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies the attributes
-      of an event.
-      </para>
-    </summary>
     <remarks>
-      <para>
-        <SPAN>This enumeration is used by
-      the <see cref="P:System.Reflection.EventInfo.Attributes" />
-      property.</SPAN>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>EventAttributes values may be combined using the bitwise OR operation to get the appropriate combination.</para>
+      <para>These enums are defined in the corhdr.h file and are a combination of bits and enumerators.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the attributes of an event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -52,13 +50,11 @@
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>
-       Specifies that the event has
-       no attributes.
-    </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the event has no attributes.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -76,8 +72,11 @@
       </ReturnValue>
       <MemberValue>ReservedMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a reserved flag for common language runtime use only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RTSpecialName">
@@ -94,8 +93,11 @@
       </ReturnValue>
       <MemberValue>ReservedMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the common language runtime should check name encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpecialName">
@@ -114,22 +116,11 @@
       <Parameters />
       <MemberValue>SpecialName</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the event is treated in a special way by some tools.
-      </para>
-          <block subset="none" type="note">
-            <para> 
-         There are currently
-         no event names that are required to be marked as special names. This functionality is provided for extensions,
-         future standardization, and to increase consistency between the declaration of fields
-         and methods.</para>
-            <para>For more information on special names, see Partition I of the CLI
-         Specification.</para>
-            <para> For more information on <see langword="SpecialName" /> , see Partition II of the
-      CLI Specification.</para>
-          </block>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the event is special in a way described by the name.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

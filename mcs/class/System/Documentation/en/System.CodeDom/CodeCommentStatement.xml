@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeCommentStatement" FullName="System.CodeDom.CodeCommentStatement">
   <TypeSignature Language="C#" Value="public class CodeCommentStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeCommentStatement extends System.CodeDom.CodeStatement" />
@@ -23,9 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeCommentStatement" /> can be used to represent a single-line comment statement. <see cref="T:System.CodeDom.CodeCommentStatement" /> is a statement, so it can be inserted into a statements collection and will appear on its own line. <see cref="T:System.CodeDom.CodeCommentStatement" /> can also be added to the comments collection of <see cref="T:System.CodeDom.CodeNamespace" /> or any object that derives from <see cref="T:System.CodeDom.CodeTypeMember" />.</para>
+    </remarks>
     <summary>
-      <see cref="T:System.CodeDom.CodeStatement" /> representing a comment in the code graph.</summary>
-    <remarks>To be added</remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a statement consisting of a single comment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,7 +47,6 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> with an empty comment text. The <see cref="P:System.CodeDom.CodeCommentStatement.Comment" /> property should be used before emitting the code for the object.</summary>
         <remarks>
           <example>
 Creating the code for the following statement throws an Exception because the value of the CodeCommentStatement Comment property hasn't been set.
@@ -50,6 +56,10 @@ demoNs.Comments.Add(new CodeCommentStatement());
 ...
   </code></example>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeCommentStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,8 +76,6 @@ demoNs.Comments.Add(new CodeCommentStatement());
         <Parameter Name="comment" Type="System.CodeDom.CodeComment" />
       </Parameters>
       <Docs>
-        <param name="comment">CodeComment this CodeCommentStatement is to be initialized with.</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> initalized with the comment in the specified <see cref="T:System.CodeDom.CodeComment" /> object.</summary>
         <remarks>To be added
 <example><code lang="C#">
 ...
@@ -80,6 +88,12 @@ emits
   <code lang="C#">
 /// foo!
   </code></example></remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeCommentStatement" /> class using the specified comment.</para>
+        </summary>
+        <param name="comment">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeComment" /> that indicates the comment. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -96,8 +110,6 @@ emits
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">String the Comment property of this object is to be initialized to.</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> with the <see cref="P:System.CodeDom.CodeCommentStatement.Comment" /> property initialized to the specified string.</summary>
         <remarks>
           <example>
             <code lang="C#">
@@ -108,6 +120,12 @@ generates the code
 // This is a test
   </code></example>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeCommentStatement" /> class using the specified text as contents.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of the comment. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -125,21 +143,18 @@ generates the code
         <Parameter Name="docComment" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="text">String the Comment property of this object is to be initialized to.</param>
-        <param name="docComment">If true, specifies a documentation comment; otherwise a regular comment is produced.</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeCommentStatement" /> with the <see cref="P:System.CodeDom.CodeCommentStatement.Comment" /> property initialized to the specified string. The docComment argument signifies whether the comment is a regular comment or a document line.</summary>
         <remarks>
-          <example>
-            <code lang="C#">
-demoNs.Comments.Add(new CodeCommentStatement("This is a docstring test",true));
-demoNs.Comments.Add(new CodeCommentStatement("This is a test",false));
-  </code>
-generates the following code for C#
-  <code lang="C#">
-/// This is a docstring test
-// This is a test
-  </code></example>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="docComment" /> parameter is true, the <see cref="T:System.CodeDom.CodeCommentStatement" /> is a documentation comment and the comment is structured using triple delimiter characters. For example, in C# the comment is "///", in Visual Basic "'''". Documentation comments are used to identify an XML comment field, such as a type or member summary identified by the &lt;summary&gt; element.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeCommentStatement" /> class using the specified text and documentation comment flag.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of the comment. </param>
+        <param name="docComment">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the comment is a documentation comment; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="Comment">
@@ -157,9 +172,12 @@ generates the following code for C#
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>This is the text of the comment to be generated.</summary>
         <value>To be added: an object of type 'CodeComment'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contents of the comment.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

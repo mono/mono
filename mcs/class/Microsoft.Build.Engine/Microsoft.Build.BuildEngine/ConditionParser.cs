@@ -182,7 +182,7 @@ namespace Microsoft.Build.BuildEngine {
 				e = new ConditionFactorExpression (token);
 			} else if (token.Type == TokenType.Item || token.Type == TokenType.Property
 					|| token.Type == TokenType.Metadata) {
-				e = ParseReferenceExpression (token.Value);
+				e = ParseReferenceExpression (token.Value [0]);
 			} else if (token.Type == TokenType.Not) {
 				e = ParseNotExpression ();
 			} else
@@ -224,21 +224,33 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		//@prefix: @ or $
-		ConditionExpression ParseReferenceExpression (string prefix)
+		ConditionExpression ParseReferenceExpression (char prefix)
 		{
-			StringBuilder sb = new StringBuilder ();
-
-			string ref_type = prefix [0] == '$' ? "a property" : "an item list";
 			int token_pos = tokenizer.Token.Position;
+			string ref_type = prefix == '$' ? "a property" : "an item list";
 			IsAtToken (TokenType.LeftParen, String.Format (
 						"Expected {0} at position {1} in condition \"{2}\". Missing opening parantheses after the '{3}'.",
 						ref_type, token_pos, conditionStr, prefix));
-			tokenizer.GetNextToken ();
 
+
+			if (prefix == '$') {
+				//
+				// Tjhe scan should consider quoted parenthesis but it breaks on .net as well
+				// we are bug compatible
+				//
+				tokenizer.ScanForClosingParens ();
+			} else {
+				tokenizer.GetNextToken ();
+			}
+
+			if (tokenizer.IsEOF ())
+				throw new ExpressionParseException ("Missing closing parenthesis in condition " + conditionStr);
+
+			StringBuilder sb = new StringBuilder ();
 			sb.AppendFormat ("{0}({1}", prefix, tokenizer.Token.Value);
 
 			tokenizer.GetNextToken ();
-			if (prefix == "@" && tokenizer.Token.Type == TokenType.Transform) {
+			if (prefix == '@' && tokenizer.Token.Type == TokenType.Transform) {
 				tokenizer.GetNextToken ();
 				sb.AppendFormat ("->'{0}'", tokenizer.Token.Value);
 
@@ -250,9 +262,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 
-			IsAtToken (TokenType.RightParen, String.Format (
-						"Expected {0} at position {1} in condition \"{2}\". Missing closing parantheses'.",
-						ref_type, token_pos, conditionStr, prefix));
+			IsAtToken (TokenType.RightParen, "Missing closing parenthesis in condition " + conditionStr);
 			tokenizer.GetNextToken ();
 
 			sb.Append (")");

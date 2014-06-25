@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaInclude" FullName="System.Xml.Schema.XmlSchemaInclude">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaInclude : System.Xml.Schema.XmlSchemaExternal" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaInclude extends System.Xml.Schema.XmlSchemaExternal" />
@@ -14,8 +15,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The included schema document must meet one of the following conditions: </para>
+      <para>The included schema must have the same target namespace as the containing schema document.</para>
+      <para>OR </para>
+      <para>The included schema cannot have a specified targetNamespace; the targetNamespace attribute must be null.</para>
+      <para>XmlSchemaInclude adds all the schema components from included schemas that have the same target namespace (or no specified target namespace) to the containing schema.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the include element from XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class is used to include declarations and definitions from an external schema. The included declarations and definitions are then available for processing in the containing schema.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +41,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaInclude" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Annotation">
@@ -53,9 +67,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaAnnotation'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the annotation property.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

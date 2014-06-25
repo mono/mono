@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MachineKeyValidationConverter" FullName="System.Web.Configuration.MachineKeyValidationConverter">
   <TypeSignature Language="C#" Value="public sealed class MachineKeyValidationConverter : System.Configuration.ConfigurationConverterBase" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.MayLeakOnAbort" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for converting <see cref="T:System.Web.Configuration.MachineKeyValidation" /> objects to and from strings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +28,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.MachineKeyValidationConverter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,13 +51,39 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added.</param>
-        <param name="ci">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method will throw an <see cref="T:System.ArgumentException" /> exception if the <paramref name="data" /> parameter does not refer to one of the following strings:</para>
+          <list type="bullet">
+            <item>
+              <para>SHA1</para>
+            </item>
+            <item>
+              <para>MD5</para>
+            </item>
+            <item>
+              <para>3DES</para>
+            </item>
+            <item>
+              <para>AES</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a string to the equivalent <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The equivalent <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
+        <param name="ci">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,14 +102,24 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="ctx">To be added.</param>
-        <param name="ci">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value to the string representation of that value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing a <see cref="T:System.Web.Configuration.MachineKeyValidation" /> value.</para>
+        </returns>
+        <param name="ctx">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
+        <param name="ci">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.MachineKeyValidation" /> to be converted.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

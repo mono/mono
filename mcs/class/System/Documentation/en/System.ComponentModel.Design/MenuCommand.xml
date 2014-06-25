@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MenuCommand" FullName="System.ComponentModel.Design.MenuCommand">
   <TypeSignature Language="C#" Value="public class MenuCommand" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MenuCommand extends System.Object" />
@@ -20,8 +21,38 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.MenuCommand" /> class represents information about a Windows menu or toolbar command. The <see cref="T:System.ComponentModel.Design.IMenuCommandService" /> interface allows you to add <see cref="T:System.ComponentModel.Design.MenuCommand" /> objects to the Visual Studio menu.</para>
+      <para>This class provides the following members: </para>
+      <list type="bullet">
+        <item>
+          <para>An event-handler property to which you can attach an event handler for the command.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.ComponentModel.Design.CommandID" /> property that uniquely identifies the command.</para>
+        </item>
+        <item>
+          <para>An <see cref="M:System.ComponentModel.Design.MenuCommand.Invoke" /> method that executes the command.</para>
+        </item>
+        <item>
+          <para>An <see cref="M:System.ComponentModel.Design.MenuCommand.OnCommandChanged(System.EventArgs)" /> method that can be overridden to handle the event that occurs when a new command is selected.</para>
+        </item>
+        <item>
+          <para>Boolean flag states that indicate whether the command is <see cref="P:System.ComponentModel.Design.MenuCommand.Checked" />, <see cref="P:System.ComponentModel.Design.MenuCommand.Enabled" />, <see cref="P:System.ComponentModel.Design.MenuCommand.Supported" />, or <see cref="P:System.ComponentModel.Design.MenuCommand.Visible" />.</para>
+        </item>
+        <item>
+          <para>An <see cref="P:System.ComponentModel.Design.MenuCommand.OleStatus" /> property that indicates the OLE command status code for the command.</para>
+        </item>
+        <item>
+          <para>An override for the <see cref="M:System.ComponentModel.Design.MenuCommand.ToString" /> method.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows menu or toolbar command item.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,10 +70,15 @@
         <Parameter Name="command" Type="System.ComponentModel.Design.CommandID" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added: an object of type 'EventHandler'</param>
-        <param name="command">To be added: an object of type 'CommandID'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.MenuCommand" /> class.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event to raise when the user selects the menu item or toolbar button. </param>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique command ID that links this menu command to the environment's menu. </param>
       </Docs>
     </Member>
     <Member MemberName="Checked">
@@ -60,9 +96,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether this menu item is checked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CommandChanged">
@@ -79,8 +118,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A command can change if it becomes checked or disabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the menu command changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CommandID">
@@ -96,9 +141,12 @@
         <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CommandID'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> associated with this menu command.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Enabled">
@@ -116,9 +164,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this menu item is available.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -135,8 +186,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the command.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -154,9 +208,13 @@
         <Parameter Name="arg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="arg">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the command with the given parameter.</para>
+        </summary>
+        <param name="arg">
+          <attribution license="cc4" from="Microsoft" modified="false" />An optional argument for use by the command.</param>
       </Docs>
     </Member>
     <Member MemberName="OleStatus">
@@ -177,9 +235,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the OLE command status code for this menu item.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCommandChanged">
@@ -198,9 +259,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.MenuCommand.OnCommandChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.MenuCommand.CommandChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -215,9 +284,15 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All menu commands store their public properties in the <see cref="P:System.ComponentModel.Design.MenuCommand.Properties" /> collection. The key in the properties dictionary is the property name. This allows for generic enumeration of properties and provides a consistent substrate from which new properties can be added without modifying the class definition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the public properties associated with the <see cref="T:System.ComponentModel.Design.MenuCommand" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Supported">
@@ -235,9 +310,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether this menu item is supported.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -254,9 +332,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of this menu command.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the value of the <see cref="P:System.ComponentModel.Design.MenuCommand.CommandID" /> property appended with the names of any flags that are set, separated by pipe bars (|). These flag properties include <see cref="P:System.ComponentModel.Design.MenuCommand.Checked" />, <see cref="P:System.ComponentModel.Design.MenuCommand.Enabled" />, <see cref="P:System.ComponentModel.Design.MenuCommand.Supported" />, and <see cref="P:System.ComponentModel.Design.MenuCommand.Visible" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Visible">
@@ -274,9 +358,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether this menu item is visible.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

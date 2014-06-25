@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeAttributes" FullName="System.Reflection.TypeAttributes" FullNameSP="System_Reflection_TypeAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable TypeAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum TypeAttributes" />
@@ -22,15 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Specifies attributes of a type.</para>
-    </summary>
     <remarks>
-      <para>
-        <SPAN>
-      This enumeration is used by the <see cref="T:System.Type" /> class.</SPAN>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The members of this enumerator class match the CorTypeAttr enumerator as defined in the corhdr.h file.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies type attributes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abstract">
@@ -48,10 +48,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies that the type is not implemented in the declaring type.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the type is abstract.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -71,10 +72,11 @@
       <Parameters />
       <MemberValue>Class</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that LPSTR is interpreted as ANSI.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LPTSTR is interpreted as ANSI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -93,10 +95,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies that LPSTR is interpreted automatically.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LPTSTR is interpreted automatically.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -116,11 +119,11 @@
       <Parameters />
       <MemberValue>Class</MemberValue>
       <Docs>
-        <summary>
-   Specifies that fields of the type are automatically laid
-   out by the system.
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that class fields are automatically laid out by the common language runtime.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -139,11 +142,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-   Specifies that calling static methods of the type does not force the system to
-   initialize the type.
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that calling static methods of the type does not force the system to initialize the type.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -163,10 +166,11 @@
       <Parameters />
       <MemberValue>Class</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the type is a class.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the type is a class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -185,10 +189,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies a bitmask used to determine whether a type is a class or interface.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies class semantics information; the current class is contextful (else agile).</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -204,10 +209,11 @@
         <ReturnType>System.Reflection.TypeAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>
-          <para>Specifies that LPSTR is interpreted by some implementation-specific means, which includes the possibility of throwing a <see cref="T:System.NotSupportedException" />.</para>
-        </summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LPSTR is interpreted by some implementation-specific means, which includes the possibility of throwing a <see cref="T:System.NotSupportedException" />. Not used in the Microsoft implementation of the dnprdnshort.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CustomFormatMask">
@@ -222,8 +228,11 @@
         <ReturnType>System.Reflection.TypeAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to retrieve non-standard encoding information for native interop. The meaning of the values of these 2 bits is unspecified. Not used in the Microsoft implementation of the dnprdnshort.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExplicitLayout">
@@ -241,11 +250,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-   Specifies that the layout of fields in the type is
-   provided explicitly.
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that class fields are laid out at the specified offsets.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -263,8 +272,11 @@
       </ReturnValue>
       <MemberValue>Class, AnsiClass, NotPublic, HasSecurity</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Type has security associate with it.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Import">
@@ -281,8 +293,11 @@
       </ReturnValue>
       <MemberValue>Class, AnsiClass, NotPublic, Import</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class or interface is imported from another module.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Interface">
@@ -300,10 +315,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies that the type is an interface.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -322,10 +338,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies a bitmask used to obtain layout information.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies class layout information.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -344,11 +361,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Specifies that the type is nested and is accessible
-      only to members within its assembly.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is nested with assembly visibility, and is thus accessible only by methods within its assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -367,11 +384,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Specifies that the type
-      is nested and is accessible only to members of its family in its assembly.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is nested with assembly and family visibility, and is thus accessible only by methods lying in the intersection of its family and assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -390,11 +407,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Specifies that the type
-      is nested and is accessible only to members of its family.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is nested with family visibility, and is thus accessible only by methods within its own type and any derived types.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -413,12 +430,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> 
-      Specifies that the type
-      is nested and is accessible only to members of its family and throughout its assembly.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is nested with family or assembly visibility, and is thus accessible only by methods lying in the union of its family and assembly.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -437,10 +453,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Specifies that the type is nested with private visibility.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is nested with private visibility.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -459,11 +476,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Specifies
-      that the type is nested with public visibility.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is nested with public visibility.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -483,10 +500,11 @@
       <Parameters />
       <MemberValue>Class</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the type is not public.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is not public.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -505,10 +523,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Specifies that the type has public visibility.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is public.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -526,8 +545,11 @@
       </ReturnValue>
       <MemberValue>Class, AnsiClass, NotPublic, ReservedMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attributes reserved for runtime use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RTSpecialName">
@@ -544,8 +566,11 @@
       </ReturnValue>
       <MemberValue>Class, AnsiClass, NotPublic, RTSpecialName</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runtime should check name encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Sealed">
@@ -563,11 +588,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies that the type cannot be used
-      to derive new types.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is concrete and cannot be extended.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -586,11 +611,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> 
-      Specifies that fields in the type are laid out sequentially.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that class fields are laid out sequentially, in the order that the fields were emitted to the metadata.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -608,8 +633,11 @@
       </ReturnValue>
       <MemberValue>Class, AnsiClass, NotPublic, Serializable</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class can be serialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpecialName">
@@ -627,16 +655,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies that the type is treated in a special way by some tools. </para>
-          <block subset="none" type="note">
-            <para>For more information on special names, see Partition I of the CLI 
-         Specification.</para>
-            <para>For more information on <see langword="SpecialName " />in metadata, see 
-      Partition II of the CLI Specification.</para>
-          </block>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the class is special in a way denoted by the name.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -655,10 +678,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies a bitmask used to obtain string format information.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to retrieve string information for native interoperability.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -677,10 +701,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies that LPSTR is interpreted as Unicode.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LPTSTR is interpreted as UNICODE.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -699,10 +724,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Specifies a bitmask used to obtain visibility information.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies type visibility information.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -717,7 +743,10 @@
         <ReturnType>System.Reflection.TypeAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a wrt type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

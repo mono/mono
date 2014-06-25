@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileMigrateEventArgs" FullName="System.Web.Profile.ProfileMigrateEventArgs">
   <TypeSignature Language="C#" Value="public sealed class ProfileMigrateEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Profile.ProfileMigrateEventArgs" /> object provides event information to the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class. The <see cref="T:System.Web.Profile.ProfileMigrateEventArgs" /> object provides access to the <see cref="T:System.Web.HttpContext" /> of the current request and the anonymous user identifier for the anonymous profile in the <see cref="P:System.Web.Profile.ProfileMigrateEventArgs.AnonymousID" /> property. </para>
+      <para>You can use the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event to copy profile property values from an anonymous profile to an authenticated profile when a user who has been anonymously using your application logs in.</para>
+      <para>When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. When the ProfileCommon class is generated, based on the profile properties specified in the Web.config file, a GetProfile method is added that enables you to retrieve a ProfileCommon object based on a user name. You can use the GetProfile method of the current profile to retrieve the property values of the anonymous profile. The anonymous property values can then be copied to the current profile for the authenticated user.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +31,19 @@
         <Parameter Name="anonymousId" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="anonymousId">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileMigrateEventArgs.#ctor(System.Web.HttpContext,System.String)" /> creates an instance of the <see cref="T:System.Web.Profile.ProfileMigrateEventArgs" /> class, sets the <see cref="P:System.Web.Profile.ProfileMigrateEventArgs.Context" /> property to the specified <see cref="T:System.Web.HttpContext" />, and sets the <see cref="P:System.Web.Profile.ProfileMigrateEventArgs.AnonymousID" /> property to the specified <paramref name="anonymousId" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.Profile.ProfileMigrateEventArgs" /> class.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> of the current request.</param>
+        <param name="anonymousId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The anonymous identifier being migrated from.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +56,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Profile.ProfileMigrateEventArgs.AnonymousID" /> property contains the unique identifier for an anonymous user. When someone who has been using your application anonymously logs in, you can handle the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event to copy profile property values from the user's anonymous profile to his or her authenticated profile.</para>
+          <para>When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class and includes profile properties specified in the Web.config file. When the ProfileCommon class is generated, a GetProfile method is added that enables you to retrieve a ProfileCommon object based on a user name. You can use the GetProfile method of the current profile to retrieve the property values of the anonymous profile. The anonymous property values can then be copied to the current profile for the authenticated user. See the second code example for an example of copying anonymous property values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the anonymous identifier for the anonymous profile from which to migrate profile property values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +79,16 @@
         <ReturnType>System.Web.HttpContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Profile.ProfileMigrateEventArgs" /> object provides event information to the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class. The <see cref="P:System.Web.Profile.ProfileMigrateEventArgs.Context" /> property provides access to the <see cref="T:System.Web.HttpContext" /> of the current request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

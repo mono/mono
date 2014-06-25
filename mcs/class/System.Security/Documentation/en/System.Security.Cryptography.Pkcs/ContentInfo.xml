@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContentInfo" FullName="System.Security.Cryptography.Pkcs.ContentInfo">
   <TypeSignature Language="C#" Value="public sealed class ContentInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContentInfo extends System.Object" />
@@ -11,9 +12,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> class represents the CMS/PKCS #7 ContentInfo data structure as defined in the CMS/PKCS #7 standards document. This data structure is the basis for all CMS/PKCS #7 messages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +32,37 @@
         <Parameter Name="content" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> class has the following default property values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Default value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>               <see cref="P:System.Security.Cryptography.Pkcs.ContentInfo.ContentType" />             </para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.1 (data)</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Pkcs.ContentInfo.#ctor(System.Byte[])" /> constructor  creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> class by using an array of byte values as the data and a default <paramref name="object identifier" /> (OID) that represents the content type.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of byte values that represents the data from which to create the <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,10 +79,86 @@
       </Parameters>
       <Docs>
         <param name="oid">To be added.</param>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digestedData and encryptedData content types, which appear in the CMS/PKCS #7 standards document,  are not content types that can be produced by this implementation. However these content types can be passed to this constructor.</para>
+          <para>Use the following OID strings as arguments to the <see cref="M:System.Security.Cryptography.Pkcs.ContentInfo.#ctor(System.Security.Cryptography.Oid,System.Byte[])" /> constructor to build the <paramref name="contentType" /> content type parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>                 <paramref name="contentType " />content type</para>
+                </term>
+                <description>
+                  <para>OID string</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>data</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.1</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>digestedData</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.5</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>encryptedData</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.6</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>envelopedData</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.3</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>hashedData</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.5</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>signedAndEnvelopedData</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.4</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>signedData</para>
+              </term>
+              <description>
+                <para>1.2.840.113549.1.7.2</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Pkcs.ContentInfo.#ctor(System.Security.Cryptography.Oid,System.Byte[])" />  constructor  creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> class by using the specified content type and an array of byte values as the data.</para>
+        </summary>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of byte values that represents the data from which to create the <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="Content">
@@ -66,10 +173,13 @@
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Pkcs.ContentInfo.Content" /> property  retrieves the content of the CMS/PKCS #7 message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentType">
@@ -84,10 +194,13 @@
         <ReturnType>System.Security.Cryptography.Oid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Security.Cryptography.Pkcs.ContentInfo.ContentType" /> property  retrieves the <see cref="T:System.Security.Cryptography.Oid" />   object that contains the <paramref name="object identifier" /> (OID)  of the content type of the inner content of the CMS/PKCS #7 message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -123,11 +236,19 @@
         <Parameter Name="encodedMessage" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="encodedMessage">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Pkcs.ContentInfo.GetContentType(System.Byte[])" /> static method  retrieves the outer content type of the encoded <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> message represented by an array of byte values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the method succeeds, the method returns an <see cref="T:System.Security.Cryptography.Oid" /> object that contains the outer content type of the specified encoded <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> message.</para>
+          <para>If the method fails, it throws an exception.</para>
+        </returns>
+        <param name="encodedMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of byte values that represents the encoded <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> message from which to retrieve the outer content type.</param>
       </Docs>
     </Member>
   </Members>

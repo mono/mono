@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebControl" FullName="System.Web.UI.WebControls.WebControl">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class WebControl : System.Web.UI.Control, System.Web.UI.IAttributeAccessor" />
   <AssemblyInfo>
@@ -28,8 +29,22 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebControl" /> class provides the properties, methods, and events that are common to all Web server controls. You can control the appearance and behavior of a Web server control by setting properties defined in this class. For example, the background color and font color of a control are controlled by using the <see cref="P:System.Web.UI.WebControls.WebControl.BackColor" /> and <see cref="P:System.Web.UI.WebControls.WebControl.ForeColor" /> properties, respectively. On controls that can display a border, you can control the border width, the border style, and the border color by setting the <see cref="P:System.Web.UI.WebControls.WebControl.BorderWidth" />, <see cref="P:System.Web.UI.WebControls.WebControl.BorderStyle" />, and <see cref="P:System.Web.UI.WebControls.WebControl.BorderColor" /> properties. The size of a Web server control can be specified by using the <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> and <see cref="P:System.Web.UI.WebControls.WebControl.Width" /> properties.</para>
+      <para>The behavior of the control can be specified by setting certain properties. You can enable and disable a control by setting the <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property. The place of the control in the tab order is controlled by setting the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property. You can specify a ToolTip for the control by setting the <see cref="P:System.Web.UI.WebControls.WebControl.ToolTip" /> property.</para>
+      <block subset="none" type="note">
+        <para>Not all controls support every property defined in this class. For specific information about whether a property is supported, see the documentation for the specific control.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>Some properties in this class render differently, depending on the browser. Some properties do not render at all, while others render, but have no effect. The <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.TagWriter" /> property of the <see cref="T:System.Web.HttpBrowserCapabilities" /> object determines the way in which a Web server control renders. For browsers that support HTML 4.0, the <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.TagWriter" /> property will contain a regular <see cref="T:System.Web.HttpBrowserCapabilities" /> object, and most properties will be rendered using HTML 4.0 style attributes. Browsers that are not known to support HTML 4.0 will use the <see cref="T:System.Web.UI.Html32TextWriter" /> object. This will automatically map the style attributes to any relevant HTML 3.2 tag attributes. In some cases, such as with the <see cref="P:System.Web.UI.WebControls.WebControl.ForeColor" /> property, the style attributes will be converted into additional tags, such as &lt;font&gt; tags. In some cases, there will be no mapping performed. For specific information about how a property is rendered in different browsers, see the documentation for the specific property.</para>
+      </block>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.WebControl" />, see the <see cref="M:System.Web.UI.WebControls.WebControl.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the base class that defines the methods, properties and events common to all controls in the <see cref="N:System.Web.UI.WebControls" /> namespace.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +53,38 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class that represents a Span HTML element.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.WebControl" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TagKey </para>
+              </term>
+              <description>
+                <para>The <see cref="F:System.Web.UI.HtmlTextWriterTag.Span" />  enumeration value. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is not called directly. Instead, it is often called by the constructor of a derived class to initialize the <see cref="P:System.Web.UI.WebControls.WebControl.TagKey" /> property to the <see cref="F:System.Web.UI.HtmlTextWriterTag.Span" /> enumeration value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class that represents a Span HTML tag.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,9 +99,48 @@
         <Parameter Name="tag" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="tag">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class using the specified HTML tag.</para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.WebControl" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TagKey </para>
+              </term>
+              <description>
+                <para>The <see cref="F:System.Web.UI.HtmlTextWriterTag.Unknown" /> enumeration value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>TagName </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="tag" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is not called directly. Instead, it is often called by the constructor of a derived class to initialize the <see cref="P:System.Web.UI.WebControls.WebControl.TagKey" /> and <see cref="P:System.Web.UI.WebControls.WebControl.TagName" /> properties.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class using the specified HTML tag.</para>
+        </summary>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />An HTML tag. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -71,9 +155,37 @@
         <Parameter Name="tag" Type="System.Web.UI.HtmlTextWriterTag" />
       </Parameters>
       <Docs>
-        <param name="tag">a <see cref="T:System.Web.UI.HtmlTextWriterTag" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class using the specified <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.WebControl" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>TagKey </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.HtmlTextWriterTag" /> enumeration value specified by the <paramref name="tag" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class using the specified HTML tag.</para>
+        </summary>
+        <param name="tag">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,9 +200,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.AccessKey" /> property to specify the keyboard shortcut for the Web server control. This allows you to navigate quickly to the control by pressing the ALT key and the key for the specified character on the keyboard. For example, setting the access key of a control to the string "D" indicates that the user can navigate to the control by pressing ALT+D.</para>
+          <para>Only a single character string is allowed for the <see cref="P:System.Web.UI.WebControls.WebControl.AccessKey" /> property. If you attempt to set this property to a value that is neither null, <see cref="F:System.String.Empty" />, nor a single character string, an exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only in Internet Explorer 4.0 and later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the access key that allows you to quickly navigate to the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -112,9 +234,19 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To render attributes and styles for a Web Server control on the client, you typically call the <see cref="Overload:System.Web.UI.HtmlTextWriter.AddAttribute" />  and <see cref="Overload:System.Web.UI.HtmlTextWriter.AddStyleAttribute" /> methods to insert each attribute and style individually to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream. To simplify the process, this method encapsulates all calls to the <see cref="Overload:System.Web.UI.HtmlTextWriter.AddAttribute" /> and <see cref="Overload:System.Web.UI.HtmlTextWriter.AddStyleAttribute" /> methods for every attribute and style associated with the Web server control. All attributes and styles are inserted into the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream in a single method call. This method is typically overridden by control developers in derived classes to insert the appropriate attributes and styles to the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for the class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.WebControl.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" /> method cannot be used to insert client script. To use client script, see the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds HTML attributes and styles that need to be rendered to the specified <see cref="T:System.Web.UI.HtmlTextWriterTag" />. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -131,9 +263,13 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'Style'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies any nonblank elements of the specified style to the Web control, overwriting any existing style elements of the control. This method is primarily used by control developers.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style to be copied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +284,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.AttributeCollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> collection contains a collection of all attributes declared in the opening tag of a Web server control. This allows you to programmatically control the attributes associated with a Web server control. You can add attributes to the collection or remove attributes from the collection.</para>
+          <block subset="none" type="note">
+            <para>This property is rendered with all attributes in the collection in the control’s opening tag, regardless of the browser settings. Not all browsers support every attribute that is rendered. The unsupported attributes are usually ignored by the browser.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>You cannot add client-side script to a <see cref="T:System.Web.UI.WebControls.WebControl" /> instance using the <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> collection. To add client-side script, use the <see cref="P:System.Web.UI.Page.ClientScript" /> property on the <see cref="T:System.Web.UI.Page" /> control. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of arbitrary attributes (for rendering only) that do not correspond to properties on the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,9 +321,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.BackColor" /> property to specify the background color of the Web server control. This property is set using a <see cref="T:System.Drawing.Color" /> object.</para>
+          <block subset="none" type="note">
+            <para>This property will render for only certain controls. For example, <see cref="T:System.Web.UI.WebControls.Table" />, <see cref="T:System.Web.UI.WebControls.Panel" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.Calendar" />, and <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> will render this property. It will also work for <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.RadioButtonList" /> and <see cref="T:System.Web.UI.WebControls.DataList" /> if their RepeatLayout property is RepeatLayout.Table, not RepeatLayout.Flow.</para>
+          </block>
+          <para>In general, only controls that render as a &lt;table&gt; tag can display a background color in HTML 3.2, whereas almost any control can in HTML 4.0.</para>
+          <para>For controls that render as a &lt;span&gt; tag (including <see cref="T:System.Web.UI.WebControls.Label" />, all validation controls, and list controls with their RepeatLayout property set to RepeatLayout.Flow), this property will work in Microsoft Internet Explorer version 5 and later, but not in Microsoft Internet Explorer version 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the background color of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,9 +357,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.BorderColor" /> property to specify the border color of the Web Server control. This property is set using a <see cref="T:System.Drawing.Color" /> object.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.WebControl.BorderColor" /> property will render only for certain controls. For example, the <see cref="T:System.Web.UI.WebControls.Table" />, <see cref="T:System.Web.UI.WebControls.Panel" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.Calendar" />, and <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> controls will render this property. It will also work for the <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.RadioButtonList" />, and <see cref="T:System.Web.UI.WebControls.DataList" /> controls, if their RepeatLayout property is set to RepeatLayout.Table, not RepeatLayout.Flow. However, it is rendered as the bordercolor attribute, which is not part of the HTML 3.2 standard. The bordercolor attribute works for Microsoft Internet Explorer version 3.0 or later, but not most other browsers.</para>
+          </block>
+          <para>When the <see cref="P:System.Web.UI.WebControls.WebControl.BorderColor" /> property is not set, the browser will use its default border color. Refer to your browser to determine its default color scheme.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border color of the Web control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -223,9 +392,110 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'BorderStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.BorderStyle" /> property to specify the border style for the Web server control. This property is set using one of the <see cref="T:System.Web.UI.WebControls.BorderStyle" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Border Style </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>NotSet </para>
+              </term>
+              <description>
+                <para>The border style is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>None </para>
+              </term>
+              <description>
+                <para>No border </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Dotted </para>
+              </term>
+              <description>
+                <para>A dotted line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Dashed </para>
+              </term>
+              <description>
+                <para>A dashed line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Solid </para>
+              </term>
+              <description>
+                <para>A solid line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Double </para>
+              </term>
+              <description>
+                <para>A solid double line border. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Groove </para>
+              </term>
+              <description>
+                <para>A grooved border for a sunken border appearance. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Ridge </para>
+              </term>
+              <description>
+                <para>A ridged border for a raised border appearance. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Inset </para>
+              </term>
+              <description>
+                <para>An inset border for a sunken control appearance. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Outset </para>
+              </term>
+              <description>
+                <para>An outset border for a raised control appearance. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This property will not render on browsers earlier than Microsoft Internet Explorer 4 for any Web server control. There is no equivalent to it in HTML 3.2.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border style of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,9 +515,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.BorderWidth" /> property to specify a border width for a control.</para>
+          <block subset="none" type="note">
+            <para>This property does not work with all Web server controls. It applies only to controls that display as a table, such as <see cref="T:System.Web.UI.WebControls.Table" /> and <see cref="T:System.Web.UI.WebControls.DataGrid" />.</para>
+          </block>
+          <para>This property is set with a <see cref="T:System.Web.UI.WebControls.Unit" /> object. If the <see cref="P:System.Web.UI.WebControls.Unit.Value" /> property of the <see cref="T:System.Web.UI.WebControls.Unit" /> contains a negative number, an exception is thrown.</para>
+          <block subset="none" type="note">
+            <para>The border width can be expressed only in pixels for browsers earlier than Microsoft Internet Explorer version 5. All unit types are supported in Microsoft Internet Explorer version 5 and later. Refer to the specific control for details.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the border width of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -266,9 +549,15 @@
         <ReturnType>System.Web.UI.WebControls.Style</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Style'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property encapsulates all properties of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class that specify the appearance of the control, such as <see cref="P:System.Web.UI.WebControls.WebControl.BorderColor" /> and <see cref="P:System.Web.UI.WebControls.WebControl.Font" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style of the Web server control. This property is used primarily by control developers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -290,9 +579,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a <see cref="T:System.Web.UI.WebControls.Style" /> object has been created for the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> property. This property is primarily used by control developers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -320,9 +612,16 @@
         <Parameter Name="controlSrc" Type="System.Web.UI.WebControls.WebControl" />
       </Parameters>
       <Docs>
-        <param name="controlSrc">To be added: an object of type 'WebControl'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.CopyBaseAttributes(System.Web.UI.WebControls.WebControl)" /> method copies the <see cref="P:System.Web.UI.WebControls.WebControl.AccessKey" />, <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" />, <see cref="P:System.Web.UI.WebControls.WebControl.ToolTip" />, <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" />, and <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> properties from the specified Web server control to the Web server control that this method is called from. This is commonly used in cases where a Web server control works by dynamically creating new controls while it is rendering and using the controls. This method is useful in this situation because it copies all properties of Web server controls not encapsulated by the <see cref="T:System.Web.UI.WebControls.Style" /> object so they can be placed on the outermost control of a tag that is being rendered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the properties not encapsulated by the <see cref="P:System.Web.UI.WebControls.WebControl.Style" /> object from the specified Web server control to the Web server control that this method is called from. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="controlSrc">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.WebControl" /> that represents the source control with properties to be copied to the Web server control that this method is called from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,9 +636,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Style'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.CreateControlStyle" /> method is used to create the style object that is used internally to implement all style related properties. Derived classes can override this method to create a style that is appropriate to the class. This method is primarily used by control developers.</para>
+          <para>Note   Control developers should return a <see cref="T:System.Web.UI.WebControls.Style" /> that derives from the <see cref="T:System.Web.UI.WebControls.Style" /> that the base control returns. It cannot be assumed that the <see cref="P:System.Web.UI.WebControls.WebControl.ControlStyle" /> is of a particular Style type since a derived control may return a different type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the style object that is used internally by the <see cref="T:System.Web.UI.WebControls.WebControl" /> class to implement all style related properties. This method is used primarily by control developers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Style" /> that is used to implement all style-related properties of the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -354,9 +663,26 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.CssClass" /> property to specify the CSS class to render on the client for the Web Server control. This property will render on browsers for all controls. It will always be rendered as the class attribute, regardless of the browser.</para>
+          <block subset="none" type="note">
+            <para>This example has a text box that accepts user input, which is a potential security threat. By default, ASP.NET Web pages validate that user input does not include script or HTML elements. For more information, see <format type="text/html"><a href="772c7312-211a-4eb3-8d6e-eec0aa1dcc07">Script Exploits Overview</a></format>.</para>
+          </block>
+          <para>For example, suppose you have the following Web server control declaration: </para>
+          <code> &lt;asp:TextBox id="TextBox1" ForeColor="Red" CssClass="class1" /&gt;</code>
+          <para>The following HTML is rendered on the client for the previous Web server control declaration: </para>
+          <code> &lt;input type=text class="class1" style="ForeColor:red"&gt;</code>
+          <para>If you use cascading style sheets (CSS) to customize the appearance of a control, use either inline styles or a separate CSS file, but not both. Using both inline styles and a separate CSS file could cause unexpected results.</para>
+          <block subset="none" type="note">
+            <para>On browsers that do not support CSS, setting the <see cref="P:System.Web.UI.WebControls.WebControl.CssClass" /> property will have no effect.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Cascading Style Sheet (CSS) class rendered by the Web server control on the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -376,9 +702,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property of a control is set to false, the control typically appears dimmed. If the control is an input element, the browser prevents the user from clicking or typing in it. HTML elements that are rendered for a server control are marked as disabled by setting their disabled attribute or their CSS class attribute. For more information, see <see cref="P:System.Web.UI.WebControls.WebControl.SupportsDisabledAttribute" /> and <see cref="P:System.Web.Configuration.PagesSection.ControlRenderingCompatibilityVersion" />.</para>
+          <para>This property propagates down the control hierarchy. If you disable a container control, the child controls within that container are also disabled. For more information, see the <see cref="P:System.Web.UI.WebControls.WebControl.IsEnabled" /> property.</para>
+          <block subset="none" type="note">
+            <para>In a custom composite control, this inheritance behavior does not apply to controls that have not yet created their child controls. You must either set the enabled state of the child controls when they are created, or override the <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property to call the <see cref="M:System.Web.UI.Control.EnsureChildControls" /> method.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>Disabling a control only prevents interaction with the control by the user through the browser UI. It is possible for a user to craft a request that submits a postback that is processed by the page even if controls on the page are disabled. Before you process a postback request, check to make sure that the control is enabled and visible.</para>
+          </block>
+          <para>Not all controls support this property. See the individual controls for details.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the Web server control is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -411,9 +752,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebControl.EnableTheming" /> property indicates whether themes are enabled for a specified control. When the <see cref="P:System.Web.UI.WebControls.WebControl.EnableTheming" /> property is true, the theme directory for the application is searched for control skins to apply. If no skin for the particular control exists in the theme directory, skins are not applied.</para>
+          <para>When the <see cref="P:System.Web.UI.WebControls.WebControl.EnableTheming" /> property is false, the theme directory is not searched and the contents of the <see cref="P:System.Web.UI.WebControls.WebControl.SkinID" /> property is not used.</para>
+          <para>A control can override the <see cref="P:System.Web.UI.WebControls.WebControl.EnableTheming" /> value set by its parent control or the containing page. For example, if a parent control has the <see cref="P:System.Web.UI.WebControls.WebControl.EnableTheming" /> property set to false, you can selectively apply themes to child controls that are contained within the parent by setting the <see cref="P:System.Web.UI.WebControls.WebControl.EnableTheming" /> property to true on the individual child controls.</para>
+          <para>Themes can be enabled at the page, container, or control level. When theming is disabled at the page or container level, themes are disabled for all controls that are contained by the page or container. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether themes apply to this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Font">
@@ -423,9 +773,20 @@
         <ReturnType>System.Web.UI.WebControls.FontInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FontInfo'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.Font" /> property to specify the font properties of the Web Server control. This property includes subproperties that can be accessed declaratively in the form of <paramref name="Property-Subproperty" /> (for example Font-Bold) or programmatically in the form of <paramref name="Property.Subproperty" /> (for example Font.Bold).</para>
+          <para>All but one subproperty will render in browsers prior to Microsoft Internet Explorer version 4 for all controls. They are: <see cref="P:System.Web.UI.WebControls.FontInfo.Bold" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Italic" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Name" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Names" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Strikeout" />, <see cref="P:System.Web.UI.WebControls.FontInfo.Underline" />, and <see cref="P:System.Web.UI.WebControls.FontInfo.Size" /> (but only named font sizes, such as Small, Smaller, and so on, will work).</para>
+          <block subset="none" type="note">
+            <para>Although these subproperties render in browsers prior to Microsoft Internet Explorer version 4, the HTML that is rendered is different than later browsers. Instead of rendering as style attributes, these subproperties are rendered as HTML elements, such as &lt;b&gt; and &lt;font&gt;.</para>
+          </block>
+          <para>The one subproperty that will not render on earlier browsers for all controls is <see cref="P:System.Web.UI.WebControls.FontInfo.Overline" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the font properties associated with the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -448,9 +809,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.ForeColor" /> property to specify the foreground color of the Web server control. The foreground color is usually the color of the text. This property will render on browsers earlier than Microsoft Internet Explorer version 4 for all controls, except the <see cref="T:System.Web.UI.WebControls.Image" />, <see cref="T:System.Web.UI.WebControls.AdRotator" />, <see cref="T:System.Web.UI.WebControls.HyperLink" /> and <see cref="T:System.Web.UI.WebControls.LinkButton" />.</para>
+          <block subset="none" type="note">
+            <para>On browsers earlier than Microsoft Internet Explorer version 4, this property is rendered as &lt;font&gt; tags.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color (typically the color of the text) of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -483,9 +853,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebControl.HasAttributes" /> property returns true when the <see cref="T:System.Web.UI.WebControls.WebControl" /> instance has attribute name/value pairs. The attribute pairs can be set either in the  property or in the view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the control has attributes set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Height">
@@ -496,9 +872,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> property to specify the height of the Web server control.</para>
+          <block subset="none" type="note">
+            <para>This property does not render for all controls in browsers earlier than Microsoft Internet Explorer version 4. Controls that do not render this property in earlier browsers include <see cref="T:System.Web.UI.WebControls.Label" />, <see cref="T:System.Web.UI.WebControls.HyperLink" />, <see cref="T:System.Web.UI.WebControls.LinkButton" />, and any validation controls. The <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.RadioButtonList" /> and <see cref="T:System.Web.UI.WebControls.DataList" /> also do not render this property in earlier browsers when their RepeatLayout property is set to RepeatLayout.Flow. Furthermore, only unit types of Pixel and Percentage are supported in earlier browsers.</para>
+          </block>
+          <para>Because this property is nonstandard HTML, Web server controls that display as a table, such as <see cref="T:System.Web.UI.WebControls.Table" /> and <see cref="T:System.Web.UI.WebControls.DataGrid" />, do not support this property in browsers earlier than Microsoft Internet Explorer version 4.</para>
+          <block subset="none" type="note">
+            <para>To set the <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> property to a unit type other than the default of Pixel, you must create a new unit type specific to the unit type you want. For example, to set a control's <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> property to a percentage value of 100, you could do the following:</para>
+            <para>myWebControl.Width = Unit.Percentage(100);</para>
+            <para>For more information on the unit types available for the <see cref="P:System.Web.UI.WebControls.WebControl.Height" /> property, see the <see cref="T:System.Web.UI.WebControls.Unit" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the height of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -520,9 +911,27 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a read-only property. If you want to disable a control, you set its <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property to false.</para>
+          <para>If a control is not contained by another control, the value of the <see cref="P:System.Web.UI.WebControls.WebControl.IsEnabled" /> property is always the same as the value of the <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.WebControl.IsEnabled" /> property has a value that is different from the <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property if a control is a child of another control and if all the following circumstances are true:</para>
+          <list type="bullet">
+            <item>
+              <para>The value of the <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property or the <see cref="P:System.Web.UI.WebControls.WebControl.IsEnabled" /> property of the parent control is false.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property of the child control is set to true.</para>
+            </item>
+          </list>
+          <para>In this situation, the child control inherits the disabled state of the parent control. The <see cref="P:System.Web.UI.WebControls.WebControl.IsEnabled" /> property of the child control returns false to indicate that the control is disabled even though the child control was not explicitly disabled by setting its <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property to false. The parent control itself might have its <see cref="P:System.Web.UI.WebControls.WebControl.Enabled" /> property set to true but might inherit the disabled state from its parent, and so on.</para>
+          <para>When ASP.NET renders HTML elements for a server control, it marks the elements as disabled by setting their disabled attribute or their CSS class attribute. For more information, see <see cref="P:System.Web.UI.WebControls.WebControl.SupportsDisabledAttribute" /> and <see cref="P:System.Web.Configuration.PagesSection.ControlRenderingCompatibilityVersion" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the control is enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadViewState">
@@ -535,9 +944,17 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code. However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.LoadViewState(System.Object)" /> method restores the view-state information that was saved during a previous <see cref="M:System.Web.UI.WebControls.WebControl.SaveViewState" /> request. The <see cref="T:System.Web.UI.WebControls.WebControl" /> class overrides the base <see cref="M:System.Web.UI.Control.LoadViewState(System.Object)" /> method to handle the <see cref="P:System.Web.UI.Control.ViewState" />, <see cref="P:System.Web.UI.WebControls.WebControl.Style" />, and <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores view-state information from a previous request that was saved with the <see cref="M:System.Web.UI.WebControls.WebControl.SaveViewState" /> method. </para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the control state to restore. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -554,9 +971,13 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'Style'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies any nonblank elements of the specified style to the Web control, but will not overwrite any existing style elements of the control. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style to be copied. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -573,9 +994,18 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.Render(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.Render(System.Web.UI.HtmlTextWriter)" /> method sends the Web control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> instance. Override this method to send your custom server control to the client.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.Render(System.Web.UI.HtmlTextWriter)" /> method first calls the <see cref="M:System.Web.UI.WebControls.WebControl.RenderBeginTag(System.Web.UI.HtmlTextWriter)" /> method, then the <see cref="M:System.Web.UI.WebControls.WebControl.RenderContents(System.Web.UI.HtmlTextWriter)" /> method, and finally the <see cref="M:System.Web.UI.WebControls.WebControl.RenderEndTag(System.Web.UI.HtmlTextWriter)" /> method to send the control to the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the control to the specified HTML writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the control content. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -592,9 +1022,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is made public so other controls can render multiple controls in between the opening and closing tags of a Web server control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the HTML opening tag of the control to the specified writer. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -611,9 +1048,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Web.UI.WebControls.WebControl.RenderContents(System.Web.UI.HtmlTextWriter)" /> method to render the contents of the control between the begin and end tags. The default implementation of this method renders any child controls.</para>
+          <para>If your control has child controls, you must either call the base <see cref="M:System.Web.UI.WebControls.WebControl.RenderContents(System.Web.UI.HtmlTextWriter)" /> method or call the <see cref="M:System.Web.UI.Control.RenderChildren(System.Web.UI.HtmlTextWriter)" /> at the point where you want the child controls to be rendered to the text writer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the contents of the control to the specified writer. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -630,9 +1075,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is made public so other controls can render multiple controls in between the opening and closing tags of a Web server control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the HTML closing tag of the control into the specified writer. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -647,9 +1099,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Object" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.SaveViewState" /> method is used primarily by control developers.</para>
+          <para>View state is the cumulative values of the properties for a server control. These values are placed automatically in the <see cref="P:System.Web.UI.Control.ViewState" /> property for the server control, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. The <see cref="P:System.Web.UI.Control.ViewState" /> property value is then persisted to a string object after the save state stage of the life cycle for the server control. For more information, see <format type="text/html"><a href="7949d756-1a79-464e-891f-904b1cfc7991">Introduction to the ASP.NET Page Life Cycle</a></format>. </para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in a hidden HTML input element. When you author custom server controls, you can improve efficiency by overriding the <see cref="M:System.Web.UI.WebControls.WebControl.SaveViewState" /> method and modifying the <see cref="P:System.Web.UI.Control.ViewState" /> property for your server control. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves any state that was modified after the <see cref="M:System.Web.UI.WebControls.Style.TrackViewState" /> method was invoked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the current view state of the control; otherwise, if there is no view state associated with the control, null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -671,9 +1134,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skins available to a control are contained in one or more skin files in a theme directory. The <see cref="P:System.Web.UI.WebControls.WebControl.SkinID" /> property specifies which of these skins to apply to the control. A skin is specific to a particular control; you cannot share skin setting between controls of different types.</para>
+          <para>If you do not set the <see cref="P:System.Web.UI.WebControls.WebControl.SkinID" /> property, a control uses the default skin if one is defined. For example, if a skin without an ID is defined for an <see cref="T:System.Web.UI.WebControls.Image" /> control, then that skin applies to all <see cref="T:System.Web.UI.WebControls.Image" /> controls that do not explicitly reference a skin by ID and that are not set to disable theming. If a skin with an ID is defined for an <see cref="T:System.Web.UI.WebControls.Image" /> control, then that skin applies to only <see cref="T:System.Web.UI.WebControls.Image" /> controls whose <see cref="P:System.Web.UI.WebControls.WebControl.SkinID" /> is set to that ID.</para>
+          <para>If the skin files in a theme directory do not contain a skin with the specified <see cref="P:System.Web.UI.WebControls.WebControl.SkinID" />, an <see cref="T:System.ArgumentException" /> exception is thrown at runtime.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the skin to apply to the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Style">
@@ -684,9 +1155,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.CssStyleCollection" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.Style" /> collection to manage the style attributes rendered in the outer tag of the Web server control. This property will render on all browsers for all controls.</para>
+          <block subset="none" type="note">
+            <para>Browsers that do not support style attributes will ignore the rendered HTML.</para>
+          </block>
+          <para>Any style values set through the strongly typed style properties (for example, BackColor="Red") will automatically override a corresponding value in this collection.</para>
+          <para>Values set in this collection are not automatically reflected by the strongly typed style properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of text attributes that will be rendered as a style attribute on the outer tag of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -716,9 +1198,18 @@
       </Parameters>
       <Docs>
         <param name="key">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.System#Web#UI#IAttributeAccessor#GetAttribute(System.String)" /> method is an explicit interface member implementation. It can be used only when the instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class is cast to an <see cref="T:System.Web.UI.IAttributeAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an attribute of the Web control with the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the attribute.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IAttributeAccessor.SetAttribute">
@@ -737,9 +1228,16 @@
       </Parameters>
       <Docs>
         <param name="key">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.System#Web#UI#IAttributeAccessor#SetAttribute(System.String,System.String)" /> method is an explicit interface member implementation. It can be used only when the instance of the <see cref="T:System.Web.UI.WebControls.WebControl" /> class is cast to an <see cref="T:System.Web.UI.IAttributeAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an attribute of the Web control to the specified name and value.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value component of the attribute's name/value pair.</param>
       </Docs>
     </Member>
     <Member MemberName="TabIndex">
@@ -750,9 +1248,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'short'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property to specify or determine the tab index of a Web server control on the Web Forms page. When you press the Tab key, the order in which the Web server controls receive focus is determined by the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property of each control. When a page is initially loaded, the first item that receives focus when the Tab key is pressed is the address bar. Next, the controls on the Web Forms page are tabbed to in ascending order, based on the value of the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property of each control, starting with the smallest positive, nonzero value. If multiple controls share the same tab index, the controls will receive focus in the order they are declared on the Web Forms page. Finally, controls that have a tab index of zero are tabbed to in the order they are declared.</para>
+          <block subset="none" type="note">
+            <para>Only controls with a nonzero tab index will render the tabindex attribute.</para>
+          </block>
+          <para>You can remove a Web Server control from the tab order by setting the <see cref="P:System.Web.UI.WebControls.WebControl.TabIndex" /> property to a negative value.</para>
+          <block subset="none" type="note">
+            <para>This property is supported only in Internet Explorer 4 and later.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the tab index of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -772,9 +1283,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.HtmlTextWriterTag" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.TagKey" /> property to determine the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value that is associated with this Web server control. This property is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value that corresponds to this Web server control. This property is used primarily by control developers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -796,9 +1313,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.TagName" /> property to determine the name of the control tag associated with this Web server control. This property is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the control tag. This property is used primarily by control developers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -821,9 +1344,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.ToolTip" /> property to specify the custom text that is displayed when the mouse pointer hovers over the Web server control.</para>
+          <block subset="none" type="note">
+            <para>This property is rendered for all browsers. However, only Microsoft Internet Explorer will display this property as a ToolTip. All other browsers will ignore this property.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed when the mouse pointer hovers over the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -846,8 +1379,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.TrackViewState" /> method is used primarily by control developers. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebControl.TrackViewState" /> marks the starting point at which to begin tracking and saving changes to the view state for the control. The <see cref="M:System.Web.UI.WebControls.WebControl.TrackViewState" /> method is called automatically by ASP.NET when a server control is initialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes the control to track changes to its view state so they can be stored in the object's <see cref="P:System.Web.UI.Control.ViewState" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -862,9 +1402,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Unit'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.WebControl.Width" /> property to specify the width of the Web server control.</para>
+          <block subset="none" type="note">
+            <para>This property does not render for all controls in browsers earlier than Microsoft Internet Explorer version 4. Controls that do not render this property in earlier browsers include <see cref="T:System.Web.UI.WebControls.Label" />, <see cref="T:System.Web.UI.WebControls.HyperLink" />, <see cref="T:System.Web.UI.WebControls.LinkButton" />, and any validation controls. The <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.RadioButtonList" /> and <see cref="T:System.Web.UI.WebControls.DataList" /> also do not render this property in earlier browsers when their RepeatLayout property is set to RepeatLayout.Flow. Furthermore, only unit types of Pixel and Percentage are supported in earlier browsers.</para>
+          </block>
+          <para>Because this property is nonstandard HTML, Web server controls that display as a table, such as <see cref="T:System.Web.UI.WebControls.Table" /> and <see cref="T:System.Web.UI.WebControls.DataGrid" />, do not support this property in browsers earlier than Microsoft Internet Explorer version 4.</para>
+          <block subset="none" type="note">
+            <para>To set the <see cref="P:System.Web.UI.WebControls.WebControl.Width" /> property declaratively to a unit type other than the default of Pixel, you must create a new unit type specific to the unit type you want. For example, to set a control's <see cref="P:System.Web.UI.WebControls.WebControl.Width" /> property to a percentage value of 100, you could do the following:</para>
+            <para>myWebControl.width = Unit.Percentage(100);</para>
+            <para>For more information on the unit types available for the <see cref="P:System.Web.UI.WebControls.WebControl.Width" /> property, see the <see cref="T:System.Web.UI.WebControls.Unit" /> class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the width of the Web server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

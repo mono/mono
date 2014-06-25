@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlAtomicValue" FullName="System.Xml.Schema.XmlAtomicValue">
   <TypeSignature Language="C#" Value="public sealed class XmlAtomicValue : System.Xml.XPath.XPathItem, ICloneable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit XmlAtomicValue extends System.Xml.XPath.XPathItem implements class System.ICloneable" />
@@ -15,9 +16,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the typed value of a validated XML element or attribute. The <see cref="T:System.Xml.Schema.XmlAtomicValue" /> class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clone">
@@ -33,10 +37,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a copy of this <see cref="T:System.Xml.Schema.XmlAtomicValue" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlAtomicValue" /> object copy of this <see cref="T:System.Xml.Schema.XmlAtomicValue" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsNode">
@@ -51,10 +61,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.IsNode" /> property always returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the validated XML element or attribute is an XPath node or an atomic value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -70,10 +86,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlAtomicValue" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Xml.Schema.XmlAtomicValue.Clone" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a copy of this <see cref="T:System.Xml.Schema.XmlAtomicValue" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -89,9 +114,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string value of the validated XML element or attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value of the validated XML element or attribute.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypedValue">
@@ -106,10 +137,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the item is not valid according to its specified schema type, the value of the <see cref="P:System.Xml.Schema.XmlAtomicValue.TypedValue" /> property is equivalent to the value of the <see cref="P:System.Xml.Schema.XmlAtomicValue.Value" /> property.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current validated XML element or attribute as a boxed object of the most appropriate Microsoft .NET Framework type according to its schema type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -124,10 +162,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string value of the validated XML element or attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueAs">
@@ -146,12 +187,25 @@
         <Parameter Name="nsResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="nsResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Xml.Schema.XmlAtomicValue.ValueAs(System.Type,System.Xml.IXmlNamespaceResolver)" /> method attempts to convert the value of the validated XML element or attribute to the Microsoft .NET Framework type specified.</para>
+          <para>The <see cref="T:System.Xml.IXmlNamespaceResolver" /> object is used to resolve namespace prefixes related to type conversions. For example, when converting an xs:QName to an xs:string.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the validated XML element or attribute's value as the type specified using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the validated XML element or attribute as the type requested.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to return the validated XML element or attribute's value as.</param>
+        <param name="nsResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.IXmlNamespaceResolver" /> object used to resolve namespace prefixes.</param>
       </Docs>
     </Member>
     <Member MemberName="ValueAsBoolean">
@@ -166,10 +220,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueAsBoolean" /> property attempts to convert the value of the validated XML element or attribute to the Microsoft .NET Framework <see cref="T:System.Boolean" /> type according to the XPath 2.0 rules for casting the item's type.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validated XML element or attribute's value as a <see cref="T:System.Boolean" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueAsDateTime">
@@ -184,10 +245,17 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueAsDateTime" /> property attempts to convert the value of the validated XML element or attribute to the Microsoft .NET Framework <see cref="T:System.DateTime" /> type according to the XPath 2.0 rules for casting the item's type.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validated XML element or attribute's value as a <see cref="T:System.DateTime" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueAsDecimal">
@@ -218,10 +286,17 @@
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueAsDouble" /> property attempts to convert the value of the validated XML element or attribute to the Microsoft .NET Framework <see cref="T:System.Double" /> type according to the XPath 2.0 rules for casting the item's type.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validated XML element or attribute's value as a <see cref="T:System.Double" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueAsInt">
@@ -236,10 +311,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueAsInt" /> property attempts to convert the value of the validated XML element or attribute to the Microsoft .NET Framework <see cref="T:System.Int32" /> type according to the XPath 2.0 rules for casting the item's type.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validated XML element or attribute's value as an <see cref="T:System.Int32" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueAsLong">
@@ -254,10 +336,17 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueAsLong" /> property attempts to convert the value of the validated XML element or attribute to the Microsoft .NET Framework <see cref="T:System.Int64" /> type according to the XPath 2.0 rules for casting the item's type.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the validated XML element or attribute's value as an <see cref="T:System.Int64" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueType">
@@ -272,10 +361,18 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueType" /> property gets the .NET Framework type of the typed value of the validated XML element or attribute.</para>
+          <para>For example, an element of type xs:int would have a <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueType" /> of <see cref="T:System.Int32" /> by default. However, the <see cref="P:System.Xml.Schema.XmlAtomicValue.ValueType" /> could be any one of the valid types that can be mapped to xs:int, such as <see cref="T:System.Int16" /> or <see cref="T:System.Double" />.</para>
+          <para>For more information about type support in the <see cref="N:System.Xml" /> namespace, see <format type="text/html"><a href="63570538-06e3-4401-ad4d-ac50be90c7bf">Type Support in the System.Xml Classes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Microsoft .NET Framework type of the validated XML element or attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlType">
@@ -290,10 +387,16 @@
         <ReturnType>System.Xml.Schema.XmlSchemaType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Schema.XmlAtomicValue.XmlType" /> property gets the <see cref="T:System.Xml.Schema.XmlSchemaType" /> for the validated XML element or attribute. For example, the <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> or <see cref="T:System.Xml.Schema.XmlSchemaComplexType" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Schema.XmlSchemaType" /> for the validated XML element or attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

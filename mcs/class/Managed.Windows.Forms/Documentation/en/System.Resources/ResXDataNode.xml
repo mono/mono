@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResXDataNode" FullName="System.Resources.ResXDataNode">
   <TypeSignature Language="C#" Value="public sealed class ResXDataNode : System.Runtime.Serialization.ISerializable" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Resources.ResXDataNode" /> class supports the representation of rich data types within a resource file. It can support the storage of any object in a resource file, so long as the object supports serialization and type editors. </para>
+      <para>You can create a <see cref="T:System.Resources.ResXDataNode" /> object by calling one of its overloaded class constructors. You can then add the resource item or element to a resource file by calling the <see cref="M:System.Resources.ResXResourceWriter.AddResource(System.Resources.ResXDataNode)" /> method. </para>
+      <para>To retrieve an existing <see cref="T:System.Resources.ResXDataNode" /> object, you must enumerate the <see cref="T:System.Resources.ResXDataNode" /> objects in an XML resource file by instantiating a <see cref="T:System.Resources.ResXResourceReader" /> object, setting the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property to true, and calling the <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method to get an enumerator. The example provides an illustration. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an element in an XML resource (.resx) file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +37,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXDataNode" /> class. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The resource to store. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -45,10 +59,15 @@
         <Parameter Name="fileRef" Type="System.Resources.ResXFileRef" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="fileRef">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Resources.ResXDataNode" /> class with a reference to a resource file.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
+        <param name="fileRef">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file reference to use as the resource.</param>
       </Docs>
     </Member>
     <Member MemberName="Comment">
@@ -61,9 +80,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a comment has not been assigned to the resource item, the value of the <see cref="P:System.Resources.ResXDataNode.Comment" /> property is <see cref="F:System.String.Empty" />.</para>
+          <para>You access the <see cref="P:System.Resources.ResXDataNode.Comment" /> property of an data node in an existing XML resource file by instantiating a <see cref="T:System.Resources.ResXResourceReader" /> object, setting the <see cref="P:System.Resources.ResXResourceReader.UseResXDataNodes" /> property to true, and calling the <see cref="M:System.Resources.ResXResourceReader.GetEnumerator" /> method to retrieve an <see cref="T:System.Collections.IDictionaryEnumerator" /> object that you use to enumerate the items in the XML resource file. The <see cref="P:System.Collections.IDictionaryEnumerator.Value" /> property returns the <see cref="T:System.Resources.ResXDataNode" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an arbitrary comment regarding this resource. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileRef">
@@ -76,9 +102,12 @@
         <ReturnType>System.Resources.ResXFileRef</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the file reference for this resource.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetNodePosition">
@@ -92,9 +121,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the position of the resource in the resource file. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that specifies the location of this resource in the resource file as a line position (<see cref="P:System.Drawing.Point.X" />) and a column position (<see cref="P:System.Drawing.Point.Y" />). If this resource is not part of a resource file, this method returns a structure that has an <see cref="P:System.Drawing.Point.X" /> of 0 and a <see cref="P:System.Drawing.Point.Y" /> of 0. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -110,10 +145,20 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the stored value currently exists in memory, it is returned directly. If it is stored in the resource file and it is not a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> looks for a <see cref="T:System.ComponentModel.TypeConverter" /> by using the specified type resolution service that can convert from a string to the appropriate object. If the resource is a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> tries to de-serialize it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the object that is stored by this node by using the specified type resolution service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that corresponds to the stored value. </para>
+        </returns>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type resolution service to use when looking for a type converter.</param>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -129,10 +174,20 @@
         <Parameter Name="names" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <param name="names">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the stored value currently exists in memory, it is returned directly. If it is stored in the resource file and it is not a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> looks in the assemblies identified by names to find the object's corresponding type, and then looks for a <see cref="T:System.ComponentModel.TypeConverter" /> that can convert from a string to the appropriate object. If the resource is a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> tries to deserialize it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the object that is stored by this node by searching the specified assemblies.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that corresponds to the stored value. </para>
+        </returns>
+        <param name="names">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of assemblies to search for the type of the object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetValueTypeName">
@@ -148,10 +203,17 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type name for the value by using the specified type resolution service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the fully qualified name of the type.</para>
+        </returns>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type resolution service to use to locate a converter for this type. </param>
       </Docs>
     </Member>
     <Member MemberName="GetValueTypeName">
@@ -167,10 +229,17 @@
         <Parameter Name="names" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <param name="names">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type name for the value by examining the specified assemblies.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the fully qualified name of the type.</para>
+        </returns>
+        <param name="names">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assemblies to examine for the type. </param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -183,9 +252,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of this resource.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
@@ -202,10 +274,18 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Resources.ResXDataNode" /> instance is cast to an <see cref="T:System.Runtime.Serialization.ISerializable" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the data needed to serialize the target object.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />An  object to populate with data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination for this serialization.</param>
       </Docs>
     </Member>
   </Members>

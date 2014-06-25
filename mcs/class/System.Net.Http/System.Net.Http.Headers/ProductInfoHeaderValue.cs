@@ -154,13 +154,17 @@ namespace System.Net.Http.Headers
 			var value = new ProductHeaderValue ();
 			value.Name = lexer.GetStringValue (t);
 
+			var pos = lexer.Position;
 			t = lexer.Scan ();
 			if (t == Token.Type.SeparatorSlash) {
+
 				t = lexer.Scan ();
 				if (t != Token.Type.Token)
 					return false;
 
 				value.Version = lexer.GetStringValue (t);
+			} else {
+				lexer.Position = pos;
 			}
 
 			parsedValue = new ProductInfoHeaderValue (value);

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConfigXmlDocument" FullName="System.Configuration.ConfigXmlDocument">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class ConfigXmlDocument : System.Xml.XmlDocument, System.Configuration.IConfigXmlNode, System.Configuration.Internal.IConfigErrorInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ConfigXmlDocument extends System.Xml.XmlDocument implements class System.Configuration.IConfigXmlNode, class System.Configuration.Internal.IConfigErrorInfo" />
@@ -22,8 +23,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.ConfigXmlDocument" /> wraps the corresponding <see cref="T:System.Xml.XmlDocument" /> type to carry the necessary information for reporting file-name and line numbers. This information is necessary when the system issues configuration errors.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Wraps the corresponding <see cref="T:System.Xml.XmlDocument" /> type and also carries the necessary information for reporting file-name and line numbers. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.ConfigXmlDocument" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateAttribute">
@@ -60,12 +70,21 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added: an object of type 'string'</param>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceUri">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlAttribute'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a configuration element attribute.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Xml.Serialization.XmlAttributes.XmlAttribute" /> attribute.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix definition.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name that is used locally.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL that is assigned to the namespace.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateCDataSection">
@@ -84,10 +103,17 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlCDataSection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an XML CData section.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlCDataSection" /> value.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to use.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateComment">
@@ -107,9 +133,15 @@
       </Parameters>
       <Docs>
         <param name="comment">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlComment'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create an XML comment.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlComment" /> value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateElement">
@@ -130,12 +162,21 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added: an object of type 'string'</param>
-        <param name="localName">To be added: an object of type 'string'</param>
-        <param name="namespaceUri">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlElement'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a configuration element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlElement" /> value.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix definition.</param>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used locally.</param>
+        <param name="namespaceUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace for the URL.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateSignificantWhitespace">
@@ -154,10 +195,17 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlSignificantWhitespace'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates white spaces.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlSignificantWhitespace" /> value.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to use.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateTextNode">
@@ -176,10 +224,17 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlText'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create a text node.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlText" /> value.</para>
+        </returns>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to use.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateWhitespace">
@@ -198,10 +253,17 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="data">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Xml.XmlWhitespace'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates white space.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlWhitespace" /> value.</para>
+        </returns>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to use.</param>
       </Docs>
     </Member>
     <Member MemberName="Filename">
@@ -217,9 +279,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration file name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LineNumber">
@@ -235,9 +300,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current node line number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Load">
@@ -256,9 +324,13 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads the configuration file.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file.</param>
       </Docs>
     </Member>
     <Member MemberName="LoadSingleElement">
@@ -278,10 +350,15 @@
         <Parameter Name="sourceReader" Type="System.Xml.XmlTextReader" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <param name="sourceReader">To be added: an object of type 'Xml.XmlTextReader'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads a single configuration element.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file.</param>
+        <param name="sourceReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source for the reader.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Configuration.IConfigXmlNode.Filename">
@@ -332,9 +409,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration file name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Configuration.Internal.IConfigErrorInfo.LineNumber">
@@ -349,9 +429,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration line number.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

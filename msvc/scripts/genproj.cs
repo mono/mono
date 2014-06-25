@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using System.Linq;
+using System.Xml;
 
 public enum Target {
 	Library, Exe, Module, WinExe
@@ -25,23 +27,24 @@ class SlnGenerator {
 	{
 		switch (formatVersion) {
 		case "2008":
-			this.header = makeHeader ("10.00", "2008");
+			this.header = MakeHeader ("10.00", "2008");
 			break;
 		default:
-			this.header = makeHeader ("12.00", "2012");
+			this.header = MakeHeader ("12.00", "2012");
 			break;
 		}
 	}
 
-	private string makeHeader (string formatVersion, string yearTag)
-	{
-		return string.Format ("Microsoft Visual Studio Solution File, Format Version {0}" + NewLine + "# Visual Studio {1}", formatVersion, yearTag);
-	}
 	const string project_start = "Project(\"{{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}}\") = \"{0}\", \"{1}\", \"{2}\""; // Note: No need to double up on {} around {2}
 	const string project_end = "EndProject";
 
 	List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
-	private string header;
+	string header;
+
+	string MakeHeader (string formatVersion, string yearTag)
+	{
+		return string.Format ("Microsoft Visual Studio Solution File, Format Version {0}" + NewLine + "# Visual Studio {1}", formatVersion, yearTag);
+	}
 
 	public void Add (MsbuildGenerator.VsCsproj vsproj)
 	{
@@ -58,7 +61,7 @@ class SlnGenerator {
 			sln.WriteLine ();
 			sln.WriteLine (header);
 			foreach (var proj in libraries) {
-				sln.WriteLine (project_start, proj.library, proj.csprojFileName, proj.projectGuid);
+				sln.WriteLine (project_start, proj.library, proj.csProjFilename, proj.projectGuid);
 				sln.WriteLine (project_end);
 			}
 			sln.WriteLine ("Global");
@@ -96,6 +99,7 @@ class SlnGenerator {
 
 class MsbuildGenerator {
 	static readonly string NewLine = SlnGenerator.NewLine;
+	static XmlNamespaceManager xmlns;
 
 	public const string profile_2_0 = "_2_0";
 	public const string profile_3_5 = "_3_5";
@@ -113,30 +117,51 @@ class MsbuildGenerator {
 		using (var input = new StreamReader ("csproj.tmpl")) {
 			template = input.ReadToEnd ();
 		}
+
+		xmlns = new XmlNamespaceManager (new NameTable ());
+		xmlns.AddNamespace ("x", "http://schemas.microsoft.com/developer/msbuild/2003");
 	}
 
 	// The directory as specified in order.xml
 	string dir;
+	string library;
+	string projectGuid;
+	string fx_version;
+
+	XElement xproject;
+	public string CsprojFilename;
 
 	//
 	// Our base directory, this is relative to our exectution point mono/msvc/scripts
 	string base_dir;
-
 	string mcs_topdir;
 
-	// Class directory, relative to 
-	string class_dir;
+	public string LibraryOutput, AbsoluteLibraryOutput;
 
-	public MsbuildGenerator (string dir)
+	public MsbuildGenerator (XElement xproject)
 	{
-		this.dir = dir;
+		this.xproject = xproject;
+		dir = xproject.Attribute ("dir").Value;
+		library = xproject.Attribute ("library").Value;
+		CsprojFilename = "..\\..\\mcs\\" + dir + "\\" + library + ".csproj";
+		LibraryOutput = xproject.Element ("library_output").Value;
+
+		projectGuid = LookupOrGenerateGuid ();
+		fx_version = xproject.Element ("fx_version").Value;
+		Csproj = new VsCsproj () {
+			csProjFilename = this.CsprojFilename,
+			projectGuid = this.projectGuid,
+			library_output = this.LibraryOutput,
+			fx_version = double.Parse (fx_version),
+			library = this.library
+		};
 
 		if (dir == "mcs") {
-			mcs_topdir = "..\\";
-			class_dir = "..\\class\\";
-			base_dir = "..\\..\\mcs\\mcs";
+			mcs_topdir = "../";
+			class_dir = "../class/";
+			base_dir = "../../mcs/mcs";
 		} else {
-			mcs_topdir = "..\\";
+			mcs_topdir = "../";
 
 			foreach (char c in dir) {
 				if (c == '/')
@@ -146,38 +171,55 @@ class MsbuildGenerator {
 
 			base_dir = Path.Combine ("..", "..", "mcs", dir);
 		}
+		AbsoluteLibraryOutput = Path.GetFullPath (Path.Combine (base_dir, LibraryOutput));
+	}
+
+	string LookupOrGenerateGuid ()
+	{
+		var projectFile = NativeName (CsprojFilename);
+		if (File.Exists (projectFile)){
+			var doc = XDocument.Load (projectFile);
+			return doc.XPathSelectElement ("x:Project/x:PropertyGroup/x:ProjectGuid", xmlns).Value;
+		}
+		return "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
 	}
 
 	// Currently used
 	bool Unsafe = false;
 	StringBuilder defines = new StringBuilder ();
-	bool StdLib = true;
-	private bool copyLocal = true;
-
-	// Currently unused
-	Target Target = Target.Exe;
-	string TargetExt = ".exe";
-	string OutputFile;
 	bool Optimize = true;
-	bool VerifyClsCompliance = true;
-
-	string win32IconFile;
 	bool want_debugging_support = false;
-	bool Checked = false;
-	bool WarningsAreErrors;
 	Dictionary<string, string> embedded_resources = new Dictionary<string, string> ();
+	List<string> warning_as_error = new List<string> ();
+	List<int> ignore_warning = new List<int> ();
+	bool load_default_config = true;
+	bool StdLib = true;
 	List<string> references = new List<string> ();
 	List<string> libs = new List<string> ();
 	List<string> reference_aliases = new List<string> ();
-	List<string> warning_as_error = new List<string> ();
+	bool showWarnings = false;
+
+	// Currently unused
+#pragma warning disable 0219, 0414
 	int WarningLevel = 4;
-	List<int> ignore_warning = new List<int> ();
-	bool load_default_config = true;
+
+	bool Checked = false;
+	bool WarningsAreErrors;
+	bool VerifyClsCompliance = true;
+	string win32IconFile;
 	string StrongNameKeyFile;
+	bool copyLocal = true;
+	Target Target = Target.Exe;
+	string TargetExt = ".exe";
+	string OutputFile;
 	string StrongNameKeyContainer;
 	bool StrongNameDelaySign = false;
 	LanguageVersion Version = LanguageVersion.Default;
 	string CodePage;
+
+	// Class directory, relative to 
+	string class_dir;
+#pragma warning restore 0219,414
 
 	readonly char [] argument_value_separator = new char [] { ';', ',' };
 
@@ -299,7 +341,6 @@ class MsbuildGenerator {
 				Console.WriteLine ("Wrong number of arguments for option `{0}'", option);
 				Environment.Exit (1);
 				break;
-
 			}
 
 			return true;
@@ -334,10 +375,11 @@ class MsbuildGenerator {
 		case "/m":
 		case "/addmodule":
 		case "/win32res":
-		case "/doc": {
+		case "/doc": 
+			if (showWarnings)
 				Console.WriteLine ("{0} = not supported", arg);
-				return true; // throwing an exception was a showstopper, so far as I can see.
-			}
+			return true;
+			
 		case "/lib": {
 				libs.Add (value);
 				return true;
@@ -392,7 +434,7 @@ class MsbuildGenerator {
 			return true;
 
 		case "/-runtime":
-			Console.WriteLine ("Warning ignoring /runtime:v4");
+			// Console.WriteLine ("Warning ignoring /runtime:v4");
 			return true;
 
 		case "/warnaserror-":
@@ -574,27 +616,27 @@ class MsbuildGenerator {
 	public class VsCsproj {
 		public string projectGuid;
 		public string output;
-		public string csprojFileName;
 		public string library_output;
+		public string csProjFilename;
 		public double fx_version;
 		public List<VsCsproj> projReferences = new List<VsCsproj> ();
 		public string library;
 	}
 
-	public VsCsproj Generate (XElement xproject, List<MsbuildGenerator.VsCsproj> projects)
-	{
+	public VsCsproj Csproj;
 
-		var result = new VsCsproj ();
-		string library = xproject.Attribute ("library").Value;
-		string boot, flags, output_name, built_sources, library_output, response, fx_version, profile;
+	public VsCsproj Generate (Dictionary<string,MsbuildGenerator> projects, bool showWarnings = false)
+	{
+		var generatedProjFile = NativeName (Csproj.csProjFilename);
+		//Console.WriteLine ("Generating: {0}", generatedProjFile);
+
+		string boot, flags, output_name, built_sources, response, profile;
 
 		boot = xproject.Element ("boot").Value;
 		flags = xproject.Element ("flags").Value;
 		output_name = xproject.Element ("output").Value;
 		built_sources = xproject.Element ("built_sources").Value;
-		library_output = xproject.Element ("library_output").Value;
 		response = xproject.Element ("response").Value;
-		fx_version = xproject.Element ("fx_version").Value;
 		//if (library.EndsWith("-build")) fx_version = "2.0"; // otherwise problem if .NET4.5 is installed, seems. (https://github.com/nikhilk/scriptsharp/issues/156)
 		profile = xproject.Element ("profile").Value;
 		if (string.IsNullOrEmpty (response)) {
@@ -627,10 +669,25 @@ class MsbuildGenerator {
 		//  inputs/LIBRARY.pre
 		//
 		string prebuild = Load (library + ".pre");
-
+		string prebuild_windows, prebuild_unix;
+		
 		int q = library.IndexOf ("-");
 		if (q != -1)
 			prebuild = prebuild + Load (library.Substring (0, q) + ".pre");
+
+		if (prebuild.IndexOf ("@MONO@") != -1){
+			prebuild_unix = prebuild.Replace ("@MONO@", "mono").Replace ("@CAT@", "cat");
+			prebuild_windows = prebuild.Replace ("@MONO@", "").Replace ("@CAT@", "type");
+		} else {
+			prebuild_unix = prebuild.Replace ("jay.exe", "jay");
+			prebuild_windows = prebuild;
+		}
+		
+		const string condition_unix    = "Condition=\" '$(OS)' != 'Windows_NT' \"";
+		const string condition_windows = "Condition=\" '$(OS)' == 'Windows_NT' \"";
+		prebuild =
+			"    <PreBuildEvent " + condition_unix + ">\n" + prebuild_unix + "\n    </PreBuildEvent>\n" +
+			"    <PreBuildEvent " + condition_windows + ">\n" + prebuild_windows + "\n    </PreBuildEvent>\n";
 
 		var all_args = new Queue<string []> ();
 		all_args.Enqueue (flags.Split ());
@@ -638,9 +695,9 @@ class MsbuildGenerator {
 			string [] f = all_args.Dequeue ();
 
 			for (int i = 0; i < f.Length; i++) {
-				if (f [i] [0] == '-')
+				if (f [i].Length > 0 && f [i][0] == '-')
 					f [i] = "/" + f [i].Substring (1);
-
+				
 				if (f [i] [0] == '@') {
 					string [] extra_args;
 					string response_file = f [i].Substring (1);
@@ -710,9 +767,6 @@ class MsbuildGenerator {
 		//    this.ignore_warning.Add(0436);
 		//}
 
-		result.library = library;
-		result.csprojFileName = "..\\..\\mcs\\" + dir + "\\" + library + ".csproj";
-
 		var refs = new StringBuilder ();
 
 		bool is_test = response.Contains ("_test_");
@@ -733,6 +787,8 @@ class MsbuildGenerator {
 			}
 			resources.AppendFormat ("  </ItemGroup>" + NewLine);
 		}
+	
+
 		if (references.Count > 0 || reference_aliases.Count > 0) {
 			// -r:mscorlib.dll -r:System.dll
 			//<ProjectReference Include="..\corlib\corlib-basic.csproj">
@@ -745,13 +801,14 @@ class MsbuildGenerator {
 			//</ProjectReference>
 			var refdistinct = references.Distinct ();
 			foreach (string r in refdistinct) {
-				VsCsproj lastMatching = getMatchingCsproj (Path.GetFileName (r), projects);
-				if (lastMatching != null) {
-					addProjectReference (refs, result, lastMatching, r);
+				var match = GetMatchingCsproj (Path.GetFileName (r), projects);
+				if (match != null) {
+					AddProjectReference (refs, Csproj, match, r, null);
 				} else {
-					var msg = string.Format ("", library, r);
-					Console.WriteLine ("{0}: Could not find a matching project reference for {1}", library, Path.GetFileName (r));
-					Console.WriteLine ("  --> Adding reference with hintpath instead");
+					if (showWarnings){
+						Console.WriteLine ("{0}: Could not find a matching project reference for {1}", library, Path.GetFileName (r));
+						Console.WriteLine ("  --> Adding reference with hintpath instead");
+					}
 					refs.Append ("    <Reference Include=\"" + r + "\">" + NewLine);
 					refs.Append ("      <SpecificVersion>False</SpecificVersion>" + NewLine);
 					refs.Append ("      <HintPath>" + r + "</HintPath>" + NewLine);
@@ -764,9 +821,9 @@ class MsbuildGenerator {
 				int index = r.IndexOf ('=');
 				string alias = r.Substring (0, index);
 				string assembly = r.Substring (index + 1);
-				VsCsproj lastMatching = getMatchingCsproj (Path.GetFileName (assembly), projects);
-				if (lastMatching != null) {
-					addProjectReference (refs, result, lastMatching, r);
+				var match = GetMatchingCsproj (assembly, projects, explicitPath: true);
+				if (match != null) {
+					AddProjectReference (refs, Csproj, match, r, alias);
 				} else {
 					throw new NotSupportedException (string.Format ("From {0}, could not find a matching project reference for {1}", library, r));
 					refs.Append ("    <Reference Include=\"" + assembly + "\">" + NewLine);
@@ -779,43 +836,45 @@ class MsbuildGenerator {
 			}
 		}
 
-		string library_output_dir = string.Empty;
-		try {
-			// ../class/lib/build/tmp/System.Xml.dll
-			//   /class/lib/basic/System.Core.dll
-			// <library_output>mcs.exe</library_output>
-			bool has_tmp = library_output.Contains ("/tmp/");
-			string p = library_output.Replace ("/tmp/", "/").Replace ("/", @"\");
-			string profile_dir = Path.GetDirectoryName (p);
-			string d = has_tmp ? Path.Combine (profile_dir, library) : profile_dir;
-			library_output_dir = d;
-			if (string.IsNullOrEmpty (library_output_dir))
-				library_output_dir = @".\";
-			library_output = Path.Combine (library_output_dir, output_name).Replace (@"\", "/");
-		} catch {
-			Console.WriteLine ("Error in path: {0} while processing {1}", library_output_dir, library);
-		}
+		// Possible inputs:
+		// ../class/lib/build/tmp/System.Xml.dll  [No longer possible, we should be removing this from order.xml]
+		//   /class/lib/basic/System.Core.dll
+		// <library_output>mcs.exe</library_output>
+		string build_output_dir;
+		if (LibraryOutput.Contains ("/"))
+			build_output_dir = Path.GetDirectoryName (LibraryOutput);
+		else
+			build_output_dir = "bin\\Debug\\" + library;
+		
 
-		// The build output directory shoudl be unique for each project, to overcome cyclic deps
-		var build_output_dir = string.Format (@"bin\Debug\{0}", library);
+		string postbuild_unix = string.Empty;
+		string postbuild_windows = string.Empty;
 
-
-		string postbuild = string.Empty;
-		postbuild = string.Format (
-			//"if not \"$(OutDir)\" == \"..\\lib\\{0}\" xcopy $(OutDir)$(TargetName).* ..\\lib\\{0}\\ /Y /R /D",
-			"      xcopy $(TargetName).* $(ProjectDir)..\\lib\\{0}\\ /Y /R /D",
-			profile);
+		var postbuild =  
+			"    <PostBuildEvent " + condition_unix + ">\n" + postbuild_unix + "\n    </PostBuildEvent>\n" +
+			"    <PostBuildEvent " + condition_windows + ">\n" + postbuild_windows + "\n    </PostBuildEvent>";
+			
 
 		bool basic_or_build = (library.Contains ("-basic") || library.Contains ("-build"));
 
 		//
 		// Replace the template values
 		//
-		result.projectGuid = "{" + Guid.NewGuid ().ToString ().ToUpper () + "}";
-		result.library_output = library_output;
-		result.fx_version = double.Parse (fx_version);
-		result.output = template.
-			Replace ("@PROJECTGUID@", result.projectGuid).
+
+		string strongNameSection = "";
+		if (StrongNameKeyFile != null){
+			strongNameSection = String.Format (
+				"  <PropertyGroup>\n" +
+				"    <SignAssembly>true</SignAssembly>\n" +
+				"{1}" +
+				"  </PropertyGroup>\n" + 
+				"  <PropertyGroup>\n" + 
+				"    <AssemblyOriginatorKeyFile>{0}</AssemblyOriginatorKeyFile>\n" +
+				"  </PropertyGroup>", StrongNameKeyFile, StrongNameDelaySign ? "    <DelaySign>true</DelaySign>\n" : "");
+		}
+		Csproj.output = template.
+			Replace ("@SIGNATURE@", strongNameSection).
+			Replace ("@PROJECTGUID@", Csproj.projectGuid).
 			Replace ("@DEFINES@", defines.ToString ()).
 			Replace ("@DISABLEDWARNINGS@", string.Join (",", (from i in ignore_warning select i.ToString ()).ToArray ())).
 			//Replace("@NOSTDLIB@", (basic_or_build || (!StdLib)) ? "<NoStdLib>true</NoStdLib>" : string.Empty).
@@ -838,45 +897,103 @@ class MsbuildGenerator {
 			Replace ("@SOURCES@", sources.ToString ());
 
 		//Console.WriteLine ("Generated {0}", ofile.Replace ("\\", "/"));
-		using (var o = new StreamWriter (NativeName (result.csprojFileName))) {
-			o.WriteLine (result.output);
+		using (var o = new StreamWriter (generatedProjFile)) {
+			o.WriteLine (Csproj.output);
 		}
 
-		return result;
+		return Csproj;
 	}
 
-	private void addProjectReference (StringBuilder refs, VsCsproj result, VsCsproj lastMatching, string r)
+	void AddProjectReference (StringBuilder refs, VsCsproj result, MsbuildGenerator match, string r, string alias)
 	{
-		refs.AppendFormat ("    <ProjectReference Include=\"{0}\">{1}", getRelativePath (result.csprojFileName, lastMatching.csprojFileName), NewLine);
-		refs.Append ("      <Project>" + lastMatching.projectGuid + "</Project>" + NewLine);
-		refs.Append ("      <Name>" + Path.GetFileNameWithoutExtension (lastMatching.csprojFileName) + "</Name>" + NewLine);
-		//refs.Append("      <HintPath>" + r + "</HintPath>" + NewLine);
+		refs.AppendFormat ("    <ProjectReference Include=\"{0}\">{1}", GetRelativePath (result.csProjFilename, match.CsprojFilename), NewLine);
+		refs.Append ("      <Project>" + match.projectGuid + "</Project>" + NewLine);
+		refs.Append ("      <Name>" + Path.GetFileNameWithoutExtension (match.CsprojFilename) + "</Name>" + NewLine);
+		if (alias != null)
+			refs.Append ("      <Aliases>" + alias + "</Aliases>");
 		refs.Append ("    </ProjectReference>" + NewLine);
-		if (!result.projReferences.Contains (lastMatching))
-			result.projReferences.Add (lastMatching);
+		if (!result.projReferences.Contains (match.Csproj))
+			result.projReferences.Add (match.Csproj);
 	}
 
-	static string getRelativePath (string referencerPath, string referenceePath)
+	static string GetRelativePath (string from, string to)
 	{
-		// F:\src\mono\msvc\scripts\
-		//..\..\mcs\class\System\System-net_2_0.csproj
-		//..\..\mcs\class\corlib\corlib-net_2_0.csproj
-		//  So from \System\, corlib needs to be referenced as:
-		// ..\corlib\corlib-net_2_0.csproj
+		from = from.Replace ("\\", "/");
+		to = to.Replace ("\\", "/");
+		var fromUri = new Uri (Path.GetFullPath (from));
+		var toUri = new Uri (Path.GetFullPath (to));
 
-		// Could be possible to use PathRelativePathTo, but this is a P/Invoke to Win32 API.
-		// For now, simpler but less robust:
-		return referenceePath.Replace (@"..\..\mcs\class", "..").Replace ("/", "\\");
+		var ret =  fromUri.MakeRelativeUri (toUri).ToString ().Replace ("%5C", "\x5c");
+		return ret;
 	}
 
-	static VsCsproj getMatchingCsproj (string dllReferenceName, List<VsCsproj> projects)
+	MsbuildGenerator GetMatchingCsproj (string dllReferenceName, Dictionary<string,MsbuildGenerator> projects, bool explicitPath = false)
 	{
-		return projects.LastOrDefault (x => Path.GetFileName (x.library_output).Replace (".dll", "") == dllReferenceName.Replace (".dll", ""));
+		// libDir would be "./../../class/lib/net_4_5 for example
+		// project 
+		if (!dllReferenceName.EndsWith (".dll"))
+			dllReferenceName += ".dll";
+
+		if (explicitPath){
+			var probe = Path.GetFullPath (Path.Combine (base_dir, dllReferenceName));
+			foreach (var project in projects){
+				if (probe == project.Value.AbsoluteLibraryOutput)
+					return project.Value;
+			}
+		} 
+
+		// not explicit, search for the library in the lib path order specified
+
+		foreach (var libDir in libs) {
+			var abs = Path.GetFullPath (Path.Combine (base_dir, libDir));
+			foreach (var project in projects){
+				var probe = Path.Combine (abs, dllReferenceName);
+
+				if (probe == project.Value.AbsoluteLibraryOutput)
+					return project.Value;
+			}
+		}
+		Console.WriteLine ("Did not find referenced {0} with libs={1}", dllReferenceName, String.Join (", ", libs));
+		foreach (var p in projects) {
+			Console.WriteLine ("    => {0}", p.Value.AbsoluteLibraryOutput);
+		}
+		return null;
 	}
 
 }
 
 public class Driver {
+
+	static IEnumerable<XElement> GetProjects ()
+	{
+		XDocument doc = XDocument.Load ("order.xml");
+		foreach (XElement project in doc.Root.Elements ()) {
+			string dir = project.Attribute ("dir").Value;
+			string library = project.Attribute ("library").Value;
+			var profile = project.Element ("profile").Value;
+
+			//
+			// Do only class libraries for now
+			//
+			if (!(dir.StartsWith ("class") || dir.StartsWith ("mcs") || dir.StartsWith ("basic")))
+				continue;
+
+			//
+			// Do not do 2.1, it is not working yet
+			// Do not do basic, as there is no point (requires a system mcs to be installed).
+			//
+			if (library.Contains ("moonlight") || library.Contains ("-basic") || library.EndsWith ("bootstrap")  || library.Contains ("build"))
+				continue;
+
+			// The next ones are to make debugging easier for now
+			if (profile == "basic")
+				continue;
+			if (profile != "net_4_5" || library.Contains ("tests"))
+				continue;
+
+			yield return project;
+		}
+	}
 
 	static void Main (string [] args)
 	{
@@ -903,51 +1020,37 @@ public class Driver {
 		var four_sln_gen = new SlnGenerator (slnVersion);
 		var three_five_sln_gen = new SlnGenerator (slnVersion);
 		var four_five_sln_gen = new SlnGenerator (slnVersion);
-		var projects = new List<MsbuildGenerator.VsCsproj> ();
+		var projects = new Dictionary<string,MsbuildGenerator> ();
 
-		XDocument doc = XDocument.Load ("order.xml");
 		var duplicates = new List<string> ();
-		foreach (XElement project in doc.Root.Elements ()) {
-			string dir = project.Attribute ("dir").Value;
-			string library = project.Attribute ("library").Value;
-
-			//
-			// Do only class libraries for now
-			//
-			if (!(dir.StartsWith ("class") || dir.StartsWith ("mcs") || dir.StartsWith ("basic")))
-				continue;
-
-			//
-			// Do not do 2.1, it is not working yet
-			// Do not do basic, as there is no point (requires a system mcs to be installed).
-			//
-			//if (library.Contains ("moonlight") || library.Contains ("-basic") || library.EndsWith ("bootstrap"))
-			if (library.Contains ("moonlight") || library.EndsWith ("bootstrap"))
-				continue;
-
-			var gen = new MsbuildGenerator (dir);
+		foreach (var project in GetProjects ()) {
+			var library_output = project.Element ("library_output").Value;
+			projects [library_output] = new MsbuildGenerator (project);
+		}
+		foreach (var project in GetProjects ()){
+			var library_output = project.Element ("library_output").Value;
+			var gen = projects [library_output];
 			try {
-				var csproj = gen.Generate (project, projects);
-				var csprojFilename = csproj.csprojFileName;
+				var csproj = gen.Generate (projects);
+				var csprojFilename = csproj.csProjFilename;
 				if (!sln_gen.ContainsProjectIdentifier (csproj.library)) {
-					projects.Add (csproj);
 					sln_gen.Add (csproj);
 				} else {
 					duplicates.Add (csprojFilename);
 				}
 
 			} catch (Exception e) {
-				Console.WriteLine ("Error in {0}\n{1}", dir, e);
+				Console.WriteLine ("Error in {0}\n{1}", project, e);
 			}
 		}
 
 		Func<MsbuildGenerator.VsCsproj, bool> additionalFilter;
-		additionalFilter = fullSolutions ? (Func<MsbuildGenerator.VsCsproj, bool>)null : isCommonLibrary;
+		additionalFilter = fullSolutions ? (Func<MsbuildGenerator.VsCsproj, bool>)null : IsCommonLibrary;
 
-		fillSolution (two_sln_gen, MsbuildGenerator.profile_2_0, projects, additionalFilter);
-		fillSolution (four_five_sln_gen, MsbuildGenerator.profile_4_5, projects, additionalFilter);
-		fillSolution (four_sln_gen, MsbuildGenerator.profile_4_0, projects, additionalFilter);
-		fillSolution (three_five_sln_gen, MsbuildGenerator.profile_3_5, projects, additionalFilter);
+		FillSolution (two_sln_gen, MsbuildGenerator.profile_2_0, projects.Values, additionalFilter);
+		FillSolution (four_five_sln_gen, MsbuildGenerator.profile_4_5, projects.Values, additionalFilter);
+		FillSolution (four_sln_gen, MsbuildGenerator.profile_4_0, projects.Values, additionalFilter);
+		FillSolution (three_five_sln_gen, MsbuildGenerator.profile_3_5, projects.Values, additionalFilter);
 
 		var sb = new StringBuilder ();
 		sb.AppendLine ("WARNING: Skipped some project references, apparent duplicates in order.xml:");
@@ -956,58 +1059,60 @@ public class Driver {
 		}
 		Console.WriteLine (sb.ToString ());
 
-		writeSolution (two_sln_gen, mkSlnName (MsbuildGenerator.profile_2_0));
-		writeSolution (three_five_sln_gen, mkSlnName (MsbuildGenerator.profile_3_5));
-		writeSolution (four_sln_gen, mkSlnName (MsbuildGenerator.profile_4_0));
-		writeSolution (four_five_sln_gen, mkSlnName (MsbuildGenerator.profile_4_5));
+		WriteSolution (two_sln_gen, MakeSolutionName (MsbuildGenerator.profile_2_0));
+		WriteSolution (three_five_sln_gen, MakeSolutionName (MsbuildGenerator.profile_3_5));
+		WriteSolution (four_sln_gen, MakeSolutionName (MsbuildGenerator.profile_4_0));
+		WriteSolution (four_five_sln_gen, MakeSolutionName (MsbuildGenerator.profile_4_5));
+		
 		// A few other optional solutions
 		// Solutions with 'everything' and the most common libraries used in development may be of interest
-		//writeSolution (sln_gen, "mcs_full.sln");
-		//writeSolution (small_full_sln_gen, "small_full.sln");
+		//WriteSolution (sln_gen, "mcs_full.sln");
+		//WriteSolution (small_full_sln_gen, "small_full.sln");
 		// The following may be useful if lacking visual studio or MonoDevelop, to bootstrap mono compiler self-hosting
-		//writeSolution (basic_sln_gen, "mcs_basic.sln");
-		//writeSolution (build_sln_gen, "mcs_build.sln");
+		//WriteSolution (basic_sln_gen, "mcs_basic.sln");
+		//WriteSolution (build_sln_gen, "mcs_build.sln");
 	}
 
-	private static string mkSlnName (string profileTag)
+	static string MakeSolutionName (string profileTag)
 	{
 		return "net" + profileTag + ".sln";
 	}
 
-	private static void fillSolution (SlnGenerator solution, string profileString, List<MsbuildGenerator.VsCsproj> projects, Func<MsbuildGenerator.VsCsproj, bool> additionalFilter = null)
+	static void FillSolution (SlnGenerator solution, string profileString, IEnumerable<MsbuildGenerator> projects, Func<MsbuildGenerator.VsCsproj, bool> additionalFilter = null)
 	{
-		foreach (var vsCsproj in projects) {
+		foreach (var generator in projects) {
+			var vsCsproj = generator.Csproj;
 			if (!vsCsproj.library.Contains (profileString))
 				continue;
 			if (additionalFilter != null && !additionalFilter (vsCsproj))
 				continue;
-			var csprojFilename = vsCsproj.csprojFileName;
+			var csprojFilename = vsCsproj.csProjFilename;
 			if (!solution.ContainsProjectIdentifier (vsCsproj.library)) {
 				solution.Add (vsCsproj);
-				recursiveAddProj (solution, vsCsproj);
+				RecursiveAddProj (solution, vsCsproj);
 			}
 		}
 	}
 
-	private static void recursiveAddProj (SlnGenerator solution, MsbuildGenerator.VsCsproj vsCsproj, int recursiveDepth = 1)
+	static void RecursiveAddProj (SlnGenerator solution, MsbuildGenerator.VsCsproj vsCsproj, int recursiveDepth = 1)
 	{
 		const int max_recursive = 16;
 		if (recursiveDepth > max_recursive) throw new Exception (string.Format ("Reached {0} levels of project dependency", max_recursive));
 		foreach (var projRef in vsCsproj.projReferences) {
 			if (!solution.ContainsProjectIdentifier (projRef.library)) {
 				solution.Add (projRef);
-				recursiveAddProj (solution, projRef, recursiveDepth + 1);
+				RecursiveAddProj (solution, projRef, recursiveDepth + 1);
 			}
 		}
 	}
 
-	private static void writeSolution (SlnGenerator sln_gen, string slnfilename)
+	static void WriteSolution (SlnGenerator sln_gen, string slnfilename)
 	{
 		Console.WriteLine (String.Format ("Writing solution {1}, with {0} projects", sln_gen.Count, slnfilename));
 		sln_gen.Write (slnfilename);
 	}
 
-	private static bool isCommonLibrary (MsbuildGenerator.VsCsproj proj)
+	static bool IsCommonLibrary (MsbuildGenerator.VsCsproj proj)
 	{
 		var library = proj.library;
 		//if (library.Contains ("-basic"))

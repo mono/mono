@@ -15,6 +15,14 @@ Assembly/AssemblyInfo.cs
 ../Managed.Windows.Forms/System.Resources/ResXDataNodeHandler.cs
 ../Managed.Windows.Forms/System.Resources/TypeConverterFromResXHandler.cs
 ../Managed.Windows.Forms/System.Resources/ResXFileRef.cs
+
+Mono.Web.Util/ISectionSettingsMapper.cs
+Mono.Web.Util/MembershipSectionMapper.cs
+Mono.Web.Util/RoleManagerSectionMapper.cs
+Mono.Web.Util/SettingsMapping.cs
+Mono.Web.Util/SettingsMappingManager.cs
+Mono.Web.Util/SettingsMappingWhat.cs
+
 System.Web/ApplicationShutdownReason.cs
 System.Web/BeginEventHandler.cs
 System.Web.Caching/AggregateCacheDependency.cs

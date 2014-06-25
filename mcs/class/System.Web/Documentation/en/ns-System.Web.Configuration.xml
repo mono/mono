@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Configuration" FullName="System.Web.Configuration" FullNameSP="System.Web.Configuration" Maintainer="Mono">
   <Docs>
-    <summary>
-    </summary>
     <remarks>
       <para>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Configuration" /> namespace contains classes that are used to set up ASP.NET configuration.</para>
+    </summary>
   </Docs>
 </Namespace>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceAuthorizationBehavior" FullName="System.ServiceModel.Description.ServiceAuthorizationBehavior">
   <TypeSignature Language="C#" Value="public sealed class ServiceAuthorizationBehavior : System.ServiceModel.Description.IServiceBehavior" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ServiceAuthorizationBehavior extends System.Object implements class System.ServiceModel.Description.IServiceBehavior" />
@@ -14,8 +15,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Authorization occurs at the service level and at the operation level. This class contains properties related to authorization at the service level.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides properties related to service authorization behavior.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, applications do not call the constructor directly. Instead they retrieve an instance of this class by calling ServiceHostBase.Description.Behaviors.Find&lt;ServiceAuthorizationBehavior&gt;.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceAuthorizationBehavior" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExternalAuthorizationPolicies">
@@ -42,9 +55,15 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The external authorization policies participate in the policy evaluation process resulting in a user <see cref="T:System.ServiceModel.ServiceSecurityContext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of external authorization policies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImpersonateCallerForAllOperations">
@@ -58,9 +77,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value of false indicates that impersonation is specified for each operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the service performs impersonation for all the operations that it supports.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrincipalPermissionMode">
@@ -74,9 +99,33 @@
         <ReturnType>System.ServiceModel.Description.PrincipalPermissionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains one of the members of the <see cref="T:System.ServiceModel.Description.PrincipalPermissionMode" /> enumeration. Valid values are:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.Custom" />. A custom IAuthorizationPolicy implementation is used to populate Thread.CurrentPrincipal.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.None" />. The Thread.CurrentPrincipal property is not set.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.UseAspNetRoles" />. The Thread.CurrentPrincipal property is set to an IPrincipal based on ASP.NET role information.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Description.PrincipalPermissionMode.UseWindowsGroups" />. The Thread.CurrentPrincipal property is set to a WindowsPrincipal based on the user credentials of the incoming message.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the principal permission mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RoleProvider">
@@ -90,9 +139,15 @@
         <ReturnType>System.Web.Security.RoleProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned <see cref="T:System.Web.Security.RoleProvider" /> object is an implementation of a custom role provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom role provider.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServiceAuthorizationManager">
@@ -106,9 +161,15 @@
         <ReturnType>System.ServiceModel.ServiceAuthorizationManager</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.ServiceAuthorizationManager" /> class is responsible for evaluating all policies, chaining forward and backward, optionally connecting the resulting <see cref="T:System.IdentityModel.Policy.AuthorizationContext" /> to the <see cref="T:System.ServiceModel.ServiceSecurityContext" /> and returning the authorization decision of true or false to allow or deny access.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the service authorization manager.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IServiceBehavior.AddBindingParameters">
@@ -128,12 +189,22 @@
         <Parameter Name="parameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
       </Parameters>
       <Docs>
-        <param name="description">To be added.</param>
-        <param name="serviceHostBase">To be added.</param>
-        <param name="endpoints">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ServiceModel.Description.ServiceAuthorizationBehavior" /> instance is cast to an <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to pass custom data to binding elements to support the contract implementation.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description of the service.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host of the service.</param>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service endpoints.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom objects to which binding elements have access.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior">
@@ -151,10 +222,18 @@
         <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
       </Parameters>
       <Docs>
-        <param name="description">To be added.</param>
-        <param name="serviceHostBase">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ServiceModel.Description.ServiceAuthorizationBehavior" /> instance is cast to an <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines an explicit interface implementation that adds dispatch behaviors to configure the binding.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The host that is currently being built.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IServiceBehavior.Validate">
@@ -172,10 +251,18 @@
         <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
       </Parameters>
       <Docs>
-        <param name="description">To be added.</param>
-        <param name="serviceHostBase">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ServiceModel.Description.ServiceAuthorizationBehavior" /> instance is cast to an <see cref="T:System.ServiceModel.Description.IServiceBehavior" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides the ability to inspect the service host and the service description to confirm that the service can run successfully.</para>
+        </summary>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service description.</param>
+        <param name="serviceHostBase">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service host that is currently being constructed.</param>
       </Docs>
     </Member>
   </Members>

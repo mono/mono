@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StronglyTypedResourceBuilder" FullName="System.Resources.Tools.StronglyTypedResourceBuilder">
   <TypeSignature Language="C#" Value="public static class StronglyTypedResourceBuilder" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, resources separate code from content within an application. Creating and consuming these resources makes it easier to develop localizable applications. In the .NET Framework, resources are usually consumed by using the <see cref="T:System.Resources.ResourceManager" /> class, which contains methods that provide access to culture-specific resources at run time. For more information about creating and consuming resources, see <format type="text/html"><a href="8ad495d4-2941-40cf-bf64-e82e85825890">Resources in Applications</a></format>.</para>
+      <para>Strongly typed resource support is a compile-time feature that encapsulates access to resources by creating classes that contain a set of static, read-only (get) properties. This provides an alternative way to consume resources instead of calling the <see cref="Overload:System.Resources.ResourceManager.GetString" /> and <see cref="Overload:System.Resources.ResourceManager.GetObject" /> methods. </para>
+      <para>The basic functionality for strongly typed resource support is provided by the <see cref="T:System.Resources.Tools.StronglyTypedResourceBuilder" /> class (as well as the /str command-line option in the <format type="text/html"><a href="8ef159de-b660-4bec-9213-c3fbc4d1c6f4">Resource File Generator (Resgen.exe)</a></format>). The output of the <see cref="Overload:System.Resources.Tools.StronglyTypedResourceBuilder.Create" /> method is a class that contains strongly typed properties that match the resources that are referenced in the input parameter. This class provides read-only access to the resources that are available in the file processed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for strongly typed resources. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Create">
@@ -147,11 +156,27 @@
         <Parameter Name="provider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="key" /> parameter is a valid string of characters, that string is returned. If the <paramref name="key" /> parameter is an invalid string or a string that contains invalid characters, the <see cref="M:System.Resources.Tools.StronglyTypedResourceBuilder.VerifyResourceName(System.String,System.CodeDom.Compiler.CodeDomProvider)" /> method attempts to generate a valid string based on the <paramref name="key" /> and <paramref name="provider" /> parameters. If a valid string can be generated, that string is returned; otherwise, null is returned.</para>
+          <para>If the <paramref name="key" /> parameter is an empty string (""), a string that consists of a single underscore character (_) is returned. If the <paramref name="key" /> parameter is not an empty string, the <see cref="M:System.Resources.Tools.StronglyTypedResourceBuilder.VerifyResourceName(System.String,System.CodeDom.Compiler.CodeDomProvider)" /> method compares each character in the string to a set of invalid tokens based on the language specified by the <paramref name="provider" /> parameter. Any invalid character in the string is replaced with an underscore character. The characters that will be replaced with an underscore are as follows:</para>
+          <para>' ' (space), U+00A0 (non-breaking space), '.' (period), ',' (comma), ';' (semicolon), '|', '~', '@', '#', '%', '^', '&amp;', '*', '+', '-', '/', '\', '&lt;', '&gt;', '?', '[', ']', '(', ')', '{', '}', '"' (quote), ''' (apostrophe), ':', and '!'.</para>
+          <block subset="none" type="note">
+            <para>Strongly typed resources do not allow the use of language keywords (such as if, for, and so on) as resource key names. However, the <see cref="N:System.CodeDom" /> design pattern allows the use of language keywords by prefixing the keyword with the underscore character. The <see cref="M:System.Resources.Tools.StronglyTypedResourceBuilder.VerifyResourceName(System.String,System.CodeDom.Compiler.CodeDomProvider)" /> method calls the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.CreateValidIdentifier(System.String)" /> method to enforce this design. For example, if you use a resource name that is the same as a language keyword, such as for, the name appears as _for in the generated strongly typed resource class.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a valid resource string based on the specified input string and code provider.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid resource name derived from the <paramref name="key" /> parameter. Any invalid tokens are replaced with the underscore (_) character, or null if the derived string still contains invalid characters according to the language specified by the <paramref name="provider" /> parameter.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to verify and, if necessary, convert to a valid resource name.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> object that specifies the target language to use.</param>
       </Docs>
     </Member>
   </Members>

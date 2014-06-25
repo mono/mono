@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.SessionState" FullName="System.Web.SessionState" FullNameSP="System.Web.SessionState" Maintainer="Mono">
   <Docs>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.SessionState" /> namespace supplies classes and interfaces that enable storage of data specific to a single client within a Web application on the server. The session-state data is used to give the client the appearance of a persistent connection with the application. State information can be stored within local process memory or, for Web farm configurations, it can be stored out of process using either the ASP.NET State service or a Microsoft SQL Server database.</para>
     </summary>
     <remarks>
-      <para>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Session state can be used with clients that do not support cookies. ASP.NET can be configured to encode a session ID in the URL string that is transmitted between the client and the server.</para>
     </remarks>
   </Docs>
 </Namespace>

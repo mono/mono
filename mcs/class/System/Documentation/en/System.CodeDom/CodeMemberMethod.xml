@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeMemberMethod" FullName="System.CodeDom.CodeMemberMethod">
   <TypeSignature Language="C#" Value="public class CodeMemberMethod : System.CodeDom.CodeTypeMember" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeMemberMethod extends System.CodeDom.CodeTypeMember" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents a method in the CodeDom.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeMemberMethod" /> can be used to represent the declaration for a method.</para>
+      <para>The <see cref="P:System.CodeDom.CodeMemberMethod.ReturnType" /> property specifies the data type of the method's return value. The <see cref="P:System.CodeDom.CodeMemberMethod.Parameters" /> property contains the method's parameters. The <see cref="P:System.CodeDom.CodeMemberMethod.Statements" /> property contains the statements of the method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a declaration for a method of a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor creates an empty <see cref="T:System.CodeDom.CodeMemberMethod" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMemberMethod" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImplementationTypes">
@@ -56,9 +71,17 @@
         <ReturnType>System.CodeDom.CodeTypeReferenceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReferenceCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The types referenced by this collection must consist of interfaces.</para>
+          <para>If this <see cref="T:System.CodeDom.CodeMemberMethod" /> represents a declaration for a public method, and this method implements a method on an interface, the interface or interfaces this method implements a method of should be referenced in this collection.</para>
+          <para>The method should still have the same name as the method of the interface that is implemented by this method. For some languages, like C#, this has no effect on the syntax. For others, like Visual Basic, there is a special syntax for implementing interfaces. If the method is privately implementing a single interface, the <see cref="P:System.CodeDom.CodeMemberMethod.PrivateImplementationType" /> property should be used instead.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the data types of the interfaces implemented by this method, unless it is a private method implementation, which is indicated by the <see cref="P:System.CodeDom.CodeMemberMethod.PrivateImplementationType" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parameters">
@@ -74,9 +97,12 @@
         <ReturnType>System.CodeDom.CodeParameterDeclarationExpressionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeParameterDeclarationExpressionCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameter declarations for the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PopulateImplementationTypes">
@@ -93,8 +119,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An event that will be raised the first time the <see cref="P:System.CodeDom.CodeMemberMethod.ImplementationTypes" /> collection is accessed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PopulateParameters">
@@ -111,8 +140,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An event that will be raised the first time the <see cref="P:System.CodeDom.CodeMemberMethod.Parameters" /> collection is accessed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PopulateStatements">
@@ -129,8 +161,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An event that will be raised the first time the <see cref="P:System.CodeDom.CodeMemberMethod.Statements" /> collection is accessed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrivateImplementationType">
@@ -148,9 +183,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this <see cref="T:System.CodeDom.CodeMemberMethod" /> represents the declaration of a private method and the method implements a method of an interface, this property should indicate the interface type that the method is implementing a method of.</para>
+          <para>The type referenced by this property must be an interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the interface this method, if private, implements a method of, if any.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnType">
@@ -168,9 +210,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the return value of the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnTypeCustomAttributes">
@@ -186,9 +231,12 @@
         <ReturnType>System.CodeDom.CodeAttributeDeclarationCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeAttributeDeclarationCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom attributes of the return type of the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Statements">
@@ -204,9 +252,12 @@
         <ReturnType>System.CodeDom.CodeStatementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatementCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the statements within the method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeParameters">
@@ -226,9 +277,15 @@
         <ReturnType>System.CodeDom.CodeTypeParameterCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic method contains one or more unspecified types known as type parameters. A type parameter name stands for the type within the body of the generic declaration. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type parameters for the current generic method.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

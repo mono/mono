@@ -723,11 +723,11 @@ namespace MonoTests.System.Net {
 		public void ClosePort ()
 		{
 			var h = new HttpListener ();
-			h.Prefixes.Add ("http://127.0.0.1:8080/");
+			h.Prefixes.Add ("http://127.0.0.1:30158/");
 			h.Start ();
 			h.BeginGetContext (null, null);
 			h.Stop ();
-			TcpListener t = new TcpListener (IPAddress.Parse ("127.0.0.1"), 8080);
+			TcpListener t = new TcpListener (IPAddress.Parse ("127.0.0.1"), 30158);
 			t.Start ();
 			t.Stop ();
 		}

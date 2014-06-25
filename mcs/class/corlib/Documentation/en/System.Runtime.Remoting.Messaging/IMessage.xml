@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMessage" FullName="System.Runtime.Remoting.Messaging.IMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMessage" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessage" />
@@ -16,8 +17,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Message sinks that use <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> can be placed in the client sink chains or in the server sink chains. A message object is passed from message sink to message sink through the chain, and carries a set of named properties such as action identifiers, envoy information, and parameters.</para>
+      <para>An object that implements the <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> interface meets the minimum qualifications to be considered a message object. The exact object received by a message sink does not have to be passed on to the next sink, but this is often the case.</para>
+      <para>Although the objects in the property bag do not have to be serializable, the message sink implementer needs to consider this, since the properties that flow out of the application domain must be serializable.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains communication data sent between cooperating message sinks.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Properties">
@@ -33,9 +42,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IDictionary'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.IDictionary" /> that represents a collection of the message's properties.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

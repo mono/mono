@@ -10,5 +10,5 @@ struct Sample
 	
 	int Prop { get { return 1; } }
 
-	int text;
+	public int text;
 }

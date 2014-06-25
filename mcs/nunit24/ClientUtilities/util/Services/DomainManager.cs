@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Text;
+using System.Threading;
 using System.Configuration;
 using System.Diagnostics;
 using System.Security.Policy;
@@ -121,27 +122,56 @@ namespace NUnit.Util
 
 		public void Unload( AppDomain domain )
 		{
-			bool shadowCopy = domain.ShadowCopyFiles;
-			string cachePath = domain.SetupInformation.CachePath;
-			string domainName = domain.FriendlyName;
+			new DomainUnloader(domain).Unload();
+		}
+		#endregion
 
-            try
-            {
-                AppDomain.Unload(domain);
-            }
-            catch (Exception ex)
-            {
-                // We assume that the tests did something bad and just leave
-                // the orphaned AppDomain "out there". 
-                // TODO: Something useful.
-                Trace.WriteLine("Unable to unload AppDomain {0}", domainName);
-                Trace.WriteLine(ex.ToString());
-            }
-            finally
-            {
-                if (shadowCopy)
-                    DeleteCacheDir(new DirectoryInfo(cachePath));
-            }
+		#region Nested DomainUnloader Class
+		class DomainUnloader
+		{
+			private Thread thread;
+			private AppDomain domain;
+
+			public DomainUnloader(AppDomain domain)
+			{
+				this.domain = domain;
+			}
+
+			public void Unload()
+			{
+				thread = new Thread(new ThreadStart(UnloadOnThread));
+				thread.Start();
+				if (!thread.Join(20000))
+				{
+					Trace.WriteLine("Unable to unload AppDomain {0}", domain.FriendlyName);
+					Trace.WriteLine("Unload thread timed out");
+				}
+			}
+
+			private void UnloadOnThread()
+			{
+				bool shadowCopy = domain.ShadowCopyFiles;
+				string cachePath = domain.SetupInformation.CachePath;
+				string domainName = domain.FriendlyName;
+
+    	        try
+	            {
+        	        AppDomain.Unload(domain);
+            	}
+	            catch (Exception ex)
+    	        {
+        	        // We assume that the tests did something bad and just leave
+            	    // the orphaned AppDomain "out there". 
+                	// TODO: Something useful.
+	                Trace.WriteLine("Unable to unload AppDomain {0}", domainName);
+    	            Trace.WriteLine(ex.ToString());
+        	    }
+            	finally
+	            {
+    	            if (shadowCopy)
+        	            DeleteCacheDir(new DirectoryInfo(cachePath));
+            	}
+			}
 		}
 		#endregion
 
@@ -179,7 +209,7 @@ namespace NUnit.Util
 		/// TODO: This entire method is problematic. Should we be doing it?
 		/// </summary>
 		/// <param name="cacheDir"></param>
-		private void DeleteCacheDir( DirectoryInfo cacheDir )
+		private static void DeleteCacheDir( DirectoryInfo cacheDir )
 		{
 			//			Debug.WriteLine( "Modules:");
 			//			foreach( ProcessModule module in Process.GetCurrentProcess().Modules )

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EncodingInfo" FullName="System.Text.EncodingInfo">
   <TypeSignature Language="C#" Value="public sealed class EncodingInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit EncodingInfo extends System.Object" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is primarily used by the <see cref="T:System.Text.Encoding" /> class. The <see cref="M:System.Text.Encoding.GetEncodings" /> method returns an array of this type.</para>
+      <para>This class is intended to provide minimal information about an encoding. To obtain additional information, the application should use the <see cref="M:System.Text.EncodingInfo.GetEncoding" /> method to get an instance of the <see cref="T:System.Text.Encoding" /> class, which contains more comprehensive information about the encoding it represents.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides basic information about an encoding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CodePage">
@@ -28,10 +36,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is equivalent to <see cref="P:System.Text.Encoding.CodePage" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the code page identifier of the encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisplayName">
@@ -46,10 +60,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property defines a display name that is the same as the name represented by the <see cref="P:System.Text.Encoding.EncodingName" /> property. Your applications should use <see cref="P:System.Text.EncodingInfo.Name" /> for a name to pass to <see cref="M:System.Text.Encoding.GetEncoding(System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the human-readable description of the encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -67,11 +87,21 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Two <see cref="T:System.Text.EncodingInfo" /> objects are equal if their <see cref="P:System.Text.EncodingInfo.CodePage" /> properties are equal.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified object is equal to the current <see cref="T:System.Text.EncodingInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is a <see cref="T:System.Text.EncodingInfo" /> object and is equal to the current <see cref="T:System.Text.EncodingInfo" /> object; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to the current <see cref="T:System.Text.EncodingInfo" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEncoding">
@@ -87,10 +117,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Text.Encoding" /> object that corresponds to the current <see cref="T:System.Text.EncodingInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.Encoding" /> object that corresponds to the current <see cref="T:System.Text.EncodingInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -106,10 +142,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the <see cref="M:System.Text.EncodingInfo.GetHashCode" /> method is not suitable for distinguishing one <see cref="T:System.Text.EncodingInfo" /> object from another. If your application needs a unique hash code, it should override the <see cref="M:System.Text.EncodingInfo.GetHashCode" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the current <see cref="T:System.Text.EncodingInfo" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -124,10 +169,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property defines the name that is appropriate for passing to <see cref="M:System.Text.Encoding.GetEncoding(System.String)" />. This name is the same as the name represented by the <see cref="P:System.Text.Encoding.WebName" /> property. When its value is the name of a standard, the actual implementation of the encoding may not conform in full to that standard. Your applications should use <see cref="P:System.Text.EncodingInfo.DisplayName" /> for a human-readable name.</para>
+          <para>The <see cref="M:System.Text.Encoding.GetEncodings" /> method gets a complete list of supported encodings, uniquely distinguished by code page. If your application retrieves encodings using the <see cref="P:System.Text.EncodingInfo.Name" /> property, note that some duplicate encodings are retrieved. For more about handling these duplicates, see the description of <see cref="M:System.Text.Encoding.GetEncodings" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name registered with the Internet Assigned Numbers Authority (IANA) for the encoding.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

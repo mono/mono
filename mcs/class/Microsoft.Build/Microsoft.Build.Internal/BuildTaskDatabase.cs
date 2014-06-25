@@ -106,15 +106,23 @@ namespace Microsoft.Build.Internal
 		void LoadUsingTasks (ProjectInstance projectInstance, IEnumerable<ProjectUsingTaskElement> usingTasks)
 		{
 			Func<string,bool> cond = s => projectInstance != null ? projectInstance.EvaluateCondition (s) : Convert.ToBoolean (s);
+			Func<string,string> expand = s => projectInstance != null ? projectInstance.ExpandString (s) : s;
 			foreach (var ut in usingTasks) {
-				var ta = assemblies.FirstOrDefault (a => a.AssemblyFile.Equals (ut.AssemblyFile, StringComparison.OrdinalIgnoreCase) || a.AssemblyName.Equals (ut.AssemblyName, StringComparison.OrdinalIgnoreCase));
+				var aName = expand (ut.AssemblyName);
+				var aFile = expand (ut.AssemblyFile);
+				if (string.IsNullOrEmpty (aName) && string.IsNullOrEmpty (aFile)) {
+					var errorNoAssembly = string.Format ("Task '{0}' does not specify either of AssemblyName or AssemblyFile.", ut.TaskName);
+					engine.LogWarningEvent (new BuildWarningEventArgs (null, null, projectInstance.FullPath, ut.Location.Line, ut.Location.Column, 0, 0, errorNoAssembly, null, null));
+					continue;
+				}
+				var ta = assemblies.FirstOrDefault (a => a.AssemblyFile.Equals (aFile, StringComparison.OrdinalIgnoreCase) || a.AssemblyName.Equals (aName, StringComparison.OrdinalIgnoreCase));
 				if (ta == null) {
 					var path = Path.GetDirectoryName (string.IsNullOrEmpty (ut.Location.File) ? projectInstance.FullPath : ut.Location.File);
-					ta = new TaskAssembly () { AssemblyName = ut.AssemblyName, AssemblyFile = ut.AssemblyFile };
+					ta = new TaskAssembly () { AssemblyName = aName, AssemblyFile = aFile };
 					try {
 						ta.LoadedAssembly = !string.IsNullOrEmpty (ta.AssemblyName) ? Assembly.Load (ta.AssemblyName) : Assembly.LoadFile (Path.Combine (path, ta.AssemblyFile));
 					} catch {
-						var errorNotLoaded = string.Format ("For task '{0}' Specified assembly '{1}' was not found", ut.TaskName, string.IsNullOrEmpty (ta.AssemblyName) ? ta.AssemblyFile : ta.AssemblyName);
+						var errorNotLoaded = string.Format ("For task '{0}' Specified assembly '{1}' was not found", ut.TaskName, string.IsNullOrEmpty (ta.AssemblyName) ? Path.Combine (path, ta.AssemblyFile) : ta.AssemblyName);
 						engine.LogWarningEvent (new BuildWarningEventArgs (null, null, projectInstance.FullPath, ut.Location.Line, ut.Location.Column, 0, 0, errorNotLoaded, null, null));
 						continue;
 					}
@@ -130,7 +138,7 @@ namespace Microsoft.Build.Internal
 					TaskAssembly = ta,
 					Name = ut.TaskName,
 					TaskFactoryParameters = pg,
-					TaskBody = ut.TaskBody != null && cond (ut.TaskBody.Condition) ? ut.TaskBody.Evaluate : null,
+					TaskBody = ut.TaskBody != null && cond (ut.TaskBody.Condition) ? ut.TaskBody.TaskBody : null,
 					};
 				if (string.IsNullOrEmpty (ut.TaskFactory)) {
 					type = LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskName);

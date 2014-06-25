@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IEvidenceFactory" FullName="System.Security.IEvidenceFactory">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IEvidenceFactory" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEvidenceFactory" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Gets an object's <see cref="T:System.Security.Policy.Evidence" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Evidence">
@@ -33,9 +37,12 @@
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Policy.Evidence'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets <see cref="T:System.Security.Policy.Evidence" /> that verifies the current object's identity.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

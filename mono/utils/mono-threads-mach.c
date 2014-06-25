@@ -58,7 +58,7 @@ mono_threads_core_suspend (MonoThreadInfo *info)
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 	res = mono_threads_get_runtime_callbacks ()->
-		thread_state_init_from_handle (&info->suspend_state, mono_thread_info_get_tid (info), info->native_handle);
+		thread_state_init_from_handle (&info->suspend_state, info);
 	if (!res)
 		thread_resume (info->native_handle);
 	return res;
@@ -87,7 +87,11 @@ mono_threads_core_resume (MonoThreadInfo *info)
 			return FALSE;
 
 		mono_mach_arch_thread_state_to_mcontext (state, mctx);
+#ifdef TARGET_ARM64
+		g_assert_not_reached ();
+#else
 		uctx.uc_mcontext = mctx;
+#endif
 		mono_monoctx_to_sigctx (&tmp, &uctx);
 
 		mono_mach_arch_mcontext_to_thread_state (mctx, state);

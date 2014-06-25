@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LinkButton" FullName="System.Web.UI.WebControls.LinkButton">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class LinkButton : System.Web.UI.WebControls.WebControl, System.Web.UI.IPostBackEventHandler, System.Web.UI.WebControls.IButtonControl" />
   <AssemblyInfo>
@@ -46,8 +47,109 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#ButtonControlsAndValidation">LinkButton Controls and Validation</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeclarativeSyntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control to create a hyperlink-style button on the Web page. The <see cref="T:System.Web.UI.WebControls.LinkButton" /> control has the same appearance as a <see cref="T:System.Web.UI.WebControls.HyperLink" /> control, but has the same functionality as a <see cref="T:System.Web.UI.WebControls.Button" /> control. If you want to link to another Web page when the control is clicked, consider using the <see cref="T:System.Web.UI.WebControls.HyperLink" /> control.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.WebControls.LinkButton" /> control renders JavaScript to the client browser. The client browser must have JavaScript enabled for this control to function properly. For more information on client script, see <format type="text/html"><a href="13edb6b9-2dea-43c6-b8c1-a47207de19aa">Client Script in ASP.NET Web Pages</a></format>. </para>
+      </block>
+      <para>You can create either a Submit button or a Command button. A Submit button does not have a command name associated with it. The button simply posts the Web page back to the server. By default, a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is a Submit button. You can provide an event handler for the <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event to programmatically control the actions performed when the Submit button is clicked. On the other hand, a Command button has a command name associated with the button, such as Sort. Set the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property to specify the command name. This allows you to create multiple <see cref="T:System.Web.UI.WebControls.LinkButton" /> controls on a Web page and programmatically determine which <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. You can also use the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property with a Command button to provide additional information about the command to perform, such as specifying ascending order. You can also provide an event handler for the <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event to programmatically control the action performed when the Command button is clicked.</para>
+      <block subset="none" type="note">
+        <para>This control can be used to display user input, which might include malicious client script. Text is not HTML encoded before it is displayed in the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="96D2C59E-693C-4079-9B53-B3FF0D9E9133">[&lt;topic://cpconASPNETSyntaxForValidationControls&gt;]</a></format>.</para>
+      </block>
+      <format type="text/html">
+        <a href="#ButtonControlsAndValidation" />
+      </format>
+      <format type="text/html">
+        <h2>LinkButton Controls and Validation</h2>
+      </format>
+      <para>By default, page validation is performed when a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. Page validation determines whether the input controls associated with a validation control on the page all pass the validation rules specified by the validation control. To prevent page validation from occurring, set the <see cref="P:System.Web.UI.WebControls.LinkButton.CausesValidation" /> property to false.</para>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:LinkButton
+    AccessKey="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CausesValidation="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    CommandArgument="string"
+    CommandName="string"
+    CssClass="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+        Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    OnClick="Click event handler"
+    OnClientClick="string"
+    OnCommand="Command event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    PostBackUrl="uri"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    Text="string"
+    ToolTip="string"
+    ValidationGroup="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a hyperlink-style button control on a Web page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -56,8 +158,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,8 +183,11 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the attributes of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control to the output stream for rendering on the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,9 +204,13 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">a <see cref="T:System.Object" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the control that an element, either XML or HTML, was parsed, and adds the element to the control's <see cref="T:System.Web.UI.ControlCollection" /> object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the parsed element.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,9 +225,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, page validation is performed when a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. Page validation determines whether the input controls associated with a validation control on the page all pass the validation rules specified by the validation control.</para>
+          <para>You can specify (or determine) whether validation is performed on both the client and the server when a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked by using the <see cref="P:System.Web.UI.WebControls.LinkButton.CausesValidation" /> property. To prevent validation from being performed, set the <see cref="P:System.Web.UI.WebControls.LinkButton.CausesValidation" /> property to false.</para>
+          <para>This property is commonly set to false for a Reset or Clear button to prevent validation from being performed when the button is clicked.</para>
+          <para>When the value of the <see cref="P:System.Web.UI.WebControls.LinkButton.CausesValidation" /> property is set to true, you can also use the <see cref="P:System.Web.UI.WebControls.LinkButton.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control causes validation.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether validation is performed when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,8 +260,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event is raised when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. This event is commonly used when no command name is associated with the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control, as in the case of a Submit button.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -151,8 +283,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event is raised when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. This event is commonly used when a command name, such as Sort, is associated with the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. This allows you to create multiple <see cref="T:System.Web.UI.WebControls.LinkButton" /> controls on a Web page and programmatically determine which <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event is raised through the control hierarchy in the form of the BubbleEvent.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +309,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property to specify an argument that complements the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property is typically only used when the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property is set.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property complements the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property by allowing you to provide any additional information about the command to perform. For example, you can set the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property to Sort and set the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property to Ascending to specify a command to sort in ascending order.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an optional argument passed to the <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event handler along with the associated <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,9 +348,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you have multiple <see cref="T:System.Web.UI.WebControls.LinkButton" /> controls on a Web page, use the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property to specify or determine the command name associated with the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control clicked. You can set the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandName" /> property with any string that identifies the command to perform. You can then programmatically determine the command name of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control and perform the appropriate actions.</para>
+          <para>Additional information about the command, such as an Ascending sort order, can be specified by using the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the command name associated with the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. This value is passed to the <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event handler along with the <see cref="P:System.Web.UI.WebControls.LinkButton.CommandArgument" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -223,9 +384,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LinkButton.GetPostBackOptions" /> method creates a <see cref="T:System.Web.UI.PostBackOptions" /> object that represents the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control's postback behavior. The <see cref="T:System.Web.UI.PostBackOptions" /> object is then typically passed to the <see cref="M:System.Web.UI.ClientScriptManager.GetPostBackEventReference(System.Web.UI.PostBackOptions)" /> method, which is used to obtain a reference to a client-side script function that, when invoked, causes the server to post back to the page.</para>
+          <para>This method is used primarily by control developers when extending the <see cref="T:System.Web.UI.WebControls.LinkButton" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.Web.UI.PostBackOptions" /> object that represents the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control's postback behavior.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.PostBackOptions" /> that represents the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control's postback behavior.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadViewState">
@@ -238,9 +409,10 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">a <see cref="T:System.Object" /></param>
         <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The saved state to retrieve.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -257,9 +429,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event is raised when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. This event is commonly used when no command name is associated with the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control, as in the case of a Submit button.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LinkButton.OnClick(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -284,9 +465,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.LinkButton.OnClientClick" /> property to specify additional client-side script that executes when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control's <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event is raised. The script that you specify for this property is rendered in the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control's OnClick attribute in addition to the control's predefined client-side script.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the client-side script that executes when a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control's <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event is raised</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCommand">
@@ -299,9 +487,21 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.CommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event is raised when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. This event is commonly used when a command name, such as Sort, is associated with the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. This allows you to create multiple <see cref="T:System.Web.UI.WebControls.LinkButton" /> controls on a Web page and programmatically determine which <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event is raised through the control hierarchy in the form of the BubbleEvent.</para>
+          </block>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">[&lt;topic://cpconProvidingEventFunctionality&gt;]</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LinkButton.OnCommand(System.Web.UI.WebControls.CommandEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -318,9 +518,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LinkButton.OnPreRender(System.EventArgs)" /> method notifies the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control to perform any necessary prerendering steps prior to saving view state and rendering content to the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,9 +558,27 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LinkButton.PostBackUrl" /> property allows you to perform a cross-page post using the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. Set the <see cref="P:System.Web.UI.WebControls.LinkButton.PostBackUrl" /> property to the URL of the Web page to post to when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked. For example, specifying Page2.aspx causes the page that contains the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control to post to Page2.aspx. If you do not specify a value for the <see cref="P:System.Web.UI.WebControls.LinkButton.PostBackUrl" /> property, the page posts back to itself.</para>
+          <block subset="none" type="note">
+            <para>When performing a cross-page postback with controls with server-side validation, you should check that the page's <see cref="P:System.Web.UI.Page.IsValid" /> property is true before processing the postback. In the case of a cross-page postback, the page to check is the PreviousPage. The following Visual Basic code shows how this is done:</para>
+          </block>
+          <code>Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Page.PreviousPage.IsValid Then
+            ' Handle the post back
+        Else
+            Response.Write("Invalid")
+        End If
+End Sub</code>
+          <para>For more information on cross-page posting techniques, see <format type="text/html"><a href="fedf234e-b7c4-4644-a9e8-c1c0870b043b">Cross-Page Posting in an ASP.NET Web Page</a></format>.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the page to post to from the current page when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RaisePostBackEvent">
@@ -369,9 +594,16 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is used internally by the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control, when it is clicked, to raise a <see cref="E:System.Web.UI.WebControls.LinkButton.Click" /> event, and if defined, a <see cref="E:System.Web.UI.WebControls.LinkButton.Command" /> event. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control when it posts back to the server.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument for the event.</param>
       </Docs>
     </Member>
     <Member MemberName="RenderContents">
@@ -384,9 +616,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the contents of the control to the specified writer.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -408,8 +647,14 @@
       </Parameters>
       <Docs>
         <param name="ea">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -420,9 +665,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.LinkButton.Text" /> property to specify or determine the caption to display on the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control.</para>
+          <block subset="none" type="note">
+            <para>This control can be used to display user input, which might include malicious client script. Check any information that is sent from a client for executable script, SQL statements, or other code before displaying it in your application. ASP.NET provides an input request validation feature to block script and HTML in user input. Validation server controls are also provided to assess user input. For more information, see <format type="text/html"><a href="96D2C59E-693C-4079-9B53-B3FF0D9E9133">[&lt;topic://cpconASPNETSyntaxForValidationControls&gt;]</a></format>.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption displayed on the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -461,9 +716,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validation groups allow you to assign validation controls on a page to a specific category. Each validation group can be validated independently of other validation groups on the page. Use the <see cref="P:System.Web.UI.WebControls.LinkButton.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control causes validation when it posts back to the server. </para>
+          <para>This property has an effect only when the value of the <see cref="P:System.Web.UI.WebControls.LinkButton.CausesValidation" /> property is set to true. When you specify a value for the <see cref="P:System.Web.UI.WebControls.LinkButton.ValidationGroup" /> property, only the validation controls that are part of the specified group are validated when the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control posts back to the server. If you do not specify a value for this property and the <see cref="P:System.Web.UI.WebControls.LinkButton.CausesValidation" /> property is set to true, all validation controls on the page that are not assigned to a validation group are validated when the control posts back to the server.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group of controls for which the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control causes validation when it posts back to the server.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

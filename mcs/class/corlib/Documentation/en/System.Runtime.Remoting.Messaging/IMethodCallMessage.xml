@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMethodCallMessage" FullName="System.Runtime.Remoting.Messaging.IMethodCallMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMethodCallMessage : System.Runtime.Remoting.Messaging.IMethodMessage" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMethodCallMessage implements class System.Runtime.Remoting.Messaging.IMessage, class System.Runtime.Remoting.Messaging.IMethodMessage" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> is generated as a result of a method called on a remote object, and is used to transport details about the remote method call to the server side.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method call message interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetInArg">
@@ -40,10 +47,17 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="argNum">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified argument that is not marked as an out parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested argument that is not marked as an out parameter.</para>
+        </returns>
+        <param name="argNum">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested in argument. </param>
       </Docs>
     </Member>
     <Member MemberName="GetInArgName">
@@ -62,10 +76,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the name of the specified argument that is not marked as an out parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of a specific argument that is not marked as an out parameter.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested in argument. </param>
       </Docs>
     </Member>
     <Member MemberName="InArgCount">
@@ -81,9 +102,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of arguments in the call that are not marked as out parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InArgs">
@@ -99,9 +123,15 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object []'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the <see cref="P:System.Runtime.Remoting.Messaging.IMethodCallMessage.InArgs" /> property is redundant since the same functionality can be achieved with the <see cref="P:System.Runtime.Remoting.Messaging.IMethodCallMessage.InArgCount" /> and <see cref="M:System.Runtime.Remoting.Messaging.IMethodCallMessage.GetInArg(System.Int32)" /> methods, there might be performance optimization available if the implementer understands when all the arguments will be retrieved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of arguments that are not marked as out parameters.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

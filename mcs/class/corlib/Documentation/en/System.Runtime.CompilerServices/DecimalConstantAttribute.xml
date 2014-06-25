@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DecimalConstantAttribute" FullName="System.Runtime.CompilerServices.DecimalConstantAttribute" FullNameSP="System_Runtime_CompilerServices_DecimalConstantAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable DecimalConstantAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class DecimalConstantAttribute : Attribute" />
@@ -24,22 +25,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Stores the value of a <see cref="T:System.Decimal" /> constant in metadata.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>This attribute can be applied to fields
-         and parameters.</para>
-        <para>For more information on storing constants in metadata, see Partition II of
-         the CLI Specification.</para>
-        <para>The types in
-      <see langword="System.Runtime.CompilerServices" /> are intended primarily for use by
-         compilers, not application programmers. They allow compilers to easily
-         implement certain language features that are not directly visible to
-         programmers.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this attribute to specify at compile time that a decimal value is a constant value. </para>
+      <para>You can apply this attribute to fields or parameters.</para>
+      <para>For more information about constant attributes, see the <see cref="T:System.Runtime.CompilerServices.CustomConstantAttribute" /> class.</para>
+      <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers use only.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores the value of a <see cref="T:System.Decimal" /> constant in metadata. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -58,14 +54,22 @@
         <Parameter Name="low" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="scale">To be added.</param>
-        <param name="sign">To be added.</param>
-        <param name="hi">To be added.</param>
-        <param name="mid">To be added.</param>
-        <param name="low">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DecimalConstantAttribute" /> class with the specified signed integer values. </para>
+        </summary>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The power of 10 scaling factor that indicates the number of digits to the right of the decimal point. Valid values are 0 through 28 inclusive.</param>
+        <param name="sign">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of 0 indicates a positive value, and a value of 1 indicates a negative value.</param>
+        <param name="hi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />.</param>
+        <param name="mid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The middle 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />.</param>
+        <param name="low">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -92,19 +96,6 @@
         <Parameter Name="low" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="scale">A <see cref="T:System.Byte" /> that specifies the number of digits to the right of the decimal point in the value of the new instance. Valid <paramref name="scale" /> values are 0 through 28 inclusive.</param>
-        <param name="sign">A <see cref="T:System.Byte" /> that specifies the sign of the value of the new instance. Zero indicates a positive value; any non-zero value indicates a negative value.</param>
-        <param name="hi">A <see cref="T:System.UInt32" /> that specifies the high-order 32 bits of the value of the new instance.</param>
-        <param name="mid">A <see cref="T:System.UInt32" /> that specifies the middle 32 bits of the value of the new instance.</param>
-        <param name="low">A <see cref="T:System.UInt32" /> that specifies the low-order 32 bits of the value of the new instance.</param>
-        <param name="sign">To be added.</param>
-        <param name="hi">To be added.</param>
-        <param name="mid">To be added.</param>
-        <param name="low">To be added.</param>
-        <summary>
-          <para> Constructs a new instance of the <see cref="T:System.Runtime.CompilerServices.DecimalConstantAttribute" /> 
-class with the specified value.</para>
-        </summary>
         <remarks>
           <para>
             <block subset="none" type="note">For representations of <see cref="T:System.Decimal" /> whose values can have scales exceeding 255, the constructor <see cref="T:System.Runtime.CompilerServices.DecimalConstantAttribute.System.DecimalConstantAttribute" /><see langword="(System.String)" />  must be used instead.</block>
@@ -112,6 +103,28 @@ class with the specified value.</para>
         </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="scale" /> &gt; 28.</exception>
+        <param name="sign">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of 0 indicates a positive value, and a value of 1 indicates a negative value. </param>
+        <param name="hi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <param name="mid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The middle 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <param name="low">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.DecimalConstantAttribute" /> class with the specified unsigned integer values.</para>
+        </summary>
+        <param name="scale">
+          <attribution license="cc4" from="Microsoft" modified="false" />The power of 10 scaling factor that indicates the number of digits to the right of the decimal point. Valid values are 0 through 28 inclusive. </param>
+        <param name="sign">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of 0 indicates a positive value, and a value of 1 indicates a negative value. </param>
+        <param name="hi">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <param name="mid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The middle 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
+        <param name="low">
+          <attribution license="cc4" from="Microsoft" modified="false" />The low 32 bits of the 96-bit <see cref="P:System.Runtime.CompilerServices.DecimalConstantAttribute.Value" />. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -128,9 +141,12 @@ class with the specified value.</para>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the decimal constant stored in this attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

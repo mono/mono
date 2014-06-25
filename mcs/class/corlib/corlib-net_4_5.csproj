@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</ProjectGuid>
+    <ProjectGuid>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>612,618,1699</NoWarn>
-    <OutputPath>bin\Debug\corlib-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -235,6 +236,14 @@
     <Compile Include="System.Diagnostics.SymbolStore\SymDocumentType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageVendor.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventAttribute.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventCommand.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventCommandEventArgs.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventKeywords.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventLevel.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventSourceAttribute.cs" />
+    <Compile Include="System.Diagnostics.Tracing\NonEventAttribute.cs" />
     <Compile Include="System.Diagnostics\ConditionalAttribute.cs" />
     <Compile Include="System.Diagnostics\DebuggableAttribute.cs" />
     <Compile Include="System.Diagnostics\Debugger.cs" />
@@ -281,6 +290,7 @@
     <Compile Include="System.Globalization\PersianCalendar.cs" />
     <Compile Include="System.Globalization\RegionInfo.cs" />
     <Compile Include="System.Globalization\RegionInfo.MonoTouch.cs" />
+    <Compile Include="System.Globalization\SortVersion.cs" />
     <Compile Include="System.Globalization\StringInfo.cs" />
     <Compile Include="System.Globalization\TaiwanCalendar.cs" />
     <Compile Include="System.Globalization\TaiwanLunisolarCalendar.cs" />
@@ -459,6 +469,7 @@
     <Compile Include="System.Reflection\MonoGenericMethod.cs" />
     <Compile Include="System.Reflection\MonoMethod.cs" />
     <Compile Include="System.Reflection\MonoModule.cs" />
+    <Compile Include="System.Reflection\MonoParameterInfo.cs" />
     <Compile Include="System.Reflection\MonoProperty.cs" />
     <Compile Include="System.Reflection\ObfuscateAssemblyAttribute.cs" />
     <Compile Include="System.Reflection\ObfuscationAttribute.cs" />
@@ -625,6 +636,18 @@
     <Compile Include="System.Runtime.InteropServices.ComTypes\VARFLAGS.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\VARKIND.cs" />
     <Compile Include="System.Runtime.InteropServices.Expando\IExpando.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\DefaultInterfaceAttribute.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\DesignerNamespaceResolveEventArgs.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\EventRegistrationToken.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\EventRegistrationTokenTable.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\IActivationFactory.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\InterfaceImplementedInVersionAttribute.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\NamespaceResolveEventArgs.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\ReadOnlyArrayAttribute.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\ReturnValueNameAttribute.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\WindowsRuntimeMarshal.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\WindowsRuntimeMetadata.cs" />
+    <Compile Include="System.Runtime.InteropServices.WindowsRuntime\WriteOnlyArrayAttribute.cs" />
     <Compile Include="System.Runtime.InteropServices\_Activator.cs" />
     <Compile Include="System.Runtime.InteropServices\_Assembly.cs" />
     <Compile Include="System.Runtime.InteropServices\_AssemblyBuilder.cs" />
@@ -1036,6 +1059,7 @@
     <Compile Include="System.Runtime.Versioning\TargetFrameworkAttribute.cs" />
     <Compile Include="System.Runtime.Versioning\VersioningHelper.cs" />
     <Compile Include="System.Runtime\AssemblyTargetedPatchBandAttribute.cs" />
+    <Compile Include="System.Runtime\GCLargeObjectHeapCompactionMode.cs" />
     <Compile Include="System.Runtime\GCLatencyMode.cs" />
     <Compile Include="System.Runtime\GCSettings.cs" />
     <Compile Include="System.Runtime\MemoryFailPoint.cs" />
@@ -1108,6 +1132,11 @@
     <Compile Include="System.Security.AccessControl\SddlAccessRight.cs" />
     <Compile Include="System.Security.AccessControl\SecurityInfos.cs" />
     <Compile Include="System.Security.AccessControl\SystemAcl.cs" />
+    <Compile Include="System.Security.Claims\Claim.cs" />
+    <Compile Include="System.Security.Claims\ClaimsIdentity.cs" />
+    <Compile Include="System.Security.Claims\ClaimsPrincipal.cs" />
+    <Compile Include="System.Security.Claims\ClaimTypes.cs" />
+    <Compile Include="System.Security.Claims\ClaimValueTypes.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate20.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509ContentType.cs" />
@@ -1693,12 +1722,19 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PreBuildEvent>
+
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>
@@ -1729,3 +1765,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UCOMIBindCtx" FullName="System.Runtime.InteropServices.UCOMIBindCtx">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMIBindCtx" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract UCOMIBindCtx" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information, please see the existing documentation for IBindCtx in the com subfolder of the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.BIND_OPTS" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnumObjectParam">
@@ -128,9 +135,16 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IBindCtx::RegisterObjectBound in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Register the passed object as one of the objects that has been bound during a moniker operation and which should be released when it is complete.</para>
+        </summary>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register for release. </param>
       </Docs>
     </Member>
     <Member MemberName="RegisterObjectParam">
@@ -150,10 +164,18 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="pszKey">To be added: an object of type 'string'</param>
-        <param name="punk">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IBindCtx::RegisterObjectParam in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Register the given object pointer under the specified name in the internally-maintained table of object pointers.</para>
+        </summary>
+        <param name="pszKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to register <paramref name="punk" /> with. </param>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to register. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseBoundObjects">
@@ -170,8 +192,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IBindCtx::ReleaseBoundObjects in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all the objects currently registered with the bind context by <see cref="M:System.Runtime.InteropServices.UCOMIBindCtx.RegisterObjectBound(System.Object)" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RevokeObjectBound">
@@ -190,9 +218,16 @@
         <Parameter Name="punk" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="punk">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IBindCtx::RevokeObjectBound in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the object from the set of registered objects that need to be released.</para>
+        </summary>
+        <param name="punk">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to unregister for release. </param>
       </Docs>
     </Member>
     <Member MemberName="RevokeObjectParam">
@@ -211,9 +246,16 @@
         <Parameter Name="pszKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="pszKey">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, please see the existing documentation for IBindCtx::RevokeObjectParam in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Revoke the registration of the object currently found under this key in the internally-maintained table of contextual object parameters, if any such key is currently registered.</para>
+        </summary>
+        <param name="pszKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to unregister. </param>
       </Docs>
     </Member>
     <Member MemberName="SetBindOptions">

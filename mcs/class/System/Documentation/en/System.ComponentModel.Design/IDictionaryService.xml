@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDictionaryService" FullName="System.ComponentModel.Design.IDictionaryService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDictionaryService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDictionaryService" />
@@ -12,8 +13,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This service provides a simple interface to set, retrieve, and look up objects with associated keys.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a basic, component site-specific, key-value pair dictionary through a service that a designer can use to store user-defined data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetKey">
@@ -32,10 +39,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the key corresponding to the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The associated key, or null if no key exists.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to look up in the dictionary. </param>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -54,10 +68,17 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value corresponding to the specified key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The associated value, or null if no value exists.</para>
+        </returns>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to look up the value for. </param>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
@@ -77,10 +98,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the specified key-value pair.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to use as the key to associate the value with. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to store. </param>
       </Docs>
     </Member>
   </Members>

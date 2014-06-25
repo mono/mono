@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XAttribute" FullName="System.Xml.Linq.XAttribute">
   <TypeSignature Language="C#" Value="public class XAttribute : System.Xml.Linq.XObject" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XAttribute extends System.Xml.Linq.XObject" />
@@ -10,8 +11,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An XML attribute is a name/value pair associated with an XML element. </para>
+      <para>Each <see cref="T:System.Xml.Linq.XElement" /> contains a list of the attributes for that element. Attributes must have a qualified name that is unique to the element. Attributes are not derived from <see cref="T:System.Xml.Linq.XNode" />; they are not nodes in the XML tree. Instead, they are simply name/value pairs associated with an element.</para>
+      <para>Attributes are maintained in the XML tree in the order that they were added to the element. When a collection of attributes is returned by <see cref="M:System.Xml.Linq.XElement.Attributes" />, they are returned in the order that they were added to the element, and are not sorted.</para>
+      <para>Technically, in XML, namespace declarations are not attributes proper. However, this distinction is not normally made by many XML programmers. Instead, because namespace declarations have exactly the same XML syntax as attributes, most XML programmers think of namespaces as attributes. To simplify the sqltecxlinq programming interface, namespaces are represented in the XML tree as attributes. Such namespace attributes impact serialization of an XML tree. When serializing, sqltecxlinq attempts to serialize with the namespace prefix specified in namespace attributes. You can use the <see cref="P:System.Xml.Linq.XAttribute.IsNamespaceDeclaration" /> to determine if an attribute is really a namespace declaration.</para>
+      <para>The <see cref="T:System.Xml.Linq.XAttribute" /> class derives from <see cref="T:System.Xml.Linq.XObject" />. You can add annotations to attributes, and observe events for them.</para>
+      <para>Some <see cref="T:System.Xml.Linq.XAttribute" /> methods can be used from XAML. For more information, see <format type="text/html"><a href="0455f47c-4a68-4f2e-a3f8-dd1d85b99012">LINQ to XML Dynamic Properties</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML attribute.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +37,16 @@
         <Parameter Name="other" Type="System.Xml.Linq.XAttribute" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is primarily used internally when making a deep copy of an XML tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XAttribute" /> class from another <see cref="T:System.Xml.Linq.XAttribute" /> object. </para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XAttribute" /> object to copy from.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,10 +61,29 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>There is an implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />. Typical use of this constructor is to specify a string as the first parameter instead of creating a new <see cref="T:System.Xml.Linq.XName" />, as follows:</para>
+          <code>XElement root = new XElement("Root",
+    new XAttribute("AnAttributeName", "Content")
+);</code>
+          <para>You can also use the addition operator overload with an <see cref="T:System.Xml.Linq.XNamespace" /> and a string to create an <see cref="T:System.Xml.Linq.XName" />, as follows:</para>
+          <code>XNamespace aw = "http://www.adventure-works.com";
+XElement root = new XElement(aw + "Root",
+    new XAttribute(aw + "AnAttributeName", "Content")
+);</code>
+          <para>For more information, see <format type="text/html"><a href="e3003209-3234-45be-a832-47feb7927430">Working With Namespaces</a></format>.</para>
+          <para>These same approaches will work for Visual Basic, however XML literals provide a better approach for creating XML trees.</para>
+          <para>The <paramref name="value" /> parameter can be a <see cref="T:System.String" />, double, float, decimal, bool, <see cref="T:System.DateTime" />, or <see cref="T:System.TimeSpan" />. If the value is a <see cref="T:System.DateTime" /> or <see cref="T:System.TimeSpan" />, the value of the attribute is formatted correctly per the W3C specifications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XAttribute" /> class from the specified name and value. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> containing the value of the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="EmptySequence">
@@ -59,9 +97,15 @@
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Xml.Linq.XAttribute&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is typically used by class implementers when writing a method that returns a collection of attributes. If the method needs to return an empty collection of attributes, it could use this property to get an empty collection of <see cref="T:System.Xml.Linq.XAttribute" /> objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an empty collection of attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsNamespaceDeclaration">
@@ -75,9 +119,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Technically, in XML, namespace declarations are not attributes proper. However, this distinction is not normally made by most XML programmers. Instead, because namespace declarations have exactly the same syntax as attributes, most XML programmers think of namespaces as attributes. To simplify the sqltecxlinq programming interface, namespaces are represented in the XML tree as attributes. You can use this property to determine if a particular sqltecxlinq attribute is really a namespace declaration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if this attribute is a namespace declaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -91,9 +141,15 @@
         <ReturnType>System.Xml.Linq.XName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The expanded name returned by this property is in the form of {namespace}localname.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the expanded name of this attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NextAttribute">
@@ -107,9 +163,16 @@
         <ReturnType>System.Xml.Linq.XAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attributes are maintained in the XML tree in the order that they were added to the element. When a collection of attributes is returned by <see cref="M:System.Xml.Linq.XElement.Attributes" />, they are returned in the order that they were added, and are not sorted. When you request the next attribute through this property, this property returns the attribute that was added after this attribute.</para>
+          <para>If this attribute does not have a parent, or if there is no next attribute, then this property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the next attribute of the parent element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -123,9 +186,15 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of concrete subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each node in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -764,9 +833,17 @@
         <ReturnType>System.Xml.Linq.XAttribute</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attributes are maintained in the XML tree in the order that they were added to the element. When a collection of attributes is returned by <see cref="M:System.Xml.Linq.XElement.Attributes" />, they are returned in the order that they were added, and are not sorted. When you request the previous attribute through this property, this property returns the attribute that was added before this attribute.</para>
+          <para>If this attribute does not have a parent, or if this attribute is the first attribute, then this property returns null.</para>
+          <para>The <see cref="T:System.Xml.Linq.XElement" /> class stores its attributes as a singly-linked list of <see cref="T:System.Xml.Linq.XAttribute" /> objects. This means that the <see cref="P:System.Xml.Linq.XAttribute.PreviousAttribute" /> property must traverse the list of attributes that belong to the element. Therefore, using this property might affect your performance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous attribute of the parent element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -781,8 +858,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this method to modify an XML tree. This method will cause events to occur.</para>
+          <para>There are many scenarios in which you might want to remove a set of attributes. In sqltecxlinq programming, you should not manipulate or modify a set of nodes while you are querying for nodes in that set. In practical terms, this means that you should not iterate over a set of attributes and remove them. Instead, you should materialize them into a <see cref="T:System.Collections.Generic.List`1" /> using the <see cref="M:System.Linq.Enumerable.ToList``1(System.Collections.Generic.IEnumerable{``0})" /> extension method. Then you can iterate over the list, removing the attributes. For more information, see <format type="text/html"><a href="d9a5c404-2b0e-46cd-a358-0e78773b3094">Declarative Code / Imperative Code Bugs</a></format>.</para>
+          <para>Alternatively, if you want to remove a set of attributes, it is recommended that you use the <see cref="M:System.Xml.Linq.Extensions.Remove(System.Collections.Generic.IEnumerable{System.Xml.Linq.XAttribute})" /> method. This method copies the attributes to a list, then iterates over the list, removing the attributes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes this attribute from its parent element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetValue">
@@ -799,9 +884,18 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value is converted to its string representation and assigned to the <see cref="P:System.Xml.Linq.XAttribute.Value" /> property.</para>
+          <para>It is invalid to pass an instance of a class that derives from <see cref="T:System.Xml.Linq.XObject" />, such as <see cref="T:System.Xml.Linq.XElement" /> or <see cref="T:System.Xml.Linq.XAttribute" />.</para>
+          <para>This method will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of this attribute.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to this attribute.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -816,9 +910,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a string in the form of AttributeName="content".</para>
+          <block subset="none" type="note">
+            <para>When this method is called and <see cref="T:System.Xml.Linq.XAttribute" /> contains control character, an exception is thrown with a message like: hexadecimal value 0x0B, is an invalid character.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the current <see cref="T:System.Xml.Linq.XAttribute" /> object to a string representation.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the XML text representation of an attribute and its value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -832,9 +938,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to get or set the value of an attribute.</para>
+          <para>Setting this property will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+          <para>If you are getting the value and the attribute might not exist, it is more convenient to use the explicit conversion operators, and assign the attribute to a nullable type such as string or <see cref="T:System.Nullable`1" /> of <see cref="T:System.Int32" />. If the attribute does not exist, then the nullable type is set to null. Before using this property, you must make sure that the <see cref="M:System.Xml.Linq.XElement.Attribute(System.Xml.Linq.XName)" /> method does not return null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of this attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

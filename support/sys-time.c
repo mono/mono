@@ -72,6 +72,10 @@ Mono_Posix_Syscall_settimeofday (
 /* Remove this at some point in the future */
 gint32
 Mono_Posix_Syscall_utimes_bad (const char *filename,
+	struct Mono_Posix_Timeval *tv);
+
+gint32
+Mono_Posix_Syscall_utimes_bad (const char *filename,
 	struct Mono_Posix_Timeval *tv)
 {
 	struct timeval _tv;

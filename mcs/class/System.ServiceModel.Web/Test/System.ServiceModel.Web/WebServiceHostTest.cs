@@ -45,7 +45,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Category("NotWorking")]
 		public void ServiceDebugBehaviorTest () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:8080/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
 			ServiceEndpoint webHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new WebHttpBinding (), "WebHttpBinding");
 
 			Assert.AreEqual (true, host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageEnabled, "HttpHelpPageEnabled #1");
@@ -63,7 +63,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Category ("NotWorking")]
 		public void WebHttpBehaviorTest1 () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:8080/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
 			ServiceEndpoint webHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new WebHttpBinding (), "WebHttpBinding");
 			ServiceEndpoint basicHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new BasicHttpBinding (), "BasicHttpBinding");
 
@@ -83,7 +83,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Category("NotWorking")]
 		public void WebHttpBehaviorTest2 () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:8080/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
 			ServiceEndpoint webHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new WebHttpBinding (), "WebHttpBinding");
 			MyWebHttpBehavior behavior = new MyWebHttpBehavior ();
 			behavior.ApplyDispatchBehaviorBegin += delegate {
@@ -103,7 +103,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Test]
 		public void ServiceBaseUriTest () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:8080/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
 			Assert.AreEqual (0, host.Description.Endpoints.Count, "no endpoints yet");
 			host.Open ();
 			Assert.AreEqual (1, host.Description.Endpoints.Count, "default endpoint after open");

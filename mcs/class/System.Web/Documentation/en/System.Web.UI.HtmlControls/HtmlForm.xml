@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlForm" FullName="System.Web.UI.HtmlControls.HtmlForm">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class HtmlForm : System.Web.UI.HtmlControls.HtmlContainerControl" />
   <AssemblyInfo>
@@ -14,8 +15,23 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control is a container for server controls on a Web Forms page. All server controls that post back to the server must be placed between the opening and closing tags of an <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+      <block subset="none" type="note">
+        <para>ASP.NET allows only a single <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control to be active on a Web Forms page. If there is more than one active <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control on a Web Forms page, the common language runtime will throw an <see cref="T:System.Web.HttpException" /> exception when you request the page. You can, however, use a <see cref="T:System.Web.UI.WebControls.MultiView" /> control where each <see cref="T:System.Web.UI.WebControls.View" /> object contains one <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control, because only one <see cref="T:System.Web.UI.WebControls.View" /> is active at any given time.</para>
+      </block>
+      <para>You can control the behavior of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control by setting its properties. To specify the encoding type for the form's data, set the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Enctype" /> property. The method (GET or POST) that a browser uses to post form data to the server for processing is specified by setting the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Method" /> property.</para>
+      <block subset="none" type="note">
+        <para>By default, the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Method" /> property is set to POST. You can modify the value of this property to GET, but this might break the built-in state and postback services provided by the ASP.NET page framework.</para>
+      </block>
+      <para>You can configure controls that implement the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface to post to a different target page. This is referred to as cross-page posting. For more information, see <format type="text/html"><a href="fedf234e-b7c4-4644-a9e8-c1c0870b043b">Cross-Page Posting in an ASP.NET Web Page</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlForm" />, see the <see cref="M:System.Web.UI.HtmlControls.HtmlForm.#ctor" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides programmatic access to the HTML &lt;form&gt; element on the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +40,36 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> class.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlForm" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "form" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +87,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> collection for the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ControlCollection" /> that contains the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control's child server controls.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultButton">
@@ -63,9 +113,31 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> property lets you specify that users can cause a postback by pressing ENTER in an input control in the form (such as a text box). You can specify as a default button any control that derives from the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface except the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control. If the control that is referenced by the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> property does not derive from <see cref="T:System.Web.UI.WebControls.IButtonControl" />, an <see cref="T:System.InvalidOperationException" /> exception is thrown.</para>
+          <para>If you are using master pages and you set the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> property from a content page, use the <see cref="P:System.Web.UI.Control.UniqueID" /> property of the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> button. For more information about master pages, see <format type="text/html"><a href="4e53eedf-8304-4e7a-aed1-691a2623b28b">ASP.NET Master Pages Overview</a></format>.</para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> property might not cause a postback in the following scenarios:</para>
+          <list type="bullet">
+            <item>
+              <para>Pressing ENTER when focus is outside the input controls in the form. The default postback action is not guaranteed to be triggered.</para>
+            </item>
+            <item>
+              <para>Pressing ENTER when focus is inside a multi-line text box. In a multi-line text box, the expected behavior is that pressing ENTER creates a new line in the text box. In some browsers, pressing ENTER inside a multi-line text box triggers a postback. In that case, if you want ENTER to create a new line instead, you can attach a JavaScript function to the input control. The script should capture the ENTER key and stop the postback. For example, you can use the <see cref="P:System.Web.UI.WebControls.WebControl.Attributes" /> property collection to add client script for the onKeyPress event.</para>
+            </item>
+            <item>
+              <para>Specifying a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control as a default button. Only <see cref="T:System.Web.UI.WebControls.Button" /> and <see cref="T:System.Web.UI.WebControls.ImageButton" /> controls are supported. </para>
+            </item>
+            <item>
+              <para>Changing the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> property programmatically during an asynchronous postback. Asynchronous postbacks can be enabled on a page by adding one or more <see cref="T:System.Web.UI.UpdatePanel" /> controls to the page. For more information, see <format type="text/html"><a href="29a2265d-9674-4c19-b70e-e5560ee9689a">UpdatePanel Control Overview</a></format> and <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the child control of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control that causes postback when the ENTER key is pressed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultFocus">
@@ -83,9 +155,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultFocus" /> property to access the control on the form to display as the control with input focus when the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control is loaded. Controls that can be selected are displayed with a visual cue indicating that they have the focus. For example, a <see cref="T:System.Web.UI.WebControls.TextBox" /> control with focus is displayed with the insertion point positioned inside of it. </para>
+          <para>The control with focus can also be set using the <see cref="M:System.Web.UI.Control.Focus" /> or <see cref="M:System.Web.UI.Page.SetFocus(System.Web.UI.Control)" /> methods. These methods have precedence over the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultFocus" /> property. If either of these methods are called to set the control with focus, the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultFocus" /> property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the control on the form to display as the control with input focus when the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control is loaded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Enctype">
@@ -96,9 +175,53 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Enctype" /> property to specify the encoding type a browser uses to post data back to the server.</para>
+          <para>The following table shows the common encoding types.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Encoding type </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>application/x-www-form-urlencoded </para>
+              </term>
+              <description>
+                <para>Form data is encoded as name/value pairs. This is the standard encoding format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>multipart/form-data </para>
+              </term>
+              <description>
+                <para>Form data is encoded as a message with a separate part for each control on the page. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>text/plain </para>
+              </term>
+              <description>
+                <para>Form data is encoded in plain text, without any control or formatting characters. </para>
+              </description>
+            </item>
+          </list>
+          <para>For more information on encoding types, see the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C Web site</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encoding type a browser uses when posting the form's data to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -121,9 +244,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify how the browser sends form data to the server for processing. The two common methods supported by all browsers are GET and POST.</para>
+          <block subset="none" type="note">
+            <para>You can override the default value of this property and use the GET method instead of POST. However, because GET requests are limited in how much data they can include, using the GET method can, in some cases, cause the postback and state management capabilities provided by the ASP.NET page framework to fail.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates how a browser posts form data to the server for processing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -146,9 +278,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Name" /> property to determine the unique identifier name for an <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control. In this implementation, getting this property returns the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.UniqueID" /> property. However, setting the property does not assign a value to the property. Setting the property does not assign a value to this property because the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Name" /> property must have the same value as the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.UniqueID" /> property.</para>
+          <block subset="none" type="note">
+            <para>The name attribute is not an XHTML-compliant attribute and is not rendered by ASP.NET regardless of the xhtmlConformance setting. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the identifier name for the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,9 +314,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When notified by the <see cref="M:System.Web.UI.HtmlControls.HtmlForm.OnInit(System.EventArgs)" /> method, Web server controls must perform any initialization steps that are required to create and set up an instance. In this stage of the server control's life cycle, the control's view state has yet to be populated. Additionally, you cannot access other server controls when this method is called, regardless of whether it is a child or parent to this control. Other server controls are not guaranteed to be created and ready for access.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.GridView.OnInit(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.OnInit(System.EventArgs)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event for the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.EventArgs" /> that contains event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,9 +346,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.OnPreRender(System.EventArgs)" /> method is called just prior to rendering the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control. If the <see cref="P:System.Web.UI.Page.SmartNavigation" /> property is set to true, the <see cref="M:System.Web.UI.HtmlControls.HtmlForm.OnPreRender(System.EventArgs)" /> method registers the smart navigation script file reference so that it gets rendered.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.Page.SmartNavigation" /> property has been deprecated in ASP.NET version 2.0.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event for the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -211,8 +372,15 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.Render(System.Web.UI.HtmlTextWriter)" /> method renders an HTML &lt;iframe&gt; element if the <see cref="P:System.Web.UI.Page.SmartNavigation" /> property is set to true. The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.Render(System.Web.UI.HtmlTextWriter)" /> method calls the base <see cref="M:System.Web.UI.Control.Render(System.Web.UI.HtmlTextWriter)" /> method.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.Render(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -230,8 +398,16 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method uses the <see cref="M:System.Web.UI.HtmlTextWriter.IsValidFormAttribute(System.String)" /> method to check the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control's attributes to ensure that they can be rendered in the opening tag of a &lt;form&gt; HTML element.</para>
+          <para>Additionally, the <see cref="M:System.Web.UI.HtmlControls.HtmlForm.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method renders the method, action, and onsubmit attributes of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control. If the control ID set in the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultButton" /> property does not implement the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface, an <see cref="T:System.InvalidOperationException" /> exception is thrown.</para>
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.RenderAttributes(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control's attributes to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -249,8 +425,17 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.HtmlControls.HtmlForm.RenderChildren(System.Web.UI.HtmlTextWriter)" /> method renders client script to ensure that the browser focus is set to the control specified in the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultFocus" /> property.</para>
+          <block subset="none" type="note">
+            <para>A control specified by the <see cref="M:System.Web.UI.Page.SetFocus(System.Web.UI.Control)" /> property takes precedence over a control specified by the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.DefaultFocus" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the child controls of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -271,8 +456,11 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubmitDisabledControls">
@@ -290,9 +478,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.SubmitDisabledControls" /> property to specify whether to force controls disabled on the client to submit their values when the page posts back. This allows the disabled controls to preserve their values after the page posts back to the server. When the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.SubmitDisabledControls" /> property is set to false, controls on the form that have been disabled using client script will not be submitted to the server the next time the page posts back. As a result, any values stored by the disabled controls are lost. To allow the disabled controls to preserve their values after the page posts back to the server, set the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.SubmitDisabledControls" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value indicating whether to force controls disabled on the client to submit their values, allowing them to preserve their values after the page posts back to the server. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -303,9 +497,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Target" /> property to specify the target window or frame that displays the results of the information that is posted to the server. Redirecting the results of the information posted to the server is an advanced task. Using this property simply to post back is not recommended.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Target" /> property renders as a target attribute. The target attribute on form elements is not allowed in XHTML 1.1. Therefore, if the rendered markup must conform to XHTML standards or must conform to accessibility standards, do not set the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Target" /> property. For more information, see <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format> and <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format>. </para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Target" /> value must begin with a letter in the range of A to Z (case-insensitive), except for the following special values, which begin with an underscore.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search </para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine if the _search value is supported.  For example, Microsoft Internet Explorer 5.0 and later support the _search target value. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the frame or window in which to render the results of information that is posted to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -331,9 +590,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.UniqueID" /> property to get the unique programmatic identifier assigned to the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control. This property overrides the base implementation to return a constant value when the control is contained in an <see cref="T:System.Web.UI.INamingContainer" />-implemented object other than a page, such as a custom server control. If the naming container is a page, the value of the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control's <see cref="P:System.Web.UI.Control.ID" /> property is returned.</para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlForm.UniqueID" /> property and the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Name" /> property always return the same value. This is useful when the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control is rendered on a browser that requires the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control's <see cref="P:System.Web.UI.HtmlControls.HtmlForm.UniqueID" /> and <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Name" /> properties to be the same. To keep these properties synchronized, the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.Name" /> property always returns the value of the <see cref="P:System.Web.UI.HtmlControls.HtmlForm.UniqueID" /> property.</para>
+          <block subset="none" type="note">
+            <para>The name attribute is not an XHTML-compliant attribute and by default is not rendered by ASP.NET.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique programmatic identifier assigned to the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

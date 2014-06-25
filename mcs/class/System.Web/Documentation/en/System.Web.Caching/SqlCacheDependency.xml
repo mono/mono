@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlCacheDependency" FullName="System.Web.Caching.SqlCacheDependency">
   <TypeSignature Language="C#" Value="public sealed class SqlCacheDependency : System.Web.Caching.CacheDependency" />
   <AssemblyInfo>
@@ -9,8 +10,38 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>On all supported versions of SQL Server (Microsoft SQL Server 7.0, Microsoft SQL Server 2000, and SQL Server 2005) the <see cref="T:System.Web.Caching.SqlCacheDependency" /> class monitors a specific SQL Server database table. When the table changes, items associated with the table are removed from the <see cref="T:System.Web.Caching.Cache" />, and a new version of the item is added to the <see cref="T:System.Web.Caching.Cache" />.</para>
+      <para>The <see cref="T:System.Web.Caching.SqlCacheDependency" /> class also supports integration with the <see cref="T:System.Data.SqlClient.SqlDependency" /> class when using a sqprsqlong database. The query notification mechanism of sqprsqlong detects changes to data that invalidate the results of an SQL query and removes any cached items associated with the SQL query from the <see cref="T:System.Web.Caching.Cache" />.</para>
+      <para>You can use the <see cref="T:System.Web.Caching.SqlCacheDependency" /> class to add items to your application's <see cref="T:System.Web.Caching.Cache" /> that are dependent on either a SQL Server database table or on an SQL query when using sqprsqlong. You can also use this class with the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive to make an output-cached page or a user control dependent on a SQL Server database table. Finally, you can use the <see cref="T:System.Web.Caching.SqlCacheDependency" /> class with the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> page directive to make an output-cached page dependent on the results of an SQL query when using sqprsqlong. Query notification using sqprsqlong is not supported on the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive for user controls.</para>
+      <block subset="none" type="note">
+        <para>For this class to work correctly when using table-based notifications, the database and any tables that you want to make dependencies on must have notifications enabled. You can enable notifications by calling methods of the <see cref="T:System.Web.Caching.SqlCacheDependencyAdmin" /> class or by using the <format type="text/html"><a href="d17168e3-83f1-48d7-ab1c-535fd335eca0">Aspnet_regsql.exe</a></format> command-line tool. In addition, the proper configuration settings must be included in the application's Web.config file.</para>
+        <para>Using a <see cref="T:System.Web.Caching.SqlCacheDependency" /> object with sqprsqlong query notification does not require any explicit configuration. Consult the sqprsqlong Books Online for information about restrictions on the types of Transact-SQL queries that are allowed when using query notification.</para>
+      </block>
+      <para>The following example shows an ASP.NET Web.config file that enables table-based dependencies on a SQL Server database table.</para>
+      <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="Northwind" connectionString="Data Source=(local); Initial Catalog=northwind; Integrated Security=true"; providerName="System.Data.SqlClient" /&gt;
+  &lt;/connectionStrings&gt;
+  &lt;system.web&gt;
+    &lt;caching&gt;
+      &lt;sqlCacheDependency enabled = "true" pollTime = "60000" &gt;
+        &lt;databases&gt;
+          &lt;add name="northwind" 
+            connectionStringName="Northwind"
+            pollTime="9000000"
+            /&gt;
+        &lt;/databases&gt;
+      &lt;/sqlCacheDependency&gt;
+    &lt;/caching&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Establishes a relationship between an item stored in an ASP.NET application's <see cref="T:System.Web.Caching.Cache" /> object and either a specific SQL Server database table or the results of a sqprsqlong query. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +54,26 @@
         <Parameter Name="sqlCmd" Type="System.Data.SqlClient.SqlCommand" />
       </Parameters>
       <Docs>
-        <param name="sqlCmd">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to create <see cref="T:System.Web.Caching.SqlCacheDependency" /> objects that use the query-notification feature of sqprsqlong products. </para>
+          <para>SQL statements that are associated with the <paramref name="sqlCmd" /> parameter must include the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Fully qualified table names, including the name of the table owner. For example, to refer to a table named Customers that is owned by the database owner, the SQL statement must refer to dbo.customers.</para>
+            </item>
+            <item>
+              <para>Explicit column names in the Select statement. You cannot use the asterisk (*) wildcard character to select all columns from a table. For example, instead of select * from dbo.customers, you must use select name, address, city, state from dbo.customers.</para>
+            </item>
+          </list>
+          <para>This constructor cannot be used to associate a <see cref="T:System.Data.SqlClient.SqlCommand" /> instance with a <see cref="T:System.Web.Caching.SqlCacheDependency" /> instance on a page using sqprsqlong query notifications with page-level output caching.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.SqlCacheDependency" /> class, using the supplied <see cref="T:System.Data.SqlClient.SqlCommand" /> to create a cache-key dependency.</para>
+        </summary>
+        <param name="sqlCmd">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is used to create a <see cref="T:System.Web.Caching.SqlCacheDependency" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +87,37 @@
         <Parameter Name="tableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="databaseEntryName">To be added.</param>
-        <param name="tableName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is used to create <see cref="T:System.Web.Caching.SqlCacheDependency" /> objects for SQL Server 7.0 and SQL Server 2000 products.</para>
+          <para>The database name passed to the <paramref name="database" /> parameter must be defined in the application's Web.config file. For example, the following Web.config file defines a database named pubs for <see cref="T:System.Web.Caching.SqlCacheDependency" /> change notifications.</para>
+          <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="Pubs" connectionString="Data Source=(local); Initial Catalog=pubs; Integrated Security=true"; providerName="System.Data.SqlClient" /&gt;
+  &lt;/connectionStrings&gt;
+  &lt;system.web&gt;
+    &lt;caching&gt;
+      &lt;sqlCacheDependency enabled = "true" pollTime = "60000" &gt;
+        &lt;databases&gt;
+          &lt;add name="pubs" 
+            connectionStringName="pubs"
+            pollTime="9000000"
+            /&gt;
+        &lt;/databases&gt;
+      &lt;/sqlCacheDependency&gt;
+    &lt;/caching&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+          <para>Two exceptions are commonly thrown when this constructor is used: <see cref="T:System.Web.Caching.DatabaseNotEnabledForNotificationException" /> and <see cref="T:System.Web.Caching.TableNotEnabledForNotificationException" />. If a <see cref="T:System.Web.Caching.DatabaseNotEnabledForNotificationException" /> is thrown, you can call the <see cref="M:System.Web.Caching.SqlCacheDependencyAdmin.EnableNotifications(System.String)" /> method in exception-handling code, or use the <format type="text/html"><a href="d17168e3-83f1-48d7-ab1c-535fd335eca0">Aspnet_regsql.exe</a></format> command-line tool to set up the database for notifications. If a <see cref="T:System.Web.Caching.TableNotEnabledForNotificationException" /> is thrown, you can call the <see cref="M:System.Web.Caching.SqlCacheDependencyAdmin.EnableTableForNotifications(System.String,System.String)" /> method or use <format type="text/html"><a href="d17168e3-83f1-48d7-ab1c-535fd335eca0">Aspnet_regsql.exe</a></format> to set up the table for notifications. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.SqlCacheDependency" /> class, using the supplied parameters to create a cache-key dependency.</para>
+        </summary>
+        <param name="databaseEntryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of a database defined in the databases element of the application's Web.config file. </param>
+        <param name="tableName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the database table that the <see cref="T:System.Web.Caching.SqlCacheDependency" /> is associated with. </param>
       </Docs>
     </Member>
     <Member MemberName="GetUniqueID">
@@ -56,9 +131,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Caching.SqlCacheDependency" /> method returns an identifier used to uniquely track <see cref="T:System.Web.Caching.SqlCacheDependency" /> objects associated with an item or application. The unique identifier generated when using table-based notifications is partially dependent on the change identifier generated by the database.</para>
+          <para>When using SQL Server 2005-based query notifications, the unique identifier is null because sqprsqlong does not support returning unique identifiers for individual query notifications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a unique identifier for a <see cref="T:System.Web.Caching.SqlCacheDependency" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the <see cref="T:System.Web.Caching.SqlCacheDependency" /> object, or null if no identifier can be generated.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -31,8 +31,21 @@
 		directories for mscorlib.dll by constructing a filtered item set, and assume it only has
 		one item.
 		-->
-		<ItemGroup>
+		<ItemGroup Condition="'$(MonoUseMicrosoftBuildDll)' != 'True'">
 			<_ExplicitReference Include="@(_TargetFrameworkDirectories->'%(FullPath)\mscorlib.dll')" Condition="Exists('%(FullPath)\mscorlib.dll')">
+				<Private>false</Private>
+			</_ExplicitReference>
+		</ItemGroup>
+		<PropertyGroup Condition="'$(MonoUseMicrosoftBuildDll)' == 'True'">
+			<_ExplicitMSCorlibPath>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToStandardLibraries ('$(TargetFrameworkIdentifier)', '$(TargetFrameworkVersion)', '$(TargetFrameworkProfile)'))\mscorlib.dll</_ExplicitMSCorlibPath>
+		</PropertyGroup>
+		<ItemGroup Condition="'$(MonoUseMicrosoftBuildDll)' == 'True'">
+			<_ExplicitReference Include="@(_TargetFrameworkDirectories->'%(FullPath)\mscorlib.dll')" Condition="Exists('%(FullPath)\mscorlib.dll')">
+				<Private>false</Private>
+			</_ExplicitReference>
+		</ItemGroup>
+		<ItemGroup Condition="'$(MonoUseMicrosoftBuildDll)' == 'True'">
+			<_ExplicitReference Include="$(_ExplicitMSCorlibPath)" Condition="Exists('$(_ExplicitMSCorlibPath)')">
 				<Private>false</Private>
 			</_ExplicitReference>
 		</ItemGroup>

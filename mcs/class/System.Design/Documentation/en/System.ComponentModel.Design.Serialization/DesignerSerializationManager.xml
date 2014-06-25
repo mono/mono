@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerSerializationManager" FullName="System.ComponentModel.Design.Serialization.DesignerSerializationManager">
   <TypeSignature Language="C#" Value="public class DesignerSerializationManager : System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />
   <AssemblyInfo>
@@ -13,8 +14,143 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> interface is designed to be a format-independent interface to an object that controls serialization. It essentially provides context and services to serializers, which actually perform the deserialization. <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> assists in the deserialization process by keeping track of objects. This is similar in technique to the <see cref="T:System.ComponentModel.Design.IDesignerHost" /> interface: designers actually provide the user interface (UI), and <see cref="T:System.ComponentModel.Design.IDesignerHost" /> provides the glue that allows different designers to work together.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> class implements <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" />. It is designed to provide a generic form of deserialization that is similar to run-time serializers like the <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" />.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> class achieves three goals:</para>
+      <list type="bullet">
+        <item>
+          <para>It is a simple, turnkey object that can be used to deserialize a variety of formats.</para>
+        </item>
+        <item>
+          <para>It is generic and not tied to any particular format. It can be used equally for CodeDOM deserialization as well as markup deserialization.</para>
+        </item>
+        <item>
+          <para>It is extensible and supports different serialization methods that are used in copy/paste and undo/redo scenarios.</para>
+        </item>
+      </list>
+      <para>Design-time serialization has the following differences from run-time object serialization:</para>
+      <list type="bullet">
+        <item>
+          <para>The object performing the serialization is generally separate from the run-time object, so that design-time logic can be removed from a component.</para>
+        </item>
+        <item>
+          <para>The serialization scheme assumes the object will be created fully initialized, and then modified through property and method invocations during deserialization.</para>
+        </item>
+        <item>
+          <para>Properties of an object that have values that were never set on the object (the properties contain the default values) are not serialized. Conversely, the deserialization stream may have holes.</para>
+        </item>
+        <item>
+          <para>Emphasis is placed on the quality of the content within the serialization stream, rather than the full serialization of an object. This means that if there is no defined way to serialize an object, that object may be skipped rather than throwing an exception. The serialization engine may provide heuristics here to decide which failures can be ignored and which are unrecoverable.</para>
+        </item>
+        <item>
+          <para>The serialization stream may have more data than is needed for deserialization. Source code serialization, for example, has user code mixed in with the code needed to deserialize an object graph. This user code must be ignored on deserialization and preserved on serialization.</para>
+        </item>
+      </list>
+      <para>Because of these differences, a different serialization model applies to design-time serialization. This model utilizes a separate serializer object for each data type being serialized. Each serializer provides its small contribution to the problem as a whole. These serializers are all coordinated through a common serialization manager. The serialization manager is responsible for maintaining state between these different serializers. As an example, consider the following class: </para>
+      <para>code reference: System.ComponentModel.Design.Serialization.DesignerSerializationManager.SampleObject#2</para>
+      <para>An instance of this class would utilize three different serializers: one for SampleObject, one for strings, and another for integers. The serializer for SampleObject is called the root serializer because SampleObject is the root of the serialization graph. More complex object graphs can be created as well. For example, consider what would happen if SampleObject were changed as follows:</para>
+      <para>code reference: System.ComponentModel.Design.Serialization.DesignerSerializationManager.SampleObject#11</para>
+      <para>This allows SampleObject to have a child that is another instance of itself. The following code fills in the object graph: </para>
+      <para>code reference: System.ComponentModel.Design.Serialization.DesignerSerializationManager.SampleObject#12</para>
+      <para>When root is serialized, there will be four serializers used: one root serializer, one serializer for the child SampleObject, one serializer for int, and one serializer for string. Serializers are cached based on type, so there is no need to create a serializer for each instance of SampleObject.</para>
+      <para>The <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> class is based on the idea of a serialization session. A session maintains state that can be accessed by the various serializers. When a session is disposed, this state is destroyed. This helps to ensure that serializers remain largely stateless, and helps to clean up serializers that are have been corrupted. The following tables describe how state is managed in and among sessions.</para>
+      <format type="text/html">
+        <h2>Global State</h2>
+      </format>
+      <para>This state is owned by the serialization manager object, but is independent of the current serialization session. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Object</para>
+            </term>
+            <description>
+              <para>Usage</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Serialization providers</para>
+          </term>
+          <description>
+            <para>Objects can add themselves as custom serialization providers. Because these providers are used to locate serializers, they outlive a serialization session.</para>
+          </description>
+        </item>
+      </list>
+      <format type="text/html">
+        <h2>Session-Owned State</h2>
+      </format>
+      <para>This state is owned by a session and is destroyed when a session is destroyed. Consequently, accessing any properties or methods that would manipulate this state will throw an exception if the serialization manager is not in an active session.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Object</para>
+            </term>
+            <description>
+              <para>Usage</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.ResolveName" /> event</para>
+          </term>
+          <description>
+            <para>The <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.ResolveName" /> event is attached by a serializer to provide additional resolution of names. All handlers are detached from this event when a session terminates.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.SerializationComplete" /> event</para>
+          </term>
+          <description>
+            <para>The <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.SerializationComplete" /> event is raised just before a session is disposed. Then, all handlers are detached from this event.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Name table</para>
+          </term>
+          <description>
+            <para>The serialization manager maintains a table that maps between objects and their names. Serializers may give objects names for easy identification. This name table is cleared when the session terminates.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Serializer cache</para>
+          </term>
+          <description>
+            <para>The serialization manager maintains a cache of serializers it has been asked to supply. This cache is cleared when the session terminates. The public <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method can safely be called at any time, but its value is cached only if it is called from within a session.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Context stack</para>
+          </term>
+          <description>
+            <para>The serialization manager maintains an object called the context stack, which you can access with the <see cref="P:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Context" /> property. Serializers can use this stack to store additional information that is available to other serializers. For example, a serializer that is serializing a property value can push the property name on the serialization stack before asking the value to serialize. This stack is cleared when the session is terminated.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Error list</para>
+          </term>
+          <description>
+            <para>The serialization manager maintains a list of errors that occurred during serialization. This list, which is accessed through the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.Errors" /> property, is cleared when the session is terminated. Accessing the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.Errors" /> property between sessions will result in an exception.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an implementation of the <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,8 +161,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor sets the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.PreserveNames" /> and <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.ValidateRecycledTypes" /> properties to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,9 +181,17 @@
         <Parameter Name="provider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a serializer requests services that cannot be satisfied by the serialization manager, the default implementation will forward those requests to the <paramref name="provider" /> parameter.</para>
+          <para>This constructor sets the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.PreserveNames" /> and <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.ValidateRecycledTypes" /> properties to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> class with the given service provider.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IServiceProvider" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Container">
@@ -54,9 +204,15 @@
         <ReturnType>System.ComponentModel.IContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a container exists, all components that are created by the serialization manager will be added to the container. The default implementation of this property will search the service provider for an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> and use the container provided by the designer host, should one exist. Otherwise, this property will return null and no components will be added to a container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets to the container for this serialization manager.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
@@ -75,13 +231,26 @@
         <Parameter Name="addToContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="arguments">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="addToContainer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by serializers when they attempt to create an instance of a type. The default implementation creates a new instance of the type, or it may return an existing instance depending on the values of the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.PreserveNames" /> and <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.RecycleInstances" /> properties. The <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method uses reflection to create instances and will perform some generic <see cref="T:System.IConvertible" /> transformations on parameters to find a matching constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the type specified by <paramref name="type" />.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to create an instance of.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters of the type’s constructor. This can be null or an empty collection to invoke the default constructor.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name to give the object. If null, the object will not be given a name, unless the object is added to a container and the container gives the object a name.</param>
+        <param name="addToContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add the object to the container if the object implements <see cref="T:System.ComponentModel.IComponent" />; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateSession">
@@ -95,9 +264,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Most data within the serialization manager is transient and only lives for the life of a serialization session. When a session is disposed, serialization is considered to be complete and this transient state is cleared. This allows a single instance of a serialization manager to be used to serialize multiple object trees. Some state, including the service provider and any custom serialization providers that were added to the serialization manager, span sessions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new serialization session.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> that represents a new serialization session.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Errors">
@@ -110,9 +288,15 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can only read the error list while a serialization session is active.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the list of errors that occurred during serialization or deserialization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetSerializer">
@@ -130,10 +314,20 @@
       </Parameters>
       <Docs>
         <param name="componentType">To be added.</param>
-        <param name="serializerType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can request the type of serializer you would like. This method returns null if there is no serializer of the requested type for the specified object type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the serializer for the given object type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serializer for <paramref name="objectType" />, or null, if not found.</para>
+        </returns>
+        <param name="serializerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of serializer to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -150,9 +344,18 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetService(System.Type)" /> method provides access to the underlying container or service provider that was set in the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the requested service.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service, or null if the service cannot be resolved.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -169,9 +372,18 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetType" /> method will search the service provider for an <see cref="T:System.ComponentModel.Design.ITypeResolutionService" /> and, if available, it will delegate to that service to resolve the type. If an <see cref="T:System.ComponentModel.Design.ITypeResolutionService" /> is not available, <see cref="Overload:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetType" /> will call the <see cref="M:System.Object.GetType" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the requested type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested type, or null if the type cannot be resolved.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnResolveName">
@@ -187,9 +399,17 @@
         <Parameter Name="e" Type="System.ComponentModel.Design.Serialization.ResolveNameEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.OnResolveName(System.ComponentModel.Design.Serialization.ResolveNameEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.ResolveName" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.Serialization.ResolveNameEventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSessionCreated">
@@ -205,9 +425,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.OnSessionCreated(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.Serialization.DesignerSerializationManager.SessionCreated" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnSessionDisposed">
@@ -223,9 +451,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.OnSessionDisposed(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Design.Serialization.DesignerSerializationManager.SessionDisposed" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="PreserveNames">
@@ -238,9 +474,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.PreserveNames" /> property determines the behavior of the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method. If true, <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will pass the given component name. If false, <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will check for the presence of the given name in the container. If the name does not exist in the container, <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will use the given name. If the name does exist in the container, <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will pass a null value as the name of a component when adding it to the container, thereby giving it a new name. This second variation is useful for implementing a serializer that always duplicates objects, rather than assuming those objects do not exist. Paste commands often use this type of serializer. </para>
+          <para>You can only change this property when you are not in a serialization session.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method should check for the presence of the given name in the container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyProvider">
@@ -253,9 +496,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.PropertyProvider" /> property provides a way to give the serialization manager a set of serialization properties that serializers can use to guide their behavior.</para>
+          <para>This object's public properties will be inspected and wrapped in new property descriptors that have a target object of the serialization manager.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that should be used to provide properties to the serialization manager's <see cref="P:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Properties" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RecycleInstances">
@@ -268,9 +518,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.RecycleInstances" /> property is false, the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method will always create a new instance of a type. If <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.RecycleInstances" /> is true, <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will first search the name table and container for an object of the same name. If such an object exists and is of the same type, <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will return the existing instance. This second variation is useful for implementing a serializer that applies serialization state to an existing set of objects, rather than always creating a new tree. The <ui>Undo</ui> command often uses this type of serializer. </para>
+          <para>In the case where the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.RecycleInstances" /> property is true, the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.ValidateRecycledTypes" /> property will further modify the behavior of <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> depending on the types of the two objects.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a flag indicating whether <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> will always create a new instance of a type. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SessionCreated">
@@ -283,8 +540,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a session is created. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SessionDisposed">
@@ -297,8 +557,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a session is disposed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.AddSerializationProvider">
@@ -314,9 +577,16 @@
         <Parameter Name="provider" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetSerializer(System.Type,System.Type)" /> method is used to request a serialization provider, the serialization manager queries the custom serialization providers first before looking in the type's metadata for the appropriate serializer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a custom serialization provider to the serialization manager.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The serialization provider to add.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Context">
@@ -329,9 +599,15 @@
         <ReturnType>System.ComponentModel.Design.Serialization.ContextStack</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A context stack provides a user-defined storage area, implemented as a stack. This storage area is a useful way to provide communication across serializers, as serialization is a generally hierarchical process.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the context stack for this serialization session. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance">
@@ -350,13 +626,23 @@
         <Parameter Name="addToContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="arguments">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="addToContainer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created object instance.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type to create. </param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The arguments to pass to the constructor for this type. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the object. This name can be used to access the object later through <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetInstance(System.String)" />. If null is passed, the object is still created but cannot be accessed by name. </param>
+        <param name="addToContainer">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add this object to the design container. The object must implement <see cref="T:System.ComponentModel.IComponent" /> for this to have any effect. </param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetInstance">
@@ -372,10 +658,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an instance of a created object of the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object with the given name, or null if no object by that name can be found.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the object to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetName">
@@ -392,9 +685,18 @@
       </Parameters>
       <Docs>
         <param name="instance">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#GetName(System.Object)" /> method cannot find a corresponding name for the <paramref name="value" /> parameter, it raises the <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.ResolveName" /> event before it returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a name for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object is unnamed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer">
@@ -412,10 +714,17 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <param name="serializerType">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a serializer of the requested type for the specified object type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested serializer, or null if no appropriate serializer can be located.</para>
+        </returns>
+        <param name="serializerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the serializer to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetType">
@@ -432,9 +741,15 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a type of the specified name.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the type, or null if the type cannot be loaded.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Properties">
@@ -447,9 +762,12 @@
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implements the <see cref="P:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Properties" /> property. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.RemoveSerializationProvider">
@@ -465,9 +783,16 @@
         <Parameter Name="provider" Type="System.ComponentModel.Design.Serialization.IDesignerSerializationProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#RemoveSerializationProvider(System.ComponentModel.Design.Serialization.IDesignerSerializationProvider)" /> method removes a custom serialization provider that was previously added by a call to the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#AddSerializationProvider(System.ComponentModel.Design.Serialization.IDesignerSerializationProvider)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added serialization provider.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationProvider" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.ReportError">
@@ -484,8 +809,16 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializers can be written to handle recoverable errors gracefully by calling the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#ReportError(System.Object)" /> method with the error information. The serialization manager may support reporting a list of errors after it completes, or it may throw an exception from this method and abort the serialization process. The serializer should continue after calling this function.</para>
+          <para>
+            <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#ReportError(System.Object)" /> adds the <paramref name="errorInformation" /> parameter to the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.Errors" /> collection. If <paramref name="errorInformation" /> is null, no action is taken.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to report a recoverable error in serialization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.SetName">
@@ -502,10 +835,18 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#SetName(System.Object,System.String)" /> method provides a way to set the name of an existing object. This enables creation of an instance of the object through a call to the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#GetInstance(System.String)" /> method, avoiding the overhead of the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the name for the specified object.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to set the name.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> used as the name of the object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.IServiceProvider.GetService">
@@ -522,9 +863,20 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> instance is cast to an <see cref="T:System.IServiceProvider" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see the <see cref="M:System.IServiceProvider.GetService(System.Type)" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service object of type <paramref name="serviceType" />.</para>
+          <para>-or-</para>
+          <para>null if there is no service object of type <paramref name="serviceType" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidateRecycledTypes">
@@ -537,9 +889,65 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.ValidateRecycledTypes" /> property modifies the behavior of the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method when the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.RecycleInstances" /> property is true, as detailed in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>RecycleInstances</para>
+                </term>
+                <description>
+                  <para>ValidateRecycledTypes</para>
+                </description>
+                <description>
+                  <para>Behavior of CreateInstance</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>false</para>
+              </term>
+              <description>
+                <para>true or false</para>
+              </description>
+              <description>
+                <para>Always create a new instance of the specified type</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true</para>
+              </term>
+              <description>
+                <para>false</para>
+              </description>
+              <description>
+                <para>If a matching instance is found it is returned, regardless of its type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>true</para>
+              </term>
+              <description>
+                <para>true</para>
+              </description>
+              <description>
+                <para>If a matching instance is found, it is returned only if its type is the same as specified in the method call.</para>
+              </description>
+            </item>
+          </list>
+          <para>
+            <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.ValidateRecycledTypes" /> is useful for morphing one type of object to another if they have similar properties but share no common parent or interface. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a flag indicating whether the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method will verify that matching names refer to the same type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

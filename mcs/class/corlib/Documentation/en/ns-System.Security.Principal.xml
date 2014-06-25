@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Security.Principal" FullName="System.Security.Principal" FullNameSP="System.Security.Principal" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Security.Principal" /> namespace defines a principal object that represents the security context under which code is running. For more information, see <format type="text/html"><a href="578cc32b-5654-4d8b-9d8c-ebcbc5c75390">Role-Based Security</a></format>. </para>
+    </summary>
   </Docs>
 </Namespace>

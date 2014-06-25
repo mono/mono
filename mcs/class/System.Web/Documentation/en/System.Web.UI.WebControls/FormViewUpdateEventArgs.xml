@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormViewUpdateEventArgs" FullName="System.Web.UI.WebControls.FormViewUpdateEventArgs">
   <TypeSignature Language="C#" Value="public class FormViewUpdateEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.FormView" /> control raises the <see cref="E:System.Web.UI.WebControls.FormView.ItemUpdating" /> event when an Update button (a button with its CommandName property set to "Update") within the control is clicked, but before the <see cref="T:System.Web.UI.WebControls.FormView" /> control updates the record. This allows you to provide an event-handling method that performs a custom routine, such as HTML encoding or validating the values of a record before updating it in the data source, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.FormViewUpdateEventArgs" /> object is passed to the event-handling method, which allows you to determine the value of an optional command argument sent to the <see cref="T:System.Web.UI.WebControls.FormView" /> control and to indicate whether the update operation should be canceled. To determine the value of the command argument, use the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.CommandArgument" /> property. To cancel the update operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true. If you need to access the original key field values for the record being updated, use the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property. The original non-key field values can be accessed by using the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.OldValues" /> property. Updated values (which include updated key field values, if you allow the user to edit key fields) are accessed using the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.NewValues" /> property.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.FormViewUpdateEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.FormViewUpdateEventArgs.#ctor(System.Object)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.FormView.ItemUpdating" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +32,41 @@
       </Parameters>
       <Docs>
         <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.FormViewUpdateEventArgs" /> class.</para>
+          <para>The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.WebControls.FormViewUpdateEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="commandArgument" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.FormViewUpdateEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +79,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you create an Update button for one of the templates in a <see cref="T:System.Web.UI.WebControls.FormView" /> control, you can optionally specify a command argument for the button by using the <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandArgument" /> property. The command argument usually contains any optional information you want to accompany the update command, such as the value for the key field. The <see cref="P:System.Web.UI.WebControls.FormViewInsertEventArgs.CommandArgument" /> property is provided as a convenient way to determine the value of the Update button's command argument.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command argument for the update operation passed to the <see cref="T:System.Web.UI.WebControls.FormView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +101,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property contains the original values of the key fields listed in the <see cref="P:System.Web.UI.WebControls.FormView.DataKeyNames" /> property of a <see cref="T:System.Web.UI.WebControls.FormView" /> control. Use the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property to access the original values of the key fields for the record to update. For example, you can use these values to keep a log of updated records.</para>
+          <block subset="none" type="note">
+            <para>If you allow the user to update the values of the key fields, the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property contains the original key field values. The updated values are stored in the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.NewValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property returns an <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the updated record. To access the field names, use the <see cref="P:System.Collections.Specialized.OrderedDictionary.Keys" /> property of the <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object. Similarly, you can access the field values by using the <see cref="P:System.Collections.Specialized.OrderedDictionary.Values" /> property.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object to access the field values directly. Data source controls that rely on the field order (such as <see cref="T:System.Web.UI.WebControls.AccessDataSource" />) can access field values only by index.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the original key field name/value pairs for the record to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +130,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.NewValues" /> property to access the new field values for the record to update. For example, you can use these values to keep a log of updated records.</para>
+          <block subset="none" type="note">
+            <para>If you allow the user to update the values of the key fields, the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property contains the original key field values. The updated values are stored in the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.NewValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.NewValues" /> property returns an <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the updated record. To access the field names, use the <see cref="P:System.Collections.Specialized.OrderedDictionary.Keys" /> property of the <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object. Similarly, you can access the field values by using the <see cref="P:System.Collections.Specialized.OrderedDictionary.Values" /> property.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object to access the field values directly. Data source controls that rely on the field order (such as <see cref="T:System.Web.UI.WebControls.AccessDataSource" />) can access field values only by index.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the new field name/value pairs for the record to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +159,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.OldValues" /> property to access the original non-key field values for the updated record. For example, you can use these values to keep a log of updated records. Some data source controls, such as the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> and <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> controls, support conflict detection (optimistic concurrency checking). When the <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property of one of these controls is set to ConflictOptions.CompareAllValues, the original values of the record are compared against the values in the data source before an update operation is performed. If a record has been modified by another user concurrently, the record is not updated.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.OldValues" /> property does not contain key fields. If you allow the user to update the values of the key fields, the original key field values are stored in the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.Keys" /> property. The updated values are stored in the <see cref="P:System.Web.UI.WebControls.FormViewUpdateEventArgs.NewValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.FormViewUpdatedEventArgs.NewValues" /> property returns an <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the updated record. To access the field names, use the <see cref="P:System.Collections.Specialized.OrderedDictionary.Keys" /> property of the <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object. Similarly, you can access the field values by using the <see cref="P:System.Collections.Specialized.OrderedDictionary.Values" /> property.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.OrderedDictionary" /> object to access the field values directly. Data source controls that rely on the field order (such as <see cref="T:System.Web.UI.WebControls.AccessDataSource" />) can access field values only by index.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the original non-key field name/value pairs for the record to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

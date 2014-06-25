@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeTypeMemberCollection" FullName="System.CodeDom.CodeTypeMemberCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CodeTypeMemberCollection : System.Collections.CollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeTypeMemberCollection extends System.Collections.CollectionBase" />
@@ -24,8 +25,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> class provides a simple collection object that can be used to store a set of <see cref="T:System.CodeDom.CodeTypeMember" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.CodeDom.CodeTypeMember" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,9 +68,13 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMember []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> class containing the specified array of <see cref="T:System.CodeDom.CodeTypeMember" /> objects.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeTypeMember" /> objects with which to initialize the collection. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -77,9 +91,13 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMemberCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMemberCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> class containing the elements of the specified source collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> with which to initialize the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -98,10 +116,17 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMember'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.CodeDom.CodeTypeMember" /> with the specified value to the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the new element was inserted.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeMember" /> to add. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -120,9 +145,13 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMember []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the elements of the specified <see cref="T:System.CodeDom.CodeTypeMember" /> array to the end of the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.CodeDom.CodeTypeMember" /> containing the objects to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -141,9 +170,13 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMemberCollection" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMemberCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the contents of another <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> to the end of the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeMemberCollection" /> containing the objects to add to the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -162,10 +195,17 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMember'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the collection contains the specified <see cref="T:System.CodeDom.CodeTypeMember" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified object; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeMember" /> to search for in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -185,10 +225,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'CodeTypeMember []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the collection objects to a one-dimensional <see cref="T:System.Array" /> instance, beginning at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> that is the destination of the values copied from the collection. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the array at which to begin inserting. </param>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -207,10 +252,17 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMember'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index in the collection of the specified <see cref="T:System.CodeDom.CodeTypeMember" />, if it exists in the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index in the collection of the specified object, if found; otherwise, -1.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeMember" /> to locate in the collection. </param>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -230,10 +282,15 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="value">To be added: an object of type 'CodeTypeMember'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified <see cref="T:System.CodeDom.CodeTypeMember" /> into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index where the specified object should be inserted. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeMember" /> to insert. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -274,9 +331,13 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeMember" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'CodeTypeMember'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a specific <see cref="T:System.CodeDom.CodeTypeMember" /> from the collection.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeMember" /> to remove from the collection. </param>
       </Docs>
     </Member>
   </Members>

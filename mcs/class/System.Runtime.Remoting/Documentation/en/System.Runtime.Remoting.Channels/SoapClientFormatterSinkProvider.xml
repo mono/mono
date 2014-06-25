@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapClientFormatterSinkProvider" FullName="System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class SoapClientFormatterSinkProvider : System.Runtime.Remoting.Channels.IClientFormatterSinkProvider" />
   <AssemblyInfo>
@@ -17,8 +18,40 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" /> creates client formatter sinks that use the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" /> to serialize messages for the client channel through which remoting messages flow.</para>
+      <para>The function of the formatter sink is to generate the necessary headers and serialize the message to the stream. After reaching the formatter sink, the <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> is forwarded to all sinks in the channel sink chain through the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.ProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)" /> or <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" /> calls. At this stage the message has already been serialized and is provided as information only. Sinks that need to create or modify the message must be placed in the sink chain before the formatter. This can be achieved by implementing both the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> and <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" /> interfaces. The formatter sink can be placed in the sink chain later.</para>
+      <para>Formatter sinks use sink configuration properties to configure the channel at run time. Sink properties can be specified in a configuration file, or programmatically, inside of a <see cref="T:System.Collections.IDictionary" />. In a configuration file all values are represented by strings, but when building a property <see cref="T:System.Collections.IDictionary" /> programmatically, value types can be specified with their native values or with strings.</para>
+      <para>The following table shows the sink configuration properties that can be specified for the current sink provider.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>includeVersions </para>
+          </term>
+          <description>
+            <para>Specifies whether the formatter will include versioning information. Values are true or false.</para>
+          </description>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Using an instance of this object with untrusted data or across an unsecure channel is a security risk. Use this object only with trusted data and across a secure channel. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=330378">Untrusted Data Security Risks</see>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the implementation for a client formatter sink provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +60,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" /> class with default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,10 +80,15 @@
         <Parameter Name="providerData" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="properties">To be added: an object of type 'Collections.IDictionary'</param>
-        <param name="providerData">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" /> class with the given properties and provider data.</para>
+        </summary>
+        <param name="properties">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of configuration properties to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" />. </param>
+        <param name="providerData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ICollection" /> of provider data to use with the new instance of <see cref="T:System.Runtime.Remoting.Channels.SoapClientFormatterSinkProvider" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,12 +107,24 @@
         <Parameter Name="remoteChannelData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="channel">To be added: an object of type 'IChannelSender'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="remoteChannelData">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'IClientChannelSink'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelSender,System.String,System.Object)" /> method is called, it creates its own channel sink, forwards the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSinkProvider.CreateSink(System.Runtime.Remoting.Channels.IChannelSender,System.String,System.Object)" /> call to the next sink provider in the chain (if there is one), and ensures that the next sink and the current one are linked together.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a sink chain.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first sink of the newly formed channel sink chain, or null, which indicates that this provider will not or cannot provide a connection for this endpoint.</para>
+        </returns>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />Channel for which this sink chain is being constructed. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />URL of object to connect to or the channel URI for the target object. </param>
+        <param name="remoteChannelData">
+          <attribution license="cc4" from="Microsoft" modified="false" />A channel data object describing a channel on the remote server. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +140,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IClientChannelSinkProvider'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the next <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkProvider" /> in the sink provider chain.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

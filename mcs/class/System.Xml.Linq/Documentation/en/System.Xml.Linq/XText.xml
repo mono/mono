@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XText" FullName="System.Xml.Linq.XText">
   <TypeSignature Language="C#" Value="public class XText : System.Xml.Linq.XNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XText extends System.Xml.Linq.XNode" />
@@ -10,8 +11,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XML elements can contain text content. Sometimes the content is simple (the element only contains text content), and sometimes the content is mixed (the contents of the element contains both text and other elements). In either case, each chunk of text is represented as an <see cref="T:System.Xml.Linq.XText" /> node.</para>
+      <para>sqltecxlinq developers will often have to write code to work with arbitrary sqltecxlinq trees that they did not create. If you are writing code that has to work with sqltecxlinq trees that you have no control over creating, you should be aware of certain behaviors of <see cref="T:System.Xml.Linq.XText" /> nodes.</para>
+      <para>When processing the contents of an XML tree at the node level, you should be prepared for multiple <see cref="T:System.Xml.Linq.XText" /> nodes to be adjacent to each other. Further, you should be prepared for <see cref="T:System.Xml.Linq.XText" /> nodes that contain no text. It is possible through sqltecxlinq methods to remove the content of a text node. However, sqltecxlinq does not automatically delete the node. The node has identity, and might have annotations, so sqltecxlinq allows for zero-length nodes in the tree.</para>
+      <para>For more information, see <format type="text/html"><a href="18680d1c-6e7c-4645-8d53-27b5a96f2d3f">Programming With Nodes</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a text node. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +35,16 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You typically do not create text nodes by using the <see cref="T:System.Xml.Linq.XText" /> constructors. When you pass text content when constructing an <see cref="T:System.Xml.Linq.XElement" />, text nodes are automatically created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XText" /> class. </para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> that contains the value of the <see cref="T:System.Xml.Linq.XText" /> node.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -41,9 +58,16 @@
         <Parameter Name="other" Type="System.Xml.Linq.XText" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is primarily used internally to make a deep copy of an XML tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XText" /> class from another <see cref="T:System.Xml.Linq.XText" /> object.</para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XText" /> node to copy from.</param>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -57,9 +81,15 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of concrete subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each node in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -73,9 +103,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property will raise the <see cref="E:System.Xml.Linq.XObject.Changed" /> and the <see cref="E:System.Xml.Linq.XObject.Changing" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -92,9 +128,16 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is primarily used internally by the methods that write an XML tree to an <see cref="T:System.Xml.XmlWriter" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes this node to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> into which this method will write.</param>
       </Docs>
     </Member>
   </Members>

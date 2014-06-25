@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AsnEncodedDataEnumerator" FullName="System.Security.Cryptography.AsnEncodedDataEnumerator">
   <TypeSignature Language="C#" Value="public sealed class AsnEncodedDataEnumerator : System.Collections.IEnumerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AsnEncodedDataEnumerator extends System.Object implements class System.Collections.IEnumerator" />
@@ -15,9 +16,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class implements the <see cref="T:System.Collections.IEnumerator" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the ability to navigate through an <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> object. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
@@ -32,10 +39,20 @@
         <ReturnType>System.Security.Cryptography.AsnEncodedData</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After an enumerator is created, the <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> method must be called to advance the enumerator to the first element of the collection before reading the value of the <see cref="P:System.Security.Cryptography.AsnEncodedDataEnumerator.Current" /> property; otherwise, <see cref="P:System.Security.Cryptography.AsnEncodedDataEnumerator.Current" /> returns null or throws an exception.</para>
+          <para>
+            <see cref="P:System.Security.Cryptography.AsnEncodedDataEnumerator.Current" /> also returns null or throws an exception if the last call to <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> returns false, which indicates that the end of the collection has been reached.</para>
+          <para>
+            <see cref="P:System.Security.Cryptography.AsnEncodedDataEnumerator.Current" /> does not move the position of the enumerator, and consecutive calls to <see cref="P:System.Security.Cryptography.AsnEncodedDataEnumerator.Current" /> return the same object until <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object in an <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -51,10 +68,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After an enumerator is created, it is positioned before the first element of the collection, and the first call to the <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> method moves the enumerator over the first element of the collection. Subsequent calls to <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> advance the enumerator past subsequent elements.</para>
+          <para>After the end of the collection is passed, calls to <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> return false.</para>
+          <para>An enumerator is valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator becomes invalid and the next call to <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.MoveNext" /> can throw an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances to the next <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object in an <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the enumerator was successfully advanced to the next element; false, if the enumerator has passed the end of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -70,9 +98,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial position of an enumerator is before the first element in the <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> object. An enumerator remains valid as long as the collection remains unchanged. If changes are made to the collection, such as adding, modifying, or deleting elements, the enumerator becomes invalid, and the next call to the <see cref="M:System.Security.Cryptography.AsnEncodedDataEnumerator.Reset" /> method throws an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets an enumerator to its initial position.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">
@@ -87,9 +121,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current <see cref="T:System.Security.Cryptography.AsnEncodedData" /> object in an <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

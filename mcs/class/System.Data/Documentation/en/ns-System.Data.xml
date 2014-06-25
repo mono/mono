@@ -1,6 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Data">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Data" /> namespace provides access to classes that represent the ADO.NET architecture. ADO.NET lets you build components that efficiently manage data from multiple data sources.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a disconnected scenario such as the Internet, ADO.NET provides the tools to request, update, and reconcile data in multiple tier systems. The ADO.NET architecture is also implemented in client applications, such as Windows Forms, or HTML pages created by ASP.NET.</para>
+      <para>The centerpiece of the ADO.NET architecture is the <see cref="T:System.Data.DataSet" /> class. Each <see cref="T:System.Data.DataSet" /> can contain multiple <see cref="T:System.Data.DataTable" /> objects, with each <see cref="T:System.Data.DataTable" /> containing data from a single data source, such as SQL Server.</para>
+      <para>Each <see cref="T:System.Data.DataTable" /> contains a <see cref="T:System.Data.DataColumnCollection" />--a collection of <see cref="T:System.Data.DataColumn" /> objects--that determines the schema of each <see cref="T:System.Data.DataTable" />. The <see cref="P:System.Data.DataColumn.DataType" /> property determines the type of data held by the <see cref="T:System.Data.DataColumn" />. The <see cref="P:System.Data.DataColumn.ReadOnly" /> and <see cref="P:System.Data.DataColumn.AllowDBNull" /> properties let you further guarantee data integrity. The <see cref="P:System.Data.DataColumn.Expression" /> property lets you construct calculated columns.</para>
+      <para>If a <see cref="T:System.Data.DataTable" /> participates in a parent/child relationship with another <see cref="T:System.Data.DataTable" />, the relationship is constructed by adding a <see cref="T:System.Data.DataRelation" /> to the <see cref="T:System.Data.DataRelationCollection" /> of a <see cref="T:System.Data.DataSet" /> object. When such a relation is added, a <see cref="T:System.Data.UniqueConstraint" /> and a <see cref="T:System.Data.ForeignKeyConstraint" /> are both created automatically, depending on the parameter settings for the constructor. The <see cref="T:System.Data.UniqueConstraint" /> guarantees that values that are contained in a column are unique. The <see cref="T:System.Data.ForeignKeyConstraint" /> determines what action will happen to the child row or column when a primary key value is changed or deleted.</para>
+      <para>Using the <see cref="N:System.Data.SqlClient" /> namespace (the.NET Framework Data Provider for SQL Server), the <see cref="N:System.Data.Odbc" /> namespace (the.NET Framework Data Provider for ODBC), the <see cref="N:System.Data.OleDb" /> namespace (the.NET Framework Data Provider for OLE DB), or the <see cref="N:System.Data.OracleClient" /> namespace (the .NET Framework Data Provider for Oracle), you can access a data source to use together with a <see cref="T:System.Data.DataSet" />. Each.NET Framework data provider has a corresponding DataAdapter that you use as a bridge between a data source and a <see cref="T:System.Data.DataSet" />.</para>
+    </remarks>
   </Docs>
 </Namespace>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IClientChannelSinkStack" FullName="System.Runtime.Remoting.Channels.IClientChannelSinkStack">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IClientChannelSinkStack : System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IClientChannelSinkStack implements class System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack" />
@@ -20,8 +21,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSinkStack" /> is used during processing of responses to asynchronous calls.</para>
+      <para>During a synchronous call, the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.ProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)" /> method is called when a message is outbound to the server. Each sink in the sink chain calls the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.ProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream,System.Runtime.Remoting.Channels.ITransportHeaders@,System.IO.Stream@)" /> method on the next sink until the call reaches the transport sink at the end of the chain. From there the message is transported to the server.</para>
+      <para>When the formatter sink is called through the <see cref="M:System.Runtime.Remoting.Messaging.IMessageSink.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)" /> method, it dispatches the call asynchronously by calling <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" /> on the next channel sink. A stack of reply sinks is needed to process the response. Any sink that wants to process the response needs to push itself to the client channel sink stack inside of <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessRequest(System.Runtime.Remoting.Channels.IClientChannelSinkStack,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality for a stack of client channel sinks that must be invoked during an asynchronous message response decoding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Pop">
@@ -40,10 +49,17 @@
         <Parameter Name="sink" Type="System.Runtime.Remoting.Channels.IClientChannelSink" />
       </Parameters>
       <Docs>
-        <param name="sink">To be added: an object of type 'IClientChannelSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops the information associated with all the sinks from the sink stack up to and including the specified sink.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information generated on the request side and associated with the specified sink.</para>
+        </returns>
+        <param name="sink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sink to remove and return from the sink stack. </param>
       </Docs>
     </Member>
     <Member MemberName="Push">
@@ -63,10 +79,18 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sink">To be added: an object of type 'IClientChannelSink'</param>
-        <param name="state">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The information generated on the request side and specified in the <paramref name="state" /> parameter is returned in the <paramref name="state" /> parameter of the <see cref="M:System.Runtime.Remoting.Channels.IClientChannelSink.AsyncProcessResponse(System.Runtime.Remoting.Channels.IClientResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Channels.ITransportHeaders,System.IO.Stream)" /> method on the corresponding sink.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes the specified sink and information associated with it onto the sink stack.</para>
+        </summary>
+        <param name="sink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sink to push onto the sink stack. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />Information generated on the request side that is needed on the response side. </param>
       </Docs>
     </Member>
   </Members>

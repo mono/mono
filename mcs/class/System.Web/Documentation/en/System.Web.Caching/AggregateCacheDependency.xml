@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AggregateCacheDependency" FullName="System.Web.Caching.AggregateCacheDependency">
   <TypeSignature Language="C#" Value="public sealed class AggregateCacheDependency : System.Web.Caching.CacheDependency" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Caching.AggregateCacheDependency" /> class monitors a collection of dependency objects so that when any of them change, the cached item is automatically removed. The objects in the array can be <see cref="T:System.Web.Caching.CacheDependency" /> objects, <see cref="T:System.Web.Caching.SqlCacheDependency" /> objects, custom objects derived from <see cref="T:System.Web.Caching.CacheDependency" />, or any combination of these. </para>
+      <para>The <see cref="T:System.Web.Caching.AggregateCacheDependency" /> class differs from the <see cref="T:System.Web.Caching.CacheDependency" /> class in that it allows you to associate multiple dependencies of different types with a single cached item. For example, if you create a page that imports data from a SQL Server database table and an XML file, you can create a <see cref="T:System.Web.Caching.SqlCacheDependency" /> object to represent a dependency on the database table and a <see cref="T:System.Web.Caching.CacheDependency" /> to represent the dependency on the XML file. Rather than making an <see cref="M:System.Web.Caching.Cache.Insert(System.String,System.Object)" /> method call for each dependency, you can create an instance of the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> class with each dependency added to it. You can then use a single <see cref="Overload:System.Web.Caching.Cache.Insert" />  call to make the page dependent on the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> instance.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Combines multiple dependencies between an item stored in an ASP.NET application's <see cref="T:System.Web.Caching.Cache" /> object and an array of <see cref="T:System.Web.Caching.CacheDependency" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor for the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +57,14 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="dependencies">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an array of <see cref="T:System.Web.Caching.CacheDependency" /> objects to the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> object.</para>
+        </summary>
+        <param name="dependencies">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Web.Caching.CacheDependency" />  objects to add. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +78,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method assigns a unique identifier to each dependency in the array and returns each of them. The identifier is a combination of either the file name (for a file dependency) or the key name (for a cache-key dependency) and a string that this method assigns to the dependency.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a unique identifier for the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the <see cref="T:System.Web.Caching.AggregateCacheDependency" /> object. If one of the associated dependency objects does not have a unique identifier, the <see cref="M:System.Web.Caching.AggregateCacheDependency.GetUniqueId" /> method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

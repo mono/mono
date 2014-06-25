@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBoundControlMode" FullName="System.Web.UI.WebControls.DataBoundControlMode">
   <TypeSignature Language="C#" Value="public enum DataBoundControlMode" />
   <AssemblyInfo>
@@ -8,8 +9,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the different data-entry modes for a data-bound control or a particular field in ASP.NET Dynamic Data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Edit">
@@ -22,7 +26,10 @@
         <ReturnType>System.Web.UI.WebControls.DataBoundControlMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the edit mode, which enables users to update the values of an existing record or data field. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -35,7 +42,10 @@
         <ReturnType>System.Web.UI.WebControls.DataBoundControlMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the insert mode, which enables users to enter values for a new record or data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -48,7 +58,10 @@
         <ReturnType>System.Web.UI.WebControls.DataBoundControlMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the display mode, which prevents the user from modifying the values of a record or a data field.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

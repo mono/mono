@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IToolboxService" FullName="System.Drawing.Design.IToolboxService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IToolboxService" />
   <AssemblyInfo>
@@ -18,8 +19,77 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.Design.IToolboxService" /> interface provides properties and methods for adding and removing toolbox items and toolbox creator callback delegates, serializing and deserializing toolbox items, and retrieving toolbox state information and managing toolbox state.</para>
+      <para>You can retrieve information about the contents of the toolbox with the following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="P:System.Drawing.Design.IToolboxService.CategoryNames" /> property indicates the categories currently available on the toolbox.</para>
+        </item>
+        <item>
+          <para>The <see cref="P:System.Drawing.Design.IToolboxService.SelectedCategory" /> property indicates the currently selected toolbox category.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.GetToolboxItems" /> method retrieves the items on the toolbox, optionally filtered by a specified toolbox category.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.GetSelectedToolboxItem" /> method retrieves the currently selected <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.SetSelectedToolboxItem(System.Drawing.Design.ToolboxItem)" /> method selects the specified <see cref="T:System.Drawing.Design.ToolboxItem" /> as the current toolbox item.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.IsSupported(System.Object,System.ComponentModel.Design.IDesignerHost)" /> method indicates whether the specified serialized object, if it is a <see cref="T:System.Drawing.Design.ToolboxItem" />, is supported by the specified designer host, or whether it matches the specified attributes.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.IsToolboxItem(System.Object)" /> method indicates whether the specified serialized object is a <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </item>
+      </list>
+      <para>You can add and remove toolbox items with the following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.AddToolboxItem(System.Drawing.Design.ToolboxItem)" /> method adds a <see cref="T:System.Drawing.Design.ToolboxItem" /> to the toolbox, creating the optionally specified category if it does not exist.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.AddLinkedToolboxItem(System.Drawing.Design.ToolboxItem,System.ComponentModel.Design.IDesignerHost)" /> method adds a <see cref="T:System.Drawing.Design.ToolboxItem" /> that is only enabled for the current project to the toolbox.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.RemoveToolboxItem(System.Drawing.Design.ToolboxItem)" /> method removes the specified <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.AddCreator(System.Drawing.Design.ToolboxItemCreatorCallback,System.String)" /> method adds a <see cref="T:System.Drawing.Design.ToolboxItemCreatorCallback" /> delegate capable of converting some type of data stored on the toolbox to a <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.RemoveCreator(System.String)" /> method removes any <see cref="T:System.Drawing.Design.ToolboxItemCreatorCallback" /> delegates for the specified data type.</para>
+        </item>
+      </list>
+      <para>You can refresh the toolbox, mark a toolbox item as used, or set the mouse cursor to a cursor that represents the current toolbox item using the following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.Refresh" /> method refreshes the toolbox display to reflect the current state of the toolbox items.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.SelectedToolboxItemUsed" /> method signals the toolbox that the selected toolbox item has been used.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.SetCursor" /> method sets the mouse cursor to a cursor that represents the current toolbox item.</para>
+        </item>
+      </list>
+      <para>You can use the toolbox to serialize or deserialize a toolbox item using the following methods: </para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.DeserializeToolboxItem(System.Object)" /> method attempts to return a <see cref="T:System.Drawing.Design.ToolboxItem" /> from the specified serialized toolbox item object.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.SerializeToolboxItem(System.Drawing.Design.ToolboxItem)" /> method returns a serialized object representing the specified <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods and properties to manage and query the toolbox in the development environment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddCreator">
@@ -33,10 +103,18 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="creator">To be added: an object of type 'ToolboxItemCreatorCallback'</param>
-        <param name="format">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A toolbox item creator can convert data of a particular data format that has been pasted or dropped on the toolbox into a <see cref="T:System.Drawing.Design.ToolboxItem" />. If a creator handles more than one format, call <see cref="M:System.Drawing.Design.IToolboxService.AddCreator(System.Drawing.Design.ToolboxItemCreatorCallback,System.String)" /> more than once. Unexpected behavior may result if you add more than one creator for the same format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new toolbox item creator for a specified data format.</para>
+        </summary>
+        <param name="creator">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Design.ToolboxItemCreatorCallback" /> that can create a component when the toolbox item is invoked. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data format that the creator handles. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -55,11 +133,21 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="creator">To be added: an object of type 'ToolboxItemCreatorCallback'</param>
-        <param name="format">To be added: an object of type 'string'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A toolbox item creator can convert data of a particular data format that has been pasted or dropped on the toolbox into a <see cref="T:System.Drawing.Design.ToolboxItem" />. If a creator handles more than one format, call <see cref="M:System.Drawing.Design.IToolboxService.AddCreator(System.Drawing.Design.ToolboxItemCreatorCallback,System.String)" /> more than once. Unexpected behavior may result if you add more than one creator for the same format.</para>
+          <para>If the <paramref name="host" /> parameter is set to null, the creator will be available to all designers. If a designer host is supplied, the creator will only be available to designers using the specified host.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new toolbox item creator for a specified data format and designer host.</para>
+        </summary>
+        <param name="creator">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Design.ToolboxItemCreatorCallback" /> that can create a component when the toolbox item is invoked. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data format that the creator handles. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that represents the designer host to associate with the creator. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,10 +165,18 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A linked toolbox item is a toolbox item that is only available for a specific project.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified project-linked toolbox item to the toolbox.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The linked <see cref="T:System.Drawing.Design.ToolboxItem" /> to add to the toolbox. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,11 +195,20 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A linked toolbox item is a toolbox item that is only available for a specific project.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified project-linked toolbox item to the toolbox in the specified category.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The linked <see cref="T:System.Drawing.Design.ToolboxItem" /> to add to the toolbox. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The toolbox item category to add the toolbox item to. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -120,9 +225,13 @@
         <Parameter Name="toolboxItem" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified toolbox item to the toolbox.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to add to the toolbox. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,10 +249,15 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified toolbox item to the toolbox in the specified category.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to add to the toolbox. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The toolbox item category to add the <see cref="T:System.Drawing.Design.ToolboxItem" /> to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -157,9 +271,12 @@
         <ReturnType>System.Drawing.Design.CategoryNameCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CategoryNameCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the names of all the tool categories currently on the toolbox.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -176,10 +293,17 @@
         <Parameter Name="serializedObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serializedObject">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItem'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a toolbox item from the specified object that represents a toolbox item in serialized form.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Design.ToolboxItem" /> created from the serialized object.</para>
+        </returns>
+        <param name="serializedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the <see cref="T:System.Drawing.Design.ToolboxItem" /> to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -197,11 +321,19 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="serializedObject">To be added: an object of type 'object'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItem'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a toolbox item from the specified object that represents a toolbox item in serialized form, using the specified designer host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Design.ToolboxItem" /> created from deserialization.</para>
+        </returns>
+        <param name="serializedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the <see cref="T:System.Drawing.Design.ToolboxItem" /> to retrieve. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> to associate with this <see cref="T:System.Drawing.Design.ToolboxItem" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -216,9 +348,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItem'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently selected toolbox item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Design.ToolboxItem" /> that is currently selected, or null if no toolbox item has been selected.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -235,10 +373,20 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItem'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the currently selected <see cref="T:System.Drawing.Design.ToolboxItem" /> if it is not designer specific, and only returns a designer-specific currently selected <see cref="T:System.Drawing.Design.ToolboxItem" /> if the type of the designer host specified in the <paramref name="host" /> parameter matches the type of designer that the currently selected <see cref="T:System.Drawing.Design.ToolboxItem" /> supports.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently selected toolbox item if it is available to all designers, or if it supports the specified designer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Design.ToolboxItem" /> that is currently selected, or null if no toolbox item is currently selected.</para>
+        </returns>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that the selected tool must be associated with for it to be returned. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -253,9 +401,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItemCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the entire collection of toolbox items from the toolbox.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.ToolboxItemCollection" /> that contains the current toolbox items.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -272,10 +426,17 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItemCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of toolbox items that are associated with the specified designer host from the toolbox.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.ToolboxItemCollection" /> that contains the current toolbox items that are associated with the specified designer host.</para>
+        </returns>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is associated with the toolbox items to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -292,10 +453,17 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItemCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of toolbox items from the toolbox that match the specified category.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.ToolboxItemCollection" /> that contains the current toolbox items that are associated with the specified category.</para>
+        </returns>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The toolbox item category to retrieve all the toolbox items from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -313,11 +481,19 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="category">To be added: an object of type 'string'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ToolboxItemCollection'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of toolbox items that are associated with the specified designer host and category from the toolbox.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.ToolboxItemCollection" /> that contains the current toolbox items that are associated with the specified category and designer host.</para>
+        </returns>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The toolbox item category to retrieve the toolbox items from. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is associated with the toolbox items to retrieve. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -335,11 +511,19 @@
         <Parameter Name="filterAttributes" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="serializedObject">To be added: an object of type 'object'</param>
-        <param name="filterAttributes">To be added: an object of type 'Collections.ICollection'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified object which represents a serialized toolbox item matches the specified attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object matches the specified attributes; otherwise, false.</para>
+        </returns>
+        <param name="serializedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the <see cref="T:System.Drawing.Design.ToolboxItem" /> to retrieve. </param>
+        <param name="filterAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ICollection" /> that contains the attributes to test the serialized object for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -357,11 +541,19 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="serializedObject">To be added: an object of type 'object'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified object which represents a serialized toolbox item can be used by the specified designer host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is compatible with the specified designer host; otherwise, false.</para>
+        </returns>
+        <param name="serializedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the <see cref="T:System.Drawing.Design.ToolboxItem" /> to retrieve. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> to test for support for the <see cref="T:System.Drawing.Design.ToolboxItem" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -378,10 +570,17 @@
         <Parameter Name="serializedObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="serializedObject">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified object is a serialized toolbox item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object contains a toolbox item object; otherwise, false.</para>
+        </returns>
+        <param name="serializedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to inspect. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -399,11 +598,19 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="serializedObject">To be added: an object of type 'object'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified object is a serialized toolbox item, using the specified designer host.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object contains a toolbox item object; otherwise, false.</para>
+        </returns>
+        <param name="serializedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to inspect. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is making this request. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -418,8 +625,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Drawing.Design.IToolboxService.Refresh" /> method is used to indicate to the toolbox service that the user wants to update the cache of toolbox items. If the toolbox service maintains a live list of toolbox item containers, then this method will do nothing. If it maintains a snapshot of toolbox item containers, calling this method should ensure that the snapshot is up to date.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the state of the toolbox items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -436,9 +649,13 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added toolbox item creator of the specified data format.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data format of the creator to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -456,10 +673,15 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
-        <param name="host">To be added: an object of type 'ComponentModel.Design.IDesignerHost'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a previously added toolbox creator that is associated with the specified data format and the specified designer host.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data format of the creator to remove. </param>
+        <param name="host">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> that is associated with the creator to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -476,9 +698,13 @@
         <Parameter Name="toolboxItem" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified toolbox item from the toolbox.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to remove from the toolbox. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -496,10 +722,15 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <param name="category">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified toolbox item from the toolbox.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to remove from the toolbox. </param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The toolbox item category to remove the <see cref="T:System.Drawing.Design.ToolboxItem" /> from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -515,9 +746,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the currently selected tool category from the toolbox.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -532,8 +766,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the toolbox service that the selected tool has been used.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -550,10 +787,20 @@
         <Parameter Name="toolboxItem" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method serializes the specified <see cref="T:System.Drawing.Design.ToolboxItem" /> to an object that can be persisted. The returned object can be stored in a stream or passed around in a drag-and-drop or clipboard operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a serializable object that represents the specified toolbox item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified <see cref="T:System.Drawing.Design.ToolboxItem" />.</para>
+        </returns>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to serialize. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -568,9 +815,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no tool is selected, the cursor will default to the standard Windows cursor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the current application's cursor to a cursor that represents the currently selected tool.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the cursor is set by the currently selected tool, false if there is no tool selected and the cursor is set to the standard windows cursor.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -587,9 +843,13 @@
         <Parameter Name="toolboxItem" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <param name="toolboxItem">To be added: an object of type 'ToolboxItem'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Selects the specified toolbox item.</para>
+        </summary>
+        <param name="toolboxItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to select. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

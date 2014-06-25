@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignTimeResourceWriter" FullName="System.Web.UI.Design.IDesignTimeResourceWriter">
   <TypeSignature Language="C#" Value="public interface IDesignTimeResourceWriter : System.Resources.IResourceWriter" />
   <AssemblyInfo>
@@ -10,8 +11,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used by the <see cref="T:System.Web.UI.Design.DesignTimeResourceProviderFactory" /> class to localize data at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateResourceKey">
@@ -28,11 +32,19 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="resourceName">To be added.</param>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a key, using the provided string, to use to retrieve data from the given resource.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key used to write or retrieve <paramref name="obj" /> from <paramref name="resourceName" />.</para>
+        </returns>
+        <param name="resourceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to localize.</param>
       </Docs>
     </Member>
   </Members>

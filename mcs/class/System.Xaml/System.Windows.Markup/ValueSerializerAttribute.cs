@@ -31,9 +31,7 @@ using System.Xaml.Schema;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public sealed class ValueSerializerAttribute : Attribute
 	{
 		public ValueSerializerAttribute (string valueSerializerTypeName)

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MsmqIntegrationSecurity" FullName="System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurity">
   <TypeSignature Language="C#" Value="public sealed class MsmqIntegrationSecurity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MsmqIntegrationSecurity extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Message Queuing integration channel enables indigo1 applications to communicate with existing Message Queuing applications.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurity" /> class encapsulates the transport security settings for the Message Queuing (MSMQ) integration channel.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurity" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -38,9 +48,16 @@
         <ReturnType>System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode" /> is an enumeration that contains the following values: <see cref="F:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode.None" /> and <see cref="F:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode.Transport" />. The default value is <see cref="F:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode.Transport" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode" /> that is associated with the Message Queuing (MSMQ) integration channel.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Transport">
@@ -54,9 +71,16 @@
         <ReturnType>System.ServiceModel.MsmqTransportSecurity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.MsmqTransportSecurity" /> encapsulates the security settings for the Message Queuing integration transport. The settings are the same for both the Message Queuing integration and queued transports. <see cref="T:System.ServiceModel.MsmqTransportSecurity" /> enables you to set the Authentication Mode, Encryption Algorithm, Secure Hash Algorithm, and Protection Level.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.MsmqTransportSecurity" /> that is associated with the Message Queuing (MSMQ) integration channel.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

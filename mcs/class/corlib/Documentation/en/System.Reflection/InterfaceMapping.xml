@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InterfaceMapping" FullName="System.Reflection.InterfaceMapping">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct InterfaceMapping" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit InterfaceMapping extends System.ValueType" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Reflection.InterfaceMapping" /> structure when a type implements interface methods that use method names other than those specified by the interface, or when a type implements multiple interfaces which have a method with the same name.</para>
+      <para>To obtain an <see cref="T:System.Reflection.InterfaceMapping" /> structure, use the <see cref="M:System.Type.GetInterfaceMap(System.Type)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves the mapping of an interface into the actual methods on a class that implements that interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InterfaceMethods">
@@ -42,8 +50,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements returned in the InterfaceMethods array match their counterpart elements returned from the <see cref="F:System.Reflection.InterfaceMapping.TargetMethods" /> array. That is, the elements are in the same array indexing order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the methods that are defined on the interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InterfaceType">
@@ -65,8 +79,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the type that represents the interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TargetMethods">
@@ -88,8 +105,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The elements returned in the <see cref="F:System.Reflection.InterfaceMapping.InterfaceMethods" /> array match their counterpart elements returned from the TargetMethods array. That is, the elements are in the same array indexing order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shows the methods that implement the interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TargetType">
@@ -111,8 +134,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="F:System.Reflection.InterfaceMapping.TargetType" /> field is the instance of <see cref="T:System.Type" /> whose <see cref="M:System.Type.GetInterfaceMap(System.Type)" /> method returned the current <see cref="T:System.Reflection.InterfaceMapping" /> structure. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the type that was used to create the interface mapping.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

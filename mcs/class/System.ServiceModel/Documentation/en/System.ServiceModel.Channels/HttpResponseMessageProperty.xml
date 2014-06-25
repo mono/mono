@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpResponseMessageProperty" FullName="System.ServiceModel.Channels.HttpResponseMessageProperty">
   <TypeSignature Language="C#" Value="public sealed class HttpResponseMessageProperty : System.ServiceModel.Channels.IMessageProperty" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HttpResponseMessageProperty extends System.Object implements class System.ServiceModel.Channels.IMessageProperty" />
@@ -14,8 +15,27 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is a general-purpose class that gives you direct access to the HTTP response information, which could be used for encapsulation of HTTP-specific information.  One use of this class is to support services implemented in accordance with the Representational State Transfer (REST) architecture. </para>
+      <para>This class enables you to support the following scenarios:</para>
+      <list type="bullet">
+        <item>
+          <para>Controls whether an entity body is transmitted.</para>
+        </item>
+        <item>
+          <para>Allows HTTP header (key, value) pairs to be set for each response.</para>
+        </item>
+        <item>
+          <para>Varies the status code and status description used for each response.</para>
+        </item>
+      </list>
+      <para>This class can be used by <see cref="T:System.ServiceModel.Channels.HttpTransportBindingElement" /> and related classes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to the HTTP response in order to access and respond to the additional information made available for requests over the HTTP protocol. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +47,28 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the object as follows:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.HttpResponseMessageProperty.StatusCode" /> = <see cref="F:System.Net.HttpStatusCode.OK" />.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.HttpResponseMessageProperty.StatusDescription" /> is set to null.</para>
+            </item>
+            <item>
+              <para>
+                <see cref="P:System.ServiceModel.Channels.HttpResponseMessageProperty.SuppressEntityBody" /> = false.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.HttpResponseMessageProperty" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -42,9 +82,12 @@
         <ReturnType>System.Net.WebHeaderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTTP headers from the HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -58,9 +101,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the message property associated with the <see cref="T:System.ServiceModel.Channels.HttpResponseMessageProperty" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StatusCode">
@@ -74,9 +120,15 @@
         <ReturnType>System.Net.HttpStatusCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property has one of the values in the <see cref="T:System.Net.HttpStatusCode" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the status code of the current HTTP response to which this property is attached.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StatusDescription">
@@ -90,9 +142,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides a user-friendly description of the returned status code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the description of the status code of the current HTTP response to which this property is attached.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SuppressEntityBody">
@@ -106,9 +164,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used for empty message responses, for example, a service that accepts a POST request and returns a response that contains no message body with StatusCode = 200 and StatusDescription = OK. The <see cref="T:System.ServiceModel.Channels.HttpResponseMessageProperty" /> associated with this response has this property set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the body of the message is ignored and an empty message is sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Channels.IMessageProperty.CreateCopy">
@@ -123,9 +187,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new copy of the current instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A newly created copy of type <see cref="T:System.ServiceModel.Channels.IMessageProperty" /> of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

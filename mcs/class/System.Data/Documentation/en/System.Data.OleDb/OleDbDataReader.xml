@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OleDbDataReader" FullName="System.Data.OleDb.OleDbDataReader">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class OleDbDataReader : System.Data.Common.DbDataReader" />
   <AssemblyInfo>
@@ -14,8 +15,18 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To create an <see cref="T:System.Data.OleDb.OleDbDataReader" />, you must call the <see cref="M:System.Data.OleDb.OleDbCommand.ExecuteReader" /> method of the <see cref="T:System.Data.OleDb.OleDbCommand" /> object, instead of directly using a constructor.</para>
+      <para>Before you close the <see cref="T:System.Data.OleDb.OleDbConnection" />, first close the <see cref="T:System.Data.OleDb.OleDbDataReader" /> object. You must also close the <see cref="T:System.Data.OleDb.OleDbDataReader" /> object if you plan to resuse an <see cref="T:System.Data.OleDb.OleDbCommand" /> object.For example, you cannot retrieve output parameters until after you call <see cref="M:System.Data.OleDb.OleDbDataReader.Close" />.</para>
+      <para>Changes made to a result set by another process or thread while data is being read may be visible to the user of the <see cref="T:System.Data.OleDb.OleDbDataReader" />. However, the precise behavior is timing dependent.</para>
+      <para>
+        <see cref="P:System.Data.OleDb.OleDbDataReader.IsClosed" /> and <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is closed. Although the <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> property may be accessed while the <see cref="T:System.Data.OleDb.OleDbDataReader" /> exists, always call <see cref="M:System.Data.OleDb.OleDbDataReader.Close" /> before returning the value of <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> to guarantee an accurate return value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way of reading a forward-only stream of data rows from a data source. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Close">
@@ -26,8 +37,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You must explicitly call the <see cref="M:System.Data.OleDb.OleDbDataReader.Close" /> method when you are through using the <see cref="T:System.Data.OleDb.OleDbDataReader" /> to use the associated <see cref="T:System.Data.OleDb.OleDbConnection" /> for any other purpose.</para>
+          <block subset="none" type="note">
+            <para>Do not call Close or Dispose on a Connection, a DataReader, or any other managed object in the Finalize method of your class. In a finalizer, you should only release unmanaged resources that your class owns directly. If your class does not own any unmanaged resources, do not include a Finalize method in your class definition. For more information, see <format type="text/html"><a href="22B6CB97-0C80-4EEB-A2CF-5ED7655E37F9">Garbage Collection</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the <see cref="T:System.Data.OleDb.OleDbDataReader" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +61,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outermost table has a depth of zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates the depth of nesting for the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +83,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Includes hidden fields. Use <see cref="P:System.Data.OleDb.OleDbDataReader.VisibleFieldCount" /> to exclude hidden fields.</para>
+          <para>After executing a query that does not return rows, <see cref="P:System.Data.OleDb.OleDbDataReader.FieldCount" /> returns 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of columns in the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -91,10 +124,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a Boolean, or an exception is generated.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a Boolean.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,10 +155,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a byte.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a byte.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column as a byte.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -135,14 +190,31 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <param name="dataIndex">To be added: an object of type 'long'</param>
-        <param name="buffer">To be added: an object of type 'byte []'</param>
-        <param name="bufferIndex">To be added: an object of type 'int'</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.OleDb.OleDbDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the number of available bytes in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if GetBytes has already been used to obtain bytes from the field. This may be the case, for example, when the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is reading a large data structure into a buffer. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <para>If you pass a buffer that is null, <see cref="M:System.Data.OleDb.OleDbDataReader.GetBytes(System.Int32,System.Int64,System.Byte[],System.Int32,System.Int32)" /> returns the length of the field in bytes.</para>
+          <para>No conversions are performed; therefore, the data retrieved must already be a byte array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of bytes from the specified column offset into the buffer as an array starting at the given buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes read.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field from which to start the read operation. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the <paramref name="buffer" /> where the write operation is to start. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length to copy into the buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,10 +231,20 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for <see cref="N:System.Data.OleDb" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,14 +270,31 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <param name="dataIndex">To be added: an object of type 'long'</param>
-        <param name="buffer">To be added: an object of type 'char []'</param>
-        <param name="bufferIndex">To be added: an object of type 'int'</param>
-        <param name="length">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.OleDb.OleDbDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the number of available characters in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if GetChars has already been used to obtain characters from the field. This may be the case, for example, when the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is reading a large data structure into a buffer. For more information, see the SequentialAccess setting for <see cref="T:System.Data.CommandBehavior" />.</para>
+          <para>If you pass a buffer that is null, <see cref="M:System.Data.OleDb.OleDbDataReader.GetChars(System.Int32,System.Int64,System.Char[],System.Int32,System.Int32)" /> returns the length of the field in characters.</para>
+          <para>No conversions are performed; therefore, the data retrieved must already be a character array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of characters from the specified column offset into the buffer as an array starting at the given buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters read.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the row from which to start the read operation. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy data. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the <paramref name="buffer" /> where the write operation is to start. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to read. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,10 +311,20 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'OleDbDataReader'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.OleDb.OleDbDataAdapter.Fill(System.Data.DataSet,System.Object,System.String)" /> will call <see cref="M:System.Data.OleDb.OleDbDataReader.GetData(System.Int32)" /> if the provider returns a <see cref="T:System.Data.IDataReader" /> that has a column that supports <see cref="T:System.Data.IDataReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Data.OleDb.OleDbDataReader" /> object for the requested column ordinal.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.OleDb.OleDbDataReader" /> object.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -237,10 +346,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the source data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the back-end data type. For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=198032">SQL Server data types</see> or <see cref="http://go.microsoft.com/fwlink/?LinkId=198033">Access data types</see>.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -257,10 +373,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a <see cref="T:System.DateTime" /> object.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -296,10 +423,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a <see cref="T:System.Decimal" /> object.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Decimal" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -316,10 +454,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a double-precision floating-point number.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a double-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -337,9 +486,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although you can use this method to retrieve an explicit enumerator, in languages that support a foreach construct, it is simpler to use the looping construct directly in order to iterate through the rows in the data reader.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the rows in the data reader.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the rows in the data reader.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFieldType">
@@ -352,10 +510,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -372,10 +537,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed. Therefore, the data retrieved must already be a single-precision floating-point number.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a single-precision floating-point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -392,10 +568,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Guid'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a globally unique identifier.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a globally unique identifier (GUID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -412,10 +599,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 16-bit signed integer.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 16-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -432,10 +630,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 32-bit signed integer.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -452,10 +661,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a 64-bit signed integer.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 64-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -472,10 +692,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified column.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -492,10 +719,24 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.OleDb.OleDbDataReader.GetOrdinal(System.String)" /> performs a case-sensitive lookup first. If it fails, a second case-insensitive search is made. The method throws an IndexOutOfRange exception if the zero-based column ordinal is not found.</para>
+          <para>
+            <see cref="M:System.Data.OleDb.OleDbDataReader.GetOrdinal(System.String)" /> is kana-width insensitive.</para>
+          <para>Because ordinal-based lookups are more efficient than named lookups, it is inefficient to call <see cref="M:System.Data.OleDb.OleDbDataReader.GetOrdinal(System.String)" /> within a loop. Save time by calling <see cref="M:System.Data.OleDb.OleDbDataReader.GetOrdinal(System.String)" /> one time and assigning the results to an integer variable for use within the loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column ordinal, given the name of the column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based column ordinal.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -510,9 +751,237 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Data.DataTable'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.OleDb.OleDbDataReader.GetSchemaTable" /> method maps to the OLE DB IColumnsRowset::GetColumnsRowset method, and returns metadata about each column in the following order: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DataReader column </para>
+                </term>
+                <description>
+                  <para>OLE DB column ID </para>
+                </description>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ColumnName </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_NAME </para>
+              </description>
+              <description>
+                <para>The name of the column; this might not be unique. If this cannot be determined, a null value is returned. This name always reflects the most recent renaming of the column in the current view or command text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnOrdinal </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_NUMBER </para>
+              </description>
+              <description>
+                <para>The zero-based ordinal of the column. This column cannot contain a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnSize </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_COLUMNSIZE </para>
+              </description>
+              <description>
+                <para>The maximum possible length of a value in the column. For columns that use a fixed-length data type, this is the size of the data type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericPrecision </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_PRECISION </para>
+              </description>
+              <description>
+                <para>If DbType is a numeric data type, this is the maximum precision of the column. The precision of columns with a data type of DBTYPE_DECIMAL or DBTYPE_NUMERIC depends on the definition of the column. If DbType is not a numeric data type, this is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericScale </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_SCALE </para>
+              </description>
+              <description>
+                <para>If DbType is DBTYPE_DECIMAL or DBTYPE_NUMERIC, this is the number of digits to the right of the decimal point. Otherwise, this is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataType </para>
+              </term>
+              <description>
+                <para>None </para>
+              </description>
+              <description>
+                <para>Maps to the .NET Framework type of the column. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProviderType </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_TYPE </para>
+              </description>
+              <description>
+                <para>The indicator of the column's data type. If the data type of the column varies from row to row, this must be DBTYPE_VARIANT. This column cannot contain a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsLong </para>
+              </term>
+              <description>
+                <para>DBCOLUMNFLAGS_ISLONG </para>
+              </description>
+              <description>
+                <para>The provider sets DBCOLUMNFLAGS_ISLONG if the column contains a Binary Long Object (BLOB) that contains very long data. The definition of very long data is provider-specific. The setting of this flag corresponds to the value of the IS_LONG column in the PROVIDER_TYPES rowset for the data type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AllowDBNull </para>
+              </term>
+              <description>
+                <para>DBCOLUMNFLAGS_ISNULLABLE </para>
+              </description>
+              <description>
+                <para>The provider sets DBCOLUMNFLAGS_ISNULLABLE if the consumer can set the column to a null value, or if the provider cannot determine whether the consumer can set the column to a null value. A column may contain null values, even if it cannot be set to a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsReadOnly </para>
+              </term>
+              <description>
+                <para>DBCOLUMNFLAGS_WRITE </para>
+              </description>
+              <description>
+                <para>true if the column cannot be modified; otherwise false. The column is assumed to be writable if the provider has set either the DBCOLUMNFLAGS_WRITE or DBCOLUMNFLAGS_WRITEUNKNOWN flag. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsRowVersion </para>
+              </term>
+              <description>
+                <para>DBCOLUMNFLAGS_ISROWID </para>
+              </description>
+              <description>
+                <para>The provider sets DBCOLUMNFLAGS_ISROWID if the column contains a persistent row identifier that cannot be written to, and has no meaningful value except to identity the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsUnique </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_ISUNIQUE </para>
+              </description>
+              <description>
+                <para>VARIANT_TRUE: No two rows in the base table-the table returned in BaseTableName-can have the same value in this column. IsUnique is guaranteed to be VARIANT_TRUE if the column represents a key by itself or if there is a constraint of type UNIQUE that applies only to this column. </para>
+                <para>VARIANT_FALSE: The column can contain duplicate values in the base table. The default of this column is VARIANT_FALSE. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsKey </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_KEYCOLUMN </para>
+              </description>
+              <description>
+                <para>VARIANT_TRUE: The column is one of a set of columns in the rowset that, taken together, uniquely identify the row. The set of columns with IsKey set to VARIANT_TRUE must uniquely identify a row in the rowset. There is no requirement that this set of columns is a minimal set of columns. This set of columns may be generated from a base table primary key, a unique constraint or a unique index. </para>
+                <para>VARIANT_FALSE: The column is not required to uniquely identify the row. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsAutoIncrement </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_ISAUTOINCREMENT </para>
+              </description>
+              <description>
+                <para>VARIANT_TRUE: The column assigns values to new rows in fixed increments. </para>
+                <para>VARIANT_FALSE: The column does not assign values to new rows in fixed increments. The default of this column is VARIANT_FALSE. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseSchemaName </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_BASESCHEMANAME </para>
+              </description>
+              <description>
+                <para>The name of the schema in the data store that contains the column. A null value if the base schema name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseCatalogName </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_BASECATALOGNAME </para>
+              </description>
+              <description>
+                <para>The name of the catalog in the data store that contains the column. A null value if the base catalog name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseTableName </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_BASETABLENAME </para>
+              </description>
+              <description>
+                <para>The name of the table or view in the data store that contains the column. A null value if the base table name cannot be determined. The default of this column is a null value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseColumnName </para>
+              </term>
+              <description>
+                <para>DBCOLUMN_BASECOLUMNNAME </para>
+              </description>
+              <description>
+                <para>The name of the column in the data store. This might be different from the column name returned in the ColumnName column if an alias was used. A null value if the base column name cannot be determined or if the rowset column is derived, but not identical to, a column in the data store. The default of this column is a null value. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>To make sure that metadata columns return the correct information, you must call <see cref="M:System.Data.OleDb.OleDbCommand.ExecuteReader" /> with the <paramref name="behavior" /> parameter set to KeyInfo. Otherwise, some of the columns in the schema table may return default, null, or incorrect data.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata of the <see cref="T:System.Data.OleDb.OleDbDataReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that describes the column metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -529,10 +998,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a string.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -549,10 +1029,21 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be a <see cref="T:System.TimeSpan" /> object.</para>
+          <para>Call <see cref="M:System.Data.OleDb.OleDbDataReader.IsDBNull(System.Int32)" /> to look for null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.TimeSpan" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -569,10 +1060,20 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns <see cref="T:System.DBNull" /> for null database columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the column at the specified ordinal in its native format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value to return.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -589,10 +1090,22 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added: an object of type 'object []'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most applications, the <see cref="M:System.Data.OleDb.OleDbDataReader.GetValues(System.Object[])" /> method provides an efficient means for retrieving all columns, instead of retrieving each column individually.</para>
+          <para>You can pass an <see cref="T:System.Object" /> array that contains fewer than the number of columns that are contained in the resulting row. Only the amount of data the <see cref="T:System.Object" /> array holds is copied to the array. You can also pass an <see cref="T:System.Object" /> array whose length is more than the number of columns that are contained in the resulting row.</para>
+          <para>This method returns <see cref="T:System.DBNull" /> for null database columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates an array of objects with the column values of the current row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of instances of <see cref="T:System.Object" /> in the array.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> into which to copy the attribute columns. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -610,9 +1123,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.OleDb.OleDbDataReader" /> contains one or more rows.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsClosed">
@@ -622,9 +1138,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Data.OleDb.OleDbDataReader.IsClosed" /> and <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the data reader is closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -641,10 +1164,20 @@
         <Parameter Name="ordinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ordinal">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to look for null column values before calling the typed get methods (for example, <see cref="M:System.Data.OleDb.OleDbDataReader.GetByte(System.Int32)" />, <see cref="M:System.Data.OleDb.OleDbDataReader.GetChar(System.Int32)" />, and so on) to avoid raising an error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the column contains nonexistent or missing values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified column value is equivalent to <see cref="T:System.DBNull" />; otherwise, false.</para>
+        </returns>
+        <param name="ordinal">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -699,9 +1232,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to process multiple results that can be generated by executing batch SQL statements.</para>
+          <para>By default, the data reader is positioned on the first result.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the data reader to the next result, when reading the results of batch SQL statements.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more result sets; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -716,9 +1259,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default position of the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is before the first record. Therefore, you must call <see cref="M:System.Data.OleDb.OleDbDataReader.Read" /> to start accessing any data.</para>
+          <para>While the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is being used, the associated <see cref="T:System.Data.OleDb.OleDbConnection" /> is busy serving it until you call <see cref="M:System.Data.OleDb.OleDbDataReader.Close" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.OleDb.OleDbDataReader" /> to the next record.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are more rows; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -732,9 +1285,18 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> property is not set until all rows are read and you close the <see cref="T:System.Data.OleDb.OleDbDataReader" />.</para>
+          <para>The value of this property is cumulative. For example, if two records are inserted in batch mode, the value of <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> is two.</para>
+          <para>
+            <see cref="P:System.Data.OleDb.OleDbDataReader.IsClosed" /> and <see cref="P:System.Data.OleDb.OleDbDataReader.RecordsAffected" /> are the only properties that you can call after the <see cref="T:System.Data.OleDb.OleDbDataReader" /> is closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -802,9 +1364,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is used to determine how many fields in the <see cref="T:System.Data.OleDb.OleDbDataReader" /> are visible. For example, a SELECT on a partial primary key returns the remaining parts of the key as hidden fields. The hidden fields are always appended behind the visible fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of fields in the <see cref="T:System.Data.OleDb.OleDbDataReader" /> that are not hidden.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

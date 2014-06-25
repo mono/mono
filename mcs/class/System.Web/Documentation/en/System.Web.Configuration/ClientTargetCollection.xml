@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientTargetCollection" FullName="System.Web.Configuration.ClientTargetCollection">
   <TypeSignature Language="C#" Value="public sealed class ClientTargetCollection : System.Configuration.ConfigurationElementCollection" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.ClientTargetCollection" /> type allows access to the <see cref="T:System.Web.Configuration.ClientTarget" /> elements of the <see cref="T:System.Web.Configuration.ClientTargetSection" /> section element collection.</para>
+      <para>It belongs to a group that includes <see cref="T:System.Web.Configuration.ClientTarget" /> and <see cref="T:System.Web.Configuration.ClientTargetSection" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="T:System.Web.Configuration.ClientTarget" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +32,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.ClientTargetCollection.#ctor" /> constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.ClientTargetCollection" /> class by using the <see cref="P:System.Web.Configuration.ClientTargetSection.ClientTargets" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.ClientTargetCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +56,17 @@
         <Parameter Name="clientTarget" Type="System.Web.Configuration.ClientTarget" />
       </Parameters>
       <Docs>
-        <param name="clientTarget">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before adding a client target to the collection, you must create a <see cref="T:System.Web.Configuration.ClientTarget" /> object and initialize its <see cref="P:System.Web.Configuration.ClientTarget.Alias" /> and <see cref="P:System.Web.Configuration.ClientTarget.UserAgent" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Configuration.ClientTarget" /> object to the collection.</para>
+        </summary>
+        <param name="clientTarget">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.ClientTarget" /> to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -58,10 +79,13 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of the keys for all the configuration elements contained in the <see cref="T:System.Web.Configuration.ClientTargetCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,9 +99,39 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of updating the configuration file after calling the <see cref="M:System.Web.Configuration.ClientTargetCollection.Clear" /> method is dependent upon the <see cref="T:System.Configuration.ConfigurationSaveMode" /> value chosen. To update the configuration file you use one of these two methods: <see cref="M:System.Configuration.Configuration.Save" /> or  <see cref="M:System.Configuration.Configuration.Save(System.Configuration.ConfigurationSaveMode)" />.</para>
+          <block subset="none" type="note">
+            <para>Calling <see cref="M:System.Configuration.Configuration.Save" /> is equivalent to calling <see cref="M:System.Configuration.Configuration.Save(System.Configuration.ConfigurationSaveMode)" /> when the <see cref="T:System.Configuration.ConfigurationSaveMode" /> value is modified.</para>
+          </block>
+          <para>If you use the <see cref="M:System.Configuration.Configuration.Save(System.Configuration.ConfigurationSaveMode)" /> method, the following conditions apply:</para>
+          <list type="bullet">
+            <item>
+              <para>If you pass the <see cref="F:System.Configuration.ConfigurationSaveMode.Full" /> or <see cref="F:System.Configuration.ConfigurationSaveMode.Modified" /> parameter value, then a clear element is inserted into the clientTarget section of the configuration file at the current hierarchy level. </para>
+            </item>
+            <item>
+              <para>If you pass the <see cref="F:System.Configuration.ConfigurationSaveMode.Minimal" /> parameter value, a series of remove elements are added to the clientTarget section of the configuration file at the current hierarchy level. This removes all references to the add elements defined in the parent configuration files at higher levels in the hierarchy. With the <see cref="F:System.Configuration.ConfigurationSaveMode.Minimal" /> enumeration value, one additional property on the collection affects what gets serialized to the configuration file. The property is <see cref="P:System.Configuration.ConfigurationElementCollection.EmitClear" /> and is false by default. One of the following conditions applies:</para>
+              <list type="bullet">
+                <item>
+                  <para>When <see cref="P:System.Configuration.ConfigurationElementCollection.EmitClear" /> is set to true, a clear element is inserted into the clientTarget section of the configuration file at the current hierarchy level. This removes all references to the add elements defined in the parent configuration files at higher levels in the hierarchy. </para>
+                </item>
+                <item>
+                  <para>When <see cref="P:System.Configuration.ConfigurationElementCollection.EmitClear" /> is set to false, the clear element is removed from the clientTarget section of the configuration file at the current hierarchy level, if it exists.</para>
+                </item>
+              </list>
+            </item>
+          </list>
+          <para>The <see cref="M:System.Web.Configuration.ClientTargetCollection.Clear" /> method actually deletes the add elements defined in the clientTarget section of the configuration file at the current hierarchy level. It also removes all references to the add elements defined in the parent configuration files at higher levels in the hierarchy.</para>
+          <block subset="none" type="note">
+            <para>The add elements are not deleted from the clientTarget section of the parent configuration files. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the <see cref="T:System.Web.Configuration.ClientTarget" /> objects from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,11 +184,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection key for the specified element.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the value of the key.</para>
+        </returns>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection index of the element to get.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -206,10 +267,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.ClientTargetCollection.Remove(System.Web.Configuration.ClientTarget)" /> method deletes the add element in the clientTarget section at the current hierarchy level and inserts a remove element. The remove element effectively removes the reference to the add element defined in the parent configuration files at higher levels in the hierarchy but does not delete it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.Configuration.ClientTarget" /> object with the specified alias from the collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The alias of the <see cref="T:System.Web.Configuration.ClientTarget" /> to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -225,10 +293,17 @@
         <Parameter Name="clientTarget" Type="System.Web.Configuration.ClientTarget" />
       </Parameters>
       <Docs>
-        <param name="clientTarget">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.ClientTargetCollection.Remove(System.Web.Configuration.ClientTarget)" /> method deletes the add element in the clientTarget section at the current hierarchy level and inserts a remove element. The remove element effectively removes the reference to the add element defined in the parent configuration files at higher levels in the hierarchy but does not delete it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified <see cref="T:System.Web.Configuration.ClientTarget" /> object from the collection.</para>
+        </summary>
+        <param name="clientTarget">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.ClientTarget" /> to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,10 +319,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.ClientTargetCollection.RemoveAt(System.Int32)" /> method deletes the add element in the clientTarget section at the current hierarchy level and inserts a remove element. The remove element effectively removes the reference to the add element defined in the parent configuration files at higher levels in the hierarchy but does not delete it. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.Configuration.ClientTarget" /> object with the specified collection index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection index of the <see cref="T:System.Web.Configuration.ClientTarget" /> to remove.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

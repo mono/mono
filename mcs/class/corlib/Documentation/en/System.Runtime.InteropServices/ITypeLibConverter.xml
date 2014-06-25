@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITypeLibConverter" FullName="System.Runtime.InteropServices.ITypeLibConverter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ITypeLibConverter" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeLibConverter" />
@@ -22,8 +23,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of services that convert a managed assembly to a COM type library and vice versa.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ConvertAssemblyToTypeLib">
@@ -45,13 +49,26 @@
         <Parameter Name="notifySink" Type="System.Runtime.InteropServices.ITypeLibExporterNotifySink" />
       </Parameters>
       <Docs>
-        <param name="assembly">To be added: an object of type 'Reflection.Assembly'</param>
-        <param name="typeLibName">To be added: an object of type 'string'</param>
-        <param name="flags">To be added: an object of type 'TypeLibExporterFlags'</param>
-        <param name="notifySink">To be added: an object of type 'ITypeLibExporterNotifySink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an assembly to a COM type library.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the ITypeLib interface.</para>
+        </returns>
+        <param name="assembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly to convert. </param>
+        <param name="typeLibName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the resulting type library. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.TypeLibExporterFlags" /> value indicating any special settings. </param>
+        <param name="notifySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.InteropServices.ITypeLibExporterNotifySink" /> interface implemented by the caller. </param>
       </Docs>
     </Member>
     <Member MemberName="ConvertTypeLibToAssembly">
@@ -76,16 +93,33 @@
         <Parameter Name="unsafeInterfaces" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeLib">To be added: an object of type 'object'</param>
-        <param name="asmFileName">To be added: an object of type 'string'</param>
-        <param name="flags">To be added: an object of type 'int'</param>
-        <param name="notifySink">To be added: an object of type 'ITypeLibImporterNotifySink'</param>
-        <param name="publicKey">To be added: an object of type 'byte []'</param>
-        <param name="keyPair">To be added: an object of type 'Reflection.StrongNameKeyPair'</param>
-        <param name="unsafeInterfaces">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a COM type library to an assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> object containing the converted type library.</para>
+        </returns>
+        <param name="typeLib">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the ITypeLib interface. </param>
+        <param name="asmFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the resulting assembly. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.TypeLibImporterFlags" /> value indicating any special settings. </param>
+        <param name="notifySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Runtime.InteropServices.ITypeLibImporterNotifySink" /> interface implemented by the caller. </param>
+        <param name="publicKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing the public key. </param>
+        <param name="keyPair">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.StrongNameKeyPair" /> object containing the public and private cryptographic key pair. </param>
+        <param name="unsafeInterfaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, the interfaces require link time checks for <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission. If false, the interfaces require run time checks that require a stack walk and are more expensive, but help provide greater protection. </param>
       </Docs>
     </Member>
     <Member MemberName="ConvertTypeLibToAssembly">
@@ -111,17 +145,35 @@
         <Parameter Name="asmVersion" Type="System.Version" />
       </Parameters>
       <Docs>
-        <param name="typeLib">To be added: an object of type 'object'</param>
-        <param name="asmFileName">To be added: an object of type 'string'</param>
-        <param name="flags">To be added: an object of type 'TypeLibImporterFlags'</param>
-        <param name="notifySink">To be added: an object of type 'ITypeLibImporterNotifySink'</param>
-        <param name="publicKey">To be added: an object of type 'byte []'</param>
-        <param name="keyPair">To be added: an object of type 'Reflection.StrongNameKeyPair'</param>
-        <param name="asmNamespace">To be added: an object of type 'string'</param>
-        <param name="asmVersion">To be added: an object of type 'Version'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information on ITypeLib, please see its existing documentation in the MSDN library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a COM type library to an assembly.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> object containing the converted type library.</para>
+        </returns>
+        <param name="typeLib">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that implements the ITypeLib interface. </param>
+        <param name="asmFileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file name of the resulting assembly. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.TypeLibImporterFlags" /> value indicating any special settings. </param>
+        <param name="notifySink">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Runtime.InteropServices.ITypeLibImporterNotifySink" /> interface implemented by the caller. </param>
+        <param name="publicKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array containing the public key. </param>
+        <param name="keyPair">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Reflection.StrongNameKeyPair" /> object containing the public and private cryptographic key pair. </param>
+        <param name="asmNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace for the resulting assembly. </param>
+        <param name="asmVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version of the resulting assembly. If null, the version of the type library is used. </param>
       </Docs>
     </Member>
     <Member MemberName="GetPrimaryInteropAssembly">

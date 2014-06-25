@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StatementContext" FullName="System.ComponentModel.Design.Serialization.StatementContext">
   <TypeSignature Language="C#" Value="public sealed class StatementContext" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Usually, statements are serialized into the statement collection that is on the context stack. You can modify this behavior by creating a statement context and calling the <see cref="Overload:System.ComponentModel.Design.Serialization.ObjectStatementCollection.Populate" /> method with a collection of objects whose statements you want stored in the statement table. As each object is serialized in the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomSerializerBase.SerializeToExpression(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object)" /> method, it has its contents placed in the statement table and saved in the context. If you push this object on the stack, it is your responsibility to integrate the statements added to it into your own collection of statements.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a location into which statements can be serialized. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +28,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.StatementContext" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StatementCollection">
@@ -35,9 +45,12 @@
         <ReturnType>System.ComponentModel.Design.Serialization.ObjectStatementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of statements offered by the statement context.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

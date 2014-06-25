@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SyndicationItemFormatter" FullName="System.ServiceModel.Syndication.SyndicationItemFormatter">
   <TypeSignature Language="C#" Value="public abstract class SyndicationItemFormatter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SyndicationItemFormatter extends System.Object" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is abstract and cannot be instantiated directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class used as a base class for other formatters, (for example, <see cref="T:System.ServiceModel.Syndication.Atom10ItemFormatter" />).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,9 +53,16 @@
         <Parameter Name="itemToWrite" Type="System.ServiceModel.Syndication.SyndicationItem" />
       </Parameters>
       <Docs>
-        <param name="itemToWrite">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> must have a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> associated with it. The <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> can then write out the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to an <see cref="T:System.Xml.XmlReader" />. The only way to associate a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> with a <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> is by using this constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <param name="itemToWrite">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to write.</param>
       </Docs>
     </Member>
     <Member MemberName="CanRead">
@@ -62,10 +79,17 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies whether the specified <see cref="T:System.Xml.XmlReader" /> contains a valid syndication item.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the XML reader contains a valid syndication item, otherwise false.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />An XML reader to check.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateCategory">
@@ -82,10 +106,20 @@
         <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> used to create the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateItemInstance">
@@ -100,9 +134,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateLink">
@@ -119,10 +162,20 @@
         <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> class.  </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to use to create the new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CreatePerson">
@@ -139,10 +192,20 @@
         <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </returns>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create the new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -156,9 +219,15 @@
         <ReturnType>System.ServiceModel.Syndication.SyndicationItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> is associated with the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> by passing in a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> associated with the formatter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -177,11 +246,20 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="category">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> to load the element extensions into.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowable size for an element extension (in bytes).</param>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -200,11 +278,20 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to load the element extensions into.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowable size for an element extension (in bytes).</param>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -223,11 +310,20 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> to load the element extensions into.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowable size for an element extension (in bytes).</param>
       </Docs>
     </Member>
     <Member MemberName="LoadElementExtensions">
@@ -246,11 +342,20 @@
         <Parameter Name="maxExtensionSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="person">To be added.</param>
-        <param name="maxExtensionSize">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RSS 2.0 and Atom 1.0 specifications allow you to add custom element extensions to a syndication feed. This method allows you to read in these element extensions from an <see cref="T:System.Xml.XmlReader" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Loads element extensions into the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> using the specified <see cref="T:System.Xml.XmlReader" /> and maximum extension size.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="person">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> to load the element extensions into.</param>
+        <param name="maxExtensionSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowable size for an element extension (in bytes).</param>
       </Docs>
     </Member>
     <Member MemberName="ReadFrom">
@@ -267,9 +372,16 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />, associates it with the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> and reads the feed into the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads in a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
       </Docs>
     </Member>
     <Member MemberName="SetItem">
@@ -286,9 +398,16 @@
         <Parameter Name="item" Type="System.ServiceModel.Syndication.SyndicationItem" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is protected and cannot be called from user code. To associate a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance with a <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" />, either create a new <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> instance and pass the constructor a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance or load a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance into the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> by calling <see cref="M:System.ServiceModel.Syndication.SyndicationItemFormatter.ReadFrom(System.Xml.XmlReader)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates a <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance with the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" />.</para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to associate with the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -303,9 +422,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Syndication.SyndicationItemFormatter" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -326,14 +451,28 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="category">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the attribute was parsed successfully.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -354,14 +493,28 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the attribute was parsed successfully.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -382,14 +535,28 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the attribute was parsed successfully.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -410,14 +577,28 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="person">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the attribute was parsed successfully.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attribute to parse.</param>
+        <param name="person">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseContent">
@@ -464,12 +645,24 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="category">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the element was parsed successfully.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -488,12 +681,24 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the element was parsed successfully.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -512,12 +717,24 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the element was parsed successfully.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -536,12 +753,24 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <param name="person">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that indicates whether the element was parsed successfully.</para>
+        </returns>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <param name="person">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance to use.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to use when parsing.</param>
       </Docs>
     </Member>
     <Member MemberName="Version">
@@ -555,9 +784,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>indigo2 supports the RSS 2.0 and Atom 1.0 specifications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the syndication version of the formatter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -576,11 +811,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="category">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance that contains the attribute extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to write the attribute extensions in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -599,11 +843,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance that contains the attribute extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to write the attribute extensions in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -622,11 +875,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance that contains the attribute extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to write the attribute extensions in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributeExtensions">
@@ -645,11 +907,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="person">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how attribute extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.WriteAttributeExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the attribute extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="person">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance that contains the attribute extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version to write the attribute extensions in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -668,11 +939,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="category">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance that contains the element extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version the extensions are written in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -691,11 +971,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance that contains the element extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version the extensions are written in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -714,11 +1003,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="link">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="link">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance that contains the element extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version the extensions are written in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteElementExtensions">
@@ -737,11 +1035,20 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="person">To be added.</param>
-        <param name="version">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control how element extensions are written by the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" />, derive a class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.WriteElementExtensions(System.Xml.XmlWriter,System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the element extensions in the <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance to the specified <see cref="T:System.Xml.XmlWriter" /> in the specified syndication version.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the extensions to.</param>
+        <param name="person">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance that contains the element extensions to be written.</param>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication version the extensions are written in.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -758,9 +1065,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to the specified <see cref="T:System.Xml.XmlWriter" /> instance.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> to.</param>
       </Docs>
     </Member>
   </Members>

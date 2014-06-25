@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NameValueFileSectionHandler" FullName="System.Configuration.NameValueFileSectionHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class NameValueFileSectionHandler : System.Configuration.IConfigurationSectionHandler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NameValueFileSectionHandler extends System.Object implements class System.Configuration.IConfigurationSectionHandler" />
@@ -19,8 +20,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The file attribute of the &lt;appSettings&gt; section specifies a relative path to an external file that contains custom application-configuration settings. The details provided in the file act as an &lt;appSettings&gt; section in the configuration file. The file is accessed using the <see cref="T:System.Configuration.NameValueFileSectionHandler" /> class. The file's root element must match the section referring to it. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to a configuration file. This type supports the .NET Framework configuration infrastructure and is not intended to be used directly from your code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.NameValueFileSectionHandler" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -57,12 +67,24 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="parent">To be added: an object of type 'object'</param>
-        <param name="configContext">To be added: an object of type 'object'</param>
-        <param name="section">To be added: an object of type 'Xml.XmlNode'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="parent" /> object parameter acts as the configuration settings in the corresponding parent configuration section. The <paramref name="configContext" /> object parameter is the virtual path for which the configuration section handler computes configuration values. Normally this parameter is reserved and is null. The <paramref name="section" /> parameter is the <see cref="T:System.Xml.XmlNode" /> that contains the configuration information to be handled. The <paramref name="section" /> parameter provides direct access to the XML contents of the configuration section.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new configuration handler and adds it to the section-handler collection based on the specified parameters.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A configuration object.</para>
+        </returns>
+        <param name="parent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parent object.</param>
+        <param name="configContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration context object.</param>
+        <param name="section">
+          <attribution license="cc4" from="Microsoft" modified="false" />The section XML node.</param>
       </Docs>
     </Member>
   </Members>

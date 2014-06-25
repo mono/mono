@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SearchResult" FullName="System.DirectoryServices.SearchResult">
   <TypeSignature Language="C#" Value="public class SearchResult" />
   <AssemblyInfo>
@@ -66,9 +67,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.DirectoryServices.SearchResult.GetDirectoryEntry" /> when you want to look at the live entry instead of the entry that was returned through <see cref="T:System.DirectoryServices.DirectorySearcher" />, or when you want to invoke a method on the object that was returned.</para>
+          <block subset="none" type="note">
+            <para>Calling <see cref="M:System.DirectoryServices.SearchResult.GetDirectoryEntry" /> on each <see cref="T:System.DirectoryServices.SearchResult" /> returned through <see cref="T:System.DirectoryServices.DirectorySearcher" /> can be slow.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the <see cref="T:System.DirectoryServices.DirectoryEntry" /> that corresponds to the <see cref="T:System.DirectoryServices.SearchResult" /> from the Active Directory Domain Services hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DirectoryServices.DirectoryEntry" /> that corresponds to the <see cref="T:System.DirectoryServices.SearchResult" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -78,9 +91,15 @@
         <ReturnType>System.DirectoryServices.ResultPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection only contains properties that were explicitly requested through <see cref="P:System.DirectoryServices.DirectorySearcher.PropertiesToLoad" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.DirectoryServices.ResultPropertyCollection" /> collection of properties for this object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Path">
@@ -90,14 +109,26 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.DirectoryServices.SearchResult.Path" /> property uniquely identifies this entry in the Active Directory Domain Services hierarchy. The entry can always be retrieved using this path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the path for this <see cref="T:System.DirectoryServices.SearchResult" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Instances of the <see cref="T:System.DirectoryServices.SearchResult" /> class are very similar to instances of <see cref="T:System.DirectoryServices.DirectoryEntry" /> class. The crucial difference is that the <see cref="T:System.DirectoryServices.DirectoryEntry" /> class retrieves its information from the Active Directory Domain Services hierarchy each time a new object is accessed, whereas the data for <see cref="T:System.DirectoryServices.SearchResult" /> is already available in the <see cref="T:System.DirectoryServices.SearchResultCollection" />, where it gets returned from a query that is performed with the <see cref="T:System.DirectoryServices.DirectorySearcher" /> class. Only those properties that are specified through the <see cref="P:System.DirectoryServices.DirectorySearcher.PropertiesToLoad" /> collection in your query will be available from <see cref="T:System.DirectoryServices.SearchResult" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.SearchResult" /> class encapsulates a node in the Active Directory Domain Services hierarchy that is returned during a search through <see cref="T:System.DirectoryServices.DirectorySearcher" />.</para>
+    </summary>
   </Docs>
 </Type>

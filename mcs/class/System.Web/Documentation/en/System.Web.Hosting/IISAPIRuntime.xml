@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IISAPIRuntime" FullName="System.Web.Hosting.IISAPIRuntime">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IISAPIRuntime" />
   <AssemblyInfo>
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the methods that are used to create <see cref="T:System.Web.HttpWorkerRequest" /> objects in the .NET Framework.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DoGCCollect">
@@ -30,8 +34,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces garbage collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,11 +56,19 @@
         <Parameter Name="useProcessModel" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="ecb">To be added: an object of type 'IntPtr'</param>
-        <param name="useProcessModel">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.HttpWorkerRequest" /> object to process the current request.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>0 if <see cref="T:System.Web.HttpWorkerRequest" /> was created successfully; otherwise, 1.</para>
+        </returns>
+        <param name="ecb">
+          <attribution license="cc4" from="Microsoft" modified="false" />An ISAPI extension control block.</param>
+        <param name="useProcessModel">
+          <attribution license="cc4" from="Microsoft" modified="false" />0 to create an out-of-process request; otherwise, an in-process request is created.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,8 +83,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts processing all items in the worker process pipeline.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,8 +102,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops processing the items in the worker process pipeline.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

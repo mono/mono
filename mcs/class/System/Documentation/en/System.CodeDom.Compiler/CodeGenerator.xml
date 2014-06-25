@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeGenerator" FullName="System.CodeDom.Compiler.CodeGenerator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public abstract class CodeGenerator : System.CodeDom.Compiler.ICodeGenerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CodeGenerator extends System.Object implements class System.CodeDom.Compiler.ICodeGenerator" />
@@ -19,8 +20,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is a useful base class for code generators to derive from. Code generators are capable of rendering source code in a specific language according to the structure of a Code Document Object Model (CodeDOM) graph. This class provides many functions and methods to generate specific types of code from a CodeDOM graph.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an example implementation of the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> interface. This class is abstract.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.CodeGenerator" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContinueOnNewLine">
@@ -55,9 +68,13 @@
         <Parameter Name="st" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="st">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a line-continuation character and outputs the specified string on a new line.</para>
+        </summary>
+        <param name="st">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to write on the new line. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateEscapedIdentifier">
@@ -76,10 +93,24 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.CodeDom.Compiler.CodeGenerator.CreateEscapedIdentifier(System.String)" /> tests whether the identifier conflicts with reserved or language keywords, and if so, returns an equivalent name with language-specific escape code formatting. The returned name is referred to an escaped identifier. The escaped identifier contains the same <paramref name="value" /> but includes escape code formatting to differentiate it from conflicting keywords. For example, <paramref name="value" /> could be preceded by an at sign ("@") or delimited by square brackets ("[" and "]") to create an escaped identifier. </para>
+          <block subset="none" type="note">
+            <para>The default implementation of this method does nothing.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an escaped identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for. </param>
       </Docs>
     </Member>
     <Member MemberName="CreateValidIdentifier">
@@ -98,10 +129,24 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.CodeDom.Compiler.CodeGenerator.CreateValidIdentifier(System.String)" /> tests whether the identifier conflicts with reserved or language keywords, and if so, returns a valid identifier name that does not conflict. The returned identifier contains the same <paramref name="value" /> but includes escape code formatting to differentiate it from conflicting keywords. Typically, if the value requires modification, it is preceded by an underscore "_". </para>
+          <block subset="none" type="note">
+            <para>The default implementation of this method does nothing.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a valid identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string to create a valid identifier for. </param>
       </Docs>
     </Member>
     <Member MemberName="CurrentClass">
@@ -116,9 +161,12 @@
         <ReturnType>System.CodeDom.CodeTypeDeclaration</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the code type declaration for the current class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentMember">
@@ -134,9 +182,12 @@
         <ReturnType>System.CodeDom.CodeTypeMember</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeDom.CodeTypeMember'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current member of the class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentMemberName">
@@ -152,9 +203,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current member name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CurrentTypeName">
@@ -170,9 +224,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current class name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateArgumentReferenceExpression">
@@ -191,9 +248,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeArgumentReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeArgumentReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified argument reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeArgumentReferenceExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateArrayCreateExpression">
@@ -212,9 +273,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeArrayCreateExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeArrayCreateExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified array creation expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeArrayCreateExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateArrayIndexerExpression">
@@ -233,9 +298,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeArrayIndexerExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeArrayIndexerExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified array indexer expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeArrayIndexerExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateAssignStatement">
@@ -255,8 +324,11 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeAssignStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified assignment statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateAttachEventStatement">
@@ -276,8 +348,11 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeAttachEventStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attach event statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateAttributeDeclarationsEnd">
@@ -296,9 +371,13 @@
         <Parameter Name="attributes" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.CodeAttributeDeclarationCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attribute block end.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeAttributeDeclarationCollection" /> that indicates the end of the attribute block to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateAttributeDeclarationsStart">
@@ -317,9 +396,13 @@
         <Parameter Name="attributes" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.CodeAttributeDeclarationCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attribute block start.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeAttributeDeclarationCollection" /> that indicates the start of the attribute block to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateBaseReferenceExpression">
@@ -338,9 +421,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeBaseReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeBaseReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified base reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeBaseReferenceExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateBinaryOperatorExpression">
@@ -359,9 +446,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeBinaryOperatorExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeBinaryOperatorExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified binary operator expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeBinaryOperatorExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCastExpression">
@@ -380,9 +471,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCastExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeCastExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified cast expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCastExpression" /> that indicates the expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateCodeFromMember">
@@ -407,11 +502,20 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CodeGeneratorOptions" />
       </Parameters>
       <Docs>
-        <param name="member">To be added.</param>
-        <param name="writer">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Code for members is generated differently depending on the context. For example, code for methods on an interface or fields on an enumeration is generated differently from code for the same member on a class. This implementation assumes that the member is being generated for the class context.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified class member using the specified text writer and code generator options.</para>
+        </summary>
+        <param name="member">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class member to generate code for.</param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text writer to output code to.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />The options to use when generating the code. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateComment">
@@ -431,8 +535,11 @@
       </Parameters>
       <Docs>
         <param name="comment">To be added: an object of type 'CodeDom.CodeComment'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified comment.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateCommentStatement">
@@ -452,8 +559,11 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeCommentStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified comment statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateCommentStatements">
@@ -473,8 +583,11 @@
       </Parameters>
       <Docs>
         <param name="statements">To be added: an object of type 'CodeDom.CodeCommentStatementCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified comment statements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateCompileUnit">
@@ -494,8 +607,11 @@
       </Parameters>
       <Docs>
         <param name="compileUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified compile unit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateCompileUnitEnd">
@@ -515,8 +631,11 @@
       </Parameters>
       <Docs>
         <param name="compileUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the end of a compile unit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateCompileUnitStart">
@@ -536,8 +655,11 @@
       </Parameters>
       <Docs>
         <param name="compileUnit">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the start of a compile unit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateConditionStatement">
@@ -557,8 +679,14 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeConditionStatement'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most languages, this method will generate code for an if statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified conditional statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateConstructor">
@@ -580,8 +708,11 @@
       <Docs>
         <param name="x">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateDecimalValue">
@@ -600,9 +731,13 @@
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="d">To be added: an object of type 'decimal'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified decimal value.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The decimal value to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDefaultValueExpression">
@@ -625,9 +760,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDefaultValueExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified reference to a default value.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The reference to generate code for.</param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDelegateCreateExpression">
@@ -646,9 +785,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDelegateCreateExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeDelegateCreateExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified delegate creation expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDelegateInvokeExpression">
@@ -667,9 +810,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDelegateInvokeExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeDelegateInvokeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified delegate invoke expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDirectionExpression">
@@ -688,9 +835,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeDirectionExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeDirectionExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified direction expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDirectives">
@@ -708,9 +859,13 @@
         <Parameter Name="directives" Type="System.CodeDom.CodeDirectiveCollection" />
       </Parameters>
       <Docs>
-        <param name="directives">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified code directives.</para>
+        </summary>
+        <param name="directives">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code directives to generate code for.</param>
       </Docs>
     </Member>
     <Member MemberName="GenerateDoubleValue">
@@ -729,9 +884,13 @@
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="d">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for a double-precision floating point number.</para>
+        </summary>
+        <param name="d">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateEntryPointMethod">
@@ -753,8 +912,11 @@
       <Docs>
         <param name="m">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified entry point method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateEvent">
@@ -776,8 +938,11 @@
       <Docs>
         <param name="ev">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateEventReferenceExpression">
@@ -796,9 +961,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeEventReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeEventReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified event reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateExpression">
@@ -817,9 +986,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified code expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The code expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateExpressionStatement">
@@ -839,8 +1012,11 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeExpressionStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified expression statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateField">
@@ -860,8 +1036,11 @@
       </Parameters>
       <Docs>
         <param name="f">To be added: an object of type 'CodeDom.CodeMemberField'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified member field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateFieldReferenceExpression">
@@ -880,9 +1059,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeFieldReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeFieldReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified field reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateGotoStatement">
@@ -902,8 +1085,11 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeGotoStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified goto statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateIndexerExpression">
@@ -922,9 +1108,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeIndexerExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeIndexerExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified indexer expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateIterationStatement">
@@ -944,8 +1134,14 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeIterationStatement'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most languages, this method will generate code for a for loop or a while loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified iteration statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateLabeledStatement">
@@ -965,8 +1161,11 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeLabeledStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified labeled statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateLinePragmaEnd">
@@ -986,8 +1185,11 @@
       </Parameters>
       <Docs>
         <param name="p">To be added: an object of type 'CodeDom.CodeLinePragma'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified line pragma end.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateLinePragmaStart">
@@ -1007,8 +1209,11 @@
       </Parameters>
       <Docs>
         <param name="p">To be added: an object of type 'CodeDom.CodeLinePragma'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified line pragma start.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateMethod">
@@ -1030,8 +1235,11 @@
       <Docs>
         <param name="m">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateMethodInvokeExpression">
@@ -1050,9 +1258,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeMethodInvokeExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeMethodInvokeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method invoke expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateMethodReferenceExpression">
@@ -1071,9 +1283,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeMethodReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeMethodReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateMethodReturnStatement">
@@ -1092,9 +1308,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeMethodReturnStatement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeMethodReturnStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified method return statement.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The statement to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateNamespace">
@@ -1114,8 +1334,11 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateNamespaceEnd">
@@ -1135,8 +1358,11 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the end of a namespace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateNamespaceImport">
@@ -1156,8 +1382,11 @@
       </Parameters>
       <Docs>
         <param name="i">To be added: an object of type 'CodeDom.CodeNamespaceImport'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace import.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateNamespaceImports">
@@ -1176,9 +1405,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeNamespace" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace import.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace import to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateNamespaces">
@@ -1197,9 +1430,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the namespaces in the specified compile unit.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The compile unit to generate namespaces for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateNamespaceStart">
@@ -1219,8 +1456,11 @@
       </Parameters>
       <Docs>
         <param name="ns">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the start of a namespace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateObjectCreateExpression">
@@ -1239,9 +1479,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeObjectCreateExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeObjectCreateExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified object creation expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateParameterDeclarationExpression">
@@ -1260,9 +1504,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeParameterDeclarationExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeParameterDeclarationExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified parameter declaration expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GeneratePrimitiveExpression">
@@ -1281,9 +1529,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodePrimitiveExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodePrimitiveExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified primitive expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateProperty">
@@ -1305,8 +1557,11 @@
       <Docs>
         <param name="p">To be added.</param>
         <param name="d">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GeneratePropertyReferenceExpression">
@@ -1325,9 +1580,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodePropertyReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodePropertyReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified property reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GeneratePropertySetValueReferenceExpression">
@@ -1346,9 +1605,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodePropertySetValueReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodePropertySetValueReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified property set value reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateRemoveEventStatement">
@@ -1368,8 +1631,11 @@
       </Parameters>
       <Docs>
         <param name="statement">To be added: an object of type 'CodeDom.CodeRemoveEventStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified remove event statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateSingleFloatValue">
@@ -1388,9 +1654,13 @@
         <Parameter Name="s" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for a single-precision floating point number.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateSnippetCompileUnit">
@@ -1409,9 +1679,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeSnippetCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeSnippetCompileUnit'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment compile unit.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The literal code fragment compile unit to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateSnippetExpression">
@@ -1430,9 +1704,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeSnippetExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeSnippetExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateSnippetMember">
@@ -1452,8 +1730,11 @@
       </Parameters>
       <Docs>
         <param name="m">To be added: an object of type 'CodeDom.CodeSnippetTypeMember'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment class member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateSnippetStatement">
@@ -1473,8 +1754,11 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeSnippetStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the code of the specified literal code fragment statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateStatement">
@@ -1494,8 +1778,11 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateStatements">
@@ -1515,8 +1802,11 @@
       </Parameters>
       <Docs>
         <param name="c">To be added: an object of type 'CodeDom.CodeStatementCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified statement collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateThisReferenceExpression">
@@ -1535,9 +1825,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeThisReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeThisReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified this reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateThrowExceptionStatement">
@@ -1557,8 +1851,11 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeThrowExceptionStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified throw exception statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateTryCatchFinallyStatement">
@@ -1578,8 +1875,11 @@
       </Parameters>
       <Docs>
         <param name="s">To be added: an object of type 'CodeDom.CodeTryCatchFinallyStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified try...catch...finally statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypeConstructor">
@@ -1599,8 +1899,11 @@
       </Parameters>
       <Docs>
         <param name="constructor">To be added: an object of type 'CodeDom.CodeTypeConstructor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified class constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypeEnd">
@@ -1620,8 +1923,11 @@
       </Parameters>
       <Docs>
         <param name="declaration">To be added: an object of type 'CodeDom.CodeTypeDeclaration'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified end of the class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypeOfExpression">
@@ -1640,9 +1946,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeTypeOfExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeTypeOfExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type of expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypeReferenceExpression">
@@ -1661,9 +1971,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeTypeReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeTypeReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypes">
@@ -1682,9 +1996,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeNamespace" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeNamespace'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified namespace and the classes it contains.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to generate classes for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateTypeStart">
@@ -1704,8 +2022,11 @@
       </Parameters>
       <Docs>
         <param name="declaration">To be added: an object of type 'CodeDom.CodeTypeDeclaration'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified start of the class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateVariableDeclarationStatement">
@@ -1724,9 +2045,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeVariableDeclarationStatement" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeVariableDeclarationStatement'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified variable declaration statement.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The statement to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GenerateVariableReferenceExpression">
@@ -1745,9 +2070,13 @@
         <Parameter Name="e" Type="System.CodeDom.CodeVariableReferenceExpression" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CodeDom.CodeVariableReferenceExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified variable reference expression.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeOutput">
@@ -1767,9 +2096,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added: an object of type 'CodeDom.CodeTypeReference'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the specified data type.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the data type reference.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Indent">
@@ -1785,9 +2120,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Segments of code are commonly indented for ease of recognition.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of spaces to indent each indentation level.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCurrentClass">
@@ -1803,9 +2144,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is a class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCurrentDelegate">
@@ -1821,9 +2165,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is a delegate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCurrentEnum">
@@ -1839,9 +2186,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is an enumeration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCurrentInterface">
@@ -1857,9 +2207,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is an interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsCurrentStruct">
@@ -1875,9 +2228,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current object being generated is a value type or struct.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsValidIdentifier">
@@ -1896,10 +2252,17 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified value is a valid identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to test for conflicts with valid identifiers. </param>
       </Docs>
     </Member>
     <Member MemberName="IsValidLanguageIndependentIdentifier">
@@ -1918,10 +2281,20 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method checks the specified string to ensure that it does not contain certain characters that can be used to escape an identifier field. The <see cref="M:System.CodeDom.Compiler.CodeGenerator.ValidateIdentifiers(System.CodeDom.CodeObject)" /> method calls this method to perform string validation. Calling the <see cref="M:System.CodeDom.Compiler.CodeGenerator.ValidateIdentifiers(System.CodeDom.CodeObject)" /> method and passing a <see cref="T:System.CodeDom.CodeCompileUnit" /> before generating code from it can prevent the use of certain character sequences to include hidden code within an identifier field.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified string is a valid identifier.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified string is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to test for validity. </param>
       </Docs>
     </Member>
     <Member MemberName="NullToken">
@@ -1937,9 +2310,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the token that represents null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Options">
@@ -1955,9 +2331,12 @@
         <ReturnType>System.CodeDom.Compiler.CodeGeneratorOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeGeneratorOptions'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the options to be used by the code generator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Output">
@@ -1973,9 +2352,12 @@
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IO.TextWriter'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text writer to use for output.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputAttributeArgument">
@@ -1995,8 +2377,11 @@
       </Parameters>
       <Docs>
         <param name="argument">To be added: an object of type 'CodeDom.CodeAttributeArgument'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs an argument in an attribute block.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputAttributeDeclarations">
@@ -2015,9 +2400,13 @@
         <Parameter Name="attributes" Type="System.CodeDom.CodeAttributeDeclarationCollection" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.CodeAttributeDeclarationCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified attribute declaration collection.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The attributes to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputDirection">
@@ -2037,8 +2426,11 @@
       </Parameters>
       <Docs>
         <param name="direction">To be added: an object of type 'CodeDom.FieldDirection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified <see cref="T:System.CodeDom.FieldDirection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputExpressionList">
@@ -2057,9 +2449,13 @@
         <Parameter Name="expressions" Type="System.CodeDom.CodeExpressionCollection" />
       </Parameters>
       <Docs>
-        <param name="expressions">To be added: an object of type 'CodeDom.CodeExpressionCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified expression list.</para>
+        </summary>
+        <param name="expressions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expressions to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputExpressionList">
@@ -2079,10 +2475,14 @@
         <Parameter Name="newLineBetweenItems" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="expressions">To be added: an object of type 'CodeDom.CodeExpressionCollection'</param>
         <param name="newLineBetweenItems">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified expression list.</para>
+        </summary>
+        <param name="expressions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expressions to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputFieldScopeModifier">
@@ -2101,9 +2501,13 @@
         <Parameter Name="attributes" Type="System.CodeDom.MemberAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.MemberAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs a field scope modifier that corresponds to the specified attributes.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputIdentifier">
@@ -2122,9 +2526,13 @@
         <Parameter Name="ident" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ident">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the specified identifier.</para>
+        </summary>
+        <param name="ident">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier to output. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputMemberAccessModifier">
@@ -2143,9 +2551,13 @@
         <Parameter Name="attributes" Type="System.CodeDom.MemberAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.MemberAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified member access modifier.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the member access modifier to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputMemberScopeModifier">
@@ -2164,9 +2576,13 @@
         <Parameter Name="attributes" Type="System.CodeDom.MemberAttributes" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'CodeDom.MemberAttributes'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified member scope modifier.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the member scope modifier to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputOperator">
@@ -2185,9 +2601,13 @@
         <Parameter Name="op" Type="System.CodeDom.CodeBinaryOperatorType" />
       </Parameters>
       <Docs>
-        <param name="op">To be added: an object of type 'CodeDom.CodeBinaryOperatorType'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified operator.</para>
+        </summary>
+        <param name="op">
+          <attribution license="cc4" from="Microsoft" modified="false" />The operator to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputParameters">
@@ -2206,9 +2626,13 @@
         <Parameter Name="parameters" Type="System.CodeDom.CodeParameterDeclarationExpressionCollection" />
       </Parameters>
       <Docs>
-        <param name="parameters">To be added: an object of type 'CodeDom.CodeParameterDeclarationExpressionCollection'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified parameters.</para>
+        </summary>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameter declaration expressions to generate code for. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputType">
@@ -2228,8 +2652,11 @@
       </Parameters>
       <Docs>
         <param name="t">To be added: an object of type 'CodeDom.CodeTypeReference'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputTypeAttributes">
@@ -2250,11 +2677,17 @@
         <Parameter Name="isEnum" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="attributes">To be added: an object of type 'Reflection.TypeAttributes'</param>
-        <param name="isStruct">To be added: an object of type 'bool'</param>
-        <param name="isEnum">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified type attributes.</para>
+        </summary>
+        <param name="attributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that indicates the type attributes to generate code for. </param>
+        <param name="isStruct">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the type is a struct; otherwise, false. </param>
+        <param name="isEnum">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the type is an enum; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="OutputTypeNamePair">
@@ -2275,9 +2708,13 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified object type and name pair.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name for the object. </param>
       </Docs>
     </Member>
     <Member MemberName="QuoteSnippetString">
@@ -2296,10 +2733,20 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a modified version of the specified string that has been formatted with escape code characters. For example, /" might be used to represent ". These escape codes are used to replace elements of the specified string that might otherwise conflict with language syntax.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified string by formatting it with escape codes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted string.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
       </Docs>
     </Member>
     <Member MemberName="Supports">
@@ -2319,9 +2766,15 @@
       </Parameters>
       <Docs>
         <param name="supports">To be added: an object of type 'GeneratorSupport'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the specified code generation support is provided.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code generation support is provided; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.CreateEscapedIdentifier">
@@ -2340,10 +2793,17 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an escaped identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.CreateValidIdentifier">
@@ -2362,10 +2822,17 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a valid identifier for the specified value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the specified value.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to generate a valid identifier for.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromCompileUnit">
@@ -2389,8 +2856,11 @@
         <param name="compileUnit">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) compilation unit and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromExpression">
@@ -2414,8 +2884,11 @@
         <param name="expression">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) expression and outputs it to the specified text writer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromNamespace">
@@ -2439,8 +2912,11 @@
         <param name="ns">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) namespace and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromStatement">
@@ -2464,8 +2940,11 @@
         <param name="statement">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) statement and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GenerateCodeFromType">
@@ -2489,8 +2968,11 @@
         <param name="type">To be added.</param>
         <param name="output">To be added.</param>
         <param name="options">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates code for the specified Code Document Object Model (CodeDOM) type declaration and outputs it to the specified text writer using the specified options.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.GetTypeOutput">
@@ -2509,10 +2991,17 @@
         <Parameter Name="type" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type indicated by the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the data type reference.</para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to return.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.IsValidIdentifier">
@@ -2531,10 +3020,17 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified value is a valid identifier for the current language.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid identifier; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to test.</param>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.Supports">
@@ -2554,9 +3050,15 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the generator provides support for the language features represented by the specified <see cref="T:System.CodeDom.Compiler.GeneratorSupport" />  object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified capabilities are supported; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.ValidateIdentifier">
@@ -2575,9 +3077,13 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the specified value is not a valid identifier.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateIdentifier">
@@ -2596,9 +3102,13 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws an exception if the specified string is not a valid identifier.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier to test for validity as an identifier. </param>
       </Docs>
     </Member>
     <Member MemberName="ValidateIdentifiers">
@@ -2622,9 +3132,18 @@
         <Parameter Name="e" Type="System.CodeDom.CodeObject" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is possible for the identifier fields of <see cref="T:System.CodeDom.CodeObject" /> objects to contain field escape characters and hidden code which can allow security violations. This method checks the literal fields of each <see cref="T:System.CodeDom.CodeObject" /> in a <see cref="N:System.CodeDom" /> tree for characters which could be used to hide code, and throws an exception if an identifier field contains an invalid character.</para>
+          <para>This method calls the <see cref="M:System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(System.String)" /> method to validate each identifier in the specified <see cref="T:System.CodeDom.CodeObject" /> or <see cref="N:System.CodeDom" /> tree, and throws an exception if an identifier is invalid or contains invalid characters.</para>
+          <para>Call this method and pass it the <see cref="T:System.CodeDom.CodeCompileUnit" /> containing the code graph to generate before generating code to block the use of certain character sequences that can be used to include hidden code within an identifier field. This method is not called automatically by any generate code methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attempts to validate each identifier field contained in the specified <see cref="T:System.CodeDom.CodeObject" /> or <see cref="N:System.CodeDom" /> tree.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to test for invalid identifiers. </param>
       </Docs>
     </Member>
   </Members>

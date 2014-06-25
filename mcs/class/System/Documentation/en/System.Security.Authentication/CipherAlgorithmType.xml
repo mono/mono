@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CipherAlgorithmType" FullName="System.Security.Authentication.CipherAlgorithmType">
   <TypeSignature Language="C#" Value="public enum CipherAlgorithmType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CipherAlgorithmType extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration specifies valid values for the <see cref="P:System.Net.Security.SslStream.CipherAlgorithm" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the possible cipher algorithms for the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Aes">
@@ -27,8 +34,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Advanced Encryption Standard (AES) algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Aes128">
@@ -43,8 +53,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Advanced Encryption Standard (AES) algorithm with a 128 bit key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Aes192">
@@ -59,8 +72,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Advanced Encryption Standard (AES) algorithm with a 192 bit key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Aes256">
@@ -75,8 +91,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Advanced Encryption Standard (AES) algorithm with a 256 bit key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Des">
@@ -91,8 +110,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Data Encryption Standard (DES) algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -107,8 +129,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No encryption algorithm is used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Null">
@@ -122,7 +147,10 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No encryption is used with a Null cipher algorithm. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Rc2">
@@ -137,8 +165,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rivest's Code 2 (RC2) algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Rc4">
@@ -153,8 +184,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rivest's Code 4 (RC4) algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TripleDes">
@@ -169,8 +203,11 @@
         <ReturnType>System.Security.Authentication.CipherAlgorithmType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Triple Data Encryption Standard (3DES) algorithm.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

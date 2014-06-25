@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientScriptItem" FullName="System.Web.UI.Design.ClientScriptItem">
   <TypeSignature Language="C#" Value="public sealed class ClientScriptItem" />
   <AssemblyInfo>
@@ -9,8 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.ClientScriptItem" /> class represents a script element that is contained in a Web document at design time. A custom control designer implementation can use a <see cref="T:System.Web.UI.Design.ClientScriptItem" /> object to add client script elements to a Web Form or user control.</para>
+      <para>At design time, use the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> class to set or examine client script elements that are contained in a document, such as a Web form, a Web server control, a content page, or a master page, on the design surface. Retrieve the collection of client script elements that are contained within the Web document by using the <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.GetClientScriptsInDocument" /> method. Add a client script element to the Web document by using the <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.AddClientScriptToDocument(System.Web.UI.Design.ClientScriptItem)" /> method.</para>
+      <para>Typically, a script element either contains script statements or specifies an external location for script statements. The script element can optionally define the language of the script statements. Use the <see cref="M:System.Web.UI.Design.ClientScriptItem.#ctor(System.String,System.String,System.String,System.String,System.String)" /> constructor to initialize the properties for a new script object. Use the <see cref="T:System.Web.UI.Design.ClientScriptItem" /> properties to examine the script object attributes and contents. The <see cref="P:System.Web.UI.Design.ClientScriptItem.Language" /> property represents the language attribute of the script element. The <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property represents the src attribute. The <see cref="P:System.Web.UI.Design.ClientScriptItem.Text" /> property represents the script statements to be executed on the client that are contained in the script element. </para>
+      <para>Use the <see cref="T:System.Web.UI.Design.ClientScriptItem" /> class to manage scripts that are to be executed at design-time.</para>
+      <para>To manage client script elements at run time, use the <see cref="T:System.Web.UI.ClientScriptManager" /> class. For more information about using client scripts at run time, see <format type="text/html"><a href="13edb6b9-2dea-43c6-b8c1-a47207de19aa">Client Script in ASP.NET Web Pages</a></format>.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.Design.ClientScriptItem" /> class represents script elements at design time that are ultimately parsed and run in the client browser. Because the script elements that are generated for the <see cref="T:System.Web.UI.Design.ClientScriptItem" /> objects are not run on the server, the elements do not contain the runat="server" attribute.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a client script element in a Web Form or user control at design time. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,13 +41,44 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="language">To be added.</param>
-        <param name="type">To be added.</param>
-        <param name="id">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initialize the statements for the <see cref="T:System.Web.UI.Design.ClientScriptItem" /> object by using either the <paramref name="text" /> or <paramref name="source" /> parameter (not both). Use <paramref name="text" /> to initialize the script using an input string that contains the statements. Alternately, use <paramref name="source" /> to initialize a script using a path that contains the script statements.</para>
+          <para>You can specify any of the input parameters as null or an empty string (""); the corresponding property is set using the input value, and the script element is generated without that property. Using null or an empty string ("") generates the following results: </para>
+          <list type="bullet">
+            <item>
+              <para>For <paramref name="text" />, the corresponding script element does not contain script statements. </para>
+            </item>
+            <item>
+              <para>For <paramref name="source" />, the src attribute is not set in the script element. </para>
+            </item>
+            <item>
+              <para>For <paramref name="language" />, the language attribute is not set in the script element. </para>
+              <para>When a client script block does not specify the script language, the client browser determines the language.</para>
+            </item>
+            <item>
+              <para>For <paramref name="type" />, the type attribute is not set in the script element.</para>
+              <para>When a client script block does not specify the script type, the client browser determines the type.</para>
+            </item>
+            <item>
+              <para>For <paramref name="id" />, the design host (for example, vsprvslong) will throw an <see cref="T:System.ArgumentNullException" />.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ClientScriptItem" /> class using the provided parameters.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents for the script element; a string of script statements to run on the client.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The src attribute value for the script element, specifying an external source location for the client script contents.</param>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language attribute value for the script element, specifying the language of the script statements.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type attribute value for the script element, indicating the MIME type for the associated scripting engine.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID for the script element. This argument is required by the design host (for example, vsprvslong).</param>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -46,9 +91,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ID attribute value for the client script element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Language">
@@ -61,9 +109,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ClientScriptItem.Language" /> property represents the language in which the script statements are written. If the <see cref="P:System.Web.UI.Design.ClientScriptItem.Language" /> property is null or an empty string (""), the language attribute is not set in the script element. When a client script block does not specify the script language, the client browser determines the language.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ClientScriptItem.Language" /> property is initialized by the <see cref="M:System.Web.UI.Design.ClientScriptItem.#ctor(System.String,System.String,System.String,System.String,System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the language attribute value for the client script element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Source">
@@ -76,9 +131,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property specifies an external source location for the client script contents. Typically, the script statements for a script element are specified using either the <see cref="P:System.Web.UI.Design.ClientScriptItem.Text" /> or <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property. </para>
+          <para>If the <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property is null or an empty string (""), the src attribute is not set in the script element.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property is initialized by the <see cref="M:System.Web.UI.Design.ClientScriptItem.#ctor(System.String,System.String,System.String,System.String,System.String)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the src attribute value for the client script element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -91,9 +154,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ClientScriptItem.Text" /> property represents the statements that are contained in the script element. Typically, the script statements for a script element are specified using either the <see cref="P:System.Web.UI.Design.ClientScriptItem.Text" /> or <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property. </para>
+          <para>If the <see cref="P:System.Web.UI.Design.ClientScriptItem.Text" /> property is null or an empty string (""), the script element does not contain any script statements.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ClientScriptItem.Source" /> property is initialized by the <see cref="M:System.Web.UI.Design.ClientScriptItem.#ctor(System.String,System.String,System.String,System.String,System.String)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the script statements contained in the client script element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -106,9 +177,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type attribute value for the client script element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

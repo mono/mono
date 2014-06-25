@@ -19,6 +19,7 @@
     <TargetFrameworkVersion>v@FX_VERSION</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
+  @SIGNATURE@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -53,12 +54,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
 @PREBUILD@
-    </PreBuildEvent>
-    <PostBuildEvent>
 @POSTBUILD@
-  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
 @REFERENCES@  </ItemGroup>

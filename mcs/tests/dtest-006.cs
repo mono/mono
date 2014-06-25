@@ -1104,6 +1104,14 @@ class Tester
 		Assert (d2 >= null, false, "#3a");
 	}
 
+	void IsTest ()
+	{
+		dynamic d = 1;
+		Assert (d is long, false, "#1");
+		Assert (d is int, true, "#2");
+		Assert (d is string, false, "#3");
+	}
+
 	void LeftShiftTest ()
 	{
 		dynamic d = (ulong) 0x7F000;

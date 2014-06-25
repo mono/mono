@@ -466,26 +466,25 @@ namespace System.IO {
 			FileStream f = null;
 			string path;
 			Random rnd;
-			int num = 0;
+			int num;
 			int count = 0;
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			rnd = new Random ();
+			var tmp_path = GetTempPath ();
 			do {
 				num = rnd.Next ();
 				num++;
-				path = Path.Combine (GetTempPath(), "tmp" + num.ToString("x") + ".tmp");
+				path = Path.Combine (tmp_path, "tmp" + num.ToString ("x", CultureInfo.InvariantCulture) + ".tmp");
 
 				try {
 					f = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read,
 							    8192, false, (FileOptions) 1);
-				}
-				catch (IOException ex){
+				} catch (IOException ex){
 					if (ex.hresult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
 						throw;
-				}
-				catch (UnauthorizedAccessException ex) {
+				} catch (UnauthorizedAccessException ex) {
 					if (count ++ > 65536)
 						throw new IOException (ex.Message, ex);
 				}

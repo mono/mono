@@ -25,9 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-#if !NET_2_1
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
-#endif
 	public sealed class NameScopePropertyAttribute : Attribute
 	{
 		public NameScopePropertyAttribute (string name)

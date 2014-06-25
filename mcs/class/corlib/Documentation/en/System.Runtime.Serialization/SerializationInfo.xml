@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerializationInfo" FullName="System.Runtime.Serialization.SerializationInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SerializationInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SerializationInfo extends System.Object" />
@@ -19,8 +20,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by objects with custom serialization behavior. The <see cref="M:System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> method on either <see cref="T:System.Runtime.Serialization.ISerializable" /> or <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" /> populates the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store with the name, type, and value of each piece of information it wants to serialize. During deserialization, the appropriate function can extract this information.</para>
+      <para>Objects are added to the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store at serialization time using the <see cref="M:System.Runtime.Serialization.SerializationInfo.AddValue(System.String,System.Object,System.Type)" /> methods and extracted from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store at deserialization using the <see cref="M:System.Runtime.Serialization.SerializationInfo.GetValue(System.String,System.Type)" /> methods.</para>
+      <para>For more information about customizing serialization, see <format type="text/html"><a href="12ED422D-5280-49B8-9B71-A2ED129C0384">[&lt;topic://cpconCustomSerialization&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores all the data needed to serialize or deserialize an object. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,10 +52,18 @@
         <Parameter Name="converter" Type="System.Runtime.Serialization.IFormatterConverter" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="converter">To be added: an object of type 'IFormatterConverter'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> passed as the <paramref name="converter" /> parameter converts data from its internal representation to the form the user requested. The internal representation of the data within the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> depends on the formatter that created it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> class.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object to serialize. </param>
+        <param name="converter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> used during deserialization. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -66,10 +83,36 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. For example:</para>
+          <code>void ISerializable.GetObject(SerializationInfo info, StreamingContext context)
+{
+   // This will not cause an exception to be thrown.
+   info.AddValue("ABC", true);
+   info.AddValue("abc", false);
+   // However, this will cause the SerializationException to be thrown.
+   info.AddValue("XYZ", true);
+   info.AddValue("XYZ", false);
+}</code>
+          <code>Private Sub GetObjectData(ByVal info As SerializationInfo, _
+ByVal context As StreamingContext)
+   ' This will not cause an exception to be thrown.
+   info.AddValue("ABC", "upper case")
+   info.AddValue("abc", "lower case")
+   ' However, this will cause the SerializationException to be thrown.
+   info.AddValue("XYZ", "same case")
+   info.AddValue("XYZ", "same case")
+End Sub</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a Boolean value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Boolean value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -89,10 +132,18 @@
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'byte'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an 8-bit unsigned integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -112,10 +163,18 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a Unicode character value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -135,10 +194,18 @@
         <Parameter Name="value" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'DateTime'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.DateTime" /> value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -158,10 +225,18 @@
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'decimal'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a decimal value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The decimal value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -181,10 +256,18 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a double-precision floating-point value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The double value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -204,10 +287,18 @@
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'short'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a 16-bit signed integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Int16 value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -227,10 +318,18 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a 32-bit signed integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Int32 value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -250,10 +349,18 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a 64-bit signed integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Int64 value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -273,10 +380,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object contained in the <paramref name="value" /> parameter is serialized as the type returned by <paramref name="value" />. </para>
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified object into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store, where it is associated with a specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be serialized. Any children of this object will automatically be serialized. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -301,10 +417,18 @@
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'sbyte'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an 8-bit signed integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Sbyte value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -324,10 +448,18 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a single-precision floating-point value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The single value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -352,10 +484,18 @@
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'ushort'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a 16-bit unsigned integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The UInt16 value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -380,10 +520,18 @@
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'uint'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a 32-bit unsigned integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The UInt32 value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -408,10 +556,18 @@
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'ulong'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a 64-bit unsigned integer value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The UInt64 value to serialize. </param>
       </Docs>
     </Member>
     <Member MemberName="AddValue">
@@ -432,11 +588,21 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assigned type is always the type of the object, or one of its parents.</para>
+          <para>If two values are added with names that differ only by case, no exception will be thrown, which is not a recommended practice. However, adding two values with the exact same name will cause the <see cref="T:System.Runtime.Serialization.SerializationException" /> to be thrown. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a value into the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store, where <paramref name="value" /> is associated with <paramref name="name" /> and is serialized as being of <see cref="T:System.Type" /> <paramref name="type" />.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name to associate with the value, so it can be deserialized later. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to be serialized. Any children of this object will automatically be serialized. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to associate with the current object. This parameter must always be the type of the object itself or of one of its base classes. </param>
       </Docs>
     </Member>
     <Member MemberName="AssemblyName">
@@ -452,9 +618,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Serialization.SerializationInfo.AssemblyName" /> is the same as the value returned by <see cref="P:System.Reflection.Assembly.FullName" /> property of the assembly of the containing type. This is the assembly name that the formatter uses when serializing type information for this object.</para>
+          <para>The assembly name contains the name of the assembly, version, culture, and some security information about the object. </para>
+          <para>Users who are changing the type being serialized (for example, to send a proxy for a particular type) will set the value of this property.</para>
+          <block subset="none" type="note">
+            <para>Do not use this property during deserialization because the value of this property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the assembly name of the type to serialize during serialization only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FullTypeName">
@@ -470,9 +647,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Serialization.SerializationInfo.FullTypeName" /> is the same as what would be returned by calling the <see cref="P:System.Type.FullName" /> on <see cref="T:System.Type" />. This is the type name the formatter uses when serializing type information for this object.</para>
+          <para>Users who are changing the type to serialize (for example, to send a proxy for a particular type) will want to set the value of this property.</para>
+          <block subset="none" type="note">
+            <para>Do not use this property during deserialization because the value of this property is undefined.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the full name of the <see cref="T:System.Type" /> to serialize.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetBoolean">
@@ -491,10 +678,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a Boolean, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a Boolean value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Boolean value associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetByte">
@@ -513,10 +710,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'byte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is an 8-bit unsigned integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an 8-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetChar">
@@ -535,10 +742,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'char'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a Unicode character, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a Unicode character value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Unicode character associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDateTime">
@@ -557,10 +774,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'DateTime'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a <see cref="T:System.DateTime" />, or can be converted to a <see cref="T:System.DateTime" />, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.DateTime" /> value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> value associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.  </param>
       </Docs>
     </Member>
     <Member MemberName="GetDecimal">
@@ -579,10 +806,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'decimal'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a decimal, or can be converted to a decimal, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a decimal value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decimal value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.  </param>
       </Docs>
     </Member>
     <Member MemberName="GetDouble">
@@ -601,10 +838,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'double'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a double, or can be converted to a double, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a double-precision floating-point value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The double-precision floating-point value associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -621,9 +868,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'SerializationInfoEnumerator'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This function will most often be used by formatters that need to enumerate through the values before writing them out to the stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Runtime.Serialization.SerializationInfoEnumerator" /> used to iterate through the name-value pairs in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Serialization.SerializationInfoEnumerator" /> for parsing the name-value pairs contained in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInt16">
@@ -642,10 +898,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'short'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a 16-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a 16-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 16-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInt32">
@@ -664,10 +930,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'int'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a 32-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a 32-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetInt64">
@@ -686,10 +962,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'long'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a 64-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a 64-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSByte">
@@ -713,10 +999,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'sbyte'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is an Int8, or can be converted to an Int8, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an 8-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetSingle">
@@ -735,10 +1031,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'float'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a single-precision floating-point number, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a single-precision floating-point value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single-precision floating-point value associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. </param>
       </Docs>
     </Member>
     <Member MemberName="GetString">
@@ -757,10 +1063,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a <see cref="T:System.String" />, or can be converted to a <see cref="T:System.String" />, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a <see cref="T:System.String" /> value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.String" /> associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetUInt16">
@@ -784,10 +1100,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ushort'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a 16-bit unsigned integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a 16-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 16-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetUInt32">
@@ -811,10 +1137,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'uint'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a 32-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a 32-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetUInt64">
@@ -838,10 +1174,20 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ulong'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value is a 64-bit unsigned integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a 64-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -861,11 +1207,23 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the data stored in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> is of the type requested (or one of its derived classes), that value is returned directly. Otherwise, <see cref="M:System.Runtime.Serialization.IFormatterConverter.Convert(System.Object,System.Type)" /> is called to convert it to the appropriate type.</para>
+          <para>The value returned by the <see cref="M:System.Runtime.Serialization.SerializationInfo.GetValue(System.String,System.Type)" /> method can always be safely cast to the type specified in the <paramref name="type" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object of the specified <see cref="T:System.Type" /> associated with <paramref name="name" />.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the value to retrieve. If the stored value cannot be converted to this type, the system will throw a <see cref="T:System.InvalidCastException" />. </param>
       </Docs>
     </Member>
     <Member MemberName="IsAssemblyNameSetExplicit">
@@ -879,9 +1237,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the assembly name has been explicitly set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsFullTypeNameSetExplicit">
@@ -895,9 +1256,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the full type name has been explicitly set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MemberCount">
@@ -913,9 +1277,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of members that have been added to the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ObjectType">
@@ -929,9 +1296,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of the object to be serialized.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetType">
@@ -950,9 +1320,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.Formatter" /> is responsible for setting the <see cref="T:System.Type" /> of the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> instance before passing it to <see cref="M:System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" />. However, users who want to send proxies for their objects will need to change the type represented by this <see cref="T:System.Runtime.Serialization.SerializationInfo" /> instance. Using the <see cref="M:System.Runtime.Serialization.SerializationInfo.SetType(System.Type)" /> method is equivalent to setting both the <see cref="P:System.Runtime.Serialization.SerializationInfo.FullTypeName" /> and the <see cref="P:System.Runtime.Serialization.SerializationInfo.AssemblyName" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Type" /> of the object to serialize.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object to serialize. </param>
       </Docs>
     </Member>
   </Members>

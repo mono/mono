@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileDialogPermissionAccess" FullName="System.Security.Permissions.FileDialogPermissionAccess">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum FileDialogPermissionAccess" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileDialogPermissionAccess extends System.Enum" />
@@ -21,8 +22,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of access to files allowed through the <ui>File</ui> dialog boxes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -39,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No access to files through the <ui>File</ui> dialog boxes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -57,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to open files through the <ui>File</ui> dialog boxes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OpenSave">
@@ -75,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to open and save files through the <ui>File</ui> dialog boxes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -93,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to save files through the <ui>File</ui> dialog boxes.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

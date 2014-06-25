@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceEventType" FullName="System.Diagnostics.TraceEventType">
   <TypeSignature Language="C#" Value="public enum TraceEventType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TraceEventType extends System.Enum" />
@@ -10,8 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Diagnostics.TraceEventType" /> is used to identify the event that caused a trace in calls to the <see cref="Overload:System.Diagnostics.TraceSource.TraceEvent" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the type of event that has caused the trace.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Critical">
@@ -26,7 +34,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fatal error or application crash.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Error">
@@ -41,7 +52,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Recoverable error.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Information">
@@ -56,7 +70,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informational message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Resume">
@@ -76,7 +93,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resumption of a logical operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -96,7 +116,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starting of a logical operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Stop">
@@ -116,7 +139,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stopping of a logical operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Suspend">
@@ -136,7 +162,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Suspension of a logical operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Transfer">
@@ -156,7 +185,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Changing of correlation identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Verbose">
@@ -171,7 +203,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Debugging trace.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Warning">
@@ -186,7 +221,10 @@
         <ReturnType>System.Diagnostics.TraceEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Noncritical problem.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

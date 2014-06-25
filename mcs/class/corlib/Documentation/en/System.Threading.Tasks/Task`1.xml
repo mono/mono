@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Task&lt;TResult&gt;" FullName="System.Threading.Tasks.Task&lt;TResult&gt;">
   <TypeSignature Language="C#" Value="public class Task&lt;TResult&gt; : System.Threading.Tasks.Task" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Task`1&lt;TResult&gt; extends System.Threading.Tasks.Task" />
@@ -22,8 +23,22 @@
   </Attributes>
   <Docs>
     <typeparam name="TResult">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Threading.Tasks.Task`1" /> instances may be created in a variety of ways. The most common approach is by using the task's <see cref="P:System.Threading.Tasks.Task`1.Factory" /> property to retrieve a <see cref="T:System.Threading.Tasks.TaskFactory`1" /> instance that can be used to create tasks for several purposes. For example, to create a <see cref="T:System.Threading.Tasks.Task`1" /> that runs a function, the factory's <see cref="M:System.Threading.Tasks.TaskFactory.StartNew(System.Action,System.Threading.CancellationToken)" /> method may be used: </para>
+      <code>// C# 
+var t = Task&lt;int&gt;.Factory.StartNew(() =&gt; GenerateResult());
+
+' Visual Basic
+Dim t = Task(Of Integer).Factory.StartNew(Function() GenerateResult()) </code>
+      <para>For more complete examples, see <format type="text/html"><a href="458b5e69-5210-45e5-bc44-3888f86abd6f">Task Parallelism (Task Parallel Library)</a></format>.</para>
+      <para>The <see cref="T:System.Threading.Tasks.Task`1" /> class also provides constructors that initialize the task but that do not schedule it for execution. For performance reasons, the StartNew method should be the preferred mechanism for creating and scheduling computational tasks, but for scenarios where creation and scheduling must be separated, the constructors may be used, and the task's <see cref="M:System.Threading.Tasks.Task.Start" /> method may then be used to schedule the task for execution at a later time. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an asynchronous operation that can return a value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -192,10 +207,17 @@
         <Parameter Name="continueOnCapturedContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="continueOnCapturedContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures an awaiter used to await this <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object used to await this task.</para>
+        </returns>
+        <param name="continueOnCapturedContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to attempt to marshal the continuation back to the original context captured; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="ContinueWith">
@@ -717,9 +739,15 @@
         <ReturnType>System.Threading.Tasks.TaskFactory&lt;TResult&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The factory returned from <see cref="P:System.Threading.Tasks.Task`1.Factory" /> is a default instance of <see cref="T:System.Threading.Tasks.TaskFactory`1" />, as would result from using the default constructor on the factory type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides access to factory methods for creating <see cref="T:System.Threading.Tasks.Task`1" /> instances.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetAwaiter">
@@ -734,9 +762,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is intended for compiler user rather than use directly in code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an awaiter used to await this <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An awaiter instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Result">
@@ -755,9 +792,15 @@
         <ReturnType>TResult</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The get accessor for this property ensures that the asynchronous operation is complete before returning. Once the result of the computation is available, it is stored and will be returned immediately on later calls to <see cref="P:System.Threading.Tasks.Task`1.Result" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the result value of this <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

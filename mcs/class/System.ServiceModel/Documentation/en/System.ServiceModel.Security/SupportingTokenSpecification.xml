@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SupportingTokenSpecification" FullName="System.ServiceModel.Security.SupportingTokenSpecification">
   <TypeSignature Language="C#" Value="public class SupportingTokenSpecification : System.ServiceModel.Security.SecurityTokenSpecification" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SupportingTokenSpecification extends System.ServiceModel.Security.SecurityTokenSpecification" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Supporting tokens augment the claims provided by the token associated with the message signature. There are 4 different kinds of supporting tokens, and the <see cref="P:System.ServiceModel.Security.SupportingTokenSpecification.SecurityTokenAttachmentMode" /> enumeration specifies which kind this instance is.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a supporting security token and its authorization policies.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +34,17 @@
         <Parameter Name="attachmentMode" Type="System.ServiceModel.Security.SecurityTokenAttachmentMode" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <param name="tokenPolicies">To be added.</param>
-        <param name="attachmentMode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SupportingTokenSpecification" /> class.</para>
+        </summary>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security token.</param>
+        <param name="tokenPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of security token policies.</param>
+        <param name="attachmentMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security token attachment mode.</param>
       </Docs>
     </Member>
     <Member MemberName="SecurityTokenAttachmentMode">
@@ -45,9 +58,34 @@
         <ReturnType>System.ServiceModel.Security.SecurityTokenAttachmentMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Security.SecurityTokenAttachmentMode" /> is an enumeration of the ways in which security tokens can be attached to messages. It includes the following members:</para>
+          <list type="bullet">
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.SecurityTokenAttachmentMode.Endorsing" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.SecurityTokenAttachmentMode.Signed" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.SecurityTokenAttachmentMode.SignedEncrypted" /> </para>
+            </item>
+            <item>
+              <para>
+                <see cref="F:System.ServiceModel.Security.SecurityTokenAttachmentMode.SignedEndorsing" />
+              </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security token attachment mode.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

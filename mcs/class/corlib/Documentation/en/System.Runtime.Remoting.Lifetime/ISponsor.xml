@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISponsor" FullName="System.Runtime.Remoting.Lifetime.ISponsor">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISponsor" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISponsor" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An object must implement the <see cref="T:System.Runtime.Remoting.Lifetime.ISponsor" /> interface if it needs to request a lease renewal for a particular object. An object that implements the <see cref="T:System.Runtime.Remoting.Lifetime.ISponsor" /> interface can become a sponsor by registering itself with the lease manager. The <see cref="T:System.Runtime.Remoting.Lifetime.ISponsor" /> interface is used by the lifetime service to call back to the sponsor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the implementer wants to be a lifetime lease sponsor.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Renewal">
@@ -36,10 +43,20 @@
         <Parameter Name="lease" Type="System.Runtime.Remoting.Lifetime.ILease" />
       </Parameters>
       <Docs>
-        <param name="lease">To be added: an object of type 'ILease'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Lifetime.ISponsor.Renewal(System.Runtime.Remoting.Lifetime.ILease)" /> method is called by the distributed garbage collector to renew the lease for the specified object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests a sponsoring client to renew the lease for the specified object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The additional lease time for the specified object.</para>
+        </returns>
+        <param name="lease">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lifetime lease of the object that requires lease renewal. </param>
       </Docs>
     </Member>
   </Members>

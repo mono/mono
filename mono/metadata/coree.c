@@ -11,12 +11,6 @@
 
 #ifdef HOST_WIN32
 
-#if _WIN32_WINNT < 0x0501
-/* Required for ACTCTX. */
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501
-#endif /* _WIN32_WINNT < 0x0501 */
-
 #include <string.h>
 #include <glib.h>
 #include <mono/io-layer/io-layer.h>
@@ -226,10 +220,12 @@ STDAPI _CorValidateImage(PVOID *ImageBase, LPCWSTR FileName)
 {
 	IMAGE_DOS_HEADER* DosHeader;
 	IMAGE_NT_HEADERS32* NtHeaders32;
-	IMAGE_NT_HEADERS64* NtHeaders64;
 	IMAGE_DATA_DIRECTORY* CliHeaderDir;
+#ifdef _WIN64
+	IMAGE_NT_HEADERS64* NtHeaders64;
 	MonoCLIHeader* CliHeader;
 	DWORD SizeOfHeaders;
+#endif
 	DWORD* Address;
 	DWORD OldProtect;
 
@@ -410,7 +406,9 @@ HMODULE WINAPI MonoLoadImage(LPCWSTR FileName)
 	HANDLE MapHandle;
 	IMAGE_DOS_HEADER* DosHeader;
 	IMAGE_NT_HEADERS32* NtHeaders32;
+#ifdef _WIN64
 	IMAGE_NT_HEADERS64* NtHeaders64;
+#endif
 	HMODULE ModuleHandle;
 
 	FileHandle = CreateFile(FileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
@@ -458,7 +456,9 @@ InvalidImageFormat:
 		goto UnmapView;
 	}
 
+#ifdef _WIN64
 ValidImage:
+#endif
 	UnmapViewOfFile(DosHeader);
 	CloseHandle(MapHandle);
 

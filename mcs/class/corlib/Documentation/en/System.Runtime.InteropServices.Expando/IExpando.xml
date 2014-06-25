@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IExpando" FullName="System.Runtime.InteropServices.Expando.IExpando">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IExpando : System.Reflection.IReflect" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IExpando implements class System.Reflection.IReflect" />
@@ -23,8 +24,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables modification of objects by adding and removing members, represented by <see cref="T:System.Reflection.MemberInfo" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddField">
@@ -43,10 +47,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.FieldInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the named field to the Reflection object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the added field.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the field. </param>
       </Docs>
     </Member>
     <Member MemberName="AddMethod">
@@ -66,11 +77,19 @@
         <Parameter Name="method" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="method">To be added: an object of type 'Delegate'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the named method to the Reflection object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A MethodInfo object representing the added method.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. </param>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to the method. </param>
       </Docs>
     </Member>
     <Member MemberName="AddProperty">
@@ -89,10 +108,17 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Reflection.PropertyInfo'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the named property to the Reflection object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PropertyInfo object representing the added property.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveMember">
@@ -111,9 +137,13 @@
         <Parameter Name="m" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <param name="m">To be added: an object of type 'Reflection.MemberInfo'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified member.</para>
+        </summary>
+        <param name="m">
+          <attribution license="cc4" from="Microsoft" modified="false" />The member to remove. </param>
       </Docs>
     </Member>
   </Members>

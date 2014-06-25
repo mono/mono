@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AceEnumerator" FullName="System.Security.AccessControl.AceEnumerator">
   <TypeSignature Language="C#" Value="public sealed class AceEnumerator : System.Collections.IEnumerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AceEnumerator extends System.Object implements class System.Collections.IEnumerator" />
@@ -15,9 +16,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the ability to iterate through the access control entries (ACEs) in an access control list (ACL). </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
@@ -32,10 +36,13 @@
         <ReturnType>System.Security.AccessControl.GenericAce</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current element in the <see cref="T:System.Security.AccessControl.GenericAce" /> collection. This property gets the type-friendly version of the object. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -51,10 +58,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After an enumerator is created or after a call to the <see cref="M:System.Security.AccessControl.AceEnumerator.Reset" /> method, an enumerator is positioned before the first element of the collection, and the first call to the <see cref="M:System.Security.AccessControl.AceEnumerator.MoveNext" /> method moves the enumerator over the first element of the collection.</para>
+          <para>After the end of the collection is passed, subsequent calls to <see cref="M:System.Security.AccessControl.AceEnumerator.MoveNext" /> return false until <see cref="M:System.Security.AccessControl.AceEnumerator.Reset" /> is called.</para>
+          <para>An enumerator remains valid as long as the collection remains unchanged. If changes, such as adding, modifying, or deleting elements, are made to the collection, the enumerator is irrecoverably invalidated and the next call to <see cref="M:System.Security.AccessControl.AceEnumerator.MoveNext" /> or <see cref="M:System.Security.AccessControl.AceEnumerator.Reset" /> throws an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the enumerator to the next element of the <see cref="T:System.Security.AccessControl.GenericAce" /> collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -70,9 +88,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator remains valid as long as the collection remains unchanged. If , such as adding, modifying, or deleting elements, are made to the collection, the enumerator is irrecoverably invalidated and the next call to the <see cref="M:System.Security.AccessControl.AceEnumerator.MoveNext" /> method or the <see cref="M:System.Security.AccessControl.AceEnumerator.Reset" /> method throws an <see cref="T:System.InvalidOperationException" /> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the enumerator to its initial position, which is before the first element in the <see cref="T:System.Security.AccessControl.GenericAce" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Current">

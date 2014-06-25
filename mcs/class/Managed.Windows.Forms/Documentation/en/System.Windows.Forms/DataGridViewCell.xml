@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCell" FullName="System.Windows.Forms.DataGridViewCell">
   <TypeSignature Language="C#" Value="public abstract class DataGridViewCell : System.Windows.Forms.DataGridViewElement, ICloneable, IDisposable" />
   <AssemblyInfo>
@@ -16,9 +17,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewCell" /> class represents an individual cell in a <see cref="T:System.Windows.Forms.DataGridView" /> control. You can retrieve cells through the <see cref="P:System.Windows.Forms.DataGridViewRow.Cells" /> collection of a <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+      <para>The row and column for a <see cref="T:System.Windows.Forms.DataGridViewCell" /> identify the cell's location in the <see cref="T:System.Windows.Forms.DataGridView" />. A typical cell contains data specific to the row and column in which it is contained. The cell can be customized in a number of ways by setting its properties and handling the events associated with it.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an individual cell in a <see cref="T:System.Windows.Forms.DataGridView" /> control. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +34,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewCell" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +52,21 @@
         <ReturnType>System.Windows.Forms.AccessibleObject</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To control the instance returned from this method, override the <see cref="M:System.Windows.Forms.Control.CreateAccessibilityInstance" /> method.</para>
+          <para>If no <see cref="T:System.Windows.Forms.AccessibleObject" /> is currently assigned to the control, a new instance of one is created.</para>
+          <block subset="none" type="note">
+            <para>To get or set the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property, you must add a reference to the Accessibility assembly installed with the dnprdnshort.</para>
+          </block>
+          <para>For more information about accessible objects, see the "Active Accessibility" section of the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.DataGridViewCell.DataGridViewCellAccessibleObject" /> assigned to the <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -70,16 +92,32 @@
         <Parameter Name="isFirstDisplayedRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewAdvancedBorderStyleInput">To be added.</param>
-        <param name="dataGridViewAdvancedBorderStylePlaceholder">To be added.</param>
-        <param name="singleVerticalBorderAdded">To be added.</param>
-        <param name="singleHorizontalBorderAdded">To be added.</param>
-        <param name="isFirstDisplayedColumn">To be added.</param>
-        <param name="isFirstDisplayedRow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control internally calls the <see cref="M:System.Windows.Forms.DataGridViewCell.AdjustCellBorderStyle(System.Windows.Forms.DataGridViewAdvancedBorderStyle,System.Windows.Forms.DataGridViewAdvancedBorderStyle,System.Boolean,System.Boolean,System.Boolean,System.Boolean)" /> method to determine the appearance of the cell borders. The <see cref="T:System.Windows.Forms.DataGridView" /> control typically uses the value of the <see cref="P:System.Windows.Forms.DataGridView.AdvancedCellBorderStyle" /> property for the <paramref name="dataGridViewAdvancedBorderStyleInput" /> parameter. </para>
+          <para>The <see cref="F:System.Windows.Forms.DataGridViewAdvancedCellBorderStyle.OutsetPartial" /> value is not supported as an input style for cells.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Modifies the input cell border style according to the specified criteria. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" />.</para>
+        </returns>
+        <param name="dataGridViewAdvancedBorderStyleInput">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that represents the cell border style to modify.</param>
+        <param name="dataGridViewAdvancedBorderStylePlaceholder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that is used to store intermediate changes to the cell border style. </param>
+        <param name="singleVerticalBorderAdded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add a vertical border to the cell; otherwise, false. </param>
+        <param name="singleHorizontalBorderAdded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add a horizontal border to the cell; otherwise, false. </param>
+        <param name="isFirstDisplayedColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the hosting cell is in the first visible column; otherwise, false. </param>
+        <param name="isFirstDisplayedRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the hosting cell is in the first visible row; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,11 +138,30 @@
         <Parameter Name="advancedBorderStyle" Type="System.Windows.Forms.DataGridViewAdvancedBorderStyle" />
       </Parameters>
       <Docs>
-        <param name="advancedBorderStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default width of the cell border is one pixel. Use the following <see cref="T:System.Windows.Forms.DataGridViewAdvancedCellBorderStyle" /> values to modify the width of the border:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="F:System.Windows.Forms.DataGridViewAdvancedCellBorderStyle.None" /> value denotes a width of 0 pixels.</para>
+            </item>
+            <item>
+              <para>The <see cref="F:System.Windows.Forms.DataGridViewAdvancedCellBorderStyle.OutsetDouble" /> or <see cref="F:System.Windows.Forms.DataGridViewAdvancedCellBorderStyle.InsetDouble" /> values increase the default width by 1 pixel.</para>
+            </item>
+          </list>
+          <para>In addition, if the <see cref="P:System.Windows.Forms.DataGridViewRow.DividerHeight" /> property is set for the cell's owning row, the rectangle's height is increased by the value of <see cref="P:System.Windows.Forms.DataGridViewRow.DividerHeight" />. If the <see cref="P:System.Windows.Forms.DataGridViewColumn.DividerWidth" /> property is set for the cell's owning column, the rectangle's width will be increased by the value of <see cref="P:System.Windows.Forms.DataGridViewColumn.DividerWidth" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Drawing.Rectangle" /> that represents the widths of all the cell margins. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the widths of all the cell margins.</para>
+        </returns>
+        <param name="advancedBorderStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that the margins are to be calculated for. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -120,11 +177,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.ClickUnsharesRow(System.Windows.Forms.DataGridViewCellEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> has the effect of unsharing the cell's row. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the cell's row will be unshared when the cell is clicked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -138,10 +206,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override the <see cref="M:System.Windows.Forms.DataGridViewCell.Clone" /> method whenever you derive from the <see cref="T:System.Windows.Forms.DataGridViewCell" /> class and add new properties to the derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an exact copy of this cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -154,10 +231,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column index for the row that contains the row headers has a value of -1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column index for this cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,10 +253,18 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned rectangle reports client coordinates, in pixels.</para>
+          <para>This property calls the <see cref="M:System.Windows.Forms.DataGridViewCell.GetContentBounds(System.Drawing.Graphics,System.Windows.Forms.DataGridViewCellStyle,System.Int32)" /> method to get its value. For the base <see cref="T:System.Windows.Forms.DataGridViewCell" /> type, this value is <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+          <para>To get the bounding rectangle of the cell rather than the cell contents, use the <see cref="M:System.Windows.Forms.DataGridView.GetCellDisplayRectangle(System.Int32,System.Int32,System.Boolean)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounding rectangle that encloses the cell's content area.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -194,11 +285,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.ContentClickUnsharesRow(System.Windows.Forms.DataGridViewCellEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> has the effect of unsharing the cell's row. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the cell's row will be unshared when the cell's content is clicked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -214,11 +316,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.ContentDoubleClickUnsharesRow(System.Windows.Forms.DataGridViewCellEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> has the effect of unsharing the cell's row. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the cell's row will be unshared when the cell's content is double-clicked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -239,9 +352,19 @@
         <ReturnType>System.Windows.Forms.ContextMenuStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates the shortcut menu that is typically displayed when the user right-clicks the cell. </para>
+          <para>When the <see cref="T:System.Windows.Forms.DataGridView" /> control <see cref="P:System.Windows.Forms.DataGridView.DataSource" /> property is set or its <see cref="P:System.Windows.Forms.DataGridView.VirtualMode" /> property is true, getting the value of the <see cref="P:System.Windows.Forms.DataGridViewCell.ContextMenuStrip" /> property raises the <see cref="E:System.Windows.Forms.DataGridView.CellContextMenuStripNeeded" /> event of the control and returns the value of the <see cref="P:System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventArgs.ContextMenuStrip" /> property as specified in the event handler. If there are no handlers for the event, getting the value of the <see cref="P:System.Windows.Forms.DataGridViewCell.ContextMenuStrip" /> property returns the previously specified value or its default value of null. </para>
+          <para>Handling the <see cref="E:System.Windows.Forms.DataGridView.CellContextMenuStripNeeded" /> event is primarily useful when working with large amounts of data to avoid performance penalties when setting the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ContextMenuStrip" /> value for multiple cells. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Changing this property raises the <see cref="E:System.Windows.Forms.DataGridView.CellContextMenuStripChanged" /> event on the owning <see cref="T:System.Windows.Forms.DataGridView" />, if one exists.</para>
+          <para>You can also specify shortcut menus for individual rows rather than individual cells by setting the row <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /> property or handling the <see cref="T:System.Windows.Forms.DataGridView" /> control's <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event. The cell <see cref="P:System.Windows.Forms.DataGridViewCell.ContextMenuStrip" /> property setting overrides the row <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /> property setting, and the <see cref="E:System.Windows.Forms.DataGridView.CellContextMenuStripNeeded" /> event overrides both the <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event and the row <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /> property setting. You can specify null for a cell shortcut menu, however, to prevent a row shortcut menu from being overridden.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the shortcut menu associated with the cell. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateAccessibilityInstance">
@@ -252,10 +375,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.DataGridViewCell.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.DataGridViewCell.AccessibilityObject" /> property is referenced.</para>
+          <block subset="none" type="note">
+            <para>To get or set <see cref="P:System.Windows.Forms.DataGridViewCell.AccessibilityObject" />, you must add a reference to the Accessibility assembly installed with the dnprdnshort.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewCell" />. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewCell.DataGridViewCellAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewCell" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -268,10 +403,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.DefaultNewRowValue" /> property in the base class <see cref="T:System.Windows.Forms.DataGridViewCell" /> always returns null. However, this property can be overridden in derived cell classes to return other default values.</para>
+          <para>The value returned by this property is displayed if the cell is in the row for new records. This value can be overridden by a handler for the <see cref="E:System.Windows.Forms.DataGridView.DefaultValuesNeeded" /> event when focus enters the row for new records. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default value for a cell in the row for new records.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -290,9 +432,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridView" /> calls this method when the current cell hosts an editing control and editing mode ends. This method removes the <see cref="P:System.Windows.Forms.DataGridView.EditingControl" /> from the <see cref="P:System.Windows.Forms.DataGridView.EditingPanel" />, and then removes the <see cref="P:System.Windows.Forms.DataGridView.EditingPanel" /> from the <see cref="P:System.Windows.Forms.Control.Controls" /> collection of the <see cref="T:System.Windows.Forms.DataGridView" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the cell's editing control from the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -310,10 +458,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to determine whether a particular cell has been scrolled off-screen.</para>
+          <para>If the cell's <see cref="P:System.Windows.Forms.DataGridViewCell.Visible" /> property value is false, this property will return false as well. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the cell is currently displayed on-screen. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -332,9 +487,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Windows.Forms.DataGridViewCell.Dispose" /> when you are finished using the <see cref="T:System.Windows.Forms.DataGridViewCell" />. The <see cref="M:System.Windows.Forms.DataGridViewCell.Dispose" /> method leaves the <see cref="T:System.Windows.Forms.DataGridViewCell" /> in an unusable state. After calling <see cref="M:System.Windows.Forms.DataGridViewCell.Dispose" />, you must release all references to the <see cref="T:System.Windows.Forms.DataGridViewCell" /> so the garbage collector can reclaim the memory that the <see cref="T:System.Windows.Forms.DataGridViewCell" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.DataGridViewCell.Dispose" /> before you release your last reference to the <see cref="T:System.Windows.Forms.DataGridViewCell" />. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Windows.Forms.DataGridViewCell" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Windows.Forms.DataGridViewCell" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -350,10 +514,18 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the public Dispose method and the <see cref="M:System.Object.Finalize" /> method. Dispose invokes the protected Dispose(Boolean) method with the <paramref name="disposing" /> parameter set to true. <see cref="M:System.Object.Finalize" /> invokes Dispose with <paramref name="disposing" /> set to false.</para>
+          <para>When the <paramref name="disposing" /> parameter is true, this method releases all resources held by any managed objects that this <see cref="T:System.Windows.Forms.DataGridViewCell" /> references. This method invokes the Dispose method of each referenced object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.DataGridViewCell" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -369,11 +541,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.DoubleClickUnsharesRow(System.Windows.Forms.DataGridViewCellEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> has the effect of unsharing the cell's row. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the cell's row will be unshared when the cell is double-clicked.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -386,10 +569,17 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns the current value of the cell or editing control if the cell is in edit mode. Otherwise, getting the value of this property converts the cell value into an equivalent display value of the type indicated by the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> property. This raises the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, which you can handle to customize the value conversion.</para>
+          <para>If formatting is unsuccessful, the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event occurs. If there is no handler for this event or the handler sets the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.ThrowException" /> property to true, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current, formatted value of the cell, regardless of whether the cell is in edit mode and the value has not been committed. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -410,10 +600,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derived cell type overrides this property to return the type of its hosted editing control. If the cell does not have an editing control, as with <see cref="T:System.Windows.Forms.DataGridViewButtonCell" />, the <see cref="P:System.Windows.Forms.DataGridViewCell.EditType" /> property returns null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the cell's hosted editing control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -441,11 +637,23 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="throughMouseClick">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.EnterUnsharesRow(System.Int32,System.Boolean)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnEnter(System.Int32,System.Boolean)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnEnter(System.Int32,System.Boolean)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parent row will be unshared when the focus moves to the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared; otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
+        <param name="throughMouseClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a user action moved focus to the cell; false if a programmatic operation moved focus to the cell.</param>
       </Docs>
     </Member>
     <Member MemberName="ErrorIconBounds">
@@ -455,10 +663,18 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned rectangle reports client coordinates, in pixels.</para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridView.ShowCellErrors" /> property is false, the value of this property is <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+          <para>This property calls the <see cref="M:System.Windows.Forms.DataGridViewCell.GetErrorIconBounds(System.Drawing.Graphics,System.Windows.Forms.DataGridViewCellStyle,System.Int32)" /> method to get its value. For the base <see cref="T:System.Windows.Forms.DataGridViewCell" /> type, this value is always <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the bounds of the error icon for the cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -479,10 +695,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, the <see cref="P:System.Windows.Forms.DataGridViewCell.ErrorText" /> property is used when handling the <see cref="E:System.Windows.Forms.DataGridView.CellValidating" /> event of the <see cref="T:System.Windows.Forms.DataGridView" />. If the cell's value fails some validation criteria, set the <see cref="P:System.Windows.Forms.DataGridViewCell.ErrorText" /> property and cancel the commit operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Windows.Forms.DataGridViewCellValidatingEventArgs" /> to true. The text you specify is then displayed by the <see cref="T:System.Windows.Forms.DataGridView" />, and the user is prompted to fix the error in the cell's data.</para>
+          <para>When the <see cref="P:System.Windows.Forms.DataGridView.VirtualMode" /> property of the <see cref="T:System.Windows.Forms.DataGridView" /> is true, you can provide error text for rows and cells using the <see cref="E:System.Windows.Forms.DataGridView.RowErrorTextNeeded" /> and <see cref="E:System.Windows.Forms.DataGridView.CellErrorTextNeeded" /> events.</para>
+          <para>When you assign a different <see cref="P:System.Windows.Forms.DataGridViewCell.ErrorText" /> string to a cell, the <see cref="E:System.Windows.Forms.DataGridView.CellErrorTextChanged" /> event of the <see cref="T:System.Windows.Forms.DataGridView" /> control is raised.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text describing an error condition associated with the cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -501,9 +725,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls the <see cref="M:System.Windows.Forms.DataGridViewCell.Dispose" /> method with false as a parameter.</para>
+          <para>This method overrides <see cref="M:System.Object.Finalize" />. Application code should not call this method; an object's Finalize method is automatically invoked during garbage collection, unless finalization by the garbage collector has been disabled by a call to the <see cref="M:System.GC.SuppressFinalize(System.Object)" /> method. </para>
+          <para>For more information, see <format type="text/html"><a href="fd376774-1643-499b-869e-9546a3aeea70">Finalize Methods and Destructors</a></format>, <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format>, and <format type="text/html"><a href="8026cb68-fe93-43fc-96c1-c09ad7d64cd3">Overriding the Finalize Method</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources and performs other cleanup operations before the <see cref="T:System.Windows.Forms.DataGridViewCell" /> is reclaimed by garbage collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -516,10 +748,18 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property is the actual data object contained by the cell, whereas the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> is the formatted representation of this object. The <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> and <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> properties correspond to the data types of these values, respectively.</para>
+          <para>Getting the value of this property calls the <see cref="M:System.Windows.Forms.DataGridViewCell.GetFormattedValue(System.Object,System.Int32,System.Windows.Forms.DataGridViewCellStyle@,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter,System.Windows.Forms.DataGridViewDataErrorContexts)" /> method to convert the cell value into an equivalent display value of the type indicated by the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> property. This raises the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, which you can handle to customize the value conversion.</para>
+          <para>If formatting is unsuccessful, the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event occurs. If there is no handler for this event or the handler sets the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.ThrowException" /> property to true, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the cell as formatted for display.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -537,10 +777,16 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property is the actual data object contained by the cell, whereas the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> property is the formatted representation of the data. The <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> and <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> properties correspond to the data types of these values, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the formatted value associated with the cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -558,10 +804,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Windows.Forms.DataGridViewCell.Frozen" /> property depends on the state of the cell's parent row and column. If the Frozen property of either the row or column is set to true, the cell's <see cref="P:System.Windows.Forms.DataGridViewCell.Frozen" /> property will also be true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the cell is frozen. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -587,16 +839,35 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="firstCell">To be added.</param>
-        <param name="lastCell">To be added.</param>
-        <param name="inFirstRow">To be added.</param>
-        <param name="inLastRow">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the <see cref="M:System.Windows.Forms.DataGridView.GetClipboardContent" /> method to retrieve a Clipboard-formatted value that represents the cell value. </para>
+          <para>The cell value is first retrieved in its display format from the <see cref="M:System.Windows.Forms.DataGridViewCell.GetEditedFormattedValue(System.Int32,System.Windows.Forms.DataGridViewDataErrorContexts)" /> method. This may raise the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event to format the value and the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event if formatting is unsuccessful.</para>
+          <para>The position-related parameters of this method indicate where this cell is located in the table of data representing the region defined by the selected cells in the <see cref="T:System.Windows.Forms.DataGridView" /> control. Depending on the cell's position, additional formatting information may be returned by this method along with the display-formatted cell value. For example, the HTML format for a cell in the first column of a row will include the tag that indicates the beginning of a row.</para>
+          <para>The supported Clipboard formats include <see cref="F:System.Windows.Forms.DataFormats.Text" />, <see cref="F:System.Windows.Forms.DataFormats.UnicodeText" />, <see cref="F:System.Windows.Forms.DataFormats.Html" />, and <see cref="F:System.Windows.Forms.DataFormats.CommaSeparatedValue" />.</para>
+          <para>For more information, see the <see cref="T:System.Windows.Forms.Clipboard" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the formatted value of the cell to copy to the <see cref="T:System.Windows.Forms.Clipboard" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the value of the cell to copy to the <see cref="T:System.Windows.Forms.Clipboard" />.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the row containing the cell.</param>
+        <param name="firstCell">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the cell is in the first column of the region defined by the selected cells; otherwise, false.</param>
+        <param name="lastCell">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the cell is the last column of the region defined by the selected cells; otherwise, false.</param>
+        <param name="inFirstRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the cell is in the first row of the region defined by the selected cells; otherwise, false.</param>
+        <param name="inLastRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the cell is in the last row of the region defined by the selected cells; otherwise, false.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current format string of the cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -612,11 +883,21 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the cell's contents is computed dynamically when this method is called. The base class implementation always returns <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the bounding rectangle that encloses the cell's content area using a default <see cref="T:System.Drawing.Graphics" /> and cell style currently in effect for the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's contents.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -634,13 +915,26 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the cell's contents is computed dynamically when this method is called. The base class implementation always returns <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+          <para>This method is called internally when the <see cref="P:System.Windows.Forms.DataGridViewCell.ContentBounds" /> property is read.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the bounding rectangle that encloses the cell's content area, which is calculated using the specified <see cref="T:System.Drawing.Graphics" /> and cell style.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's contents.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The graphics context for the cell.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to be applied to the cell.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -657,12 +951,25 @@
         <Parameter Name="context" Type="System.Windows.Forms.DataGridViewDataErrorContexts" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the current value of the editing cell or editing control if the cell is in edit mode. Otherwise, this method converts the cell value into an equivalent display value of the type indicated by the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> property. This raises the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, which you can handle to customize the value conversion.</para>
+          <para>If formatting is unsuccessful, the <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event occurs. If there is no handler for this event or the handler sets the <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.ThrowException" /> property to true, an exception is thrown.</para>
+          <para>Derived classes that override this method will typically return a string representation of the cell value if the <paramref name="context" /> argument includes the <see cref="F:System.Windows.Forms.DataGridViewDataErrorContexts.ClipboardContent" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the current, formatted value of the cell, regardless of whether the cell is in edit mode and the value has not been committed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current, formatted value of the <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewDataErrorContexts" /> values that specifies the data error context.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -680,13 +987,26 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the cell's error icon area is computed dynamically when this method is called. The base class implementation always returns <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+          <para>This method is called internally when the <see cref="P:System.Windows.Forms.DataGridViewCell.ErrorIconBounds" /> property is read.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the bounding rectangle that encloses the cell's error icon, if one is displayed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's error icon, if one is displayed; otherwise, <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The graphics context for the cell.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to be applied to the cell.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -705,10 +1025,17 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that represents the error for the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that describes the error for the current <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GetFormattedValue">
@@ -754,10 +1081,36 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cell does not have an associated <see cref="T:System.Windows.Forms.ContextMenuStrip" />, it will inherit one from its parents, using the following precedence:</para>
+          <list type="ordered">
+            <item>
+              <para>This cell's <see cref="P:System.Windows.Forms.DataGridViewCell.ContextMenuStrip" /></para>
+            </item>
+            <item>
+              <para>The owning row's <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /></para>
+            </item>
+            <item>
+              <para>The owning column's <see cref="P:System.Windows.Forms.DataGridViewColumn.ContextMenuStrip" /></para>
+            </item>
+            <item>
+              <para>The parent table's <see cref="T:System.Windows.Forms.ContextMenuStrip" /></para>
+            </item>
+          </list>
+          <para>Shortcut menus are Microsoft Windows native resources whose lifetimes are typically directed by the <see cref="M:System.Windows.Forms.DataGridViewCell.Dispose" /> method or the destructor.</para>
+          <para>Pass the <see cref="M:System.Windows.Forms.DataGridViewCell.GetInheritedContextMenuStrip(System.Int32)" /> method the row index you used to retrieve the <see cref="T:System.Windows.Forms.DataGridViewCell" />. Do not use the <see cref="P:System.Windows.Forms.DataGridViewCell.RowIndex" /> property for the <paramref name="rowIndex" /> parameter. If the row is shared, <see cref="P:System.Windows.Forms.DataGridViewCell.RowIndex" /> is -1, which is not a valid value for <paramref name="rowIndex" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the inherited shortcut menu for the current cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ContextMenuStrip" /> if the parent <see cref="T:System.Windows.Forms.DataGridView" />, <see cref="T:System.Windows.Forms.DataGridViewRow" />, or <see cref="T:System.Windows.Forms.DataGridViewColumn" /> has a <see cref="T:System.Windows.Forms.ContextMenuStrip" /> assigned; otherwise, null.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the current cell.</param>
       </Docs>
     </Member>
     <Member MemberName="GetInheritedState">
@@ -770,11 +1123,21 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful to determine the state of a cell in a shared row. Shared rows have <see cref="P:System.Windows.Forms.DataGridViewBand.Index" /> values of -1, which prevents you from using the <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedState" /> property with cells in shared rows. To use this method, pass in the actual index of the row containing this cell. You can retrieve the actual index of a shared row by calling the <see cref="M:System.Windows.Forms.DataGridViewRowCollection.IndexOf(System.Windows.Forms.DataGridViewRow)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating the current state of the cell as inherited from the state of its row and column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values representing the current state of the cell.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -792,13 +1155,25 @@
         <Parameter Name="includeColors" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inheritedCellStyle">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="includeColors">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that inherits its settings from the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> objects of the cell's parent row, column, and <see cref="T:System.Windows.Forms.DataGridView" />. For more information, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style applied to the cell. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that includes the style settings of the cell inherited from the cell's parent row, column, and <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </returns>
+        <param name="inheritedCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to be populated with the inherited cell style. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
+        <param name="includeColors">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to include inherited colors in the returned cell style; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -817,14 +1192,27 @@
         <Parameter Name="constraintSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="constraintSize">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.GetPreferredSize(System.Drawing.Graphics,System.Windows.Forms.DataGridViewCellStyle,System.Int32,System.Drawing.Size)" /> method in the base class <see cref="T:System.Windows.Forms.DataGridViewCell" /> always returns a <see cref="T:System.Drawing.Size" /> with a width and height of -1. However, this method is overridden in the derived cell classes to return proper values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calculates the preferred size, in pixels, of the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that represents the preferred size, in pixels, of the cell.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the cell.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that represents the style of the cell.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based row index of the cell.</param>
+        <param name="constraintSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cell's maximum allowable size.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -840,11 +1228,21 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method cannot be used with a cell in a shared row.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> representing the cell's dimensions.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -860,11 +1258,21 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pass the <see cref="M:System.Windows.Forms.DataGridViewCell.GetValue(System.Int32)" /> method the row index you used to retrieve the <see cref="T:System.Windows.Forms.DataGridViewCell" />. Do not use the <see cref="P:System.Windows.Forms.DataGridViewCell.RowIndex" /> property for the <paramref name="rowIndex" /> parameter. If the row is shared, <see cref="P:System.Windows.Forms.DataGridViewCell.RowIndex" /> is -1, which is not a valid value for <paramref name="rowIndex" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the cell. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value contained in the <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -877,10 +1285,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Getting the value of the <see cref="P:System.Windows.Forms.DataGridViewCell.Style" /> property automatically instantiates a new <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> if the property has not previously been accessed. Therefore, you must use the <see cref="P:System.Windows.Forms.DataGridViewCell.HasStyle" /> property to determine whether the <see cref="P:System.Windows.Forms.DataGridViewCell.Style" /> property is currently set to a <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> instance. This is useful to determine which properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property represent styles set specifically for the cell. </para>
+          <para>For more information about cell style inheritance, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="P:System.Windows.Forms.DataGridViewCell.Style" /> property has been set.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -898,10 +1313,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewElementStates</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the cell as inherited from the state of its row and column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -919,10 +1337,17 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control displays its cells using the styles indicated by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property, which inherits styles from other properties of type <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />. The styles specified through the <see cref="P:System.Windows.Forms.DataGridViewCell.Style" /> property override the styles specified through all other cell-style properties, but do not necessarily indicate all the styles that contribute to the cell's appearance. </para>
+          <para>For more information, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the style currently applied to the cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -945,12 +1370,22 @@
         <Parameter Name="dataGridViewCellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="initialFormattedValue">To be added.</param>
-        <param name="dataGridViewCellStyle">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As an optimization technique, typically all the cells of the same type and in the same <see cref="T:System.Windows.Forms.DataGridView" /> share a single hosted editing control. However, before the control is used by a cell, it needs to be initialized by the <see cref="M:System.Windows.Forms.DataGridViewCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> method. The first time it is called, this method adds the control to the list of editing controls in its parent <see cref="T:System.Windows.Forms.DataGridView" />. It also initializes some of the visual properties of the cell. For example, <see cref="M:System.Windows.Forms.DataGridViewCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> sets the background color of the editing area to match the supplied cell style parameter. Subsequent calls to <see cref="M:System.Windows.Forms.DataGridViewCell.InitializeEditingControl(System.Int32,System.Object,System.Windows.Forms.DataGridViewCellStyle)" /> do nothing.</para>
+          <para>Derived classes use this method to host an instance of the <see cref="T:System.Windows.Forms.Control" /> class corresponding to their type. For example, a table that contains one or more <see cref="T:System.Windows.Forms.DataGridViewTextBoxCell" /> objects calls this method to add a single <see cref="T:System.Windows.Forms.TextBox" /> editing control to the owning <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the control used to edit the cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based row index of the cell's location.</param>
+        <param name="initialFormattedValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the value displayed by the cell when editing is started.</param>
+        <param name="dataGridViewCellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that represents the style of the cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -968,10 +1403,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful when you are working directly with cell instances. Alternatively, you can use the <see cref="P:System.Windows.Forms.DataGridView.IsCurrentCellInEditMode" /> property. You can also handle the <see cref="E:System.Windows.Forms.DataGridView.CellBeginEdit" /> event to determine when the user enters edit mode. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether this cell is currently being edited.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -993,12 +1434,24 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.KeyDownUnsharesRow(System.Windows.Forms.KeyEventArgs,System.Int32)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnKeyDown(System.Windows.Forms.KeyEventArgs,System.Int32)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnKeyDown(System.Windows.Forms.KeyEventArgs,System.Int32)" /> with the same <see cref="T:System.Windows.Forms.KeyEventArgs" /> argument has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parent row is unshared if the user presses a key while the focus is on the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1014,11 +1467,21 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override this method to create a custom cell that is editable. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if edit mode should be started based on the given key.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if edit mode should be started; otherwise, false. The default is false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that represents the key that was pressed.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1035,12 +1498,24 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.KeyPressUnsharesRow(System.Windows.Forms.KeyPressEventArgs,System.Int32)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnKeyPress(System.Windows.Forms.KeyPressEventArgs,System.Int32)" /> method. In derived classes, it must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnKeyPress(System.Windows.Forms.KeyPressEventArgs,System.Int32)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared if a key is pressed while a cell in the row has focus.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains the event data. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1057,12 +1532,24 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.KeyUpUnsharesRow(System.Windows.Forms.KeyEventArgs,System.Int32)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnKeyUp(System.Windows.Forms.KeyEventArgs,System.Int32)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnKeyUp(System.Windows.Forms.KeyEventArgs,System.Int32)" /> with the same <see cref="T:System.Windows.Forms.KeyEventArgs" /> argument has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the parent row is unshared when the user releases a key while the focus is on the cell.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1082,11 +1569,23 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="throughMouseClick">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.LeaveUnsharesRow(System.Int32,System.Boolean)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnLeave(System.Int32,System.Boolean)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnLeave(System.Int32,System.Boolean)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared when the focus leaves a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
+        <param name="throughMouseClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a user action moved focus to the cell; false if a programmatic operation moved focus to the cell.</param>
       </Docs>
     </Member>
     <Member MemberName="MeasureTextHeight">
@@ -1103,15 +1602,29 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="maxWidth">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If multiple lines are required and the specified formatting allows it, the height returned is the combined height of all lines.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height, in pixels, of the specified text, given the specified characteristics.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height, in pixels, of the text.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> applied to the text.</param>
+        <param name="maxWidth">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum width of the text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.TextFormatFlags" />  values to apply to the text.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1171,15 +1684,29 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="maxRatio">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If multiple lines are required and the specified formatting allows it, the size returned includes the combined height of all lines.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ideal height and width of the specified text given the specified characteristics.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> representing the preferred height and width of the text.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> applied to the text.</param>
+        <param name="maxRatio">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum width-to-height ratio of the block of text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.TextFormatFlags" />  values to apply to the text.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1203,14 +1730,27 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If multiple lines are required and the specified formatting allows it, the size returned includes the combined height of all lines.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height and width of the specified text given the specified characteristics.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> representing the height and width of the text.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> applied to the text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.TextFormatFlags" />  values to apply to the text.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1235,15 +1775,26 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="maxHeight">To be added.</param>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width, in pixels, of the specified text given the specified characteristics.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The width, in pixels, of the text.</para>
+        </returns>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to measure.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> applied to the text.</param>
+        <param name="maxHeight">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum height of the text.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.TextFormatFlags" />  values to apply to the text.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1264,11 +1815,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseClickUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared if the user clicks a mouse button while the pointer is on a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1284,11 +1846,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseDoubleClickUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseDoubleClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseDoubleClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared if the user double-clicks a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1304,11 +1877,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseDownUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseDown(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. In derived classes, it must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseDown(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared when the user holds down a mouse button while the pointer is on a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1324,11 +1908,22 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseEnterUnsharesRow(System.Int32)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseEnter(System.Int32)" /> method. In derived classes, it must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseEnter(System.Int32)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared when the mouse pointer moves over a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1344,11 +1939,22 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseLeaveUnsharesRow(System.Int32)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseLeave(System.Int32)" /> method. In derived classes, it must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseLeave(System.Int32)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared when the mouse pointer leaves the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1364,11 +1970,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseMoveUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. In derived classes, it must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared when the mouse pointer moves over a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1384,11 +2001,22 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.MouseUpUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseUp(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. In derived classes, it must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnMouseUp(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a row will be unshared when the user releases a mouse button while the pointer is on a cell in the row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1404,10 +2032,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the cell is clicked.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1423,10 +2058,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellContentClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellContentClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the cell's contents are clicked.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1442,10 +2084,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellContentDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellContentDoubleClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the cell's contents are double-clicked.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1459,9 +2108,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the <see cref="P:System.Windows.Forms.DataGridViewElement.DataGridView" /> property of the cell changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1477,10 +2129,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellDoubleClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the cell is double-clicked.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1497,11 +2156,19 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="throughMouseClick">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellEnter(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which an <see cref="E:System.Windows.Forms.DataGridView.CellEnter" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the focus moves to a cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
+        <param name="throughMouseClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a user action moved focus to the cell; false if a programmatic operation moved focus to the cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1518,11 +2185,19 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.Control.OnKeyDown(System.Windows.Forms.KeyEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.Control.KeyDown" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when a character key is pressed while the focus is on a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1539,11 +2214,19 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.Control.OnKeyPress(System.Windows.Forms.KeyPressEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.Control.KeyPress" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when a key is pressed while the focus is on a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains the event data. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1560,11 +2243,19 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.Control.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.Control.KeyUp" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when a character key is released while the focus is on a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1581,11 +2272,19 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="throughMouseClick">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellLeave(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellLeave" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the focus moves from a cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
+        <param name="throughMouseClick">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if a user action moved focus from the cell; false if a programmatic operation moved focus from the cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1601,10 +2300,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the user clicks a mouse button while the pointer is on a cell.  </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1620,10 +2326,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseDoubleClick(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseDoubleClick" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the user double-clicks a mouse button while the pointer is on a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1639,10 +2352,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseDown(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseDown" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the user holds down a mouse button while the pointer is on a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1658,10 +2378,17 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseEnter(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseEnter" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the mouse pointer moves over a cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1677,10 +2404,17 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseLeave(System.Windows.Forms.DataGridViewCellEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseLeave" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the mouse pointer leaves the cell.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1696,10 +2430,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseMove" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the mouse pointer moves within a cell.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1715,10 +2456,17 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is similar to the <see cref="M:System.Windows.Forms.DataGridView.OnCellMouseUp(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It is called in the same circumstances in which a <see cref="E:System.Windows.Forms.DataGridView.CellMouseUp" /> event is raised, but it does not actually raise the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the user releases a mouse button while the pointer is on a cell. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1731,10 +2479,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumn</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column that contains this cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1755,10 +2506,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewRow</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the row that contains this cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1792,20 +2546,34 @@
         <Parameter Name="paintParts" Type="System.Windows.Forms.DataGridViewPaintParts" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="clipBounds">To be added.</param>
-        <param name="cellBounds">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="cellState">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="formattedValue">To be added.</param>
-        <param name="errorText">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="advancedBorderStyle">To be added.</param>
-        <param name="paintParts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the current <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to paint the <see cref="T:System.Windows.Forms.DataGridViewCell" />.</param>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be repainted.</param>
+        <param name="cellBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the bounds of the <see cref="T:System.Windows.Forms.DataGridViewCell" /> that is being painted.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell that is being painted.</param>
+        <param name="cellState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values that specifies the state of the cell.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data of the <see cref="T:System.Windows.Forms.DataGridViewCell" /> that is being painted.</param>
+        <param name="formattedValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatted data of the <see cref="T:System.Windows.Forms.DataGridViewCell" /> that is being painted.</param>
+        <param name="errorText">
+          <attribution license="cc4" from="Microsoft" modified="false" />An error message that is associated with the cell.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that contains formatting and style information about the cell.</param>
+        <param name="advancedBorderStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that contains border styles for the cell that is being painted.</param>
+        <param name="paintParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.DataGridViewPaintParts" /> values that specifies which parts of the cell need to be painted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1825,14 +2593,22 @@
         <Parameter Name="advancedBorderStyle" Type="System.Windows.Forms.DataGridViewAdvancedBorderStyle" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="clipBounds">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="advancedBorderStyle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the border of the current <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to paint the border.</param>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be repainted.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the area of the border that is being painted.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that contains formatting and style information about the current cell.</param>
+        <param name="advancedBorderStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that contains border styles of the border that is being painted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1851,13 +2627,23 @@
         <Parameter Name="errorText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="clipBounds">To be added.</param>
-        <param name="cellValueBounds">To be added.</param>
-        <param name="errorText">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="errorText" /> parameter signals the existence of an error. If <paramref name="errorText" /> is null or <see cref="F:System.String.Empty" />, the <see cref="M:System.Windows.Forms.DataGridViewCell.PaintErrorIcon(System.Drawing.Graphics,System.Drawing.Rectangle,System.Drawing.Rectangle,System.String)" /> method does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the error icon of the current <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to paint the border.</param>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be repainted.</param>
+        <param name="cellValueBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The bounding <see cref="T:System.Drawing.Rectangle" /> that encloses the cell's content area.</param>
+        <param name="errorText">
+          <attribution license="cc4" from="Microsoft" modified="false" />An error message that is associated with the cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1876,14 +2662,31 @@
         <Parameter Name="valueTypeConverter" Type="System.ComponentModel.TypeConverter" />
       </Parameters>
       <Docs>
-        <param name="formattedValue">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="formattedValueTypeConverter">To be added.</param>
-        <param name="valueTypeConverter">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the user edits a cell value and commits the change, the <see cref="T:System.Windows.Forms.DataGridView" /> control calls this method to convert the displayed value from the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> to the <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" />. The control then sets the underlying cell value or data source value to the converted value. </para>
+          <para>The default implementation of this method parses the <paramref name="formattedValue" /> parameter using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties of the cell style indicated by the <paramref name="cellStyle" /> parameter. </para>
+          <para>If <paramref name="formattedValue" /> is equal to <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, this method returns the value of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> property or null if <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" /> is <see cref="F:System.DBNull.Value" /> and the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> is a reference type.</para>
+          <para>If <paramref name="formattedValue" /> is not equal to <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, this method parses <paramref name="formattedValue" /> using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> property and the specified or default converters. </para>
+          <para>If the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> is nullable, this method wraps the return value as a <see cref="T:System.Nullable`1" /> type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a value formatted for display to an actual cell value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell value.</para>
+        </returns>
+        <param name="formattedValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The display value of the cell.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> in effect for the cell.</param>
+        <param name="formattedValueTypeConverter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.TypeConverter" /> for the display value type, or null to use the default converter.</param>
+        <param name="valueTypeConverter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.TypeConverter" /> for the cell value type, or null to use the default converter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1907,18 +2710,33 @@
         <Parameter Name="isFirstDisplayedRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="setLocation">To be added.</param>
-        <param name="setSize">To be added.</param>
-        <param name="cellBounds">To be added.</param>
-        <param name="cellClip">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="singleVerticalBorderAdded">To be added.</param>
-        <param name="singleHorizontalBorderAdded">To be added.</param>
-        <param name="isFirstDisplayedColumn">To be added.</param>
-        <param name="isFirstDisplayedRow">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some classes derived from the <see cref="T:System.Windows.Forms.DataGridViewCell" /> class, such as <see cref="T:System.Windows.Forms.DataGridViewComboBoxCell" />, host a control in the selected cell. The <see cref="M:System.Windows.Forms.DataGridViewCell.PositionEditingControl(System.Boolean,System.Boolean,System.Drawing.Rectangle,System.Drawing.Rectangle,System.Windows.Forms.DataGridViewCellStyle,System.Boolean,System.Boolean,System.Boolean,System.Boolean)" /> method positions the editing control inside of the host cell. Because the editing control may take up more space than a single cell, it may need to be positioned differently when editing a cell in the first visible column or first visible row so it does not paint outside the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the location and size of the editing control hosted by a cell in the <see cref="T:System.Windows.Forms.DataGridView" /> control. </para>
+        </summary>
+        <param name="setLocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to have the control placed as specified by the other arguments; false to allow the control to place itself.</param>
+        <param name="setSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify the size; false to allow the control to size itself. </param>
+        <param name="cellBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that defines the cell bounds. </param>
+        <param name="cellClip">
+          <attribution license="cc4" from="Microsoft" modified="false" />The area that will be used to paint the editing control.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that represents the style of the cell being edited.</param>
+        <param name="singleVerticalBorderAdded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add a vertical border to the cell; otherwise, false.</param>
+        <param name="singleHorizontalBorderAdded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add a horizontal border to the cell; otherwise, false.</param>
+        <param name="isFirstDisplayedColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the hosting cell is in the first visible column; otherwise, false.</param>
+        <param name="isFirstDisplayedRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the hosting cell is in the first visible row; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1945,17 +2763,30 @@
         <Parameter Name="isFirstDisplayedRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cellBounds">To be added.</param>
-        <param name="cellClip">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <param name="singleVerticalBorderAdded">To be added.</param>
-        <param name="singleHorizontalBorderAdded">To be added.</param>
-        <param name="isFirstDisplayedColumn">To be added.</param>
-        <param name="isFirstDisplayedRow">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the location and size of the editing panel hosted by the cell, and returns the normal bounds of the editing control within the editing panel.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the normal bounds of the editing control within the editing panel.</para>
+        </returns>
+        <param name="cellBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that defines the cell bounds. </param>
+        <param name="cellClip">
+          <attribution license="cc4" from="Microsoft" modified="false" />The area that will be used to paint the editing panel.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that represents the style of the cell being edited.</param>
+        <param name="singleVerticalBorderAdded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add a vertical border to the cell; otherwise, false.</param>
+        <param name="singleHorizontalBorderAdded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to add a horizontal border to the cell; otherwise, false.</param>
+        <param name="isFirstDisplayedColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the cell is in the first column currently displayed in the control; otherwise, false.</param>
+        <param name="isFirstDisplayedRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the cell is in the first row currently displayed in the control; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1973,10 +2804,18 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.PreferredSize" /> property returns the natural size of the cell computed by the cell's owning row and column. <see cref="P:System.Windows.Forms.DataGridViewCell.PreferredSize" /> returns a <see cref="T:System.Drawing.Size" /> with a width and height of -1 if the cell is not contained in a table.</para>
+          <para>If the cell is in a <see cref="T:System.Windows.Forms.DataGridViewColumn" /> that has its <see cref="P:System.Windows.Forms.DataGridViewColumn.Resizable" /> property set to false, -1 is returned for the width.</para>
+          <para>This method relies on the <see cref="M:System.Windows.Forms.DataGridViewCell.GetFormattedValue(System.Object,System.Int32,System.Windows.Forms.DataGridViewCellStyle@,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter,System.Windows.Forms.DataGridViewDataErrorContexts)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size, in pixels, of a rectangular area into which the cell can fit. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1994,10 +2833,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> property indicates whether the data displayed by the cell can be edited. You can set <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> for individual cells, or you can make an entire row or column of cells read-only by setting the <see cref="P:System.Windows.Forms.DataGridViewRow.ReadOnly" /> or <see cref="P:System.Windows.Forms.DataGridViewColumn.ReadOnly" /> properties. By default, if a cell's parent row or column is set to read-only, the child cells will adopt the same value. You can override this default behavior by setting <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> for individual cells.</para>
+          <para>You can navigate to a read-only cell, and you can set a read-only cell to be the current cell.</para>
+          <para>
+            <see cref="P:System.Windows.Forms.DataGridViewCell.ReadOnly" /> only affects whether a cell is editable; it does not affect whether the user can delete rows.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the cell's data can be edited. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2018,10 +2866,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Windows.Forms.DataGridViewCell.Resizable" /> property is set by the cell's parent row or column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the cell can be resized. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2039,10 +2893,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Windows.Forms.DataGridViewCell.RowIndex" /> property returns -1, the cell is either a column header, or the cell's row is shared.</para>
+          <para>For more information about row sharing, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the cell's parent row. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2060,10 +2921,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the cell has been selected. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2088,12 +2952,20 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the value of the cell. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value has been set; otherwise, false.</para>
+        </returns>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cell value to set. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2106,10 +2978,16 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cell is not associated with a <see cref="T:System.Windows.Forms.DataGridView" /> control, the <see cref="P:System.Windows.Forms.DataGridViewCell.Size" /> property returns a <see cref="T:System.Drawing.Size" /> with a width and height of -1.   </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2127,10 +3005,17 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control displays its cells using the styles indicated by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property, which inherits styles from other properties of type <see cref="T:System.Windows.Forms.DataGridViewCellStyle" />. The styles specified through the <see cref="P:System.Windows.Forms.DataGridViewCell.Style" /> property override the styles specified through all other cell-style properties, but do not necessarily indicate all the styles that contribute to the cell's appearance. </para>
+          <para>For more information, see <format type="text/html"><a href="dbb75ed6-8804-4232-8382-f9920c2e380c">Cell Styles in the Windows Forms DataGridView Control</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style for the cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2148,10 +3033,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any type derived from the <see cref="T:System.Object" /> class can be assigned to this property. The <see cref="P:System.Windows.Forms.DataGridViewCell.Tag" /> property is commonly used to store data that is closely associated with the value displayed by the cell.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the object that contains supplemental data about the cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2178,10 +3069,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property is displayed as the cell ToolTip when the mouse pointer is over the cell and the property value is not <see cref="F:System.String.Empty" />. If the value of this property is <see cref="F:System.String.Empty" />, the cell will display a ToolTip containing the value of the cell if the value is truncated in the cell display; otherwise, the cell will not display a ToolTip. You can also prevent the display of a ToolTip by setting the <see cref="P:System.Windows.Forms.DataGridView.ShowCellToolTips" /> property to false. </para>
+          <para>When the <see cref="T:System.Windows.Forms.DataGridView" /> control <see cref="P:System.Windows.Forms.DataGridView.DataSource" /> property is set or its <see cref="P:System.Windows.Forms.DataGridView.VirtualMode" /> property is true, getting the value of the <see cref="P:System.Windows.Forms.DataGridViewCell.ToolTipText" /> property raises the <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event of the control and returns the value of the <see cref="P:System.Windows.Forms.DataGridViewCellToolTipTextNeededEventArgs.ToolTipText" /> property as specified in the event handler. If there are no handlers for the event, getting the value of the <see cref="P:System.Windows.Forms.DataGridViewCell.ToolTipText" /> property returns the previously specified value or its default value of <see cref="F:System.String.Empty" />. </para>
+          <para>Handling the <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event is primarily useful when working with large amounts of data to avoid performance penalties when setting the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ToolTipText" /> value for multiple cells. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+          <para>Changing this property raises the <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextChanged" /> event on the owning <see cref="T:System.Windows.Forms.DataGridView" />, if one exists.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ToolTip text associated with this cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2203,10 +3103,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless otherwise noted, the <see cref="M:System.Windows.Forms.DataGridViewCell.ToString" /> method for all the various cell types will return a string of the form shown in the following code example:</para>
+          <para>Classname {RowIndex = #, ColumnIndex = #}</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string that describes the current object. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2219,10 +3129,18 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you assign a different value to a cell, the <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> event of the <see cref="T:System.Windows.Forms.DataGridView" /> control is raised.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property is the actual data object contained by the cell, whereas the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> property is the formatted representation of the data. The <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> and <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> properties correspond to the data types of these values, respectively.</para>
+          <para>When you set the <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property, the specified value is not automatically converted from a formatted, display value to an underlying cell value. For example, the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> in effect for the cell is ignored, so setting <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> to <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" /> does not result in a property value of <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value associated with this cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2240,10 +3158,17 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> property for the cell has not been set, the <see cref="P:System.Windows.Forms.DataGridViewColumn.ValueType" /> property for the owning column is used, if it exists.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewCell.Value" /> property is the actual data object contained by the cell, whereas the <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> property is the formatted representation of the data. The <see cref="P:System.Windows.Forms.DataGridViewCell.ValueType" /> and <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> properties correspond to the data types of these values, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the values in the cell. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2261,10 +3186,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates whether the cell is in a row or a column with its <see cref="P:System.Windows.Forms.DataGridViewBand.Visible" /> property set to false. It does not indicate whether the cell has been scrolled off-screen. To determine whether a cell is visible within the display area of the control, use the <see cref="P:System.Windows.Forms.DataGridViewCell.Displayed" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the cell is in a row or column that has been hidden. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

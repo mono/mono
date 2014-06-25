@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PolicyAssertionCollection" FullName="System.ServiceModel.Description.PolicyAssertionCollection">
   <TypeSignature Language="C#" Value="public class PolicyAssertionCollection : System.Collections.ObjectModel.Collection&lt;System.Xml.XmlElement&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PolicyAssertionCollection extends System.Collections.ObjectModel.Collection`1&lt;class System.Xml.XmlElement&gt;" />
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.PolicyAssertionCollection" /> class to group together policy assertions and to enumerate or modify a group of assertions.</para>
+      <para>The <see cref="T:System.ServiceModel.Description.PolicyAssertionCollection" /> is used most frequently as a return value for the methods of the <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> class. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains policy assertions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.PolicyAssertionCollection" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,8 +53,11 @@
       </Parameters>
       <Docs>
         <param name="list">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.PolicyAssertionCollection" /> class using the specified <see cref="T:System.Xml.XmlElement" /> objects. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -63,9 +77,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the collection contains the specified policy assertion.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified policy assertion; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -85,9 +105,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified policy assertion.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified policy assertion, or null if the assertion cannot be found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FindAll">
@@ -107,9 +133,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns all specified policy assertions.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all policy assertions that match the specification, or an empty collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
@@ -127,10 +159,15 @@
         <Parameter Name="item" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts a specified policy assertion into the collection at the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to insert <paramref name="item" />.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy assertion to insert at <paramref name="index" />. The assertion must not be null.</param>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -150,9 +187,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified policy assertion from the collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The policy assertion that was removed from the collection or null if the policy assertion was not in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RemoveAll">
@@ -172,9 +215,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all policy assertions that match the specified name and namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all removed policy assertions or an empty collection if no assertions were found that match the specified name and namespace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetItem">
@@ -192,10 +241,15 @@
         <Parameter Name="item" Type="System.Xml.XmlElement" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the policy assertion at a specified index with a specified policy assertion.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index that contains the assertion to replace.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy assertion to replace the assertion already at <paramref name="index" />. The assertion must not be null.</param>
       </Docs>
     </Member>
   </Members>

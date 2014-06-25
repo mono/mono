@@ -139,6 +139,18 @@ public struct NestedStruct {
 public struct NestedInner {
 }
 
+public interface IRecStruct {
+	void foo (object o);
+}
+
+struct RecStruct : IRecStruct {
+	public object o;
+
+	public void foo (object o) {
+		this.o = o;
+	}
+}
+
 interface ITest
 {
 	void Foo ();
@@ -362,6 +374,7 @@ public class Tests : TestsBase, ITest2
 		ss_nested ();
 		ss_regress_654694 ();
 		ss_step_through ();
+		ss_non_user_code ();
 		ss_recursive (1);
 		ss_fp_clobber ();
 	}
@@ -482,6 +495,30 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_non_user_code () {
+		non_user_code_1 ();
+		StepNonUserCodeClass.non_user_code_2 ();
+		non_user_code_3 ();
+	}
+
+	[DebuggerNonUserCode]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void non_user_code_1 () {
+	}
+
+	[DebuggerNonUserCode]
+	class StepNonUserCodeClass {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void non_user_code_2 () {
+		}
+	}
+
+	[DebuggerNonUserCode]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void non_user_code_3 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_recursive (int n) {
 		if (n == 10)
 			return;
@@ -592,6 +629,7 @@ public class Tests : TestsBase, ITest2
 		t.vtypes1 (s, arr);
 		vtypes2 (s);
 		vtypes3 (s);
+		vtypes4 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -610,6 +648,17 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void vtypes3 (AStruct s) {
 		AStruct.static_foo (5);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void vtypes4_2 (IRecStruct o) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void vtypes4 () {
+		IRecStruct s = new RecStruct ();
+		s.foo (s);
+		vtypes4_2 (s);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

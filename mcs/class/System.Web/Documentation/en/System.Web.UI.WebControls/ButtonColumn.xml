@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ButtonColumn" FullName="System.Web.UI.WebControls.ButtonColumn">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ButtonColumn : System.Web.UI.WebControls.DataGridColumn" />
   <AssemblyInfo>
@@ -14,8 +15,17 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> class in a <see cref="T:System.Web.UI.WebControls.DataGrid" /> control to create a button that corresponds with each row in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. Specify the caption that is displayed in the buttons by setting the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> property. If you set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> property, all buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object share the same caption. Alternatively, you can bind the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> buttons to a field in a data source. This allows you to display different captions for each button. The values in the specified field are used for the text caption. Set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextField" /> property to bind the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> to a field in a data source.</para>
+      <para>You can format the captions that are displayed in the buttons by setting the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextField" /> property with a formatting string.</para>
+      <para>Clicking the buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> raises the <see cref="E:System.Web.UI.WebControls.DataGrid.ItemCommand" /> event. You can programmatically control the action that is performed when the button is clicked by providing an event handler for the <see cref="E:System.Web.UI.WebControls.DataGrid.ItemCommand" /> event.</para>
+      <para>By default, page validation is not performed when a button in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> is clicked. Page validation determines whether the input controls that are associated with a validation control on the page all pass the validation rules that are specified by the validation control. To perform page validation when a button is clicked, set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CausesValidation" /> property to true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A column type for the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control that contains a user-defined button.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +34,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.ButtonColumn.#ctor" /> constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +56,47 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ButtonColumnType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.ButtonType" /> property to specify whether the buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object are displayed as link or push buttons. The following table lists the possible settings.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Button type</para>
+                </term>
+                <description>
+                  <para>Display</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.ButtonColumnType.LinkButton" /> </para>
+              </term>
+              <description>
+                <para>A link.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.ButtonColumnType.PushButton" /> </para>
+              </term>
+              <description>
+                <para>A button control.</para>
+              </description>
+            </item>
+          </list>
+          <para>Clicking the buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> raises the <see cref="E:System.Web.UI.WebControls.DataGrid.ItemCommand" /> event. You can programmatically control the action that is performed when the button is clicked by providing an event handler for the <see cref="E:System.Web.UI.WebControls.DataGrid.ItemCommand" /> event.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of button to display in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,9 +123,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, page validation is not performed when a button in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object is clicked. Page validation determines whether the input controls that are associated with a validation control on the page all pass the validation rules that are specified by the validation control. To perform page validation when a button in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> is clicked, set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CausesValidation" /> property to true.</para>
+          <para>When the value of the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CausesValidation" /> property is true, you can also use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> causes validation.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether validation is performed when a button in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object is clicked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CommandName">
@@ -82,9 +144,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CommandName" /> property to associate a command name, such as Add or Remove, with a button. You can set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CommandName" /> property to any string that identifies the action to perform when a button in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object is clicked. Then, you can determine programmatically the command name in the event handler for the <see cref="E:System.Web.UI.WebControls.DataGrid.ItemCommand" /> event and perform the appropriate actions.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that represents the command to perform when a button in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,9 +173,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextField" /> property to specify the field name from the data source to bind to the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> property of the buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object.</para>
+          <para>Binding the column to a field instead of directly setting the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> property allows you to display different captions for the buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> by using the values in the specified field.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the field name from a data source to bind to the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -126,9 +203,98 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" /> property to provide a custom display format for the caption of the buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object.</para>
+          <para>The data format string consists of two parts, separated by a colon, in the form {A:Bxx}. For example, the formatting string {0:F2} formats the cell to display a fixed point number with two decimal places.</para>
+          <block subset="none" type="note">
+            <para>The entire string must be enclosed in braces to indicate that it is a format string and not a literal string. Any text outside the braces is displayed as literal text.</para>
+          </block>
+          <para>The value before the colon (<paramref name="A" /> in the general example) specifies the parameter index in a zero-based list of parameters.</para>
+          <block subset="none" type="note">
+            <para>This value can be set only to 0 because there is only one value in each cell.</para>
+          </block>
+          <para>The character after the colon (<paramref name="B" /> in the general example) specifies the format to display the value in. The following table lists the common formats.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Format character </para>
+                </term>
+                <description>
+                  <para>Displays numeric values in </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>C </para>
+              </term>
+              <description>
+                <para>Currency format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>D </para>
+              </term>
+              <description>
+                <para>Decimal format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E </para>
+              </term>
+              <description>
+                <para>Scientific (exponential) format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>F </para>
+              </term>
+              <description>
+                <para>Fixed format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>G </para>
+              </term>
+              <description>
+                <para>General format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>N </para>
+              </term>
+              <description>
+                <para>Number format. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>X </para>
+              </term>
+              <description>
+                <para>Hexadecimal format. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The format character is not case sensitive, except for X, which displays the hexadecimal characters in the case specified.</para>
+          </block>
+          <para>The value after the format character (<paramref name="xx" /> in the general example) specifies the number of significant digits or decimal places to display.</para>
+          <para>The value of this property is stored in view state.</para>
+          <para>For more information on formatting strings, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Overview</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string that specifies the display format for the caption in each button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -150,10 +316,23 @@
         <Parameter Name="dataTextValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="dataTextValue">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.ButtonColumn.FormatDataTextValue(System.Object)" /> method to convert the specified value to the format that is indicated by the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.ButtonColumn.FormatDataTextValue(System.Object)" /> method returns the string equivalent of the value, if the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" /> property is not set.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified value to the format that is indicated by the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="dataTextValue" /> converted to the format indicated by the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" />.</para>
+        </returns>
+        <param name="dataTextValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to format. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -168,8 +347,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.ButtonColumn.Initialize" /> method to reset the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object to its initial state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object to its initial state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,11 +373,20 @@
         <Parameter Name="itemType" Type="System.Web.UI.WebControls.ListItemType" />
       </Parameters>
       <Docs>
-        <param name="cell">a <see cref="T:System.Web.UI.WebControls.TableCell" /></param>
-        <param name="columnIndex">a <see cref="T:System.Int32" /></param>
-        <param name="itemType">a <see cref="T:System.Web.UI.WebControls.ListItemType" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ButtonColumn.InitializeCell(System.Web.UI.WebControls.TableCell,System.Int32,System.Web.UI.WebControls.ListItemType)" /> method resets the specified cell in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object to its initial state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets a cell in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object to its initial state.</para>
+        </summary>
+        <param name="cell">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.TableCell" /> that represents the cell to reset. </param>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column number where the cell is located. </param>
+        <param name="itemType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ListItemType" /> values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -207,9 +401,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> property to specify or determine the caption that is displayed in the buttons of the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object.</para>
+          <block subset="none" type="note">
+            <para>If you set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.Text" /> property, all buttons in the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> share the same caption.</para>
+          </block>
+          <para>Alternatively, you can bind the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> to a field in a data source. This allows you to display different captions for the buttons in the column using the values in the specified field. Set the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextField" /> property to bind the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> to a field in a data source.</para>
+          <para>The value of this property is stored in view state.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the caption that is displayed in the buttons of the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -239,9 +445,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validation groups allow you to assign validation controls on a page to a specific category. Each validation group can be validated independently of other validation groups on the page. Use the <see cref="P:System.Web.UI.WebControls.ButtonColumn.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object causes validation when it posts back to the server.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.ButtonColumn.ValidationGroup" /> property has an effect only when the value of the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CausesValidation" /> property is set to true. When you specify a value for the <see cref="P:System.Web.UI.WebControls.ButtonColumn.ValidationGroup" /> property, only the validation controls that are part of the specified group are validated when the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> posts back to the server. If you do not specify a value for the <see cref="P:System.Web.UI.WebControls.ButtonColumn.ValidationGroup" /> property and the <see cref="P:System.Web.UI.WebControls.ButtonColumn.CausesValidation" /> property is set to true, all validation controls on the page that are not assigned to a validation group are validated when the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> posts back to the server.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group of validation controls for which the <see cref="T:System.Web.UI.WebControls.ButtonColumn" /> object causes validation when it posts back to the server.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

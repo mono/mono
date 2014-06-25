@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildManagerHostUnloadEventHandler" FullName="System.Web.Compilation.BuildManagerHostUnloadEventHandler">
   <TypeSignature Language="C#" Value="public delegate void BuildManagerHostUnloadEventHandler(object sender, BuildManagerHostUnloadEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,11 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.Web.Compilation.ClientBuildManager.AppDomainUnloaded" /> event and the <see cref="E:System.Web.Compilation.ClientBuildManager.AppDomainShutdown" /> event of a <see cref="T:System.Web.Compilation.ClientBuildManager" /> object.</para>
+    </summary>
   </Docs>
 </Type>

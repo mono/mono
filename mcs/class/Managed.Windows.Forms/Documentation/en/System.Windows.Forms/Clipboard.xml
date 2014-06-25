@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Clipboard" FullName="System.Windows.Forms.Clipboard">
   <TypeSignature Language="C#" Value="public sealed class Clipboard" />
   <AssemblyInfo>
@@ -10,8 +11,26 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For a list of predefined formats to use with the <see cref="T:System.Windows.Forms.Clipboard" /> class, see the <see cref="T:System.Windows.Forms.DataFormats" /> class.</para>
+      <para>Call <see cref="M:System.Windows.Forms.Clipboard.SetDataObject(System.Object)" /> to put data on the Clipboard, replacing its current contents. To place a persistent copy of the data on the Clipboard, set the <paramref name="copy" /> parameter to true. </para>
+      <block subset="none" type="note">
+        <para>To place data on the Clipboard in multiple formats, use the <see cref="T:System.Windows.Forms.DataObject" /> class or an <see cref="T:System.Windows.Forms.IDataObject" /> implementation. Place data on the Clipboard in multiple formats to maximize the possibility that a target application, whose format requirements you might not know, can successfully retrieve the data.</para>
+      </block>
+      <para>Call <see cref="M:System.Windows.Forms.Clipboard.GetDataObject" /> to retrieve data from the Clipboard. The data is returned as an object that implements the <see cref="T:System.Windows.Forms.IDataObject" /> interface. Use the methods specified by <see cref="T:System.Windows.Forms.IDataObject" /> and fields in <see cref="T:System.Windows.Forms.DataFormats" /> to extract the data from the object. If you do not know the format of the data you retrieved, call the <see cref="M:System.Windows.Forms.IDataObject.GetFormats(System.Boolean)" /> method of the <see cref="T:System.Windows.Forms.IDataObject" /> interface to get a list of all formats that data is stored in. Then call the <see cref="M:System.Windows.Forms.IDataObject.GetData(System.String,System.Boolean)" /> method of the <see cref="T:System.Windows.Forms.IDataObject" /> interface, and specify a format that your application can use.</para>
+      <para>In dnprdnext, the <see cref="T:System.Windows.Forms.Clipboard" /> class provides additional methods that make it easier to work with the system Clipboard. Call the <see cref="M:System.Windows.Forms.Clipboard.Clear" /> method to remove all data from the Clipboard. To add data of a particular format to the Clipboard, replacing the existing data, call the appropriate SetFormat method, such as <see cref="Overload:System.Windows.Forms.Clipboard.SetText" />, or call the <see cref="M:System.Windows.Forms.Clipboard.SetData(System.String,System.Object)" /> method to specify the format. To retrieve data of a particular format from the Clipboard, first call the appropriate ContainsFormat method (such as <see cref="Overload:System.Windows.Forms.Clipboard.ContainsText" />) method to determine whether the Clipboard contains data in that format, and then call the appropriate GetFormat method (such as <see cref="Overload:System.Windows.Forms.Clipboard.GetText" />) to retrieve the data if the Clipboard contains it. To specify the format in these operations, call the <see cref="M:System.Windows.Forms.Clipboard.ContainsData(System.String)" /> and <see cref="M:System.Windows.Forms.Clipboard.GetData(System.String)" /> methods instead.</para>
+      <block subset="none" type="note">
+        <para>All Windows-based applications share the system Clipboard, so the contents are subject to change when you switch to another application.</para>
+        <para>An object must be serializable for it to be put on the Clipboard. If you pass a non-serializable object to a Clipboard method, the method will fail without throwing an exception. See <see cref="N:System.Runtime.Serialization" /> for more information on serialization. If your target application requires a very specific data format, the headers added to the data in the serialization process may prevent the application from recognizing your data. To preserve your data format, add your data as a <see cref="T:System.Byte" /> array to a <see cref="T:System.IO.MemoryStream" /> and pass the <see cref="T:System.IO.MemoryStream" /> to the <see cref="M:System.Windows.Forms.DataObject.SetData(System.Object)" /> method. </para>
+        <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+        <para>Special considerations may be necessary when using the metafile format with the Clipboard. Due to a limitation in the current implementation of the <see cref="T:System.Windows.Forms.DataObject" /> class, the metafile format used by the .NET Framework may not be recognized by applications that use an older metafile format. In this case, you must interoperate with the Win32 Clipboard application programming interfaces (APIs). For more information, see article 323530, "Metafiles on Clipboard Are Not Visible to All Applications," in the Microsoft Knowledge Base at http://support.microsoft.com.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods to place data on and retrieve data from the system Clipboard. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Clear">
@@ -25,8 +44,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the Clipboard is shared by multiple processes, calling this method may have an impact on those processes.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all data from the Clipboard.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainsAudio">
@@ -40,9 +68,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether the Clipboard contains audio data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetAudioStream" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether there is data on the Clipboard in the <see cref="F:System.Windows.Forms.DataFormats.WaveAudio" /> format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is audio data on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsData">
@@ -58,10 +98,25 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.DataFormats" /> class contains pre-defined format names that you can use with this method.</para>
+          <para>Use this method to determine whether the Clipboard contains data in the specified format or a compatible format before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetData(System.String)" /> method.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether there is data on the Clipboard that is in the specified format or can be converted to that format. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is data on the Clipboard that is in the specified <paramref name="format" /> or can be converted to that format; otherwise, false.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to look for. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats.</param>
       </Docs>
     </Member>
     <Member MemberName="ContainsFileDropList">
@@ -75,9 +130,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file drop list is a collection of strings containing path information for files.</para>
+          <para>Use this method to determine whether the Clipboard contains a file drop list before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetFileDropList" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether there is data on the Clipboard that is in the <see cref="F:System.Windows.Forms.DataFormats.FileDrop" /> format or can be converted to that format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a file drop list on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsImage">
@@ -91,9 +159,21 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether the Clipboard contains image data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetImage" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether there is data on the Clipboard that is in the <see cref="F:System.Windows.Forms.DataFormats.Bitmap" /> format or can be converted to that format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is image data on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsText">
@@ -107,9 +187,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method checks for the presence of data in the <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format on WinXpFamily and Win2kFamily. Otherwise, this method checks for the presence of data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> format.</para>
+          <para>Use this method to determine whether the Clipboard contains text data before retrieving it with the <see cref="Overload:System.Windows.Forms.Clipboard.GetText" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether there is data on the Clipboard in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is text data on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsText">
@@ -125,10 +218,23 @@
         <Parameter Name="format" Type="System.Windows.Forms.TextDataFormat" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to determine whether the Clipboard contains text data before retrieving it with the <see cref="Overload:System.Windows.Forms.Clipboard.GetText" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether there is text data on the Clipboard in the format indicated by the specified <see cref="T:System.Windows.Forms.TextDataFormat" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is text data on the Clipboard in the value specified for <paramref name="format" />; otherwise, false.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.TextDataFormat" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="GetAudioStream">
@@ -142,9 +248,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsAudio" /> method to determine whether the Clipboard contains audio data before retrieving it with this method.</para>
+          <para>Use the <see cref="Overload:System.Windows.Forms.Clipboard.SetAudio" /> method to add audio data to the Clipboard.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an audio stream from the Clipboard.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> containing audio data or null if the Clipboard does not contain any data in the <see cref="F:System.Windows.Forms.DataFormats.WaveAudio" /> format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -160,10 +279,26 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsData(System.String)" /> method to determine whether the Clipboard contains data in the specified format or a compatible format before retrieving it with this method.</para>
+          <para>If this method cannot find data in the specified format, it attempts to convert the data to the format. If the data cannot be converted to the specified format, or if the data was stored with automatic conversion set to false, this method returns null.</para>
+          <block subset="none" type="note">
+            <para>Data can be converted to another format if it was stored specifying that conversion is allowed, and if the requested format is compatible with the stored format. For example, data stored as Unicode can be converted to text.</para>
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.SetData(System.String,System.Object)" /> method to add data to the Clipboard in a particular format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves data from the Clipboard in the specified format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the Clipboard data or null if the Clipboard does not contain any data that is in the specified <paramref name="format" /> or can be converted to that format.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to retrieve. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats.</param>
       </Docs>
     </Member>
     <Member MemberName="GetDataObject">
@@ -174,9 +309,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the data type of the object returned from the Clipboard can vary, this method returns the data in an <see cref="T:System.Windows.Forms.IDataObject" />. Then you can use methods of the <see cref="T:System.Windows.Forms.IDataObject" /> interface to extract the data in its proper data type.</para>
+          <para>This method attempts to get the data ten times in 100-millisecond intervals, and throws an <see cref="T:System.Runtime.InteropServices.ExternalException" /> if all attempts are unsuccessful.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the data that is currently on the system Clipboard.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.IDataObject" /> that represents the data currently on the Clipboard, or null if there is no data on the Clipboard.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +342,24 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file drop list is a collection of strings containing path information for files.</para>
+          <para>A file drop list is stored on the Clipboard as a <see cref="T:System.String" /> array. This method converts this array to a <see cref="T:System.Collections.Specialized.StringCollection" /> and returns the collection.</para>
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsFileDropList" /> method to determine whether the Clipboard contains a file drop list before retrieving it with this method.</para>
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.SetFileDropList(System.Collections.Specialized.StringCollection)" /> method to add a file drop list to the Clipboard.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a collection of file names from the Clipboard. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.StringCollection" /> containing file names or null if the Clipboard does not contain any data that is in the <see cref="F:System.Windows.Forms.DataFormats.FileDrop" /> format or can be converted to that format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetImage">
@@ -210,9 +373,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsImage" /> method to determine whether the Clipboard contains image data before retrieving it with this method.</para>
+          <para>Use the <see cref="M:System.Windows.Forms.Clipboard.SetImage(System.Drawing.Image)" /> method to add image data to the Clipboard.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves an image from the Clipboard.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> representing the Clipboard image data or null if the Clipboard does not contain any data that is in the <see cref="F:System.Windows.Forms.DataFormats.Bitmap" /> format or can be converted to that format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetText">
@@ -226,9 +402,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns text data in the <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format on WinXpFamily and Win2kFamily. Otherwise, this method returns text data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> format.</para>
+          <para>Use the <see cref="Overload:System.Windows.Forms.Clipboard.ContainsText" /> method to determine whether the Clipboard contains text data before retrieving it with this method.</para>
+          <para>Use the <see cref="Overload:System.Windows.Forms.Clipboard.SetText" /> method to add text data to the Clipboard.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves text data from the Clipboard in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Clipboard text data or <see cref="F:System.String.Empty" /> if the Clipboard does not contain data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetText">
@@ -244,10 +434,24 @@
         <Parameter Name="format" Type="System.Windows.Forms.TextDataFormat" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="Overload:System.Windows.Forms.Clipboard.ContainsText" /> method to determine whether the Clipboard contains text data before retrieving it with this method.</para>
+          <para>Use the <see cref="Overload:System.Windows.Forms.Clipboard.SetText" /> method to add text data to the Clipboard.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves text data from the Clipboard in the format indicated by the specified <see cref="T:System.Windows.Forms.TextDataFormat" /> value.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Clipboard text data or <see cref="F:System.String.Empty" /> if the Clipboard does not contain data in the specified format.</para>
+        </returns>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.TextDataFormat" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="SetAudio">
@@ -263,9 +467,19 @@
         <Parameter Name="audioBytes" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="audioBytes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve audio data from the Clipboard, first use the <see cref="M:System.Windows.Forms.Clipboard.ContainsAudio" /> method to determine whether the Clipboard contains audio data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetAudioStream" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds a <see cref="T:System.Byte" /> array in the <see cref="F:System.Windows.Forms.DataFormats.WaveAudio" /> format after converting it to a <see cref="T:System.IO.Stream" />.</para>
+        </summary>
+        <param name="audioBytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Byte" /> array containing the audio data.</param>
       </Docs>
     </Member>
     <Member MemberName="SetAudio">
@@ -281,9 +495,19 @@
         <Parameter Name="audioStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="audioStream">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve audio data from the Clipboard, first use the <see cref="M:System.Windows.Forms.Clipboard.ContainsAudio" /> method to determine whether the Clipboard contains audio data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetAudioStream" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds a <see cref="T:System.IO.Stream" /> in the <see cref="F:System.Windows.Forms.DataFormats.WaveAudio" /> format.</para>
+        </summary>
+        <param name="audioStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> containing the audio data.</param>
       </Docs>
     </Member>
     <Member MemberName="SetData">
@@ -300,10 +524,23 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you do not know the format of the target application, you can store data in multiple formats using this method.</para>
+          <para>Data stored using this method can be converted to a compatible format when it is retrieved.</para>
+          <para>To retrieve data from the Clipboard in a particular format, first use the <see cref="M:System.Windows.Forms.Clipboard.ContainsData(System.String)" /> method to determine whether the Clipboard contains data in that format before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetData(System.String)" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds data in the specified format.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to set. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> representing the data to add.</param>
       </Docs>
     </Member>
     <Member MemberName="SetDataObject">
@@ -316,9 +553,21 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data will be deleted from system Clipboard when the application exits.</para>
+          <para>This method attempts to set the data ten times in 100-millisecond intervals, and throws an <see cref="T:System.Runtime.InteropServices.ExternalException" /> if all attempts are unsuccessful.</para>
+          <block subset="none" type="note">
+            <para>An object must be serializable for it to be put on the Clipboard. If you pass a non-serializable object to this method, it will fail without throwing an exception. See <see cref="N:System.Runtime.Serialization" /> for more information on serialization.</para>
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then places nonpersistent data on it.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to place on the Clipboard. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -336,10 +585,23 @@
         <Parameter Name="copy" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <param name="copy">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="copy" /> parameter is false, the data will be deleted from system Clipboard when the application exits.</para>
+          <para>This method attempts to set the data ten times in 100-millisecond intervals, and throws an <see cref="T:System.Runtime.InteropServices.ExternalException" /> if all attempts are unsuccessful.</para>
+          <block subset="none" type="note">
+            <para>An object must be serializable for it to be put on the Clipboard. If you pass a non-serializable object to this method, it will fail without throwing an exception. See <see cref="N:System.Runtime.Serialization" /> for more information on serialization.</para>
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then places data on it and specifies whether the data should remain after the application exits.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to place on the Clipboard. </param>
+        <param name="copy">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if you want data to remain on the Clipboard after this application exits; otherwise, false. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -362,12 +624,27 @@
         <Parameter Name="retryDelay" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <param name="copy">To be added.</param>
-        <param name="retryTimes">To be added.</param>
-        <param name="retryDelay">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adding data to the Clipboard can occasionally fail if the Clipboard is busy with another thread or application. This method is useful to work around this issue in environments with heavy Clipboard use. </para>
+          <para>If the <paramref name="copy" /> parameter is false, the data will be deleted from system Clipboard when the application exits.</para>
+          <block subset="none" type="note">
+            <para>An object must be serializable for it to be put on the Clipboard. If you pass a non-serializable object to this method, it will fail without throwing an exception. See <see cref="N:System.Runtime.Serialization" /> for more information on serialization.</para>
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then attempts to place data on it the specified number of times and with the specified delay between attempts, optionally leaving the data on the Clipboard after the application exits.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data to place on the Clipboard.</param>
+        <param name="copy">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if you want data to remain on the Clipboard after this application exits; otherwise, false.</param>
+        <param name="retryTimes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of times to attempt placing the data on the Clipboard.</param>
+        <param name="retryDelay">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to pause between attempts. </param>
       </Docs>
     </Member>
     <Member MemberName="SetFileDropList">
@@ -383,9 +660,21 @@
         <Parameter Name="filePaths" Type="System.Collections.Specialized.StringCollection" />
       </Parameters>
       <Docs>
-        <param name="filePaths">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file drop list is a collection of strings containing path information for files.</para>
+          <para>A file drop list is stored on the Clipboard as a <see cref="T:System.String" /> array. This method converts <paramref name="filePaths" /> to a <see cref="T:System.String" /> array before adding it to the Clipboard. </para>
+          <para>To retrieve a file drop list from the Clipboard, first use the <see cref="M:System.Windows.Forms.Clipboard.ContainsFileDropList" /> method to determine whether the Clipboard contains data in that format before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetFileDropList" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds a collection of file names in the <see cref="F:System.Windows.Forms.DataFormats.FileDrop" /> format.</para>
+        </summary>
+        <param name="filePaths">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Specialized.StringCollection" /> containing the file names.</param>
       </Docs>
     </Member>
     <Member MemberName="SetImage">
@@ -401,9 +690,19 @@
         <Parameter Name="image" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <param name="image">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve image data from the Clipboard, first use the <see cref="M:System.Windows.Forms.Clipboard.ContainsImage" /> method to determine whether the Clipboard contains image data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetImage" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds an <see cref="T:System.Drawing.Image" /> in the <see cref="F:System.Windows.Forms.DataFormats.Bitmap" /> format.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> to add to the Clipboard.</param>
       </Docs>
     </Member>
     <Member MemberName="SetText">
@@ -419,9 +718,20 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds text data in the <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format on WinXpFamily and Win2kFamily. Otherwise, this method adds text data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> format.</para>
+          <para>To retrieve text data from the Clipboard, first use the <see cref="Overload:System.Windows.Forms.Clipboard.ContainsText" /> method to determine whether the Clipboard contains text data before retrieving it with the <see cref="Overload:System.Windows.Forms.Clipboard.GetText" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds text data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to add to the Clipboard.</param>
       </Docs>
     </Member>
     <Member MemberName="SetText">
@@ -438,10 +748,21 @@
         <Parameter Name="format" Type="System.Windows.Forms.TextDataFormat" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To retrieve text data from the Clipboard, first use the <see cref="Overload:System.Windows.Forms.Clipboard.ContainsText" /> method to determine whether the Clipboard contains text data before retrieving it with the <see cref="Overload:System.Windows.Forms.Clipboard.GetText" /> method.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Windows.Forms.Clipboard" /> class can only be used in threads set to single thread apartment (STA) mode. To use this class, ensure that your Main method is marked with the <see cref="T:System.STAThreadAttribute" /> attribute. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the Clipboard and then adds text data in the format indicated by the specified <see cref="T:System.Windows.Forms.TextDataFormat" /> value.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to add to the Clipboard.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.TextDataFormat" /> values.</param>
       </Docs>
     </Member>
   </Members>

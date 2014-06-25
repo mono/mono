@@ -1254,7 +1254,7 @@ namespace MonoTests.System.Runtime.Caching
 							
 				// add some short duration entries
 				for (int i = 0; i < HEAP_RESIZE_SHORT_ENTRIES; i++) {
-					var expireAt = DateTimeOffset.Now.AddSeconds (1);
+					var expireAt = DateTimeOffset.Now.AddSeconds (3);
 					mc.Add ("short-" + i, i.ToString (), expireAt);
 				}
 				
@@ -1262,20 +1262,20 @@ namespace MonoTests.System.Runtime.Caching
 							
 				// add some long duration entries				
 				for (int i = 0; i < HEAP_RESIZE_LONG_ENTRIES; i++) {
-					var expireAt = DateTimeOffset.Now.AddSeconds (10);
+					var expireAt = DateTimeOffset.Now.AddSeconds (12);
 					mc.Add ("long-" + i, i.ToString (), expireAt);
 				}															
 				
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_SHORT_ENTRIES, mc.GetCount(), "#CS3");
 				
 				// wait for the cache thread to expire the short duration items, this will also shrink the size of the cache
-				global::System.Threading.Thread.Sleep (3 * 1000);
+				global::System.Threading.Thread.Sleep (5 * 1000);
 				
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS4");	
 				
 				// add some new items into the cache, this will grow the cache again
 				for (int i = 0; i < HEAP_RESIZE_LONG_ENTRIES; i++) {				
-					mc.Add("final-" + i, i.ToString (), DateTimeOffset.Now.AddSeconds (2));
+					mc.Add("final-" + i, i.ToString (), DateTimeOffset.Now.AddSeconds (4));
 				}			
 				
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS5");	
@@ -1355,9 +1355,51 @@ namespace MonoTests.System.Runtime.Caching
 
 				Assert.AreEqual (200, mc.GetCount (), "#CEO3");
 
-				global::System.Threading.Thread.Sleep (2 * 1000);
+				global::System.Threading.Thread.Sleep (4 * 1000);
 
 				Assert.AreEqual (100, mc.GetCount (), "#CEO4");
+			}
+		}
+
+		[Test]
+		public void TestCacheSliding ()
+		{    
+			var config = new NameValueCollection ();
+			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
+			config["physicalMemoryLimitPercentage"] = 100.ToString ();
+			config["__MonoEmulateOneCPU"] = true.ToString ();
+
+			// it appears that pollingInterval does nothing, so we set the Mono timer as well
+			config["pollingInterval"] = new TimeSpan (0, 0, 1).ToString ();
+			config["__MonoTimerPeriod"] = 1.ToString ();
+
+			using (var mc = new MemoryCache ("TestCacheSliding",  config)) {
+				Assert.AreEqual (0, mc.GetCount (), "#CSL1");
+
+				var cip = new CacheItemPolicy();
+				cip.SlidingExpiration = new TimeSpan (0, 0, 1);
+				mc.Add("slidingtest", "42", cip);
+
+				mc.Add("expire1", "1", cip);
+				mc.Add("expire2", "2", cip);
+				mc.Add("expire3", "3", cip);
+				mc.Add("expire4", "4", cip);
+				mc.Add("expire5", "5", cip);
+
+				Assert.AreEqual (6, mc.GetCount (), "#CSL2");
+
+				for (int i = 0; i < 50; i++) {
+					global::System.Threading.Thread.Sleep (100);
+
+					var item = mc.Get ("slidingtest");
+					Assert.AreNotEqual (null, item, "#CSL3-" + i);
+				}
+
+				Assert.AreEqual (1, mc.GetCount (), "#CSL4");
+
+				global::System.Threading.Thread.Sleep (4 * 1000);
+
+				Assert.AreEqual (0, mc.GetCount (), "#CSL5");
 			}
 		}
 	}

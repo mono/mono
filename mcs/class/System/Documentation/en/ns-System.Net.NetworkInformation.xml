@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Net.NetworkInformation">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.NetworkInformation" /> namespace provides access to network traffic data, network address information, and notification of address changes for the local computer. The namespace also contains classes that implement the Ping utility. You can use <see cref="T:System.Net.NetworkInformation.Ping" /> and related classes to check whether a computer is reachable across the network.</para>
+    </summary>
   </Docs>
 </Namespace>

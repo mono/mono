@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValidationSummary" FullName="System.Web.UI.WebControls.ValidationSummary">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ValidationSummary : System.Web.UI.WebControls.WebControl" />
   <AssemblyInfo>
@@ -14,8 +15,24 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> class is used to summarize the error messages from all validators on a Web page in a single location. You can summarize the error messages from a group of validators on a Web page by assigning the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control to a validation group by setting the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ValidationGroup" /> property.</para>
+      <para>The summary can be displayed as a list, as a bulleted list, or as a single paragraph, based on the <see cref="P:System.Web.UI.WebControls.ValidationSummary.DisplayMode" /> property.</para>
+      <para>The summary can be displayed on the Web page and in a message box by setting the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowSummary" /> and <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowMessageBox" /> properties, respectively.</para>
+      <block subset="none" type="note">
+        <para>When you use the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control inside an <see cref="T:System.Web.UI.UpdatePanel" /> control, make sure that the validator control and the control it is associated with are in the same panel. For more information about using the <see cref="T:System.Web.UI.UpdatePanel" /> control for partial-page updates, see <format type="text/html"><a href="5c12736d-d9e9-464a-9388-3fe0f9f49e49">Partial-Page Rendering Overview</a></format>.</para>
+      </block>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.ValidationSummary" />, see the <see cref="M:System.Web.UI.WebControls.ValidationSummary.#ctor" /> constructor.</para>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>For information about how to configure this control so that it generates markup that conforms to accessibility standards, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays a summary of all validation errors inline on a Web page, in a message box, or both. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +41,34 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.ValidationSummary" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ForeColor </para>
+              </term>
+              <description>
+                <para>Color.Red </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +85,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds attributes to the HTML tags generated for this control.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream that renders HTML content to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +106,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ValidationSummaryDisplayMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the display format of a <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control. The summary can be displayed as a list, as a bulleted list, or as a single paragraph.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display mode of the validation summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +134,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify whether the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control updates itself using client-side script. When this property is set to true, client-side script is rendered on the client to update the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control, if the browser supports that feature. When this property is set to false, no client-side script is rendered on the client and the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control only updates itself on round trips to the server. In this situation, the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowMessageBox" /> property has no effect.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control updates itself using client-side script.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -106,9 +166,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Drawing.Color" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to specify the color in which error messages from validation controls are displayed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the foreground color of the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -128,9 +194,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to display a title for the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.ValidationSummary.HeaderText" /> property is not HTML encoded. Therefore, HTML tags can be included in <see cref="P:System.Web.UI.WebControls.ValidationSummary.HeaderText" />.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the header text displayed at the top of the summary.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,9 +233,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -178,9 +256,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends server control content to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object, which writes the content to be rendered on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream that renders HTML content to the client.</param>
       </Docs>
     </Member>
     <Member MemberName="ShowMessageBox">
@@ -191,9 +273,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used in addition to the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowSummary" /> property to control where the validation summary is displayed. If this property and <see cref="P:System.Web.UI.WebControls.ValidationSummary.EnableClientScript" /> are both set to true, the validation summary is displayed in a message box. If <see cref="P:System.Web.UI.WebControls.ValidationSummary.EnableClientScript" /> is set to false, this property has no effect.</para>
+          <block subset="none" type="note">
+            <para>If both the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowMessageBox" /> and <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowSummary" /> properties are set to true, the validation summary is displayed in both a message box and on the Web page.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the validation summary is displayed in a message box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -213,9 +304,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used in addition to the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowMessageBox" /> property to control where the validation summary is displayed. If this property is set to true, the validation summary is displayed on the Web page.</para>
+          <block subset="none" type="note">
+            <para>If both the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowMessageBox" /> and <see cref="P:System.Web.UI.WebControls.ValidationSummary.ShowSummary" /> properties are set to true, the validation summary is displayed in both a message box and on the Web page.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the validation summary is displayed inline.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,9 +345,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validation groups allow you to assign validation controls on a page to a specific category. Each validation group can be validated independently of other validation groups on the page. Use the <see cref="P:System.Web.UI.WebControls.ValidationSummary.ValidationGroup" /> property to specify the name of the validation group for which the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> control will summarize error messages.</para>
+          <para>When you specify a value for the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> property, only error messages from the validation controls that are part of the specified group are summarized. If you do not set a value for this property, all error messages from validation controls on the page that are not assigned to a validation group are summarized.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the group of controls for which the <see cref="T:System.Web.UI.WebControls.ValidationSummary" /> object displays validation messages.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

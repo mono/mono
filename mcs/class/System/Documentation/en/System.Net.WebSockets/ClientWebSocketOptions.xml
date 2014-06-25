@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientWebSocketOptions" FullName="System.Net.WebSockets.ClientWebSocketOptions">
   <TypeSignature Language="C#" Value="public sealed class ClientWebSocketOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ClientWebSocketOptions extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Options to use with a  <see cref="T:System.Net.WebSockets.ClientWebSocket" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,9 +45,13 @@
         <Parameter Name="subProtocol" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="subProtocol">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a sub-protocol to be negotiated during the WebSocket connection handshake.</para>
+        </summary>
+        <param name="subProtocol">
+          <attribution license="cc4" from="Microsoft" modified="false" />The WebSocket sub-protocol to add.</param>
       </Docs>
     </Member>
     <Member MemberName="ClientCertificates">
@@ -57,9 +65,12 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a collection of client side certificates.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cookies">
@@ -73,9 +84,12 @@
         <ReturnType>System.Net.CookieContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cookies associated with the request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Credentials">
@@ -89,9 +103,12 @@
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the credential information for the client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeepAliveInterval">
@@ -105,9 +122,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the WebSocket protocol keep-alive interval in milliseconds.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Proxy">
@@ -121,9 +141,12 @@
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the proxy for WebSocket requests.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetBuffer">
@@ -141,10 +164,15 @@
         <Parameter Name="sendBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="receiveBufferSize">To be added.</param>
-        <param name="sendBufferSize">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the client buffer parameters.</para>
+        </summary>
+        <param name="receiveBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the client receive buffer.</param>
+        <param name="sendBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the client send buffer.</param>
       </Docs>
     </Member>
     <Member MemberName="SetBuffer">
@@ -163,11 +191,17 @@
         <Parameter Name="buffer" Type="System.ArraySegment&lt;System.Byte&gt;" />
       </Parameters>
       <Docs>
-        <param name="receiveBufferSize">To be added.</param>
-        <param name="sendBufferSize">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets client buffer parameters.</para>
+        </summary>
+        <param name="receiveBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the client receive buffer.</param>
+        <param name="sendBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the client send buffer.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The receive buffer to use.</param>
       </Docs>
     </Member>
     <Member MemberName="SetRequestHeader">
@@ -185,10 +219,15 @@
         <Parameter Name="headerValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="headerName">To be added.</param>
-        <param name="headerValue">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a HTTP request header and its value.</para>
+        </summary>
+        <param name="headerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the HTTP header.</param>
+        <param name="headerValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the HTTP header.</param>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultCredentials">
@@ -202,9 +241,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Boolean" /> value that indicates if default credentials should be used during WebSocket handshake.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -259,6 +259,10 @@ namespace Cairo
 		internal static extern void cairo_glyph_path (IntPtr cr, IntPtr glyphs, int num_glyphs);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		[return: MarshalAs (UnmanagedType.U1)]
+		internal static extern bool cairo_has_current_point (IntPtr cr);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_identity_matrix (IntPtr cr);
 		
 		// ImageSurface
@@ -291,6 +295,10 @@ namespace Cairo
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int cairo_image_surface_get_width  (IntPtr surface);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		[return: MarshalAs (UnmanagedType.U1)]
+		internal static extern bool cairo_in_clip (IntPtr cr, double x, double y);
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		[return: MarshalAs (UnmanagedType.U1)]

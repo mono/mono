@@ -57,6 +57,10 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		internal void SetFields (Value[] fields) {
+			this.fields = fields;
+		}
+
 		internal void SetField (int index, Value value) {
 			fields [index] = value;
 		}

@@ -293,7 +293,7 @@ opt_descr (guint32 flags) {
 
 	need_comma = 0;
 	for (i = 0; i < G_N_ELEMENTS (opt_names); ++i) {
-		if (flags & (1 << i)) {
+		if (flags & (1 << i) && optflag_get_name (i)) {
 			if (need_comma)
 				g_string_append_c (str, ',');
 			g_string_append (str, optflag_get_name (i));
@@ -1308,7 +1308,6 @@ static const char info[] =
 #ifdef HOST_WIN32
 BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
-	int dummy;
 	if (!mono_gc_dllmain (module_handle, reason, reserved))
 		return FALSE;
 
@@ -2023,31 +2022,6 @@ mono_main (int argc, char* argv[])
 #else
 		main_thread_handler (&main_args);
 		mono_thread_manage ();
-#endif
-
-	/* 
-	 * On unix, WaitForMultipleObjects for threads is implemented by waiting on
-	 * a cond variable, which is set by the thread when it exits _mono code_, 
-	 * but it could still be running libc code. On amd64, the libc thread exit 
-	 * code does a stack unwind, and if it encounters a frame pointing to native
-	 * code which is in memory which is no longer mapped (because the runtime has
-	 * shut down), it will crash:
-	 * http://mail-archives.apache.org/mod_mbox/harmony-dev/200801.mbox/%3C200801130327.41572.gshimansky@apache.org%3E
-	 * Testcase: tests/main-exit-background-change.exe.
-	 * Testcase: test/main-returns-background-abort-resetabort.exe.
-	 * To make this race less frequent, we avoid freeing the global code manager.
-	 * Since mono_main () is hopefully only used by the runtime executable, this 
-	 * will only cause a shutdown leak. This workaround also has the advantage
-	 * that it can be back-ported to 2.0 safely.
-	 * FIXME: Fix this properly by waiting for threads to really exit using 
-	 * pthread_join (). This cannot be done currently as the io-layer calls
-	 * pthread_detach ().
-	 *
-	 * This used to be an amd64 only crash, but it looks like now most glibc targets do unwinding
-	 * that requires reading the target code.
-	 */
-#if defined( __linux__ ) || defined( __native_client__ )
-		mono_dont_free_global_codeman = TRUE;
 #endif
 
 		mini_cleanup (domain);

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XsltContext" FullName="System.Xml.Xsl.XsltContext">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XsltContext : System.Xml.XmlNamespaceManager" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XsltContext extends System.Xml.XmlNamespaceManager" />
@@ -15,8 +16,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>The context in which an XPath expression is evaluated.</summary>
-    <remarks>This class allows custom XPath functions and variables to declared and used inside XPath expressions.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information on using <see cref="T:System.Xml.Xsl.XsltContext" />, see article Q324899, "HOW TO: Implement and Use Custom Functions When You Execute XPath Queries in Visual Basic .NET" in the Microsoft Knowledge Base at http://support.microsoft.com.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates the current execution context of the Extensible Stylesheet Language for Transformations (XSLT) processor allowing XML Path Language (XPath) to resolve functions, parameters, and namespaces within XPath expressions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates a new XsltContext with a new NameTable.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Xsl.XsltContext" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,9 +59,13 @@
         <Parameter Name="table" Type="System.Xml.NameTable" />
       </Parameters>
       <Docs>
-        <param name="table">To be added: an object of type 'System.Xml.NameTable'</param>
-        <summary>Creates a new XsltContext with the given NameTable.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Xsl.XsltContext" /> class with the specified <see cref="T:System.Xml.NameTable" />.</para>
+        </summary>
+        <param name="table">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.NameTable" /> to use. </param>
       </Docs>
     </Member>
     <Member MemberName="CompareDocument">
@@ -71,11 +85,25 @@
         <Parameter Name="nextbaseUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="baseUri">A URI string.</param>
-        <param name="nextbaseUri">Another URI string</param>
-        <summary>Determines if two documents are the same, based on URI string.</summary>
-        <returns>If they are equal, then 0; otherwise, compare two URI strings as string.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method supports the XSLT document() function which specifies that nodes selected across multiple documents are always returned in the same order. </para>
+          <block subset="none" type="note">
+            <para>The order is implementation-specific.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, compares the base Uniform Resource Identifiers (URIs) of two documents based upon the order the documents were loaded by the XSLT processor (that is, the <see cref="T:System.Xml.Xsl.XslTransform" /> class).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value describing the relative order of the two base URIs: -1 if <paramref name="baseUri" /> occurs before <paramref name="nextbaseUri" />; 0 if the two base URIs are identical; and 1 if <paramref name="baseUri" /> occurs after <paramref name="nextbaseUri" />.</para>
+        </returns>
+        <param name="baseUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI of the first document to compare. </param>
+        <param name="nextbaseUri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI of the second document to compare. </param>
       </Docs>
     </Member>
     <Member MemberName="PreserveWhitespace">
@@ -94,10 +122,17 @@
         <Parameter Name="node" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <param name="node">A <see cref="T:System.Xml.XPath.XPathNavigator" /> instance whose current node is determined to have whitespaces or not.</param>
-        <summary>Determines if the parameter node's whitespace should be preserved or not.</summary>
-        <returns>True if whitespaces should be preserved; otherwise False.</returns>
         <remarks>The return value comes from the nearest ancestor's preserve-whitespace or strip-whitespace attribute value.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, evaluates whether to preserve white space nodes or strip them for the given context.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the white space is to be preserved or false if the white space is to be stripped.</para>
+        </returns>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The white space node that is to be preserved or stripped in the current context. </param>
       </Docs>
     </Member>
     <Member MemberName="ResolveFunction">
@@ -118,12 +153,21 @@
         <Parameter Name="ArgTypes" Type="System.Xml.XPath.XPathResultType[]" />
       </Parameters>
       <Docs>
-        <param name="prefix">A string that is resolved to a namespace string that consists of the function's name.</param>
-        <param name="name">A string that represents local part of the name.</param>
-        <param name="ArgTypes">To be added.</param>
-        <summary>Resolves a function that is in current context and that is identified by the name and argument types.</summary>
-        <returns>An instance of <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> that represents the matching function, or null if no proper function was found.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, resolves a function reference and returns an <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> representing the function. The <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> is used at execution time to get the return value of the function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Xsl.IXsltContextFunction" /> representing the function.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the function as it appears in the XPath expression. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the function. </param>
+        <param name="ArgTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of argument types for the function being resolved. This allows you to select between methods with the same name (for example, overloaded methods). </param>
       </Docs>
     </Member>
     <Member MemberName="ResolveVariable">
@@ -143,11 +187,22 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">A string that is resolved to a namespace string that consists of the variable's name.</param>
-        <param name="name">A string that represents local part of the name.</param>
-        <summary>Resolves a variable that is in current context and that is identified by the name.</summary>
-        <returns>An instance of <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the matching variable, or null if no proper variable was found.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> is used at execution time to get the value of the variable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, resolves a variable reference and returns an <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> representing the variable.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> representing the variable at runtime.</para>
+        </returns>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the variable as it appears in the XPath expression. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
       </Docs>
     </Member>
     <Member MemberName="Whitespace">
@@ -163,9 +218,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Represents the current whitespace preservation from current context.</summary>
         <value>True if preserve; othewise False.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether to include white space nodes in the output.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

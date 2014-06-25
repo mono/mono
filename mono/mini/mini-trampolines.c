@@ -673,7 +673,7 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8* tram
 				}
 			}
 			if (!no_patch)
-				mono_aot_patch_plt_entry (plt_entry, NULL, regs, addr);
+				mono_aot_patch_plt_entry (code, plt_entry, NULL, regs, addr);
 		} else {
 			if (generic_shared) {
 				if (m->wrapper_type != MONO_WRAPPER_NONE)
@@ -869,7 +869,7 @@ mono_aot_trampoline (mgreg_t *regs, guint8 *code, guint8 *token_info,
 	plt_entry = mono_aot_get_plt_entry (code);
 	g_assert (plt_entry);
 
-	mono_aot_patch_plt_entry (plt_entry, NULL, regs, addr);
+	mono_aot_patch_plt_entry (code, plt_entry, NULL, regs, addr);
 
 	return addr;
 }
@@ -917,7 +917,7 @@ mono_class_init_trampoline (mgreg_t *regs, guint8 *code, MonoVTable *vtable, gui
 
 	if (vtable->initialized) {
 		if (plt_entry)
-			mono_arch_nullify_plt_entry (plt_entry, regs);
+			mono_aot_patch_plt_entry (code, plt_entry, NULL, regs, mini_get_nullified_class_init_trampoline ());
 		else
 			mono_arch_nullify_class_init_trampoline (code, regs);
 	}
@@ -1046,6 +1046,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	MonoError err;
 	MonoMethodSignature *sig;
 	gpointer addr, compiled_method;
+	gboolean is_remote = FALSE;
 
 	trampoline_calls ++;
 
@@ -1064,14 +1065,15 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 		 */
 #ifndef DISABLE_REMOTING
 		if (delegate->target && delegate->target->vtable->klass == mono_defaults.transparent_proxy_class) {
+			is_remote = TRUE;
 #ifndef DISABLE_COM
 			if (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
 			   !mono_class_is_com_object (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class))
 #endif
 				method = mono_marshal_get_remoting_invoke (method);
-		} else
+		}
 #endif
-		{
+		if (!is_remote) {
 			sig = tramp_info->sig;
 			if (!(sig && method == tramp_info->method)) {
 				mono_error_init (&err);

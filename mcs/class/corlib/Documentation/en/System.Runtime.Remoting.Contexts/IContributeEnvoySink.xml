@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IContributeEnvoySink" FullName="System.Runtime.Remoting.Contexts.IContributeEnvoySink">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IContributeEnvoySink" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IContributeEnvoySink" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Contexts.IContributeEnvoySink" /> interface is implemented by context properties in the server <see cref="T:System.Runtime.Remoting.Contexts.Context" /> class that want to contribute an envoy message sink on the client end. The server envoy chain is composed from those context properties that implement <see cref="T:System.Runtime.Remoting.Contexts.IContributeEnvoySink" />. The envoy chain resides on the client end and acts as a representative of the corresponding message sinks from the server context properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contributes an envoy message sink on the client end.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetEnvoySink">
@@ -37,11 +44,22 @@
         <Parameter Name="nextSink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'MarshalByRefObject'</param>
-        <param name="nextSink">To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Runtime.Remoting.Contexts.IContributeEnvoySink.GetEnvoySink(System.MarshalByRefObject,System.Runtime.Remoting.Messaging.IMessageSink)" /> method is used as an optimization to create an envoy sink when the destination is a different context in the same application domain and is used by the Wrap operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Takes the first sink in the chain of sinks composed so far, and then chains its message sink in front of the chain already formed.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composite sink chain.</para>
+        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server object for which the chain is being created. </param>
+        <param name="nextSink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The chain of sinks composed so far. </param>
       </Docs>
     </Member>
   </Members>

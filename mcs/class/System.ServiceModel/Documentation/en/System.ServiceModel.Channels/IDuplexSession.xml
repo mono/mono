@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDuplexSession" FullName="System.ServiceModel.Channels.IDuplexSession">
   <TypeSignature Language="C#" Value="public interface IDuplexSession : System.ServiceModel.Channels.IInputSession, System.ServiceModel.Channels.IOutputSession" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDuplexSession implements class System.ServiceModel.Channels.IInputSession, class System.ServiceModel.Channels.IOutputSession, class System.ServiceModel.Channels.ISession" />
@@ -14,8 +15,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.IDuplexSession" /> interface is the union of the inbound session, defined by the <see cref="T:System.ServiceModel.Channels.IInputSession" /> interface, and the outbound session, defined by the <see cref="T:System.ServiceModel.Channels.IOutputSession" /> interface. Either the inbound session or outbound session can be terminated independently of the other. The outbound session can be terminated synchronously by calling <see cref="M:System.ServiceModel.Channels.IDuplexSession.CloseOutputSession" /> or asynchronously by calling <see cref="M:System.ServiceModel.Channels.IDuplexSession.BeginCloseOutputSession" />. </para>
+      <para>The inbound session can be remotely terminated. The <see cref="M:System.ServiceModel.Channels.IInputChannel.Receive" /> associated with the inbound session starts returning null when that session is shutdown.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface for the session implemented on each side of a bi-directional communication between messaging endpoints. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginCloseOutputSession">
@@ -33,11 +41,22 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel. This operation must complete within a default interval of time. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to terminate the outbound session.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous outbound session termination. </para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains state information for this request. </param>
       </Docs>
     </Member>
     <Member MemberName="BeginCloseOutputSession">
@@ -56,12 +75,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous operation to terminate the outbound session with a specified timeout within which the operation must complete.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous outbound session termination. </para>
+        </returns>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> that specifies the interval of time within which the operation must complete.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains state information for this request. </param>
       </Docs>
     </Member>
     <Member MemberName="CloseOutputSession">
@@ -76,8 +107,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.ServiceModel.Channels.IDuplexSession.CloseOutputSession" /> signals to the other side of the session that it should return null from any outstanding or subsequent calls made to <see cref="M:System.ServiceModel.Channels.IInputChannel.Receive" />. <see cref="M:System.ServiceModel.Channels.IDuplexSession.CloseOutputSession" /> is idempotent, so calling it again has no effect.</para>
+          <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates the outbound session that indicates that no more messages will be sent from this endpoint on the channel associated with the session. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseOutputSession">
@@ -94,9 +132,17 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.ServiceModel.Channels.IDuplexSession.CloseOutputSession(System.TimeSpan)" /> signals to the other side of the session that it should return null from any outstanding or subsequent calls made to <see cref="M:System.ServiceModel.Channels.IInputChannel.Receive" />. <see cref="M:System.ServiceModel.Channels.IDuplexSession.CloseOutputSession" /> is idempotent, so calling it again has no effect.</para>
+          <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates the outbound session that indicates that no more messages will be sent from this endpoint on the channel associated with the session within a specified interval of time.</para>
+        </summary>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> that specifies the interval of time within which the operation must complete.</param>
       </Docs>
     </Member>
     <Member MemberName="EndCloseOutputSession">
@@ -113,9 +159,16 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <param name="result">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Completes an asynchronous operation to terminate the outbound session that indicates that no more messages will be sent from this endpoint on the channel associated with the session. </para>
+        </summary>
+        <param name="result">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> returned by a call to one of the <see cref="Overload:System.ServiceModel.Channels.IDuplexSession.BeginCloseOutputSession" /> methods.</param>
       </Docs>
     </Member>
   </Members>

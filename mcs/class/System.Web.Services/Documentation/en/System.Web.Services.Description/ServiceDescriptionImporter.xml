@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceDescriptionImporter" FullName="System.Web.Services.Description.ServiceDescriptionImporter">
   <TypeSignature Language="C#" Value="public class ServiceDescriptionImporter" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The interface to an XML Web service is typically described by a Web Services Description Language (WSDL) file. For example, to obtain a WSDL description of a Web service using ASP.NET exposed at http://localhost/service.asmx, simply navigate to http://localhost/service.asmx?WSDL.</para>
+      <para>The <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class allows you to easily import the information contained in a WSDL description into a <see cref="T:System.CodeDom.CodeCompileUnit" /> object. By adjusting the value of the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> parameter, you can instruct a <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance either to generate a client proxy class that provides the functionality of the Web service by transparently calling it or to generate an abstract class that encapsulates the functionality of the Web service without implementing it.</para>
+      <para>The code in the resulting <see cref="T:System.CodeDom.CodeCompileUnit" /> object can then either be called directly or exported in the language of your choice.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes a means of generating client proxy classes for XML Web services.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +32,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,11 +55,22 @@
         <Parameter Name="appSettingBaseUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="serviceDescription">To be added: an object of type 'ServiceDescription'</param>
-        <param name="appSettingUrlKey">To be added: an object of type 'string'</param>
-        <param name="appSettingBaseUrl">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to add <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances to the collection that is to be imported when the <see cref="M:System.Web.Services.Description.ServiceDescriptionImporter.Import(System.CodeDom.CodeNamespace,System.CodeDom.CodeCompileUnit)" /> method is called.</para>
+          <para>The two string parameters, <paramref name="appSettingUrlKey" /> and <paramref name="appSettingBaseUrl" />, specify how to construct the Url property of the XML Web service proxy that is to be generated from the imported <see cref="T:System.Web.Services.Description.ServiceDescription" /> value. The <paramref name="appSettingUrlKey" /> parameter specifies that the Url property should be read out of the web.config file's &lt;appsettings&gt; section by using the parameter value as the configuration key. If the <paramref name="appSettingUrlKey" /> parameter is null or an empty string, the initial value is determined by the location attribute in the Web Services Description Language (WSDL) document. If the value of <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> is Server, an error is raised if you attempt to set the value of the <paramref name="appSettingUrlKey" /> parameter.</para>
+          <para>The <paramref name="appSettingBaseUrl" /> parameter specifies that the initial value for the Url property should be constructed from a combination of this parameter value and the URL specified by the location attribute in the WSDL document. The <paramref name="appSettingUrlKey" /> parameter must also be specified. The Url property is constructed by combining a relative URL (constructed from the <paramref name="appSettingBaseUrl" /> parameter and the WSDL-specified URL) with the URL loaded from the web.config file. If this parameter is null or an empty string, the URL is constructed entirely from the value in the web.config file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the collection of <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values to be imported.</para>
+        </summary>
+        <param name="serviceDescription">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance to add to the collection </param>
+        <param name="appSettingUrlKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the initial value of the Url property of the proxy class to be generated from the instance represented by the <paramref name="serviceDescription" /> parameter. Specifies that it should be generated from the web.config file's &lt;appsetting&gt; section. </param>
+        <param name="appSettingBaseUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />Sets the initial value of the Url property of the proxy class to be generated from the instance represented by the <paramref name="serviceDescription" /> parameter. Specifies that it should be constructed from a combination of the value of this parameter and the URL specified by the location attribute in the WSDL document. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,9 +92,15 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.CodeGenerationOptions" /> property allows you to specify various options used when the <see cref="M:System.Web.Services.Description.ServiceDescriptionImporter.Import(System.CodeDom.CodeNamespace,System.CodeDom.CodeCompileUnit)" /> method is called to generate code. For example, you can specify whether simple types described in the WSDL are generated as value types or <see cref="N:System.Data.SqlTypes" /> namespace types, and whether they are generated as properties or fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets various options for code generation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CodeGenerator">
@@ -89,9 +118,12 @@
         <ReturnType>System.CodeDom.Compiler.CodeDomProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the code generator used by the service description importer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateWebReferences">
@@ -110,13 +142,26 @@
         <Parameter Name="options" Type="System.Web.Services.Description.WebReferenceOptions" />
       </Parameters>
       <Docs>
-        <param name="webReferences">To be added.</param>
         <param name="codeGenerator">To be added.</param>
-        <param name="codeCompileUnit">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The services description document collection in each <see cref="T:System.Web.Services.Description.WebReference" /> member of the <paramref name="webReferences" /> collection should contain only <see cref="T:System.Web.Services.Description.ServiceDescription" /> and <see cref="T:System.Xml.Schema.XmlSchema" /> objects. This method is unable to interpret <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> objects.</para>
+          <para>If any of the XML Web service methods in the <paramref name="webReferences" /> collection share custom parameter or return types, those types are also shared among the proxy methods generated. This is an important advantage over the situation in which each proxy is compiled separately, because in that case such types do not interoperate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles a collection of Web references to produce a client proxy or a server stub.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.StringCollection" /> of compiler warnings.</para>
+        </returns>
+        <param name="webReferences">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.WebReferenceCollection" /> of Web references to compile.</param>
+        <param name="codeCompileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeCompileUnit" /> that specifies the unit into which code is compiled.</param>
+        <param name="options">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.WebReferenceOptions" /> that specifies code generation options.</param>
       </Docs>
     </Member>
     <Member MemberName="Import">
@@ -130,11 +175,22 @@
         <Parameter Name="codeCompileUnit" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <param name="codeNamespace">a <see cref="T:System.CodeDom.CodeNamespace" /></param>
-        <param name="codeCompileUnit">a <see cref="T:System.CodeDom.CodeCompileUnit" /></param>
-        <summary>To be added</summary>
-        <returns>a <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /></returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After you have specified the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values to import and the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property of the code to generate, call the <see cref="T:System.Web.Services.Description.Import" /> method to initiate code generation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports the specified <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values, that generates code as specified by the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /> value that describes any error that occurred; or 0 if no error occurred.</para>
+        </returns>
+        <param name="codeNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace into which the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values are imported. </param>
+        <param name="codeCompileUnit">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeCompileUnit" /> instance in which the code that represents the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> value is generated. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,9 +205,33 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allowed values of this property are: </para>
+          <list type="bullet">
+            <item>
+              <para>"Soap"</para>
+            </item>
+            <item>
+              <para>"Soap12"</para>
+            </item>
+            <item>
+              <para>"HttpPost"</para>
+            </item>
+            <item>
+              <para>"HttpGet"</para>
+            </item>
+            <item>
+              <para>"HttpSoap"</para>
+            </item>
+          </list>
+          <para>The default value is "Soap", which indicates the SOAP 1.1 standard.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the protocol used to access the described XML Web services.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -166,9 +246,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Xml.Serialization.XmlSchemas" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlSchemas" /> used by the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -182,9 +265,15 @@
         <ReturnType>System.Web.Services.Description.ServiceDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>As with any collection that forms a read-only property, members can be added to the collection, removed from the collection, or modified using the methods exposed by the collection. You can also use the <see cref="M:System.Web.Services.Description.ServiceDescriptionImporter.AddServiceDescription(System.Web.Services.Description.ServiceDescription,System.String,System.String)" /> method to add members to this collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances to be imported.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -199,9 +288,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ServiceDescriptionImportStyle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property is set to <see cref="F:System.Web.Services.Description.ServiceDescriptionImportStyle.Client" />, the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> generates client proxy classes that provide the functionality of the described Web services by calling them.</para>
+          <para>If the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property is set to <see cref="F:System.Web.Services.Description.ServiceDescriptionImportStyle.Server" />, the <see cref="T:System.Web.Services.Description.ServiceDescriptionImporter" /> instance generates abstract classes that represent the functionality of the described XML Web services without implementing them. You can then implement them by writing classes that inherit from these abstract classes and implement the relevant methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines the style of code (client or server) that is generated when the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values are imported.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

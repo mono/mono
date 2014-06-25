@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRelDecryptor" FullName="System.Security.Cryptography.Xml.IRelDecryptor">
   <TypeSignature Language="C#" Value="public interface IRelDecryptor" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRelDecryptor" />
@@ -8,9 +9,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.IRelDecryptor" /> interface with the <see cref="T:System.Security.Cryptography.Xml.XmlLicenseTransform" /> class to decrypt an XrML &lt;encryptedGrant&gt; element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods that decrypt an XrML &lt;encryptedGrant&gt; element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Decrypt">
@@ -30,13 +37,25 @@
         <Parameter Name="toDecrypt" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="encryptionMethod">To be added.</param>
-        <param name="keyInfo">To be added.</param>
-        <param name="toDecrypt">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Security.Cryptography.Xml.IRelDecryptor.Decrypt(System.Security.Cryptography.Xml.EncryptionMethod,System.Security.Cryptography.Xml.KeyInfo,System.IO.Stream)" /> method decrypts an XrML &lt;encryptedGrant&gt; element and returns a plaintext stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Decrypts an XrML &lt;encryptedGrant&gt; element that is contained within a <see cref="T:System.IO.Stream" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object that contains a decrypted &lt;encryptedGrant&gt; element.</para>
+        </returns>
+        <param name="encryptionMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.Xml.EncryptionMethod" /> object that encapsulates the algorithm used for XML encryption.</param>
+        <param name="keyInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object that contains an asymmetric key to use for decryption.</param>
+        <param name="toDecrypt">
+          <attribution license="cc4" from="Microsoft" modified="false" />A stream object that contains an &lt;encryptedGrant&gt; element to decrypt.</param>
       </Docs>
     </Member>
   </Members>

@@ -6,9 +6,6 @@ LIBRARY = System.Core.dll
 
 LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
 
-INTERPRETER_DEP := Mono.Dynamic.Interpreter.dll
-INTERPRETER_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(INTERPRETER_DEP))
-
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
@@ -21,18 +18,15 @@ ifeq (xammac, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
 endif
 
-ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
-LIBRARY_USE_INTERMEDIATE_FILE = yes
+system_core_plain_libdir = $(the_libdir_base)plaincore
 
-CYCLIC_DEPS := $(INTERPRETER_DEP)
-CYCLIC_DEP_FILES := $(INTERPRETER_DEP_FILE)
+ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
+extra_test_flags := -exclude:NotWorkingInterpreter
+system_core_library_deps = $(the_libdir_base)Mono.Dynamic.Interpreter.dll $(system_core_plain_libdir)/System.Core.dll
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR
 
-ifdef CYCLIC_DEP_FILES
-LIB_MCS_FLAGS += -d:MONO_INTERPRETER -r:$(INTERPRETER_DEP)
-else
-NO_SIGN_ASSEMBLY = yes
-NO_INSTALL = yes
+ifneq (plaincore/,$(intermediate))
+LIB_MCS_FLAGS += -d:MONO_INTERPRETER -r:Mono.Dynamic.Interpreter.dll
 endif
 
 endif
@@ -57,8 +51,25 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make
 
-ifdef CYCLIC_DEP_FILES
-TEST_HARNESS_EXCLUDES += -exclude:NotWorkingInterpreter
-$(build_lib): $(INTERPRETER_DEP_FILE)
+$(the_libdir_base)System.Core.dll: $(system_core_library_deps)
+
+.NOTPARALLEL: $(system_core_plain_libdir)/System.Core.dll $(the_libdir_base)Mono.Dynamic.Interpreter.dll
+
+ifneq (plaincore/,$(intermediate))
+$(system_core_plain_libdir)/System.Core.dll:
+	$(MAKE) intermediate=plaincore/ $(system_core_plain_libdir)/System.Core.dll
 endif
 
+$(the_libdir_base)Mono.Dynamic.Interpreter.dll:
+	(cd ../Mono.Dynamic.Interpreter; $(MAKE))
+
+TEST_HARNESS_EXCLUDES += $(extra_test_flags)
+
+CLEAN_FILES = $(system_core_plain_libdir)/System.Core.dll
+
+ifndef intermediate
+ifneq ($(PROFILE),basic)
+csproj-local:
+	$(MAKE) csproj-local intermediate=plaincore/
+endif
+endif

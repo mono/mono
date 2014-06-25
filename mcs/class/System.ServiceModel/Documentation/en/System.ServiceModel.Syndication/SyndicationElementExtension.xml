@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SyndicationElementExtension" FullName="System.ServiceModel.Syndication.SyndicationElementExtension">
   <TypeSignature Language="C#" Value="public class SyndicationElementExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SyndicationElementExtension extends System.Object" />
@@ -10,8 +11,42 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Both RSS and Atom support protocol extensibility with additional namespace-qualified elements. An XML element not specifically defined in the RSS or Atom specifications can be present at the feed or item level as long as the namespace of that element does not match the root namespace of the enclosing feed. Element extensions can be added to various classes including: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.ServiceModel.Syndication.SyndicationLink" />
+          </para>
+        </item>
+      </list>
+      <para>The syndication object model makes this extensibility easier using <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />, which can be placed in a <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtensionCollection" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class that represents a syndication element extension.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +60,13 @@
         <Parameter Name="dataContractExtension" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="dataContractExtension">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> class with the specified object.</para>
+        </summary>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data contract object used to initialize the extension. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -41,9 +80,13 @@
         <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="xmlReader">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> class. </para>
+        </summary>
+        <param name="xmlReader">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> that contains the content of the new <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +101,15 @@
         <Parameter Name="dataContractSerializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <param name="dataContractExtension">To be added.</param>
-        <param name="dataContractSerializer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> class with the specified object and data contract serializer.</para>
+        </summary>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data contract object used to initialize the extension.</param>
+        <param name="dataContractSerializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data contract serializer to use.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -76,10 +124,15 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <param name="xmlSerializerExtension">To be added.</param>
-        <param name="serializer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> class with the specified object and XML serializer.</para>
+        </summary>
+        <param name="xmlSerializerExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object used to initialize the extension.</param>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML serializer to use.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -95,11 +148,17 @@
         <Parameter Name="dataContractExtension" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="outerName">To be added.</param>
-        <param name="outerNamespace">To be added.</param>
-        <param name="dataContractExtension">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> class with the specified outer name, outer namespace, and object.</para>
+        </summary>
+        <param name="outerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the enclosing XML element.</param>
+        <param name="outerNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the enclosing XML element.</param>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object used to initialize the extension.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -116,12 +175,19 @@
         <Parameter Name="dataContractSerializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <param name="outerName">To be added.</param>
-        <param name="outerNamespace">To be added.</param>
-        <param name="dataContractExtension">To be added.</param>
-        <param name="dataContractSerializer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" /> class with the specified outer name, outer namespace, object, and data contract serializer.</para>
+        </summary>
+        <param name="outerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the enclosing XML element.</param>
+        <param name="outerNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the enclosing XML element.</param>
+        <param name="dataContractExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object used to initialize the extension.</param>
+        <param name="dataContractSerializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data contract serializer to use.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -139,10 +205,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that represents the element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that contains the element extension.</para>
+        </returns>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -162,11 +235,19 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <param name="serializer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that represents the element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that contains the element extension.</para>
+        </returns>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -186,11 +267,19 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <param name="serializer">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that represents the element extension.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that contains the element extension.</para>
+        </returns>
+        <param name="serializer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetReader">
@@ -205,9 +294,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlReader" /> associated with the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlReader" /> associated with the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OuterName">
@@ -221,9 +316,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outer name of the following element extension is custom.</para>
+          <code>&lt;feed xmlns:mg="http://contoso.com"&gt;
+....&lt;mg:custom&gt; some text &lt;/mg:custom&gt;
+&lt;/feed&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the outer name of the element extension.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OuterNamespace">
@@ -237,9 +341,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The outer namespace of the following custom element is mg.</para>
+          <code>&lt;feed xmlns:mg="http://contoso.com"&gt;
+    &lt;mg:custom&gt; some text &lt;/mg:custom&gt;
+&lt;/feed&gt;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the outer namespace of the element extension.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -256,9 +369,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the current extension to the specified <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write to.</param>
       </Docs>
     </Member>
   </Members>

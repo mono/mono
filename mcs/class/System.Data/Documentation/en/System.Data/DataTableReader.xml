@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataTableReader" FullName="System.Data.DataTableReader">
   <TypeSignature Language="C#" Value="public sealed class DataTableReader : System.Data.Common.DbDataReader" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.DataTableReader" /> works much like any other data reader, such as the <see cref="T:System.Data.SqlClient.SqlDataReader" />, except that the <see cref="T:System.Data.DataTableReader" /> provides for iterating over rows in a <see cref="T:System.Data.DataTable" />. In other words, it provides for iterating over rows in a cache. The cached data can be modified while the <see cref="T:System.Data.DataTableReader" /> is active, and the reader automatically maintains its position.</para>
+      <para>When you create a <see cref="T:System.Data.DataTableReader" /> from a <see cref="T:System.Data.DataTable" />, the resulting <see cref="T:System.Data.DataTableReader" /> object contains one result set with the same data as the <see cref="T:System.Data.DataTable" /> from which it was created, except for any rows that have been marked as deleted. The columns appear in the same order as in the original <see cref="T:System.Data.DataTable" />. The structure of the returned result is identical in schema and data to the original <see cref="T:System.Data.DataTable" />. A <see cref="T:System.Data.DataTableReader" /> that was created by calling the <see cref="M:System.Data.DataSet.GetDataReader" /> method of a <see cref="T:System.Data.DataSet" /> object contains multiple result sets if the <see cref="T:System.Data.DataSet" /> contains more than one table. The results are in the same sequence as the <see cref="T:System.Data.DataTable" /> objects in the <see cref="T:System.Data.DataTableCollection" /> of the <see cref="T:System.Data.DataSet" /> object.</para>
+      <para>The returned result set contains only the current version of each <see cref="T:System.Data.DataRow" />; rows that are marked for deletion are skipped.</para>
+      <para>The DataTableReader provides a stable iterator; that is, the contents of the DataTableReader are not invalidated if the size of the underlying collection is modified during iteration. For example, if one or more rows in the <see cref="P:System.Data.DataTable.Rows" />  collection are deleted or removed during iteration, the current position within the DataTableReader is maintained appropriately and it does not invalidate the iterator.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.DataTableReader" /> obtains the contents of one or more <see cref="T:System.Data.DataTable" /> objects in the form of one or more read-only, forward-only result sets. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +32,12 @@
       </Parameters>
       <Docs>
         <param name="dt">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataTableReader" /> class by using data from the supplied <see cref="T:System.Data.DataTable" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +50,17 @@
         <Parameter Name="dataTables" Type="System.Data.DataTable[]" />
       </Parameters>
       <Docs>
-        <param name="dataTables">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you must create a <see cref="T:System.Data.DataTableReader" /> based on all or a subset of the tables within a specific <see cref="T:System.Data.Dataset" />, call the DataSet's <see cref="M:System.Data.DataSet.GetDataReader" /> method. If you want to create a new <see cref="T:System.Data.DataTableReader" /> instance based on a group of DataTable instances that are not otherwise related, use this constructor. You can also take advantage of this constructor to rearrange the ordering of the DataTables within the DataTableReader, if their ordering within their source DataSet does not meet your needs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DataTableReader" /> class using the supplied array of <see cref="T:System.Data.DataTable" /> objects.</para>
+        </summary>
+        <param name="dataTables">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Data.DataTable" /> objects that supplies the results for the new <see cref="T:System.Data.DataTableReader" /> object. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,9 +74,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling Close() on a closed DataTableReader object does not raise an error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the current <see cref="T:System.Data.DataTableReader" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +95,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DataTableReader does not support nesting. The Depth property always returns zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The depth of nesting for the current row of the <see cref="T:System.Data.DataTableReader" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +117,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the number of columns in the current row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,10 +140,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must either already be a Boolean or coercible to a Boolean, or an exception is generated.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Boolean" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +170,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a byte or coercible to a byte.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a byte.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -149,14 +204,29 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <param name="dataIndex">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="bufferIndex">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>GetBytes returns the number of available bytes in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if GetBytes has already been used to obtain bytes from the field. This may be the case, for example, when the <see cref="T:System.Data.DataTableReader" /> is reading a large data structure into a buffer</para>
+          <para>If you pass a buffer that is null (Nothing in Visual Basic), GetBytes returns the length of the entire field in bytes, not the remaining size based on the buffer offset parameter.</para>
+          <para>No conversions are performed; therefore the data retrieved must already be a byte array or coercible to a byte array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reads a stream of bytes starting at the specified column offset into the buffer as an array starting at the specified buffer offset.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes read.</para>
+        </returns>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field from which to start the read operation. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of bytes. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the buffer at which to start placing the data. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length to copy into the buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,10 +243,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a character or coercible to a character.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a character.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,14 +277,29 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <param name="dataIndex">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <param name="bufferIndex">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>GetChars returns the number of available characters in the field. Most of the time this is the exact length of the field. However, the number returned may be less than the true length of the field if GetChars has already been used to obtain characters from the field. </para>
+          <para>The actual number of characters read can be less than the requested length, if the end of the field is reached. If you pass a buffer that is null (Nothing in Visual Basic), GetChars returns the length of the entire field in characters, not the remaining size based on the buffer offset parameter.</para>
+          <para>No conversions are performed; therefore the data to be retrieved must already be a character array or coercible to a character array. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the value of the specified column as a character array.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters read.</para>
+        </returns>
+        <param name="dataIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the field from which to start the read operation. </param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to read the stream of chars. </param>
+        <param name="bufferIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index within the buffer at which to start placing the data. </param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum length to copy into the buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,10 +316,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.DataTableReader.GetDataTypeName(System.Int32)" /> method always returns the type of the underlying <see cref="T:System.Data.DataColumn" /> instead of a provider-specific type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representing the data type of the specified column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the column's data type.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -241,10 +345,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a <see cref="T:System.DateTime" /> or coercible to a DataTime.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -261,10 +375,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a <see cref="T:System.Decimal" /> or coercible to a Decimal.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.Decimal" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -281,10 +405,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a double-precision floating point number or must be coercible to a double-precision floating point number.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the column as a double-precision floating point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -298,10 +432,23 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enumerators only allow for reading the data in the <see cref="T:System.Data.DataTableReader" />. Enumerators cannot be used to modify the underlying collection.</para>
+          <para>At first, the enumerator is positioned before the first element in the collection. At this position, calling <see cref="P:System.Collections.IEnumerator.Current" /> throws an exception. Therefore, you must call MoveNext to advance the enumerator to the first element of the collection before reading the value of Current.</para>
+          <para>Current returns a <see cref="T:System.Data.Common.DbDataRecord" />, and returns the same object until either <see cref="M:System.Collections.IEnumerator.MoveNext" /> or <see cref="M:System.Collections.IEnumerator.Reset" /> is called. MoveNext sets Current to the next element. </para>
+          <para>After the end of the collection is passed, the enumerator is positioned after the last element in the collection, and calling MoveNext returns false. If the last call to MoveNext returned false, calling Current throws an exception. In addition, because the <see cref="T:System.Data.DataTableReader" /> provides forward-only access to its data, calling the <see cref="M:System.Collections.IEnumerator.Reset" /> method of the IEnumerator throws a <see cref="T:System.NotSupportedException" />. </para>
+          <para>The <see cref="T:System.Data.DataTableReader" /> provides a stable enumerator. This means that even if row deletions or additions occur within the underlying data, the enumerator returned by a call to <see cref="M:System.Data.DataTableReader.GetEnumerator" /> is still valid.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that can be used to iterate through the item collection. </para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that represents the item collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -318,10 +465,16 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -338,10 +491,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a single-precision floating point number or must be coercible to a single-precision floating point number.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a single-precision floating point number.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -358,10 +521,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore the data retrieved must already be a <see cref="T:System.Guid" /> or coercible to a Guid.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a globally-unique identifier (GUID).</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -378,10 +551,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be an <see cref="T:System.Int16" /> or coercible to an Int16.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 16-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -398,10 +581,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be an <see cref="T:System.Int32" /> or coercible to an Int32.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 32-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -418,10 +611,20 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No conversions are performed; therefore, the data retrieved must already be an <see cref="T:System.Int64" /> or coercible to an Int64.</para>
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a 64-bit signed integer.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -438,10 +641,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GetName and <see cref="M:System.Data.DataTableReader.GetOrdinal(System.String)" /> methods provide inverse functionality. That is, calling GetOrdinal on the return value of calling GetName should return the original parameter passed to GetName; the same applies to calling the procedures in the opposite order. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a <see cref="T:System.String" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -457,11 +669,24 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because most of the methods provided by the <see cref="T:System.Data.DataTableReader" /> class must be provided with an ordinal column number, you can use the GetOrdinal method to retrieve the column number, given the name of the column. </para>
+          <para>GetOrdinal performs a case-sensitive lookup first. If it fails, a second case-insensitive search is made. If the column number is not found an IndexOutOfRangeException is thrown.</para>
+          <para>GetOrdinal is kana-width insensitive.</para>
+          <para>Because ordinal-based lookups are more efficient than named lookups, it is inefficient to call GetOrdinal within a loop. Save time by calling GetOrdinal one time and assigning the results to an integer variable for use within the loop</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column ordinal, given the name of the column.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based column ordinal.</para>
+        </returns>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -478,10 +703,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Data.DataTableReader" /> always returns the type stored within the underlying <see cref="T:System.Data.DataColumn" />, the value returned by calling the <see cref="M:System.Data.DataTableReader.GetProviderSpecificFieldType(System.Int32)" />  method always returns the same type as the type stored within the <see cref="T:System.Data.DataTable" />. When you work with the <see cref="T:System.Data.DataTableReader" /> class, calling the <see cref="M:System.Data.DataTableReader.GetProviderSpecificFieldType(System.Int32)" /> method returns the same type as calling the <see cref="M:System.Type.GetType" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the specified column in provider-specific format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -498,10 +732,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Data.DataTableReader" /> always returns the type stored within the underlying <see cref="T:System.Data.DataColumn" />, the value returned by calling the <see cref="M:System.Data.DataTableReader.GetProviderSpecificValue(System.Int32)" /> method always returns data of the same type as the data stored within the <see cref="T:System.Data.DataTable" />. When you work with the <see cref="T:System.Data.DataTableReader" /> class, calling the <see cref="M:System.Data.DataTableReader.GetProviderSpecificValue(System.Int32)" /> method returns the same value and type as calling the <see cref="M:System.Data.DataTableReader.GetValue(System.Int32)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column in provider-specific format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column in provider-specific format.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -517,11 +760,21 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Data.DataTableReader" /> always returns the data of the type stored within the underlying <see cref="T:System.Data.DataColumn" />, the values returned by calling the <see cref="M:System.Data.DataTableReader.GetProviderSpecificValues(System.Object[])" /> method is always of the same types as the data stored within the <see cref="T:System.Data.DataTable" />. When you work with the <see cref="T:System.Data.DataTableReader" /> class, calling the <see cref="M:System.Data.DataTableReader.GetProviderSpecificValues(System.Object[])" /> method returns the same values and types as calling the <see cref="M:System.Data.DataTableReader.GetValues(System.Object[])" />  method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills the supplied array with provider-specific type information for all the columns in the <see cref="T:System.Data.DataTableReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of column values copied into the array.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of objects to be filled in with type information for the columns in the <see cref="T:System.Data.DataTableReader" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -535,10 +788,231 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GetSchemaTable method returns metadata about each column in the following order:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>DataReader column</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ColumnName</para>
+              </term>
+              <description>
+                <para>The name of the column as it appears in the <see cref="T:System.Data.DataTable" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnOrdinal</para>
+              </term>
+              <description>
+                <para>The ordinal of the column</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnSize</para>
+              </term>
+              <description>
+                <para>-1 if the <see cref="F:System.Data.Common.SchemaTableColumn.ColumnSize" />  (or <see cref="P:System.Data.DataColumn.MaxLength" />) property of the <see cref="T:System.Data.DataColumn" /> cannot be determined or is not relevant; otherwise, 0 or a positive integer that contains the MaxLength value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericPrecision</para>
+              </term>
+              <description>
+                <para>If the column type is a numeric type, this is the maximum precision of the column. If the column type is not a numeric data type, this is a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NumericScale</para>
+              </term>
+              <description>
+                <para>If column data type has a scale component, return the number of digits to the right of the decimal point. Otherwise, return a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DataType</para>
+              </term>
+              <description>
+                <para>The underlying type of the column.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ProviderType</para>
+              </term>
+              <description>
+                <para>The indicator of the column's data type. If the data type of the column varies from row to row, this value is <see cref="T:System.Object" />. This column cannot contain a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsLong</para>
+              </term>
+              <description>
+                <para>true if the data type of the column is <see cref="T:System.String" /> and its <see cref="P:System.Data.DataColumn.MaxLength" /> property is -1. Otherwise, false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AllowDBNull</para>
+              </term>
+              <description>
+                <para>true if the AllowDbNull constraint is set to true for the column; otherwise, false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsReadOnly</para>
+              </term>
+              <description>
+                <para>true if the column cannot be modified; otherwise false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsRowVersion</para>
+              </term>
+              <description>
+                <para>false, for every column.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsUnique</para>
+              </term>
+              <description>
+                <para>true: No two rows in the <see cref="T:System.Data.DataTable" /> can have the same value in this column. IsUnique is guaranteed to be true if the column represents a key by itself or if there is a constraint of type UNIQUE that applies only to this column. false: The column can contain duplicate values in the DataTable. The default of this column is false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsKey</para>
+              </term>
+              <description>
+                <para>true: The column is one of a set of columns that, taken together, uniquely identify the row in the <see cref="T:System.Data.DataTable" />. The set of columns with IsKey set to true must uniquely identify a row in the DataTable. There is no requirement that this set of columns is a minimal set of columns. This set of columns may be generated from a DataTable primary key, a unique constraint or a unique index. false: The column is not required to uniquely identify the row. This value is true if the column participates in a single or composite primary key. Otherwise, its value is false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsAutoIncrement</para>
+              </term>
+              <description>
+                <para>true: The column assigns values to new rows in fixed increments. false: The column does not assign values to new rows in fixed increments. The default of this column is false.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseCatalogName</para>
+              </term>
+              <description>
+                <para>The name of the catalog in the data store that contains the column. Null if the base catalog name cannot be determined. The default value for this column is a null value.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseSchemaName</para>
+              </term>
+              <description>
+                <para>This value is always Null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseTableName</para>
+              </term>
+              <description>
+                <para>The name of the <see cref="T:System.Data.DataTable" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseColumnName</para>
+              </term>
+              <description>
+                <para>The name of the column in the <see cref="T:System.Data.DataTable" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AutoIncrementSeed</para>
+              </term>
+              <description>
+                <para>The value of the <see cref="T:System.Data.DataTable" />'s <see cref="P:System.Data.DataColumn.AutoIncrementSeed" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AutoIncrementStep</para>
+              </term>
+              <description>
+                <para>The value of the <see cref="T:System.Data.DataTable" />'s <see cref="P:System.Data.DataColumn.AutoIncrementStep" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DefaultValue</para>
+              </term>
+              <description>
+                <para>The value of the <see cref="T:System.Data.DataColumn" />'s <see cref="P:System.Data.DataColumn.DefaultValue" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Expression</para>
+              </term>
+              <description>
+                <para>The expression string, if the current column is an expression column and all columns used in the expression belong to the same T:System.Data.DataTable that contains the expression column; otherwise null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>ColumnMapping</para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Data.MappingType" /> value associated with the <see cref="T:System.Data.DataColumn" />. The type can be one of Attribute, Element, Hidden, or SimpleContent. The default value is Element.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseTableNamespace</para>
+              </term>
+              <description>
+                <para>The value of the <see cref="T:System.Data.DataTable" />'s <see cref="P:System.Data.DataTable.Namespace" /> property.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>BaseColumnNamespace</para>
+              </term>
+              <description>
+                <para>The value of the <see cref="T:System.Data.DataColumn" />'s <see cref="P:System.Data.DataColumn.Namespace" /> property.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata of the <see cref="T:System.Data.DataTableReader" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that describes the column metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -555,10 +1029,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" />  to see if there are null values before calling this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column as a string.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -575,10 +1058,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although you can call <see cref="M:System.Data.DataTableReader.IsDBNull(System.Int32)" /> to see if there are null values before calling this method, you do not have to do this. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the specified column in its native format.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column. This method returns DBNull for null columns.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -594,11 +1086,23 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For most applications, this method provides an efficient means for retrieving all columns, instead of retrieving each column individually. If your intent is to retrieve all the column values from a row within the <see cref="T:System.Data.DataTableReader" />, the GetValues method provides the most efficient solution.</para>
+          <para>You can pass an <see cref="T:System.Object" /> array that contains fewer than the number of columns that are contained in the resulting row. Only the amount of data the Object array can hold is copied to the array. You can also pass an Object array whose length is more than the number of columns that are contained in the resulting row, in which case the additional array elements remains unchanged by the method call.</para>
+          <para>This method places DBNull in the output array for null columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates an array of objects with the column values of the current row.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of column values copied into the array.</para>
+        </returns>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> into which to copy the column values from the <see cref="T:System.Data.DataTableReader" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -611,10 +1115,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HasRows property returns information about the current result set. If the <see cref="T:System.Data.DataTableReader" /> contains multiple result sets, you can examine the value of the HasRows property immediately after you call the <see cref="M:System.Data.DataTableReader.NextResult" /> method in order to determine whether the new result set contains rows.</para>
+          <para>Use the HasRows property to avoid the requirement to call the <see cref="M:System.Data.DataTableReader.Read" /> method of the <see cref="T:System.Data.DataTableReader" /> if there are no rows within the current result set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.DataTableReader" /> contains one or more rows.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -627,10 +1138,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.DataTableReader.Close" /> is the only method and IsClosed and <see cref="P:System.Data.DataTableReader.RecordsAffected" /> are the only properties that can be accessed after the <see cref="T:System.Data.DataTableReader" /> has been closed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Data.DataTableReader" /> is closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -647,10 +1165,19 @@
       </Parameters>
       <Docs>
         <param name="i">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call this method to see if there are null column values before calling the typed get methods (for example, <see cref="M:System.Data.DataTableReader.GetByte(System.Int32)" />, <see cref="M:System.Data.DataTableReader.GetChar(System.Int32)" />, and so on) to avoid raising an error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the column contains non-existent or missing values.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified column value is equivalent to <see cref="T:System.DBNull" />; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -704,10 +1231,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used to process multiple results that can be generated by creating a <see cref="T:System.Data.DataTableReader" /> over a <see cref="T:System.Data.DataSet" /> that contains two or more tables, or an array that contains two or more <see cref="T:System.Data.DataTable" /> instances.</para>
+          <para>A new <see cref="T:System.Data.DataTableReader" /> is positioned on the first result.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.DataTableReader" /> to the next result set, if any.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there was another result set; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -721,10 +1258,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default position of the <see cref="T:System.Data.DataTableReader" /> is before the first record. Therefore, you must call Read to start accessing any data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the <see cref="T:System.Data.DataTableReader" /> to the next record.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there was another row to read; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -737,10 +1283,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows inserted, changed, or deleted by execution of the SQL statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

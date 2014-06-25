@@ -3,7 +3,7 @@
 
 struct Rectangle
 {
-	int x;
+	internal int x;
 	public int X {
 		set { }
 	}

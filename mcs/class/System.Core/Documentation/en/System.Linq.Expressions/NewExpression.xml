@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NewExpression" FullName="System.Linq.Expressions.NewExpression">
   <TypeSignature Language="C#" Value="public class NewExpression : System.Linq.Expressions.Expression, System.Linq.Expressions.IArgumentProvider" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NewExpression extends System.Linq.Expressions.Expression implements class System.Linq.Expressions.IArgumentProvider" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="Overload:System.Linq.Expressions.Expression.New" /> factory methods to create a <see cref="T:System.Linq.Expressions.NewExpression" />.</para>
+      <para>The value of the <see cref="P:System.Linq.Expressions.Expression.NodeType" /> property of a <see cref="T:System.Linq.Expressions.NewExpression" /> object is <see cref="F:System.Linq.Expressions.ExpressionType.New" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a constructor call.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accept">
@@ -38,10 +46,20 @@
         <Parameter Name="visitor" Type="System.Linq.Expressions.ExpressionVisitor" />
       </Parameters>
       <Docs>
-        <param name="visitor">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default implementation for <see cref="F:System.Linq.Expressions.ExpressionType.Extension" /> nodes calls <see cref="M:System.Linq.Expressions.ExpressionVisitor.VisitExtension(System.Linq.Expressions.Expression)" />. Override this method to call into a more specific method on a derived visitor class of the <see cref="T:System.Linq.Expressions.ExpressionVisitor" /> class. However, it should still support unknown visitors by calling <see cref="M:System.Linq.Expressions.ExpressionVisitor.VisitExtension(System.Linq.Expressions.Expression)" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches to the specific visit method for this node type. For example, <see cref="T:System.Linq.Expressions.MethodCallExpression" /> calls the <see cref="M:System.Linq.Expressions.ExpressionVisitor.VisitMethodCall(System.Linq.Expressions.MethodCallExpression)" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of visiting this node.</para>
+        </returns>
+        <param name="visitor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The visitor to visit this node with.</param>
       </Docs>
     </Member>
     <Member MemberName="Arguments">
@@ -56,9 +74,15 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.Expression&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Linq.Expressions.NewExpression.Arguments" /> property is an empty collection if the constructor takes no arguments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the arguments to the constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Constructor">
@@ -73,9 +97,12 @@
         <ReturnType>System.Reflection.ConstructorInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the called constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Members">
@@ -90,9 +117,15 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Reflection.MemberInfo&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Linq.Expressions.NewExpression.Members" /> property provides a mapping between the constructor arguments and the type members that correspond to those values. In the case of the construction of an anonymous type, this property maps the constructor arguments to the properties that are exposed by the anonymous type. This mapping information is important because the fields that are initialized by the construction of an anonymous type, or the properties that access those fields, are not discoverable through the <see cref="P:System.Linq.Expressions.NewExpression.Constructor" /> or <see cref="P:System.Linq.Expressions.NewExpression.Arguments" /> properties of a <see cref="T:System.Linq.Expressions.NewExpression" /> node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the members that can retrieve the values of the fields that were initialized with constructor arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -106,9 +139,12 @@
         <ReturnType>System.Linq.Expressions.ExpressionType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the node type of this <see cref="T:System.Linq.Expressions.Expression" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.Expressions.IArgumentProvider.ArgumentCount">
@@ -158,9 +194,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the static type of the expression that this <see cref="T:System.Linq.Expressions.Expression" /> represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -177,10 +216,17 @@
         <Parameter Name="arguments" Type="System.Collections.Generic.IEnumerable&lt;System.Linq.Expressions.Expression&gt;" />
       </Parameters>
       <Docs>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.NewExpression.Arguments" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

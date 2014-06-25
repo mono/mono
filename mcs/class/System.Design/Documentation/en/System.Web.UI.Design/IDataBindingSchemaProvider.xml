@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataBindingSchemaProvider" FullName="System.Web.UI.Design.IDataBindingSchemaProvider">
   <TypeSignature Language="C#" Value="public interface IDataBindingSchemaProvider" />
   <AssemblyInfo>
@@ -6,8 +7,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.IDataBindingSchemaProvider" /> class is implemented by design hosts, such as vsprvslong, that host the data-binding dialog box to show schema.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for design-time access to a schema provider in a design host.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CanRefreshSchema">
@@ -20,9 +27,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the provider can refresh the schema.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RefreshSchema">
@@ -38,9 +48,16 @@
         <Parameter Name="preferSilent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="preferSilent">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.IDataBindingSchemaProvider.RefreshSchema(System.Boolean)" /> method is called by the design host only if the <see cref="P:System.Web.UI.Design.IDataBindingSchemaProvider.CanRefreshSchema" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Refreshes the schema for the data source.</para>
+        </summary>
+        <param name="preferSilent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to disable data-binding events until after the schema has been refreshed; false to enable the events.</param>
       </Docs>
     </Member>
     <Member MemberName="Schema">
@@ -53,9 +70,12 @@
         <ReturnType>System.Web.UI.Design.IDataSourceViewSchema</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current schema object for the designer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

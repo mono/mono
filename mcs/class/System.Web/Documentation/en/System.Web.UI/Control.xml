@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Control" FullName="System.Web.UI.Control">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class Control : System.ComponentModel.IComponent, System.Web.UI.IControlBuilderAccessor, System.Web.UI.IControlDesignerAccessor, System.Web.UI.IDataBindingsAccessor, System.Web.UI.IExpressionsAccessor, System.Web.UI.IParserAccessor, System.Web.UI.IUrlResolutionService" />
   <AssemblyInfo>
@@ -61,8 +62,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>This class defines every control that can be handled in a web page.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This is the primary class that you derive from when you develop custom ASP.NET server controls. <see cref="T:System.Web.UI.Control" /> does not have any user interface (UI) specific features. If you are authoring a control that does not have a UI, or combines other controls that render their own UI, derive from <see cref="T:System.Web.UI.Control" />. If you are authoring a control that does have a UI, derive from <see cref="T:System.Web.UI.WebControls.WebControl" /> or any control in the <see cref="N:System.Web.UI.WebControls" /> namespace that provides an appropriate starting point for your custom control.</para>
+      <para>The <see cref="T:System.Web.UI.Control" /> class is the base class for all ASP.NET server controls, including custom controls, user controls, and pages. ASP.NET pages are instances of the <see cref="T:System.Web.UI.Page" /> class, which inherits from the <see cref="T:System.Web.UI.Control" /> class, and that handle requests for files that have an .aspx extension. </para>
+      <para>The <see cref="T:System.Web.UI.Control" /> class can directly or indirectly be used as part of the user interface for your Web application, and as such should be scrutinized to make sure best practices for writing secure code and securing applications are followed.</para>
+      <para>For general information on these topics, see <format type="text/html"><a href="88d61678-f84e-4622-ae80-53128821855a">Overview of Web Application Security Threats</a></format>, <format type="text/html"><a href="d49bc4d5-efb7-4caa-a2fe-e4d3cec63c05">Security Policy Best Practices</a></format>, and <format type="text/html"><a href="3cfced4f-ea02-4e66-ae98-d69286363e98">Key Security Concepts</a></format>. For more specific information, see <format type="text/html"><a href="f3e7718f-63d0-44a3-bd5f-48cc2059c2a8">Securing Standard Controls</a></format>, <format type="text/html"><a href="6f70ac33-6e11-4e98-ab7d-bae9c0e7eefa">How to: Display Safe Error Messages</a></format>, <format type="text/html"><a href="6f67973f-dda0-45a1-ba9d-e88532d7dc5b">How to: Protect Against Script Exploits in a Web Application by Applying HTML Encoding to Strings</a></format>, and <format type="text/html"><a href="3c0e7514-cff2-4bed-936d-ee3f7b740190">Introduction to the Validation Controls</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the properties, methods, and events that are shared by all ASP.NET server controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -71,8 +81,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Control" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -89,9 +102,16 @@
         <ReturnType>System.Web.UI.Adapters.ControlAdapter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET Web pages are usable across a wide range of devices and browsers that can request information from the Web. The <see cref="P:System.Web.UI.Control.Adapter" /> property returns the <see cref="T:System.Web.UI.Adapters.ControlAdapter" /> object that renders the control on the requesting device or browser's screen.</para>
+          <para>For more information about adapters, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the browser-specific adapter for the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddedControl">
@@ -109,10 +129,18 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.AddedControl(System.Web.UI.Control,System.Int32)" /> method is called immediately after a control is added to the <see cref="P:System.Web.UI.Control.Controls" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called after a child control is added to the <see cref="P:System.Web.UI.Control.Controls" /> collection of the <see cref="T:System.Web.UI.Control" /> object.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> that has been added. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the control in the <see cref="P:System.Web.UI.Control.Controls" /> collection. </param>
       </Docs>
     </Member>
     <Member MemberName="AddParsedSubObject">
@@ -125,9 +153,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unless you override it, this method automatically adds <see cref="T:System.Web.UI.LiteralControl" /> objects to the server control's <see cref="T:System.Web.UI.ControlCollection" /> object. This collection is accessible through <see cref="P:System.Web.UI.Control.Controls" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the server control that an element, either XML or HTML, was parsed, and adds the element to the server control's <see cref="T:System.Web.UI.ControlCollection" /> object.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the parsed element. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -152,9 +187,16 @@
         <Parameter Name="page" Type="System.Web.UI.Page" />
       </Parameters>
       <Docs>
-        <param name="page">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.ApplyStyleSheetSkin(System.Web.UI.Page)" /> method sets style properties on the control based on skin properties defined in a theme directory. The skin applied is either the default skin for the control or the skin specified in the <see cref="P:System.Web.UI.Control.SkinID" /> property. The <see cref="M:System.Web.UI.Control.ApplyStyleSheetSkin(System.Web.UI.Page)" /> method is called by ASP.NET for declarative controls placed on a page. You must call the <see cref="M:System.Web.UI.Control.ApplyStyleSheetSkin(System.Web.UI.Page)" /> method on any controls created programmatically at run time for style sheet skins to apply to the control. Theme skins are applied automatically. For more information on the difference between themes and cascading style sheets, see <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the style properties defined in the page style sheet to the control.</para>
+        </summary>
+        <param name="page">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Page" /> containing the control.</param>
       </Docs>
     </Member>
     <Member MemberName="AppRelativeTemplateSourceDirectory">
@@ -178,9 +220,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Control.AppRelativeTemplateSourceDirectory" /> property contains the application-relative path to the page or user control that contains the current control. For example, if the Web page resides at http://www.contoso.com/application/subdirectory, the <see cref="P:System.Web.UI.Control.AppRelativeTemplateSourceDirectory" /> property returns "~/subdirectory".</para>
+          <para>To return the virtual path ("application/subdirectory"), use the <see cref="P:System.Web.UI.Control.TemplateSourceDirectory" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the application-relative virtual directory of the <see cref="T:System.Web.UI.Page" /> or <see cref="T:System.Web.UI.UserControl" /> object that contains this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingContainer">
@@ -190,9 +239,16 @@
         <ReturnType>System.Web.UI.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Control'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Control.BindingContainer" /> property contains a reference to the <see cref="T:System.Web.UI.Control" /> object that contains the data-binding information for the current control.</para>
+          <para>The <see cref="P:System.Web.UI.Control.BindingContainer" /> property is the same as the <see cref="P:System.Web.UI.Control.NamingContainer" /> property, except when the control is part of a template. In that case, the <see cref="P:System.Web.UI.Control.BindingContainer" /> property is set to the <see cref="T:System.Web.UI.Control" /> that defines the template.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control that contains this control's data binding.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -221,10 +277,18 @@
         <Parameter Name="calcViewState" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="parentId">To be added: an object of type 'string'</param>
-        <param name="calcViewState">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gathers the information necessary about a page's UI hierarchy and passes it to the page's <format type="text/html"><a href="7931c942-63c1-47c3-a045-9d9de3cacdbf">&lt;trace&gt; Element</a></format> property. When you enable tracing, either for a page or for your application, this information is displayed in the Control Tree section of the trace output. Trace output for a page is appended to the end of the page; while trace output for an application can be viewed from the trace viewer (trace.axd file) which is stored in the application's root directory. For more information about tracing, see <format type="text/html"><a href="1552561d-887c-4002-8770-f92662cdf416">ASP.NET Tracing Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gathers information about the server control and delivers it to the <see cref="P:System.Web.UI.Page.Trace" /> property to be displayed when tracing is enabled for the page.</para>
+        </summary>
+        <param name="parentId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier of the control's parent. </param>
+        <param name="calcViewState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean that indicates whether the view-state size is calculated. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -238,9 +302,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the server control's child controls have been created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -258,8 +325,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.ClearChildControlState" /> method is used when child control-state information written to the parent control's control state is overridden as new child controls are created, such as when data-binding child controls in a templated data-bound server control. Calling the <see cref="M:System.Web.UI.Control.ClearChildControlState" /> method to empty child controls before calling the <see cref="M:System.Web.UI.Control.SaveControlState" /> method reduces the size of the control-state information that must be stored or transmitted. </para>
+          <para>When recreating child controls of a <see cref="T:System.Web.UI.Control" /> object, use the <see cref="M:System.Web.UI.Control.ClearChildControlState" /> method to clear child control state so that it does not get applied to the new controls inadvertently.</para>
+          <para>To clear both the child control state and view state, use the <see cref="M:System.Web.UI.Control.ClearChildState" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the control-state information for the server control's child controls. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClearChildState">
@@ -273,8 +348,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.ClearChildState" /> method clears all view-state and control-state information for child controls. It is equivalent to calling both the <see cref="M:System.Web.UI.Control.ClearChildViewState" /> method and the <see cref="M:System.Web.UI.Control.ClearChildControlState" /> method.</para>
+          <para>When recreating child controls of a <see cref="T:System.Web.UI.Control" /> object, use the <see cref="M:System.Web.UI.Control.ClearChildState" /> method to clear child state so that it does not get applied to the new controls inadvertently.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the view-state and control-state information for all the server control's child controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClearChildViewState">
@@ -285,8 +367,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is commonly used when you override the <see cref="M:System.Web.UI.Control.DataBind" /> method when developing templated data-bound server controls. If you do not call this method, child control view–state information can be written to a parent server control, only to be overridden when the data is bound.</para>
+          <para>When recreating child controls of a <see cref="T:System.Web.UI.Control" />, use the <see cref="M:System.Web.UI.Control.ClearChildViewState" /> method to clear child view state so that it does not get applied to the new controls inadvertently.</para>
+          <para>For more information about using this method, see <format type="text/html"><a href="07664410-02dd-4494-af53-a9259741d4f2">How to: Create Templated User Controls</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Deletes the view-state information for all the server control's child controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -300,9 +390,71 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a Web server control is rendered as an HTML element, the id attribute of the HTML element is set to the value of the <see cref="P:System.Web.UI.Control.ClientID" /> property. The <see cref="P:System.Web.UI.Control.ClientID" /> value is often used to access the HTML element in client script by using the document.getElementById method. The ID is also often used in CSS rules to specify elements to style. For example, the following CSS style rule selects all span elements that have the id attribute value of ProductIDLabel and sets their background-color attribute to white:</para>
+          <code>span#ProductIDLabel { background-color: white; }</code>
+          <para>ASP.NET provides multiple algorithms for how to generate the <see cref="P:System.Web.UI.Control.ClientID" /> property value. You select which algorithm to use for a control by setting its <see cref="P:System.Web.UI.Control.ClientIDMode" /> property. The algorithms are identified by the <see cref="T:System.Web.UI.ClientIDMode" /> enumeration values that are listed in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.ClientIDMode.AutoID" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Web.UI.Control.ClientID" /> value is generated by concatenating the <see cref="P:System.Web.UI.Control.ID" /> values of each parent naming container with the <see cref="P:System.Web.UI.Control.ID" /> value of the control. In data-binding scenarios where multiple instances of a control are rendered, an incrementing value is inserted in front of the control's <see cref="P:System.Web.UI.Control.ID" /> value. Each segment is separated by an underscore character (_). This algorithm was used in versions of ASP.NET earlier than ASP.NET 4.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.ClientIDMode.Static" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Web.UI.Control.ClientID" /> value is set to the value of the <see cref="P:System.Web.UI.Control.ID" /> property. If the control is a naming container, the control is used as the top of the hierarchy of naming containers for any controls that it contains.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.ClientIDMode.Predictable" />
+                </para>
+              </term>
+              <description>
+                <para>This algorithm is used for controls that are in data-bound controls. The <see cref="P:System.Web.UI.Control.ClientID" /> value is generated by concatenating the <see cref="P:System.Web.UI.Control.ClientID" /> value of the parent naming container with the <see cref="P:System.Web.UI.Control.ID" /> value of the control. If the control is a data-bound control that generates multiple rows, the value of the data field specified in the <see cref="P:System.Web.UI.WebControls.IDataBoundListControl.ClientIDRowSuffix" /> property is added at the end. For the <see cref="T:System.Web.UI.WebControls.GridView" /> control, multiple data fields can be specified. If the <see cref="P:System.Web.UI.WebControls.IDataBoundListControl.ClientIDRowSuffix" /> property is blank, a sequential number is added at the end instead of a data-field value. Each segment is separated by an underscore character (_).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.ClientIDMode.Inherit" />
+                </para>
+              </term>
+              <description>
+                <para>The control inherits the <see cref="T:System.Web.UI.ClientIDMode" /> setting of its <see cref="P:System.Web.UI.Control.NamingContainer" /> control.</para>
+              </description>
+            </item>
+          </list>
+          <para>The default value of <see cref="P:System.Web.UI.Control.ClientIDMode" /> for a page is <see cref="F:System.Web.UI.ClientIDMode.Predictable" />. The default value of <see cref="P:System.Web.UI.Control.ClientIDMode" /> for a control is <see cref="F:System.Web.UI.ClientIDMode.Inherit" />. Because the default for controls is <see cref="F:System.Web.UI.ClientIDMode.Inherit" />, the default generation mode is <see cref="F:System.Web.UI.ClientIDMode.Predictable" />. (However, if you use Visual Studio to convert a Web project to ASP.NET 4 from an earlier version, Visual Studio automatically sets the site default to <see cref="F:System.Web.UI.ClientIDMode.AutoID" /> in the Web.config file.)</para>
+          <para>For more information, see <format type="text/html"><a href="45a8c3ef-5ac7-48f1-862a-0cd5073742e7">ASP.NET Control Identification</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control ID for HTML markup that is generated by ASP.NET.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -327,9 +479,15 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Control.ClientID" /> value is generated by concatenating the <see cref="P:System.Web.UI.Control.ID" /> value of the control and the <see cref="P:System.Web.UI.Control.UniqueID" /> value of its parent control. Each part of the generated <see cref="P:System.Web.UI.Control.ID" /> property is separated by the <see cref="P:System.Web.UI.Control.ClientIDSeparator" /> property value. The value always returns an underscore (_).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a character value representing the separator character used in the <see cref="P:System.Web.UI.Control.ClientID" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Context">
@@ -340,9 +498,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.HttpContext" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property gives you access to the <see cref="T:System.Web.HttpContext" /> object for the current Web request. The object provides properties that access the <see cref="P:System.Web.HttpContext.Application" />, <see cref="P:System.Web.HttpContext.Session" />, <see cref="P:System.Web.HttpContext.Request" />, <see cref="P:System.Web.HttpContext.Response" /> and other objects that contain information about the current HTTP request. It also provides methods that allow you to obtain configuration information and set or clear errors for the request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> object associated with the server control for the current Web request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -364,9 +528,16 @@
         <ReturnType>System.Web.UI.ControlCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ControlCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On an ASP.NET page, when controls are added declaratively between the opening and closing tags of a server control, ASP.NET automatically adds the controls to the containing server control's <see cref="T:System.Web.UI.ControlCollection" />. Any HTML tags or text strings that are not processed on the server are treated as <see cref="T:System.Web.UI.LiteralControl" /> objects. These are added to the collection like other server controls.</para>
+          <para>The <see cref="P:System.Web.UI.Control.Controls" /> property allows you programmatic access to the instance of the <see cref="T:System.Web.UI.ControlCollection" /> class for any server control. You can add controls to the collection, remove controls from the collection, or iterate through the server controls in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ControlCollection" /> object that represents the child controls for a specified server control in the UI hierarchy.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -389,8 +560,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When you develop a composite or templated server control, you must override this method. Controls that override the <see cref="M:System.Web.UI.Control.CreateChildControls" /> method should implement the <see cref="T:System.Web.UI.INamingContainer" /> interface to avoid naming conflicts.</para>
+          <para>For more information, see <format type="text/html"><a href="f769d290-fd04-4084-85fc-4ea30dd2e8ae">ASP.NET Web Server Controls Templates</a></format> and <format type="text/html"><a href="fbe26c16-cff4-4089-b3dd-877411f0c0ef">Developing Custom ASP.NET Server Controls</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the ASP.NET page framework to notify server controls that use composition-based implementation to create any child controls they contain in preparation for posting back or rendering.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -405,9 +583,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'ControlCollection'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override this method in a custom server control if you have created a collection object that is derived from the <see cref="T:System.Web.UI.ControlCollection" /> class. You can then instantiate that collection class in the override of this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> object to hold the child controls (both literal and server) of the server control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ControlCollection" /> object to contain the current server control's child server controls.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -422,8 +609,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to bind data from a source to a server control. This method is commonly used after retrieving a dataset through a database query. Most controls perform data binding automatically, which means that you typically do not need to call this method explicitly.</para>
+          <para>This method is commonly overridden when you create a custom templated data-bound control. For more information, see <format type="text/html"><a href="07664410-02dd-4494-af53-a9259741d4f2">How to: Create Templated User Controls</a></format> and <format type="text/html"><a href="88fe02a3-957f-4ff7-84f5-2d7ab78db4c1">Developing Custom Data-Bound Web Server Controls</a></format>. When called on a server control, this method resolves all data-binding expressions in the server control and in any of its child controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds a data source to the invoked server control and all its child controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -443,9 +637,20 @@
         <Parameter Name="raiseOnDataBinding" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="raiseOnDataBinding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Control.DataBind(System.Boolean)" /> method in a scenario when your custom control overrides the <see cref="M:System.Web.UI.Control.DataBind" /> method and implements the <see cref="T:System.Web.UI.IDataItemContainer" /> interface. In this scenario, the custom control calls the <see cref="M:System.Web.UI.Control.DataBind(System.Boolean)" /> method with <paramref name="raiseOnDataBinding" /> set to false to ensure that the base class's <see cref="M:System.Web.UI.Control.DataBind" /> method gets called.</para>
+          <para>The <see cref="M:System.Web.UI.Control.DataBind" /> method invokes the <see cref="M:System.Web.UI.Control.DataBind(System.Boolean)" /> method with <paramref name="raiseOnDataBinding" /> set to true.</para>
+          <block subset="none" type="note">
+            <para>Calling the <see cref="M:System.Web.UI.Control.DataBind(System.Boolean)" /> method with <paramref name="raiseOnDataBinding" /> set to false causes any child controls to be data bound with the <see cref="M:System.Web.UI.Control.DataBind" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds a data source to the invoked server control and all its child controls with an option to raise the <see cref="E:System.Web.UI.Control.DataBinding" /> event. </para>
+        </summary>
+        <param name="raiseOnDataBinding">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the <see cref="E:System.Web.UI.Control.DataBinding" /> event is raised; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="DataBindChildren">
@@ -459,8 +664,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Control.DataBindChildren" /> method to bind a data source to the child controls of a server control.</para>
+          <block subset="none" type="note">
+            <para>When called on a server control, this method does not bind data to the control. To bind a server control and all its child controls, call the <see cref="M:System.Web.UI.Control.DataBind" /> method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds a data source to the server control's child controls.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataBinding">
@@ -471,8 +685,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event notifies the server control to perform any data-binding logic that has been written for it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control binds to a data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -489,9 +709,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Control.DesignMode" /> property returns true to indicate that the control is being used in the context of a designer. Your custom controls can use this property when design-time behavior is different than run-time behavior.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a control is being used on a design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -502,8 +728,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Web.UI.Control.Dispose" /> when you are finished using the <see cref="T:System.Web.UI.Control" />. The <see cref="M:System.Web.UI.Control.Dispose" /> method leaves the <see cref="T:System.Web.UI.Control" /> in an unusable state. After calling this method, you must release all references to the control so the memory it was occupying can be reclaimed by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables a server control to perform final clean up before it is released from memory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -518,8 +750,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resources that require significant processor time, such as database connections, should be released with this event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a server control is released from memory, which is the last stage of the server control lifecycle when an ASP.NET page is requested.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -547,9 +785,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Control.EnableTheming" /> property indicates whether themes are enabled for a specified control. When the <see cref="P:System.Web.UI.Control.EnableTheming" /> property is true, the application's theme directory is searched for control skins to apply. If no skin for the particular control exists in the theme directory, skins are not applied.</para>
+          <para>When the <see cref="P:System.Web.UI.Control.EnableTheming" /> property is false, the theme directory is not searched and the content of the <see cref="P:System.Web.UI.Control.SkinID" /> property is not used.</para>
+          <para>Themes can be enabled at the page, container, or control level. A control can override the <see cref="P:System.Web.UI.Control.EnableTheming" /> value set by its parent control, or by the containing page. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether themes apply to this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableViewState">
@@ -560,9 +806,30 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>View state enables a server control to maintain its state across HTTP requests. View state for a control is enabled if all of the following conditions are met:</para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.Web.UI.Control.EnableViewState" /> property for the page is set to true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Web.UI.Control.EnableViewState" /> property for the control is set to true.</para>
+            </item>
+            <item>
+              <para>The <see cref="P:System.Web.UI.Control.ViewStateMode" /> property for the control is set to <see cref="F:System.Web.UI.ViewStateMode.Enabled" /> or inherits the <see cref="F:System.Web.UI.ViewStateMode.Enabled" /> setting.</para>
+            </item>
+          </list>
+          <para>For more information, see the <see cref="P:System.Web.UI.Control.ViewStateMode" /> property.</para>
+          <para>A server control's view state is the accumulation of all its property values. In order to preserve these values across HTTP requests, ASP.NET uses an instance of the <see cref="T:System.Web.UI.StateBag" /> class to store the property values. The values are then passed as a variable to a hidden field when subsequent requests are processed. For more information about view state, see <format type="text/html"><a href="19d2a6ed-9a77-4c7c-a7f5-74dd4b6c3818">ASP.NET View State Overview</a></format>.</para>
+          <para>There are times when it is appropriate to disable view state, particularly to improve application performance. For example, if you are loading a database request into a server control, set this property to false. If you do not, processor time will be wasted loading view state into the server control that will only be overridden by the database query. If <see cref="P:System.Web.UI.Control.EnableViewState" /> is false, you can use the control state to persist property information that is specific to a control and cannot be turned off like the view state property. For more information on the difference between control state and view state, see <format type="text/html"><a href="9e98c7de-a888-48df-b14e-02ec8bef7681">Control State vs. View State Example</a></format>. </para>
+          <para>For information about how to enable or disable view state declaratively for an ASP.NET page, see <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the server control persists its view state, and the view state of any child controls it contains, to the requesting client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -585,8 +852,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method first checks the current value of the <see cref="P:System.Web.UI.Control.ChildControlsCreated" /> property. If this value is false, the <see cref="M:System.Web.UI.Control.CreateChildControls" /> method is called.</para>
+          <para>The <see cref="M:System.Web.UI.Control.EnsureChildControls" /> method is typically used in composite controls, which are controls that use child controls for some or all their functionality. The <see cref="M:System.Web.UI.Control.EnsureChildControls" /> method is called in order to make sure that child controls have been created and are ready to process input, to perform data binding, or to perform other tasks. </para>
+          <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control is an example of a composite control. It creates child controls such as <see cref="T:System.Web.UI.WebControls.Table" />, <see cref="T:System.Web.UI.WebControls.TableRow" />, <see cref="T:System.Web.UI.WebControls.TableCell" />, <see cref="T:System.Web.UI.WebControls.Label" />, and <see cref="T:System.Web.UI.WebControls.TextBox" /> controls, which are used to render the HTML table that the <see cref="T:System.Web.UI.WebControls.GridView" /> generates.</para>
+          <para>In most cases, custom server control developers do not have to override this method. If you do override this method, use it in a way similar to the default behavior.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the server control contains child controls. If it does not, it creates child controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -604,8 +880,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.EnsureID" /> method generates an identifier for controls that are contained in another control. Identifiers are generated only for controls that do not have a value assigned to the <see cref="P:System.Web.UI.Control.ID" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an identifier for controls that do not have an identifier assigned.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Events">
@@ -616,9 +898,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.ComponentModel.EventHandlerList" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is of type <see cref="T:System.ComponentModel.EventHandlerList" />, which uses a linear search algorithm to find entries in the list of delegates. A linear search algorithm is inefficient when working with a large number of entries. Therefore, when you have a large list, finding entries with this property will be slow.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of event handler delegates for the control. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -635,10 +923,20 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="id">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Control'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="M:System.Web.UI.Control.FindControl(System.String)" /> to access a control from a function in a code-behind page, to access a control that is inside another container, or in other circumstances where the target control is not directly accessible to the caller. This method will find a control only if the control is directly contained by the specified container; that is, the method does not search throughout a hierarchy of controls within controls. For information about how to find a control when you do not know its immediate container, see <format type="text/html"><a href="59964ef8-72ef-4159-9f1a-5b230ff46fb3">How to: Access Server Controls by ID</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the current naming container for a server control with the specified <paramref name="id" /> parameter.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -656,11 +954,19 @@
         <Parameter Name="pathOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="id">To be added: an object of type 'string'</param>
-        <param name="pathOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'Control'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the current naming container for a server control with the specified <paramref name="id" /> and an integer, specified in the <paramref name="pathOffset" /> parameter, which aids in the search. You should not override this version of the <see cref="Overload:System.Web.UI.Control.FindControl" /> method.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found. </param>
+        <param name="pathOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of controls up the page control hierarchy needed to reach a naming container. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -678,8 +984,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Control.Focus" /> method to set the initial focus of the Web page to the control. The page will be opened in the browser with the control selected.</para>
+          <para>The <see cref="M:System.Web.UI.Control.Focus" /> method causes a call to the page focus script to be emitted on the rendered page. If the page does not contain a control with an HTML ID attribute that matches the control that the <see cref="M:System.Web.UI.Control.Focus" /> method was invoked on, then page focus will not be set. An example where this can occur is when you set the focus on a user control instead of setting the focus on a child control of the user control. In this scenario, you can use the <see cref="M:System.Web.UI.Control.FindControl(System.String)" /> method to find the child control of the user control and invoke its <see cref="M:System.Web.UI.Control.Focus" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets input focus to a control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetDesignModeState">
@@ -693,9 +1006,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.GetDesignModeState" /> method returns design-time data for a control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets design-time data for a control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> containing the design-time data for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasChildViewState">
@@ -705,9 +1027,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can avoid unnecessary calls to the <see cref="M:System.Web.UI.Control.ClearChildViewState" /> method by using this property to verify that any child controls of the server control are storing view-state information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current server control's child controls have any saved view-state settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -722,9 +1050,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Since this method simply determines if any child controls exist, it can enhance performance by allowing you to avoid an unnecessary <see cref="P:System.Web.UI.ControlCollection.Count" /> property call. Calls to this property require a <see cref="T:System.Web.UI.ControlCollection" /> object to be instantiated. If there are no children, this object creation wastes server resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the server control contains any child controls.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control contains other controls; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -742,9 +1079,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value indicating whether events are registered for the control or any child controls.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if events are registered; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ID">
@@ -755,9 +1098,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property on a server control provides you with programmatic access to the server control's properties, events, and methods. This property can be set by Web developers by declaring an <see cref="P:System.Web.UI.Control.ID" /> attribute in the opening tag of an ASP.NET server control.</para>
+          <para>If this property is not specified for a server control, either declaratively or programmatically, you can obtain a reference to the control through its parent control's <see cref="P:System.Web.UI.Control.Controls" /> property.</para>
+          <block subset="none" type="note">
+            <para>Only combinations of alphanumeric characters and the underscore character ( _ ) are valid values for this property. Including spaces or other invalid characters will cause an ASP.NET page parser error.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the programmatic identifier assigned to the server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -788,9 +1141,15 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character contained in the <see cref="P:System.Web.UI.Control.IdSeparator" /> property is used to separate the control identifiers for child controls. The ID separator character is appended to the <see cref="P:System.Web.UI.Control.ID" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the character used to separate control identifiers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Init">
@@ -801,8 +1160,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Server controls should perform any initialization steps that are required to create and set up an instance. You cannot use view-state information within this event; it is not populated yet. You should not access another server control during this event, regardless of whether it is a child or parent to this control. Other server controls are not certain to be created and ready for access. For more information on server control events, see <format type="text/html"><a href="6304bff7-1b0e-4641-8acb-6d3b0badc4a3">ASP.NET Web Server Control Event Model</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control is initialized, which is the first step in its lifecycle.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -819,9 +1184,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether controls contained within this control have control state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsLiteralContent">
@@ -832,9 +1200,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this method returns true, the server control's collection holds a single literal control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if the server control holds only literal content.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control contains solely literal content; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -848,9 +1225,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a sample custom server control that uses this property, see <format type="text/html"><a href="986f63b8-6b50-42b9-a62d-a2f13cafa88b">Templated Server Control and Designer Sample</a></format> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the server control is saving changes to its view state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -867,9 +1250,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>View state can be enabled at the page, container, or control level. When view state is disabled at the page or container level, view state is disabled for all controls contained by the page or container. The <see cref="P:System.Web.UI.Control.IsViewStateEnabled" /> property indicates whether view state is enabled by pages, containers, or controls.</para>
+          <para>It is possible for the <see cref="P:System.Web.UI.Control.EnableViewState" /> property and the <see cref="P:System.Web.UI.Control.IsViewStateEnabled" /> property to be different. For example, if the <see cref="T:System.Web.UI.Page" /> containing the control has view state disabled, the <see cref="P:System.Web.UI.Control.EnableViewState" /> property can be true while the <see cref="P:System.Web.UI.Control.IsViewStateEnabled" /> property is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether view state is enabled for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Load">
@@ -880,8 +1270,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notifies the server control to perform any processing steps that are set to occur on each page request. You can access view state information and Web form POST data from this event. You can also access other server controls within the page's control hierarchy.</para>
+          <block subset="none" type="note">
+            <para>If you set a custom template in a control during the Page_Load event, the text values of child controls in the custom template will be lost. This occurs because the form values have already been loaded.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control is loaded into the <see cref="T:System.Web.UI.Page" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -902,8 +1301,14 @@
       </Parameters>
       <Docs>
         <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override this method when you need to specify how a custom server control restores its control state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores control-state information from a previous page request that was saved by the <see cref="M:System.Web.UI.Control.SaveControlState" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoadViewState">
@@ -916,9 +1321,16 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by the .NET Framework infrastructure and is not intended to be used directly from your code. However, control developers can override this method to specify how a custom server control restores its view state. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores view-state information from a previous page request that was saved by the <see cref="M:System.Web.UI.Control.SaveViewState" /> method.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the control state to be restored. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -935,9 +1347,25 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, when a parent control loads view state into child controls it creates, it does this by the position of each child control in the parent control's <see cref="P:System.Web.UI.Control.Controls" /> collection. When view state is initially applied, all child controls might not have been created. In this case, the view state for controls not yet created is saved, and applied when the child controls are created later.</para>
+          <para>For a parent control to apply view state to its child controls, two conditions must be met:</para>
+          <list type="bullet">
+            <item>
+              <para>On postback, the parent control must create the child controls in exactly the same order as the previous request so that the order of the controls remains consistent.</para>
+            </item>
+            <item>
+              <para>After postback, any child controls created must be added to the end of the parent control's <see cref="P:System.Web.UI.Control.Controls" /> collection.</para>
+            </item>
+          </list>
+          <para>If these two conditions cannot be met, as in the case of the delayed creation of a child control, the parent control can load view state by using <see cref="P:System.Web.UI.Control.ID" />. To set the <see cref="P:System.Web.UI.Control.LoadViewStateByID" /> property to true, use the <see cref="T:System.Web.UI.ViewStateModeByIdAttribute" /> metadata attribute for the parent control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the control participates in loading its view state by <see cref="P:System.Web.UI.Control.ID" /> instead of index. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MapPathSecure">
@@ -950,10 +1378,20 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can only be used by server controls that have permissions to read files and which are part of fully trusted .dll files, such as System.Web.dll. This helps prevent security breaches.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the physical path that a virtual path, either absolute or relative, maps to.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path to the requested file.</para>
+        </returns>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />A relative or root relative URL. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -967,9 +1405,17 @@
         <ReturnType>System.Web.UI.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Control'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each page in an ASP.NET Web application contains a hierarchy of controls. This hierarchy is not dependent on whether a control generates UI visible to the user. The naming container for a given control is the parent control above it in the hierarchy that implements the <see cref="T:System.Web.UI.INamingContainer" /> interface. A server control that implements this interface creates a unique namespace for the <see cref="P:System.Web.UI.Control.ID" /> property values of its child server controls. You can use the <see cref="P:System.Web.UI.Control.NamingContainer" /> property of a naming container's child control to get a reference to its parent container.</para>
+          <para>Creating a unique namespace for server controls is particularly important when you bind Web server controls to data, such as the <see cref="T:System.Web.UI.WebControls.Repeater" /> and <see cref="T:System.Web.UI.WebControls.DataList" /> server controls. When multiple entries in the data source create multiple instances of a server control that is a child of the repeating control, the naming container ensures that each instance of these child controls have <see cref="P:System.Web.UI.Control.UniqueID" /> property values that do not conflict. The default naming container for a page is the instance of the <see cref="T:System.Web.UI.Page" /> class that is generated when that page is requested.</para>
+          <para>The <see cref="P:System.Web.UI.Control.ClientID" /> property contains the value that is rendered as the element's id attribute in the HTML markup. Depending on the value that you assign to the <see cref="P:System.Web.UI.Control.ClientIDMode" /> property, the value that is generated for the <see cref="P:System.Web.UI.Control.ClientID" /> property might include the ID of the <see cref="P:System.Web.UI.Control.NamingContainer" /> object. When you set <see cref="P:System.Web.UI.Control.ClientIDMode" /> to <see cref="F:System.Web.UI.ClientIDMode.Static" />, the <see cref="P:System.Web.UI.Control.ClientID" /> value does not include the ID of the <see cref="P:System.Web.UI.Control.NamingContainer" /> object. When you set <see cref="P:System.Web.UI.Control.ClientIDMode" /> to either <see cref="F:System.Web.UI.ClientIDMode.AutoID" /> or <see cref="F:System.Web.UI.ClientIDMode.Predictable" />, the <see cref="P:System.Web.UI.Control.ClientID" /> value will include the ID from the <see cref="P:System.Web.UI.Control.NamingContainer" /> object. For more information, see <format type="text/html"><a href="45a8c3ef-5ac7-48f1-862a-0cd5073742e7">ASP.NET Control Identification</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the server control's naming container, which creates a unique namespace for differentiating between server controls with the same <see cref="P:System.Web.UI.Control.ID" /> property value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -995,11 +1441,22 @@
         <Parameter Name="args" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'object'</param>
-        <param name="args">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'bool'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET server controls such as the <see cref="T:System.Web.UI.WebControls.Repeater" />, <see cref="T:System.Web.UI.WebControls.DataList" /> and <see cref="T:System.Web.UI.WebControls.GridView" /> Web controls can contain child controls that raise events. For example, each row in a <see cref="T:System.Web.UI.WebControls.GridView" /> control can contain one or more buttons created dynamically by templates. Rather than each button raising an event individually, events from the nested controls are "bubbled"—that is, they are sent to the naming container. The naming container in turn raises a generic event called <see cref="E:System.Web.UI.WebControls.GridView.RowCommand" /> with parameter values. These values allow you to determine which individual control that raised the original event. By responding to this single event, you can avoid having to write individual event-handling methods for child controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the event for the server control is passed up the page's UI server control hierarchy.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event has been canceled; otherwise, false. The default is false.</para>
+        </returns>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1016,9 +1473,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method notifies a server control to perform any logic for binding data that is associated with it.</para>
+          <para>If you want to handle the <see cref="E:System.Web.UI.Control.DataBinding" /> event, you should override this event-handling method. This ensures that all delegates attached to the <see cref="E:System.Web.UI.Control.DataBinding" /> event are invoked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.DataBinding" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1035,9 +1500,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET calls this method to raise the <see cref="E:System.Web.UI.Control.Init" /> event. If you are developing a custom control, you can override this method in order to provide additional processing. If you override this method, call the base control's <see cref="M:System.Web.UI.Control.OnInit(System.EventArgs)" /> method to notify subscribers to the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1054,9 +1526,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET calls this method to raise the <see cref="E:System.Web.UI.Control.Load" /> event. If you are developing a custom control, you can override this method in order to provide additional processing. If you override this method, call the base control's <see cref="M:System.Web.UI.Control.OnLoad(System.EventArgs)" /> method to notify subscribers to the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Load" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1073,9 +1552,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET calls this method to raise the <see cref="E:System.Web.UI.Control.PreRender" /> event. If you are developing a custom control, you can override this method in order to provide additional processing. If you override this method, call the base control's <see cref="M:System.Web.UI.Control.OnPreRender(System.EventArgs)" /> method to notify subscribers to the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.PreRender" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1092,9 +1578,16 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET calls this method to raise the <see cref="E:System.Web.UI.Control.Unload" /> event. If you are developing a custom control, you can override this method in order to provide additional processing. If you override this method, call the base control's <see cref="M:System.Web.UI.Control.OnUnload(System.EventArgs)" /> method to notify subscribers to the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Unload" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1114,10 +1607,21 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.OpenFile(System.String)" /> method returns a <see cref="T:System.IO.Stream" /> object that can be used to read the contents of the file specified in the <paramref name="path" /> parameter. The path parameter can be either a relative or root URL without a protocol (such as "~/mySite/myFile.txt), or a physical path, either local ("c:\mySite\myFile.txt") or UNC ("\\myServer\myFile.txt").</para>
+          <para>The <see cref="M:System.Web.UI.Control.OpenFile(System.String)" /> method uses file access security to control access to the specified file. If the current ASP.NET user does not have access to the file, then the file is not opened and an <see cref="T:System.Web.HttpException" /> exception is thrown to indicate that access was denied. If the <paramref name="path" /> parameter specified a relative path, the exception does not include information about the physical path to the requested file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.IO.Stream" /> used to read a file.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> that references the desired file.</para>
+        </returns>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the desired file.</param>
       </Docs>
     </Member>
     <Member MemberName="Page">
@@ -1128,9 +1632,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Page'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property's value reflects the name of the .aspx file that contains the server control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the <see cref="T:System.Web.UI.Page" /> instance that contains the server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1155,9 +1665,15 @@
         <ReturnType>System.Web.UI.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Control'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Whenever a page is requested, a hierarchy of server controls on that page is built. This property allows you to determine the parent control of the current server control in that hierarchy, and to program against it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a reference to the server control's parent control in the page control hierarchy.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1180,8 +1696,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this event to perform any updates before the server control is rendered to the page. Any changes in the view state of the server control can be saved during this event. Such changes made in the rendering phase will not be saved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the <see cref="T:System.Web.UI.Control" /> object is loaded but prior to rendering.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1199,10 +1721,19 @@
         <Parameter Name="args" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="source">To be added: an object of type 'object'</param>
-        <param name="args">To be added: an object of type 'EventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET server controls such as the <see cref="T:System.Web.UI.WebControls.Repeater" />, <see cref="T:System.Web.UI.WebControls.DataList" /> and <see cref="T:System.Web.UI.WebControls.GridView" /> Web controls can contain child controls that raise events. For example, each row in a <see cref="T:System.Web.UI.WebControls.GridView" /> control can contain one or more buttons created dynamically by templates. Rather than each button raising an event individually, events from the nested controls are "bubbled"—that is, they are sent to the control's parent. The parent in turn raises a generic event called <see cref="E:System.Web.UI.WebControls.GridView.RowCommand" /> with parameter values. These values allow you to determine which individual control that raised the original event. By responding to this single event, you can avoid having to write individual event-handling methods for child controls.</para>
+          <para>While you cannot override this method, controls you author can handle or raise bubbled events by overriding the <see cref="M:System.Web.UI.Control.OnBubbleEvent(System.Object,System.EventArgs)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns any sources of the event and its information to the control's parent.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1223,9 +1754,16 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.RemovedControl(System.Web.UI.Control)" /> method is called immediately after a control is removed from the <see cref="P:System.Web.UI.Control.Controls" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called after a child control is removed from the <see cref="P:System.Web.UI.Control.Controls" /> collection of the <see cref="T:System.Web.UI.Control" /> object.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> that has been removed. </param>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -1238,9 +1776,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'HtmlTextWriter'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When developing custom server controls, you can override this method to generate content for an ASP.NET page. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends server control content to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object, which writes the content to be rendered on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the server control content. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1257,9 +1802,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'HtmlTextWriter'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method notifies ASP.NET to render any Active Server Pages (ASP) code on the page. If no ASP code exists on the page, this method renders any child controls for the server control. This method is called by the <see cref="M:System.Web.UI.Control.Render(System.Web.UI.HtmlTextWriter)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the content of a server control's children to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object, which writes the content to be rendered on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the rendered content. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1276,9 +1828,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'HtmlTextWriter'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a server control's <see cref="P:System.Web.UI.Control.Visible" /> property is set to true, this method determines whether tracing is enabled for the page. If so, it stores trace information associated with the control, and renders the server control content to the page.</para>
+          <para>This method is automatically called by the page during the rendering, but can be overridden by custom control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs server control content to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object and stores tracing information about the control if tracing is enabled.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the control content. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1299,10 +1859,20 @@
         <Parameter Name="adapter" Type="System.Web.UI.Adapters.ControlAdapter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <param name="adapter">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET Web pages are usable across a wide range of devices and browsers that can request information from the Web. The <see cref="P:System.Web.UI.Control.Adapter" /> property returns the <see cref="T:System.Web.UI.Adapters.ControlAdapter" /> object that renders the control on the requesting device or browser's screen. </para>
+          <para>For more information about adapters, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+          <para>If a server control's <see cref="P:System.Web.UI.Control.Visible" /> property is set to true and tracing is enabled for the page, then trace information associated with the control is captured. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs server control content to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object using a provided <see cref="T:System.Web.UI.Adapters.ControlAdapter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> that receives the control content.</param>
+        <param name="adapter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Adapters.ControlAdapter" /> that defines the rendering.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveAdapter">
@@ -1316,9 +1886,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET Web pages are viewable across a wide range of devices that are capable of requesting pages from the Web. The <see cref="M:System.Web.UI.Control.ResolveAdapter" /> method returns the control adapter responsible for rendering the control on the specific browser or device that requested the ASP.NET page. </para>
+          <para>The specific adapter type returned depends on the descendent type of the <see cref="T:System.Web.UI.Control" /> class that is being rendered.</para>
+          <para>For more information about adapters, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control adapter responsible for rendering the specified control.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Adapters.ControlAdapter" /> that will render the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ResolveClientUrl">
@@ -1334,10 +1915,23 @@
         <Parameter Name="relativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relativeUrl">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Control.ResolveClientUrl(System.String)" /> method to return a URL string suitable for use by the client to access resources on the Web server, such as image files, links to additional pages, and so on.</para>
+          <block subset="none" type="note">
+            <para>The URL returned by this method is relative to the folder containing the source file in which the control is instantiated. Controls that inherit this property, such as <see cref="T:System.Web.UI.UserControl" /> and <see cref="T:System.Web.UI.MasterPage" />, will return a fully qualified URL relative to the control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a URL that can be used by the browser.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A fully qualified URL to the specified resource suitable for use on the browser.</para>
+        </returns>
+        <param name="relativeUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URL relative to the current page.</param>
       </Docs>
     </Member>
     <Member MemberName="ResolveUrl">
@@ -1350,10 +1944,41 @@
         <Parameter Name="relativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relativeUrl">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'string'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="relativeUrl" /> parameter contains an absolute URL, the URL is returned unchanged. If the <paramref name="relativeUrl" /> parameter contains a relative URL, that URL is changed to a relative URL that is correct for the current request path, so that the browser can resolve the URL.</para>
+          <para>For example, consider the following scenario: </para>
+          <list type="bullet">
+            <item>
+              <para>A client has requested an ASP.NET page that contains a user control that has an image associated with it.</para>
+            </item>
+            <item>
+              <para>The ASP.NET page is located at /Store/page1.aspx.</para>
+            </item>
+            <item>
+              <para>The user control is located at /Store/UserControls/UC1.ascx.</para>
+            </item>
+            <item>
+              <para>The image file is located at /UserControls/Images/Image1.jpg.</para>
+            </item>
+          </list>
+          <para>If the user control passes the relative path to the image (that is, /Store/UserControls/Images/Image1.jpg) to the <see cref="M:System.Web.UI.Control.ResolveUrl(System.String)" /> method, the method will return the value /Images/Image1.jpg.</para>
+          <para>This method uses the <see cref="P:System.Web.UI.Control.TemplateSourceDirectory" /> property to resolve to the absolute URL. The returned URL is for client use.</para>
+          <para>For more information on resource paths in a Web site, see <format type="text/html"><a href="2447f50c-b849-483c-8093-85ed53e7a5bd">ASP.NET Web Site Paths</a></format>.</para>
+          <block subset="none" type="note">
+            <para>For mobile Web pages only, if your application relies on cookieless sessions or might receive requests from mobile browsers that require cookieless sessions, using a tilde ("~") in a path can result in inadvertently creating a new session and potentially losing session data. To set a property with a path such as "~/path", resolve the path by calling the <see cref="M:System.Web.UI.MobileControls.MobileControl.ResolveUrl(System.String)" /> with an argument such as "~/path" before assigning it to the property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a URL into one that is usable on the requesting client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted URL.</para>
+        </returns>
+        <param name="relativeUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL associated with the <see cref="P:System.Web.UI.Control.TemplateSourceDirectory" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1371,9 +1996,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.Control.SaveControlState" /> method to save state information required for the operation of a specific control. This control-state data is stored separately from the control's view-state data.</para>
+          <para>Custom controls using control state must call the <see cref="M:System.Web.UI.Page.RegisterRequiresControlState(System.Web.UI.Control)" /> method on the <see cref="P:System.Web.UI.Control.Page" /> before saving control state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves any server control state changes that have occurred since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the server control's current state. If there is no state associated with the control, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SaveViewState">
@@ -1384,9 +2019,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <returns>To be added: an object of type 'object'</returns>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. For more information, see <format type="text/html"><a href="7949d756-1a79-464e-891f-904b1cfc7991">Introduction to the ASP.NET Page Life Cycle</a></format>.</para>
+          <para>When view state is saved, this string object is returned to the client as a variable that is stored in an HTML HIDDEN element. When you author a custom server control with a custom view state, the view state can be managed explicitly with the <see cref="M:System.Web.UI.Control.SaveViewState" /> and <see cref="M:System.Web.UI.Control.LoadViewState(System.Object)" /> methods. For more information, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. For information on implementing a custom session-state provider, see <format type="text/html"><a href="baadfec5-c881-468a-9681-7d8796b05a66">Implementing a Session-State Store Provider</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves any server control view-state changes that have occurred since the time the page was posted back to the server.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the server control's current view state. If there is no view state associated with the control, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1406,9 +2051,16 @@
         <Parameter Name="data" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Control.SetDesignModeState(System.Collections.IDictionary)" /> method saves design-time data for a control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets design-time data for a control.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> containing the design-time data for the control. </param>
       </Docs>
     </Member>
     <Member MemberName="SetRenderMethodDelegate">
@@ -1421,9 +2073,16 @@
         <Parameter Name="renderMethod" Type="System.Web.UI.RenderMethod" />
       </Parameters>
       <Docs>
-        <param name="renderMethod">To be added: an object of type 'RenderMethod'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is supplied for implementation purposes only; you should never call it directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns an event handler delegate to render the server control and its content into its parent control.</para>
+        </summary>
+        <param name="renderMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />The information necessary to pass to the delegate so that it can render the server control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1443,9 +2102,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.ComponentModel.ISite" /></value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A site binds a <see cref="T:System.ComponentModel.Component" /> object to a <see cref="T:System.ComponentModel.Container" /> object and enables communication between the two. It also provides a way for the container to manage its components.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets information about the container that hosts the current control when rendered on a design surface.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1484,9 +2149,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skins available to a control are contained in one or more skin files in a theme directory. The <see cref="P:System.Web.UI.Control.SkinID" /> property specifies which of these skins to apply to the control. A skin is specific to a particular control; you cannot share skin settings between controls of different types.</para>
+          <para>If you do not set the <see cref="P:System.Web.UI.Control.SkinID" /> property, a control uses the default skin if one is defined. For example, if a skin without an ID is defined for an <see cref="T:System.Web.UI.WebControls.Image" /> control, then that skin applies to all <see cref="T:System.Web.UI.WebControls.Image" /> controls that do not explicitly reference a skin by ID and that are not set to disable themes. If a skin with an ID is defined for an <see cref="T:System.Web.UI.WebControls.Image" /> control, then that skin applies only to <see cref="T:System.Web.UI.WebControls.Image" /> controls whose <see cref="P:System.Web.UI.Control.SkinID" /> property is set to that ID.</para>
+          <para>If the skin files in a theme directory do not contain a skin with the specified <see cref="P:System.Web.UI.Control.SkinID" /> property, an <see cref="T:System.ArgumentException" /> exception is thrown at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the skin to apply to the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IControlBuilderAccessor.ControlBuilder">
@@ -1499,9 +2172,15 @@
         <ReturnType>System.Web.UI.ControlBuilder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IControlBuilderAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IControlBuilderAccessor.ControlBuilder" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IControlDesignerAccessor.GetDesignModeState">
@@ -1515,9 +2194,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IControlDesignerAccessor.GetDesignModeState" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> of the control state.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IControlDesignerAccessor.SetDesignModeState">
@@ -1534,8 +2222,14 @@
       </Parameters>
       <Docs>
         <param name="designData">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IControlDesignerAccessor.SetDesignModeState(System.Collections.IDictionary)" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IControlDesignerAccessor.SetOwnerControl">
@@ -1552,8 +2246,15 @@
       </Parameters>
       <Docs>
         <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface.</para>
+          <para>The <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface is used by a control designer to perform design-time actions on the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IControlDesignerAccessor.SetOwnerControl(System.Web.UI.Control)" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IControlDesignerAccessor.UserData">
@@ -1566,9 +2267,15 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IControlDesignerAccessor.UserData" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataBindingsAccessor.DataBindings">
@@ -1582,9 +2289,15 @@
         <ReturnType>System.Web.UI.DataBindingCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IDataBindingsAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IDataBindingsAccessor.DataBindings" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataBindingsAccessor.HasDataBindings">
@@ -1598,9 +2311,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IDataBindingsAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IDataBindingsAccessor.HasDataBindings" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IExpressionsAccessor.Expressions">
@@ -1613,9 +2332,15 @@
         <ReturnType>System.Web.UI.ExpressionBindingCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IExpressionsAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IExpressionsAccessor.Expressions" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IExpressionsAccessor.HasExpressions">
@@ -1628,9 +2353,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IExpressionsAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Web.UI.IExpressionsAccessor.HasExpressions" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IParserAccessor.AddParsedSubObject">
@@ -1647,9 +2378,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IParserAccessor" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="M:System.Web.UI.IParserAccessor.AddParsedSubObject(System.Object)" />. </para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to add.</param>
       </Docs>
     </Member>
     <Member MemberName="TemplateControl">
@@ -1670,9 +2408,15 @@
         <ReturnType>System.Web.UI.TemplateControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a <see cref="T:System.Web.UI.Control" /> instance is part of a control template, the <see cref="P:System.Web.UI.Control.TemplateControl" /> property contains a reference to the containing control. For more information, see the <see cref="T:System.Web.UI.TemplateControl" /> documentation. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a reference to the template that contains this control. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TemplateSourceDirectory">
@@ -1682,9 +2426,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Control.TemplateSourceDirectory" /> property specifies the path to the page or user control that contains the current control. For example, if the Web page resides at http://www.contoso.com/application/subdirectory, the <see cref="P:System.Web.UI.Control.TemplateSourceDirectory" /> property returns "application/subdirectory".</para>
+          <para>To return the application-relative virtual path ("~/subdirectory"), use the <see cref="P:System.Web.UI.Control.AppRelativeTemplateSourceDirectory" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual directory of the <see cref="T:System.Web.UI.Page" /> or <see cref="T:System.Web.UI.UserControl" /> that contains the current server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1707,8 +2458,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called automatically at the end of the <see cref="E:System.Web.UI.Control.Init" /> event in the server control's lifecycle.</para>
+          <para>Invoke this method when you develop templated data-bound controls. This method alerts ASP.NET to monitor changes to a server control's view state, which is required when you override the <see cref="M:System.Web.UI.Control.DataBind" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes tracking of view-state changes to the server control so they can be stored in the server control's <see cref="T:System.Web.UI.StateBag" /> object. This object is accessible through the <see cref="P:System.Web.UI.Control.ViewState" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1722,9 +2480,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property differs from the <see cref="P:System.Web.UI.Control.ID" /> property, in that the <see cref="P:System.Web.UI.Control.UniqueID" /> property includes the identifier for the server control's naming container. This identifier is generated automatically when a page request is processed.</para>
+          <para>This property is particularly important in differentiating server controls contained within a data-binding server control that repeats. The repeating control, which are <see cref="T:System.Web.UI.WebControls.Repeater" />, <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.DetailsView" />, <see cref="T:System.Web.UI.WebControls.FormView" />, and <see cref="T:System.Web.UI.WebControls.GridView" /> Web server controls (or any custom server controls that you create that include repeating functionality when data bound), serves as the naming container for its child controls. This means that it creates a unique namespace for its child controls so that their <see cref="P:System.Web.UI.Control.ID" /> property values do not conflict.</para>
+          <para>For example, if you include an ASP.NET <see cref="T:System.Web.UI.WebControls.Label" /> Web server control in a <see cref="T:System.Web.UI.WebControls.Repeater" /> server control, and assign the <see cref="T:System.Web.UI.WebControls.Label" /> control an <see cref="P:System.Web.UI.Control.ID" /> property value of MyLabel, and the <see cref="T:System.Web.UI.WebControls.Repeater" /> an <see cref="P:System.Web.UI.Control.ID" /> of MyRepeater. If you bind data to the <see cref="T:System.Web.UI.WebControls.Repeater" /> to an <see cref="T:System.Collections.ArrayList" /> object with three entries, the resulting <see cref="P:System.Web.UI.Control.UniqueID" /> properties for each instance of the <see cref="T:System.Web.UI.WebControls.Label" /> server controls are MyRepeater$ctl00$MyLabel, MyRepeater$ctl01$MyLabel, and MyRepeater$ctl02$MyLabel.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique, hierarchically qualified identifier for the server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1747,8 +2513,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Server controls must perform any final clean-up, such as closing files, database connections and discarding objects, during this stage of the control lifecycle before the instance is unloaded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control is unloaded from memory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1762,9 +2534,17 @@
         <ReturnType>System.Web.UI.StateBag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'StateBag'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A server control's view state is the accumulation of all its property values. In order to preserve these values across HTTP requests, ASP.NET server controls use this property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class, to store the property values. The values are then passed as a variable to an HTML hidden input element when subsequent requests are processed. For more information about saving server control view state, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>. </para>
+          <para>View state is enabled for all server controls by default, but there are circumstances in which you will want to disable it. For more information, see <format type="text/html"><a href="f882bf1b-a009-4312-ac06-74370ffabc0b">Performance Overview</a></format>. </para>
+          <para>For information about dictionaries and how to use them, see <format type="text/html"><a href="60CC581F-1DB5-445B-BA04-A173396BF872">Collections and Data Structures</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of state information that allows you to save and restore the view state of a server control across multiple requests for the same page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1786,9 +2566,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Override this method if you create a custom server control that saves its view state without taking case into account. When you do so multiple objects with the same key, but with different casing, can be stored in the <see cref="T:System.Web.UI.StateBag" /> associated with the <see cref="P:System.Web.UI.Control.ViewState" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="T:System.Web.UI.StateBag" /> object is case-insensitive.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1811,9 +2597,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is false, the server control is not rendered. You should take this into account when organizing the layout of your page.</para>
+          <block subset="none" type="note">
+            <para>If a container control is not rendered, any controls that it contains will not be rendered even if you set the <see cref="P:System.Web.UI.Control.Visible" /> property of an individual control to true. In that case, the individual control returns false for the <see cref="P:System.Web.UI.Control.Visible" /> property even if you have explicitly set it to true. (That is, if the Visible property of the parent control is set to false, the child control inherits that setting and the setting takes precedence over any local setting.)</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether a server control is rendered as UI on the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
