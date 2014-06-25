@@ -740,6 +740,10 @@ namespace MonoTests.System
 			success = Enum.TryParse<TestingEnum> ("is", true, out result);
 			Assert.AreEqual (true, success, "#D1");
 			Assert.AreEqual (TestingEnum.Is, result, "#D2");
+
+			success = Enum.TryParse<TestingEnum> ("  Is  ", out result);
+			Assert.AreEqual (true, success, "#E1");
+			Assert.AreEqual (TestingEnum.Is, result, "#E2");
 		}
 #endif
 
