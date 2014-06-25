@@ -370,7 +370,7 @@ namespace System.Data {
 					value = String.Empty;
 
 				CultureInfo info = Table != null ? Table.Locale : CultureInfo.CurrentCulture;
-				if (String.Compare (value, _columnName, info, CompareOptions.IgnoreCase) != 0) {
+				if (info.CompareInfo.Compare (value, _columnName, CompareOptions.IgnoreCase) != 0) {
 					if (Table != null) {
 						if (value.Length == 0)
 							throw new ArgumentException ("ColumnName is required when it is part of a DataTable.");
@@ -387,7 +387,7 @@ namespace System.Data {
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
 #endif
-				} else if (String.Compare (value, _columnName, info, CompareOptions.None) != 0) {
+				} else if (info.CompareInfo.Compare (value, _columnName, CompareOptions.None) != 0) {
 					RaisePropertyChanging ("ColumnName");
 					_columnName = value;
 
@@ -731,7 +731,7 @@ namespace System.Data {
 
 		internal static bool CanAutoIncrement (Type type)
 		{
-			switch (Type.GetTypeCode (type)) {
+			switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Int16:
 				case TypeCode.Int32:
 				case TypeCode.Int64:
@@ -963,7 +963,7 @@ namespace System.Data {
 #if NET_2_0
 			if (type == null)
 				return DBNull.Value;
-			if (type.Namespace == "System.Data.SqlTypes" && type.Assembly == typeof (DataColumn).Assembly) {
+			if (type.Namespace == "System.Data.SqlTypes" && type.GetAssembly () == typeof (DataColumn).GetAssembly ()) {
 				// For SqlXxx types, set SqlXxx.Null instead of DBNull.Value.
 				if (type == typeof (SqlBinary))
 					return SqlBinary.Null;

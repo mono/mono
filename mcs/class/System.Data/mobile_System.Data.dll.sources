@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs.in
 ../../build/common/Locale.cs
+../corlib/System/TypeUtil.cs
 System.Data/AcceptRejectRule.cs
 System.Data/ColumnTypeConverter.cs
 System.Data/CommandBehavior.cs

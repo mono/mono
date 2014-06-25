@@ -47,6 +47,7 @@ using System.IO;
 #if !WINDOWS_PHONE && !NETFX_CORE
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using XmlConvertUtil = System.Xml.XmlConvert;
 #else
 using System.Linq;
 using System.Xml.Linq;
@@ -223,7 +224,7 @@ namespace System.Data
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
 #endif
 		public CultureInfo Locale {
-			get { return locale != null ? locale : Thread.CurrentThread.CurrentCulture; }
+			get { return locale != null ? locale : CultureInfo.CurrentCulture; }
 			set {
 				if (locale == null || !locale.Equals (value)) {
 					// TODO: check if the new locale is valid
@@ -436,7 +437,7 @@ namespace System.Data
 		public virtual DataSet Clone ()
 		{
 			// need to return the same type as this...
-			DataSet Copy = (DataSet) Utilities.CreateInstance (GetType ());
+			DataSet Copy = (DataSet) TypeUtil.CreateInstance (GetType ());
 
 			CopyProperties (Copy);
 
@@ -458,7 +459,7 @@ namespace System.Data
 		public DataSet Copy ()
 		{
 			// need to return the same type as this...
-			DataSet Copy = (DataSet) Utilities.CreateInstance (GetType ());
+			DataSet Copy = (DataSet) TypeUtil.CreateInstance (GetType ());
 
 			CopyProperties (Copy);
 
@@ -681,11 +682,8 @@ namespace System.Data
 
 		public void InferXmlSchema (string fileName, string[] nsArray)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				InferXmlSchema (reader, nsArray);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -724,23 +722,21 @@ namespace System.Data
 			WriteXml (writer);
 		}
 
+#if !NETFX_CORE
 		///<summary>
 		/// Writes the current data for the DataSet to the specified file.
 		/// </summary>
 		/// <param name="fileName">Fully qualified filename to write to</param>
 		public void WriteXml (string fileName)
 		{
-			FileStream file = File.Create (fileName);
-			XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
-			writer.WriteStartDocument (true);
-			try {
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create(file, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true })) { 
+				writer.WriteStartDocument (true);
 				WriteXml (writer);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
-				file.Dispose ();
 			}
 		}
+#endif
 
 		public void WriteXml (TextWriter writer)
 		{
@@ -753,20 +749,17 @@ namespace System.Data
 			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
+#if !NETFX_CORE
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
-			FileStream file = File.Create (fileName);
-			XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
-			writer.WriteStartDocument (true);
-
-			try {
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true})) {
+				writer.WriteStartDocument (true);
 				WriteXml (writer, mode);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
-				file.Dispose ();
 			}
 		}
+#endif
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
@@ -823,27 +816,22 @@ namespace System.Data
 			WriteXmlSchema (writer);
 		}
 
+#if !NETFX_CORE
 		public void WriteXmlSchema (string fileName)
 		{
-			FileStream file = File.Create (fileName);
-			XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true});
-			try {
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true})) {
 				writer.WriteStartDocument (true);
 				WriteXmlSchema (writer);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
-				file.Dispose ();
 			}
 		}
+#endif
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
-			XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true});
-			try {
+			using (XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true})) {
 				WriteXmlSchema (xwriter);
-			} finally {
-				xwriter.Close ();
 			}
 		}
 
@@ -862,11 +850,8 @@ namespace System.Data
 
 		public void ReadXmlSchema (string fileName)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				ReadXmlSchema (reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -897,11 +882,8 @@ namespace System.Data
 
 		public XmlReadMode ReadXml (string fileName)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -922,11 +904,8 @@ namespace System.Data
 
 		public XmlReadMode ReadXml (string fileName, XmlReadMode mode)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader, mode);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -1334,7 +1313,7 @@ namespace System.Data
 
 		internal static string WriteObjectXml (object o)
 		{
-			switch (Type.GetTypeCode (o.GetType ())) {
+			switch (TypeUtil.GetTypeCode (o.GetType ())) {
 				case TypeCode.Boolean:
 					return XmlConvert.ToString ((Boolean) o);
 				case TypeCode.Byte:
@@ -1343,7 +1322,7 @@ namespace System.Data
 					return XmlConvert.ToString ((Char) o);
 				case TypeCode.DateTime:
 #if NET_2_0
-					return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.Unspecified);
+					return XmlConvertUtil.ToString ((DateTime) o, XmlDateTimeSerializationMode.Unspecified);
 #else
 					return XmlConvert.ToString ((DateTime) o);
 #endif

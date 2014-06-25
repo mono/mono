@@ -75,7 +75,7 @@ namespace System.Data.Common
 		}
 
 		internal int Capacity {
-			get { return null_values != null ? null_values.Count : 0; }
+			get { return null_values != null ? null_values.Length : 0; }
 			set {
 				int old_capacity = Capacity;
 				if (value == old_capacity)
@@ -99,7 +99,7 @@ namespace System.Data.Common
 		internal static DataContainer Create (Type type, DataColumn column)
 		{
 			DataContainer container;
-			switch (Type.GetTypeCode(type)) {
+			switch (TypeUtil.GetTypeCode(type)) {
 			case TypeCode.Int16:
 				container = new Int16DataContainer ();
 				break;
@@ -173,9 +173,13 @@ namespace System.Data.Common
 			
 			if (_type.IsInstanceOfType (value)) {
 				return value;
-			} else if ((tc = Type.GetTypeCode (_type)) == TypeCode.String) {
+			} else if ((tc = TypeUtil.GetTypeCode (_type)) == TypeCode.String) {
 				return (Convert.ToString (value));
+#if !NETFX_CORE
 			} else if (value is IConvertible) {
+#else
+			} else if (value.GetTypeCode () > TypeCode.Object && value.GetTypeCode () < TypeCode.String) {
+#endif
 				switch (tc) {
 					case TypeCode.Int16:
 						return (Convert.ToInt16 (value));
@@ -933,7 +937,7 @@ namespace System.Data.Common
 					return ((IComparable)obj1).CompareTo (obj2);
 				} catch {
 					if (obj2 is IComparable) {
-						obj2 = Convert.ChangeType (obj2, Type.GetTypeCode (obj1.GetType ()), CultureInfo.CurrentCulture);
+						obj2 = TypeUtil.ChangeType (obj2, TypeUtil.GetTypeCode (obj1.GetType ()), CultureInfo.CurrentCulture);
 						return ((IComparable)obj1).CompareTo (obj2);
 					}
 				}
@@ -1005,7 +1009,7 @@ namespace System.Data.Common
 		protected override int DoCompareValues (int index1, int index2)
 		{
 			DataTable table = Column.Table;
-			return String.Compare ((string) this [index1], (string) this [index2], table.Locale, table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
+			return table.Locale.CompareInfo.Compare ((string) this [index1], (string) this [index2], table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase);
 		}
 	}
 }

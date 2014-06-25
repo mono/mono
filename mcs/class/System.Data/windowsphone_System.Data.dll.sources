@@ -6,6 +6,7 @@
 ../corlib/System.Collections/Hashtable.cs
 ../corlib/System.Collections/IHashCodeProvider.cs
 ../corlib/System/ICloneable.cs
+../corlib/System/TypeUtil.cs
 ../System.XML/Mono.Xml.Schema/XsdIdentityPath.cs
 ../System.XML/Mono.Xml.Schema/XsdKeyTable.cs
 ../System.XML/Mono.Xml.Schema/XsdParticleValidationState.cs
@@ -15,7 +16,6 @@
 ../System.XML/System.Xml.Schema/SchemaDataValueType.cs
 ../System.XML/System.Xml.Schema/ValidationEventArgs.cs
 ../System.XML/System.Xml.Schema/ValidationHandler.cs
-../System.XML/System.Xml.Schema/XmlAtomicValue.cs
 ../System.XML/System.Xml.Schema/XmlSchema.cs
 ../System.XML/System.Xml.Schema/XmlSchemaAll.cs
 ../System.XML/System.Xml.Schema/XmlSchemaAnnotated.cs

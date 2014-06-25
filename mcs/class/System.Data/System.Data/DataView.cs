@@ -234,7 +234,7 @@ namespace System.Data
 				}
 
 				CultureInfo info = (Table != null) ? Table.Locale : CultureInfo.CurrentCulture;
-				if (String.Compare (rowFilter, value, info, CompareOptions.None) == 0)
+				if (info.CompareInfo.Compare (rowFilter, value, CompareOptions.None) == 0)
 					return;
 
 				if (value.Length == 0) {

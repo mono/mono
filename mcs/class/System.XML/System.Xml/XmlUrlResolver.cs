@@ -31,28 +31,18 @@ using System.Net;
 using System.IO;
 using System.Text;
 #if NET_4_5
-#if !WINDOWS_PHONE && !NETFX_CORE
 using System.Net.Cache;
 using System.Threading.Tasks;
 #endif
-#endif
 
-namespace System.Xml
-{
-#if !INCLUDE_MONO_XML_SCHEMA
-	public
-#else
-	internal
-#endif
-	class XmlUrlResolver : XmlResolver
-	{
+namespace System.Xml {
+
+	public class XmlUrlResolver : XmlResolver {
 		// Field
 		ICredentials credential;
 #if NET_4_5
-#if !WINDOWS_PHONE && !NETFX_CORE
 		RequestCachePolicy cachePolicy;
 		IWebProxy proxy;
-#endif
 #endif
 
 		// Constructor
@@ -62,7 +52,6 @@ namespace System.Xml
 		}
 
 		// Properties		
-#if !WINDOWS_PHONE && !NETFX_CORE
 		public override ICredentials Credentials
 		{
 			set { credential = value; }
@@ -76,7 +65,6 @@ namespace System.Xml
 		public IWebProxy Proxy {
 			set { proxy = value; }
 		}
-#endif
 #endif
 
 		// Methods
@@ -98,7 +86,6 @@ namespace System.Xml
 				return new FileStream (UnescapeRelativeUriBody (absoluteUri.LocalPath), FileMode.Open, FileAccess.Read, FileShare.Read);
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);
 #if NET_4_5
@@ -113,9 +100,6 @@ namespace System.Xml
 			if (credential != null)
 				req.Credentials = credential;
 			return req.GetResponse().GetResponseStream();
-#else
-			throw new XmlException ("Access to the network is not supported.");
-#endif
 		}
 
 #if NET_2_0
@@ -137,7 +121,6 @@ namespace System.Xml
 		}
 
 #if NET_4_5
-#if !WINDOWS_PHONE && !NETFX_CORE
 		public override async Task<object> GetEntityAsync (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
@@ -168,7 +151,6 @@ namespace System.Xml
 			var res = await req.GetResponseAsync ().ConfigureAwait (false);
 			return res.GetResponseStream ();
 		}
-#endif
 #endif
 	}
 }

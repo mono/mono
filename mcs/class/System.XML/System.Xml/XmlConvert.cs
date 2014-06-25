@@ -38,7 +38,11 @@ using System.Xml.Schema;
 
 namespace System.Xml {
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 	public class XmlConvert {
+#else
+	class XmlConvertUtil {
+#endif
 
 		const string encodedColon = "_x003A_";
 		const NumberStyles floatStyle = NumberStyles.AllowCurrencySymbol |
@@ -142,9 +146,6 @@ namespace System.Xml {
 
 		static DateTimeStyles _defaultStyle = DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;
 		
-		public XmlConvert()
-		{}
-
 		private static string TryDecoding (string s)
 		{
 			if (s == null || s.Length < 6)
@@ -303,7 +304,7 @@ namespace System.Xml {
 
 		public static char ToChar(string s)
 		{
-#if !NET_2_1
+#if !NET_2_1 && !WINDOWS_PHONE && !NETFX_CORE
 			return Char.Parse(s);
 #else
 			if (s == null)
@@ -454,7 +455,7 @@ namespace System.Xml {
 
 		public static string ToString(Guid value)
 		{
-			return value.ToString("D", CultureInfo.InvariantCulture);
+			return value.ToString ("D");
 		}
 
 		public static string ToString(int value)
@@ -479,7 +480,7 @@ namespace System.Xml {
 
 		public static string ToString(char value)
 		{
-			return value.ToString(CultureInfo.InvariantCulture);
+			return value.ToString ();
 		}
 
 		public static string ToString(bool value)

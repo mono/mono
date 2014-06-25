@@ -55,6 +55,9 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using Mono.Data.SqlExpressions;
+#if NETFX_CORE
+using SystemException = System.Exception;
+#endif
 
 namespace System.Data {
 	//[Designer]
@@ -1077,7 +1080,7 @@ namespace System.Data {
 		/// </summary>
 		protected virtual DataTable CreateInstance ()
 		{
-			return Utilities.CreateInstance (GetType ()) as DataTable;
+			return TypeUtil.CreateInstance (GetType ()) as DataTable;
 		}
 
 		/// <summary>
@@ -1800,7 +1803,7 @@ namespace System.Data {
 					columns.Add (dc);
 
 					g = match.Groups["Order"];
-					if (!g.Success || String.Compare (g.Value, "ASC", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0)
+					if (!g.Success || CultureInfo.InvariantCulture.CompareInfo.Compare (g.Value, "ASC", CompareOptions.IgnoreCase) == 0)
 						sorts.Add(ListSortDirection.Ascending);
 					else
 						sorts.Add (ListSortDirection.Descending);
@@ -1927,11 +1930,8 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (string fileName)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader);
-			} finally {
-				reader.Close();
 			}
 		}
 
@@ -2073,13 +2073,8 @@ namespace System.Data {
 
 		public void ReadXmlSchema (string fileName)
 		{
-			XmlReader reader = null;
-			try {
-				reader = XmlReader.Create (fileName);
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				ReadXmlSchema (reader);
-			} finally {
-				if (reader != null)
-					reader.Close ();
 			}
 		}
 
@@ -2133,10 +2128,12 @@ namespace System.Data {
 			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
 		}
 
+#if !NETFX_CORE
 		public void WriteXml (string fileName)
 		{
 			WriteXml (fileName, XmlWriteMode.IgnoreSchema, false);
 		}
+#endif
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
@@ -2153,20 +2150,24 @@ namespace System.Data {
 			WriteXml (writer, mode, false);
 		}
 
+#if !NETFX_CORE
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
 			WriteXml (fileName, mode, false);
 		}
+#endif
 
 		public void WriteXml (Stream stream, bool writeHierarchy)
 		{
 			WriteXml (stream, XmlWriteMode.IgnoreSchema, writeHierarchy);
 		}
 
+#if !NETFX_CORE
 		public void WriteXml (string fileName, bool writeHierarchy)
 		{
 			WriteXml (fileName, XmlWriteMode.IgnoreSchema, writeHierarchy);
 		}
+#endif
 
 		public void WriteXml (TextWriter writer, bool writeHierarchy)
 		{
@@ -2183,22 +2184,15 @@ namespace System.Data {
 			WriteXml (XmlWriter.Create (stream, GetWriterSettings ()), mode, writeHierarchy);
 		}
 
+#if !NETFX_CORE
 		public void WriteXml (string fileName, XmlWriteMode mode, bool writeHierarchy)
 		{
-			XmlWriter xw = null;
-			FileStream file = null;
-			try {
-				file = File.Create (fileName);
-				xw = XmlWriter.Create (file, GetWriterSettings ());
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter xw = XmlWriter.Create (file, GetWriterSettings ())) {
 				WriteXml (xw, mode, writeHierarchy);
-			} finally {
-				if (xw != null)
-					xw.Close ();
-				if (file != null) {
-					file.Dispose ();
-				}
 			}
 		}
+#endif
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writeHierarchy)
 		{
@@ -2321,6 +2315,7 @@ namespace System.Data {
 */
 		}
 
+#if !NETFX_CORE
 		public void WriteXmlSchema (string fileName)
 		{
 			if (fileName == "") {
@@ -2329,23 +2324,14 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			XmlWriter writer = null;
-			FileStream file = null;
-			try {
-				XmlWriterSettings s = GetWriterSettings ();
-				s.OmitXmlDeclaration = false;
-				file = File.Create (fileName);
-				writer = XmlWriter.Create (file);
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file)) {
 				WriteXmlSchema (writer);
-			} finally {
-				if (writer != null) {
-					writer.Close ();
-				}
-				if (file != null) {
-					file.Dispose ();
-				}
 			}
 		}
+#endif
 
 		public void WriteXmlSchema (Stream stream, bool writeHierarchy)
 		{
@@ -2417,6 +2403,7 @@ namespace System.Data {
 //			}
 		}
 
+#if !NETFX_CORE
 		public void WriteXmlSchema (string fileName, bool writeHierarchy)
 		{
 			if (fileName == "") {
@@ -2425,23 +2412,14 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			XmlWriter writer = null;
-			FileStream file = null;
-			try {
-				XmlWriterSettings s = GetWriterSettings ();
-				s.OmitXmlDeclaration = false;
-				file = File.Create (fileName);
-				writer = XmlWriter.Create (file);
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			using (Stream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file)) {
 				WriteXmlSchema (writer, writeHierarchy);
-			} finally {
-				if (writer != null) {
-					writer.Close ();
-				}
-				if (file != null) {
-					file.Dispose ();
-				}
 			}
 		}
+#endif
 	}
 
 	partial class DataTable

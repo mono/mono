@@ -282,7 +282,13 @@ namespace Mono.Xml.Schema
 		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
 		public void Compile (ValidationEventHandler validationEventHandler)
 		{
-			Compile (validationEventHandler, new XmlUrlResolver ());
+			Compile (validationEventHandler, 
+#if !WINDOWS_PHONE && !NETFX_CORE
+				new XmlUrlResolver ()
+#else
+				null
+#endif
+				);
 		}
 
 		[Obsolete ("Use XmlSchemaSet.Compile() instead.")]
@@ -385,10 +391,12 @@ namespace Mono.Xml.Schema
 				compilationItems.Add (Items [i]);
 			}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
 			for (int i = 0; i < Includes.Count; i++)
 				ProcessExternal (handler, handledUris, resolver, Includes [i] as XmlSchemaExternal, col);
+#endif
 
 			// Compilation phase.
 			// At least each Compile() must give unique (qualified) name for each component.
@@ -483,6 +491,7 @@ namespace Mono.Xml.Schema
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		private string GetResolvedUri (XmlResolver resolver, string relativeUri)
 		{
 			Uri baseUri = null;
@@ -550,13 +559,8 @@ namespace Mono.Xml.Schema
 					missedSubComponents = true;
 					return;
 				} else {
-					XmlReader xtr = null;
-					try {
-						xtr = XmlReader.Create (stream, new XmlReaderSettings () { NameTable = nameTable}, url);
+					using (XmlReader xtr = XmlReader.Create (stream, new XmlReaderSettings () { NameTable = nameTable}, url)) {
 						includedSchema = XmlSchema.Read (xtr, handler);
-					} finally {
-						if (xtr != null)
-							xtr.Close ();
 					}
 					includedSchema.schemas = schemas;
 				}
@@ -620,6 +624,7 @@ namespace Mono.Xml.Schema
 				if (!items.Contains (obj))
 					items.Add (obj);
 		}
+#endif
 
 		internal bool IsNamespaceAbsent (string ns)
 		{

@@ -110,7 +110,7 @@ namespace System.Data {
 			foreach (Constraint cst in List) {
 				if (cst == excludeFromComparison)
 					continue;
-				if (String.Compare (constraintName, cst.ConstraintName, Table.Locale, CompareOptions.None) == 0)
+				if (Table.Locale.CompareInfo.Compare (constraintName, cst.ConstraintName, CompareOptions.None) == 0)
 					return true;
 			}
 
@@ -318,7 +318,7 @@ namespace System.Data {
 
 			int index = 0;
 			foreach (Constraint con in List) {
-				if (String.Compare (constraintName, con.ConstraintName, Table.Locale, Table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) == 0)
+				if (Table.Locale.CompareInfo.Compare (constraintName, con.ConstraintName, Table.CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) == 0)
 					return index;
 				index++;
 			}

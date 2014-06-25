@@ -225,10 +225,12 @@ namespace Mono.Xml.Schema
 			get { return  reader.XmlSpace; }
 		}
 
+#if !NETFX_CORE
 		public override void Close()
 		{
 			reader.Close(); 
 		}
+#endif
 
 		public override bool Equals(object obj)
 		{

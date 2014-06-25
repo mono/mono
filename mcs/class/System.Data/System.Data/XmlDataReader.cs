@@ -28,7 +28,9 @@ using System.Data;
 using System.Xml;
 using System.Xml.Serialization;
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if !WINDOWS_PHONE && !NETFX_CORE
+using XmlConvertUtil = System.Xml.XmlConvert;
+#else
 using XmlAttribute = System.Xml.Linq.XAttribute;
 using XmlElement = System.Xml.Linq.XElement;
 using XmlNode = System.Xml.Linq.XNode;
@@ -386,12 +388,12 @@ namespace System.Data
 		{
 			if (type == null) return value;
 
-			switch (Type.GetTypeCode (type)) {
+			switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
 				case TypeCode.Byte: return XmlConvert.ToByte (value);
 				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
 #if NET_2_0
-				case TypeCode.DateTime: return XmlConvert.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
+				case TypeCode.DateTime: return XmlConvertUtil.ToDateTime (value, XmlDateTimeSerializationMode.Unspecified);
 #else
 				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
 #endif

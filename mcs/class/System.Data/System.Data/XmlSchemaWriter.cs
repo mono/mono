@@ -868,7 +868,7 @@ namespace System.Data
 
 		private /*static*/ XmlQualifiedName MapType (Type type)
 		{
-			switch (Type.GetTypeCode (type)) {
+			switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.String: return XmlConstants.QnString;
 				case TypeCode.Int16: return XmlConstants.QnShort;
 				case TypeCode.Int32: return XmlConstants.QnInt;

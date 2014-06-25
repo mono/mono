@@ -49,6 +49,7 @@ using NUnit.Framework;
 #endif // USE_MSUNITTEST
 using System;
 using System.Data;
+using System.Diagnostics;
 #if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
 #endif
@@ -382,7 +383,7 @@ namespace MonoTests.System.Data
 							, _dataset.Tables ["Order"].Columns ["custid"]);
 			drcol.Add (dr1);	
 			Assert.AreEqual ("System.Data.DataRelationCollection", drcol.ToString (), "test#1");
-			Console.WriteLine (drcol.ToString ());
+			Debug.WriteLine (drcol.ToString ());
 		}
 	}
 }

@@ -788,7 +788,7 @@ namespace System.Xml
 			if (value == null || value == String.Empty)
 				return DBNull.Value;
 
-			switch (Type.GetTypeCode (type)) {
+			switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
 				case TypeCode.Byte: return XmlConvert.ToByte (value);
 				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);

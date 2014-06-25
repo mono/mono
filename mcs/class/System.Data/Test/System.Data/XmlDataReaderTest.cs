@@ -139,7 +139,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual (99, Convert.ToInt32(ds.Tables["CustomTypesTable"].Rows[0][0]), "XDR3");
 			Assert.IsTrue (ds.Tables["CustomTypesTable"].Rows[0][1].ToString().StartsWith("<Func "), "XDR4");
 			
-			xr.Close ();
+			xr.Dispose ();
 		}
 		
 #if !WINDOWS_PHONE && !NETFX_CORE

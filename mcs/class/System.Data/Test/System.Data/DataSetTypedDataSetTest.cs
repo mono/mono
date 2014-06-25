@@ -352,8 +352,8 @@ namespace MonoTests.System.Data
 			}
 #endif
         
-			[Browsable(false)]
 #if !WINDOWS_PHONE && !NETFX_CORE
+			[Browsable(false)]
 			[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Content)]
 #endif
 			public Order_DetailsDataTable Order_Details 
@@ -364,8 +364,8 @@ namespace MonoTests.System.Data
 				}
 			}
         
-			[Browsable(false)]
 #if !WINDOWS_PHONE && !NETFX_CORE
+			[Browsable(false)]
 			[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Content)]
 #endif
 			public OrdersDataTable Orders 
@@ -528,7 +528,9 @@ namespace MonoTests.System.Data
 					this.DisplayExpression = table.DisplayExpression;
 				}
             
+#if !WINDOWS_PHONE && !NETFX_CORE
 				[Browsable(false)]
+#endif
 				public int Count 
 				{
 					get 
@@ -820,7 +822,7 @@ namespace MonoTests.System.Data
             
 				public void SetDiscountNull() 
 				{
-					this[this.tableOrder_Details.DiscountColumn] = Convert.DBNull;
+					this [this.tableOrder_Details.DiscountColumn] = DBNull.Value;
 				}
 			}
         
@@ -911,7 +913,9 @@ namespace MonoTests.System.Data
 					this.DisplayExpression = table.DisplayExpression;
 				}
             
+#if !WINDOWS_PHONE && !NETFX_CORE
 				[Browsable(false)]
+#endif
 				public int Count 
 				{
 					get 
@@ -1488,7 +1492,7 @@ namespace MonoTests.System.Data
             
 				public void SetCustomerIDNull() 
 				{
-					this[this.tableOrders.CustomerIDColumn] = Convert.DBNull;
+					this [this.tableOrders.CustomerIDColumn] = DBNull.Value;
 				}
             
 				public bool IsEmployeeIDNull() 
@@ -1498,7 +1502,7 @@ namespace MonoTests.System.Data
             
 				public void SetEmployeeIDNull() 
 				{
-					this[this.tableOrders.EmployeeIDColumn] = Convert.DBNull;
+					this [this.tableOrders.EmployeeIDColumn] = DBNull.Value;
 				}
             
 				public bool IsOrderDateNull() 
@@ -1508,7 +1512,7 @@ namespace MonoTests.System.Data
             
 				public void SetOrderDateNull() 
 				{
-					this[this.tableOrders.OrderDateColumn] = Convert.DBNull;
+					this [this.tableOrders.OrderDateColumn] = DBNull.Value;
 				}
             
 				public bool IsRequiredDateNull() 
@@ -1518,7 +1522,7 @@ namespace MonoTests.System.Data
             
 				public void SetRequiredDateNull() 
 				{
-					this[this.tableOrders.RequiredDateColumn] = Convert.DBNull;
+					this [this.tableOrders.RequiredDateColumn] = DBNull.Value;
 				}
             
 				public bool IsShippedDateNull() 
@@ -1528,7 +1532,7 @@ namespace MonoTests.System.Data
             
 				public void SetShippedDateNull() 
 				{
-					this[this.tableOrders.ShippedDateColumn] = Convert.DBNull;
+					this [this.tableOrders.ShippedDateColumn] = DBNull.Value;
 				}
             
 				public bool IsShipViaNull() 
@@ -1538,7 +1542,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipViaNull() 
 				{
-					this[this.tableOrders.ShipViaColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipViaColumn] = DBNull.Value;
 				}
             
 				public bool IsFreightNull() 
@@ -1548,7 +1552,7 @@ namespace MonoTests.System.Data
             
 				public void SetFreightNull() 
 				{
-					this[this.tableOrders.FreightColumn] = Convert.DBNull;
+					this [this.tableOrders.FreightColumn] = DBNull.Value;
 				}
             
 				public bool IsShipNameNull() 
@@ -1558,7 +1562,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipNameNull() 
 				{
-					this[this.tableOrders.ShipNameColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipNameColumn] = DBNull.Value;
 				}
             
 				public bool IsShipAddressNull() 
@@ -1568,7 +1572,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipAddressNull() 
 				{
-					this[this.tableOrders.ShipAddressColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipAddressColumn] = DBNull.Value;
 				}
             
 				public bool IsShipCityNull() 
@@ -1578,7 +1582,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipCityNull() 
 				{
-					this[this.tableOrders.ShipCityColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipCityColumn] = DBNull.Value;
 				}
             
 				public bool IsShipRegionNull() 
@@ -1588,7 +1592,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipRegionNull() 
 				{
-					this[this.tableOrders.ShipRegionColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipRegionColumn] = DBNull.Value;
 				}
             
 				public bool IsShipPostalCodeNull() 
@@ -1598,7 +1602,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipPostalCodeNull() 
 				{
-					this[this.tableOrders.ShipPostalCodeColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipPostalCodeColumn] = DBNull.Value;
 				}
             
 				public bool IsShipCountryNull() 
@@ -1608,7 +1612,7 @@ namespace MonoTests.System.Data
             
 				public void SetShipCountryNull() 
 				{
-					this[this.tableOrders.ShipCountryColumn] = Convert.DBNull;
+					this [this.tableOrders.ShipCountryColumn] = DBNull.Value;
 				}
             
 				public Order_DetailsRow[] GetOrder_DetailsRows() 

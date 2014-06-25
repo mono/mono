@@ -105,7 +105,13 @@ namespace Mono.Xml.Schema
 		// Methods
 		public XmlSchema Add (string ns, XmlReader reader)
 		{
-			return Add (ns, reader, new XmlUrlResolver ());
+			return Add (ns, reader, 
+#if !WINDOWS_PHONE && !NETFX_CORE
+				new XmlUrlResolver ()
+#else
+				null
+#endif
+				);
 		}
 
 		public XmlSchema Add (string ns, XmlReader reader, XmlResolver resolver)
@@ -121,17 +127,20 @@ namespace Mono.Xml.Schema
 
 		public XmlSchema Add (string ns, string uri)
 		{
-			XmlReader reader = XmlReader.Create (uri);
-			try {
+			using (XmlReader reader = XmlReader.Create (uri)) {
 				return Add (ns, reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
 		public XmlSchema Add (XmlSchema schema)
 		{
-			return Add (schema, new XmlUrlResolver ());
+			return Add (schema,
+#if !WINDOWS_PHONE && !NETFX_CORE
+				new XmlUrlResolver ()
+#else
+				null
+#endif				
+				);
 		}
 
 		public XmlSchema Add (XmlSchema schema, XmlResolver resolver)

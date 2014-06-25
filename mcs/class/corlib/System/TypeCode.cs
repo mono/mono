@@ -39,7 +39,9 @@ using System.Runtime.InteropServices;
 namespace System {
 
 	[ComVisible (true)]
+#if !NETFX_CORE
 	[Serializable]
+#endif
 	public enum TypeCode {
 
 		Empty = 0,

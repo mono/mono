@@ -40,6 +40,9 @@ using System.Globalization;
 using Mono.Xml.Schema;
 #endif
 
+#if !WINDOWS_PHONE && !NETFX_CORE
+using XmlConvertUtil = System.Xml.XmlConvert;
+#endif
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
 #else
@@ -1495,11 +1498,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, NSResolver nsmgr)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			return XmlConvert.FromBinHexString (Normalize (s));
-#else
-			throw new NotImplementedException("Currently not implemented for Windows Phone and Windows Store");
-#endif
+			return XmlConvertUtil.FromBinHexString (Normalize (s));
 		}
 		
 		internal override int Length(string s) {
@@ -1916,11 +1915,7 @@ namespace Mono.Xml.Schema
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			return XmlConvert.ToDateTime (Normalize (s));
-#else
-			return XmlConvert.ToDateTime (Normalize (s), XmlDateTimeSerializationMode.Unspecified);
-#endif
+			return XmlConvertUtil.ToDateTime (Normalize (s), XmlDateTimeSerializationMode.Unspecified);
 		}
 
 		internal override XsdOrdering Compare(object x, object y) {

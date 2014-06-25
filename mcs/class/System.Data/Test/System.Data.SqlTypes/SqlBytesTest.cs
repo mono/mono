@@ -164,7 +164,7 @@ namespace MonoTests.System.Data.SqlTypes
 			b = new byte [10];
 			bytes = new SqlBytes (b);
 			Assert.AreEqual (bytes.Storage, StorageState.Buffer, "#3 Should be StorageState.Buffer");
-			FileStream fs = null;
+			Stream fs = null;
 			bytes = new SqlBytes (fs);
 			try {
 				Assert.AreEqual (bytes.Storage, StorageState.Buffer, "#4 Should throw SqlNullValueException");

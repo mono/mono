@@ -216,7 +216,7 @@ namespace System.Data.Common
 			if (Events ["RowUpdated"] != null) {
 				Delegate [] rowUpdatedList = Events ["RowUpdated"].GetInvocationList ();
 				foreach (Delegate rowUpdated in rowUpdatedList) {
-					MethodInfo rowUpdatedMethod = rowUpdated.Method;
+					MethodInfo rowUpdatedMethod = rowUpdated.GetMethodInfo ();
 					rowUpdatedMethod.Invoke (value, null);
 				}
 			}
@@ -227,7 +227,7 @@ namespace System.Data.Common
 			if (Events ["RowUpdating"] != null) {
 				Delegate [] rowUpdatingList = Events ["RowUpdating"].GetInvocationList ();
 				foreach (Delegate rowUpdating in rowUpdatingList) {
-					MethodInfo rowUpdatingMethod = rowUpdating.Method;
+					MethodInfo rowUpdatingMethod = rowUpdating.GetMethodInfo ();
 					rowUpdatingMethod.Invoke (value, null);
 				}
 			}

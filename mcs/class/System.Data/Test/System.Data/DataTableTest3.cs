@@ -28,6 +28,7 @@ using System;
 using System.Data;
 using System.IO;
 using System.Xml;
+using MonoTests.System.Data.Utils;
 
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
@@ -63,11 +64,7 @@ namespace Monotests_System.Data
 		[SetUp]
 		public void SetUp ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			tempFile = Path.GetTempFileName ();
-#else
-			tempFile = "temp_" + Guid.NewGuid ().ToString ("N") + ".tmp";
-#endif
+			tempFile = AssertHelpers.GetTempFileName ();
 		}
 
 		[TearDown]
@@ -500,13 +497,13 @@ namespace Monotests_System.Data
 			dataSet.Tables.Remove (parentTable);
 
 			//Write
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 
 			//Read
 			DataTable table = new DataTable ();
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				table.ReadXmlSchema (stream);
 			}
 
@@ -521,7 +518,7 @@ namespace Monotests_System.Data
 			dataSet.Tables.Remove (parentTable);
 			parentTable.TableName = String.Empty;
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				try {
 					parentTable.WriteXmlSchema (stream);
 					Assert.Fail ("#1");
@@ -539,13 +536,13 @@ namespace Monotests_System.Data
 			//Write
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 
 			//Read
 			DataTable table = new DataTable ();
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				table.ReadXmlSchema (stream);
 			}
 
@@ -562,13 +559,13 @@ namespace Monotests_System.Data
 			MakeDataRelation ();
 
 			//Write
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				parentTable.WriteXmlSchema (stream, true);
 			}
 
 			//Read
 			DataTable table = new DataTable ();
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				table.ReadXmlSchema (stream);
 			}
 
@@ -618,13 +615,13 @@ namespace Monotests_System.Data
 			MakeDataRelation ();
 			
 			//Write
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				childTable.WriteXmlSchema (stream);
 			}
 
 			//Read
 			DataTable table = new DataTable (childTable.TableName);
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				table.ReadXmlSchema (stream);
 			}
 			
@@ -711,7 +708,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 
@@ -719,7 +716,7 @@ namespace Monotests_System.Data
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (table);
 			
-			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+			using (Stream stream = File.OpenRead (tempFile)) {
 				try {
 					table.ReadXmlSchema (stream);
 					Assert.Fail ("#1");
@@ -738,6 +735,9 @@ namespace Monotests_System.Data
 		[Test]
 		public void XmlSchemaTest7 ()
 		{
+			// we aren't using the temp file
+			tempFile = null;
+
 			DataTable table = new DataTable ();
 			
 			try {
@@ -757,7 +757,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 		
@@ -778,7 +778,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+			using (Stream stream = File.Create (tempFile)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 		

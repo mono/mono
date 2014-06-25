@@ -322,13 +322,12 @@ namespace System.Data {
 			string error = reader.GetAttribute ("hasErrors");
 			string changes = reader.GetAttribute ("hasChanges", XmlConstants.DiffgrNamespace);
 			
-			if (changes != null)
-			{
-				if (string.Compare (changes, "modified", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0) {
+			if (changes != null) {
+				if (CultureInfo.InvariantCulture.CompareInfo.Compare (changes, "modified", CompareOptions.IgnoreCase) == 0) {
 					DiffGrRows.Add (id, Row); // for later use
 					state = DataRowState.Modified;
 				}
-				else if (string.Compare (changes, "inserted", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0) {
+				else if (CultureInfo.InvariantCulture.CompareInfo.Compare (changes, "inserted", CompareOptions.IgnoreCase) == 0) {
 					state = DataRowState.Added;
 				}
 				else
@@ -338,7 +337,7 @@ namespace System.Data {
 				state = DataRowState.Unchanged;
 			
 			// If row had errors add row to hashtable for later use
-			if (error != null && string.Compare (error, "true", CultureInfo.InvariantCulture, CompareOptions.IgnoreCase) == 0)
+			if (error != null && CultureInfo.InvariantCulture.CompareInfo.Compare (error, "true", CompareOptions.IgnoreCase) == 0)
 				ErrorRows.Add (id, Row);
 		
 			LoadColumns (Table, Row, reader, DataRowVersion.Current);

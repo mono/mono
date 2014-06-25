@@ -55,6 +55,7 @@ using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 #endif // USE_MSUNITTEST
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.ComponentModel;
 using System.IO;
 using MonoTests.System.Data.Utils;
@@ -111,7 +112,7 @@ namespace MonoTests.System.Data
 		{
 			listChangedArgs = args;
 			// for debugging
-			/*Console.WriteLine("EventType :: " + listChangedArgs.ListChangedType + 
+			/*Debug.WriteLine ("EventType :: " + listChangedArgs.ListChangedType + 
 							  "  oldIndex  :: " + listChangedArgs.OldIndex + 
 							  "  NewIndex  :: " + listChangedArgs.NewIndex);*/
 			
@@ -119,25 +120,29 @@ namespace MonoTests.System.Data
 
 		private void PrintTableOrView (DataTable t, string label)
 		{
-			Console.WriteLine ("\n" + label);
-			for (int i = 0; i<t.Rows.Count; i++){
+			Debug.WriteLine ("\n" + label);
+			for (int i = 0; i < t.Rows.Count; i++){
+				string line = String.Empty;
 				foreach (DataColumn dc in t.Columns)
-					Console.Write (t.Rows [i][dc] + "\t");
-				Console.WriteLine ("");
+					line += t.Rows [i][dc] + "\t";
+				Debug.WriteLine (line);
+				Debug.WriteLine (String.Empty);
 			}
-			Console.WriteLine ();
+			Debug.WriteLine (String.Empty);
 		}
 
 		private void PrintTableOrView (DataView dv, string label)
 		{
-			Console.WriteLine ("\n" + label);
-			Console.WriteLine ("Sort Key :: " + dv.Sort);
+			Debug.WriteLine ("\n" + label);
+			Debug.WriteLine ("Sort Key :: " + dv.Sort);
 			for (int i = 0; i < dv.Count; i++) {
+				string line = String.Empty;
 				foreach (DataColumn dc in dv.Table.Columns)
-					Console.Write (dv [i].Row [dc] + "\t");
-				Console.WriteLine ("");
+					line += dv [i].Row [dc] + "\t";
+				Debug.WriteLine (line);
+				Debug.WriteLine (String.Empty);
 			}
-			Console.WriteLine ();
+			Debug.WriteLine (String.Empty);
 		}
 
 		[TearDown]

@@ -282,10 +282,10 @@ namespace Mono.Xml.Schema
 				throw new ArgumentNullException ("value");
 			if (type == null)
 				throw new ArgumentNullException ("type");
-			switch (Type.GetTypeCode (value.GetType ())) {
+			switch (TypeUtil.GetTypeCode (value.GetType ())) {
 			case TypeCode.Boolean:
 				bool bvalue = (bool) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (bvalue);
 				case TypeCode.DateTime:
@@ -308,7 +308,7 @@ namespace Mono.Xml.Schema
 //			case TypeCode.Char:
 			case TypeCode.DateTime:
 				DateTime dtvalue = (DateTime) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (dtvalue);
 				case TypeCode.DateTime:
@@ -330,7 +330,7 @@ namespace Mono.Xml.Schema
 //			case TypeCode.DBNull:
 			case TypeCode.Decimal:
 				decimal decvalue = (decimal) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (decvalue);
 				case TypeCode.DateTime:
@@ -351,7 +351,7 @@ namespace Mono.Xml.Schema
 				break;
 			case TypeCode.Double:
 				double dblvalue = (double) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (dblvalue);
 				case TypeCode.DateTime:
@@ -374,7 +374,7 @@ namespace Mono.Xml.Schema
 //			case TypeCode.Int16:
 			case TypeCode.Int32:
 				int ivalue = (int) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (ivalue);
 				case TypeCode.DateTime:
@@ -395,7 +395,7 @@ namespace Mono.Xml.Schema
 				break;
 			case TypeCode.Int64:
 				long lvalue = (long) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (lvalue);
 				case TypeCode.DateTime:
@@ -418,7 +418,7 @@ namespace Mono.Xml.Schema
 //			case TypeCode.SByte:
 			case TypeCode.Single:
 				float fvalue = (float) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (fvalue);
 				case TypeCode.DateTime:
@@ -439,7 +439,7 @@ namespace Mono.Xml.Schema
 				break;
 			case TypeCode.String:
 				string svalue = (string) value;
-				switch (Type.GetTypeCode (type)) {
+				switch (TypeUtil.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return ToBoolean (svalue);
 				case TypeCode.DateTime:

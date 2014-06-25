@@ -61,7 +61,7 @@ namespace System.Data.Common
 		public DbConnectionStringBuilder (bool useOdbcRules)
 		{
 			this.useOdbcRules = useOdbcRules;
-			_dictionary = new Dictionary <string, object> (StringComparer.InvariantCultureIgnoreCase);
+			_dictionary = new Dictionary <string, object> (StringComparer.OrdinalIgnoreCase);
 		}
 
 		#endregion // Constructors
@@ -309,7 +309,7 @@ namespace System.Data.Common
 					return;
 				}
 
-				bool isDriver = (string.Compare (keyword, "Driver", StringComparison.InvariantCultureIgnoreCase) == 0);
+				bool isDriver = (string.Compare (keyword, "Driver", StringComparison.OrdinalIgnoreCase) == 0);
 				if (isDriver) {
 					if (value [0] == '{' && lastChar == '}' && !needBraces) {
 						builder.Append (value);

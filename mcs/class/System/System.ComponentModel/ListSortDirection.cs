@@ -28,13 +28,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE
 namespace System.ComponentModel
 {
 	/// <summary>
 	/// Specifies the direction of a sort operation.
 	/// </summary>
-	public enum ListSortDirection {
+#if !NETFX_CORE
+	public 
+#else
+	internal
+#endif
+	enum ListSortDirection {
 		Ascending = 0,
 		Descending = 1
 	}
 }
+#endif

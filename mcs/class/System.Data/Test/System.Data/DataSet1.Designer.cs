@@ -86,8 +86,8 @@ namespace MonoTests.System.Data {
 #endif
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.ComponentModel.Browsable(false)]
 #if !WINDOWS_PHONE && !NETFX_CORE
+        [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
 #endif
         public DataTable1DataTable DataTable1 {
@@ -97,8 +97,8 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.ComponentModel.BrowsableAttribute(true)]
 #if !WINDOWS_PHONE && !NETFX_CORE
+        [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
 #endif
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -296,7 +296,9 @@ namespace MonoTests.System.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+#if !WINDOWS_PHONE && !NETFX_CORE
             [global::System.ComponentModel.Browsable(false)]
+#endif
             public int Count {
                 get {
                     return this.Rows.Count;
@@ -481,7 +483,7 @@ namespace MonoTests.System.Data {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public void SetColumn1Null() {
-                this[this.tableDataTable1.Column1Column] = global::System.Convert.DBNull;
+                this[this.tableDataTable1.Column1Column] = global::System.DBNull.Value;
             }
         }
         

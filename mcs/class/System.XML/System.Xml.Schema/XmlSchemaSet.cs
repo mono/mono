@@ -55,7 +55,12 @@ namespace Mono.Xml.Schema
 #endif
 	{
 		XmlNameTable nameTable;
-		XmlResolver xmlResolver = new XmlUrlResolver ();
+		XmlResolver xmlResolver = 
+#if !WINDOWS_PHONE && !NETFX_CORE
+			new XmlUrlResolver ();
+#else
+			null;
+#endif
 
 		ArrayList schemas;
 		XmlSchemaObjectTable attributes;
@@ -136,6 +141,7 @@ namespace Mono.Xml.Schema
 #endif
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		public XmlSchema Add (string targetNamespace, string schemaUri)
 		{
 			var uri = xmlResolver.ResolveUri (null, schemaUri);
@@ -143,6 +149,7 @@ namespace Mono.Xml.Schema
 				using (var r = XmlReader.Create (stream, new XmlReaderSettings () { XmlResolver = xmlResolver, NameTable = nameTable}, uri.ToString ()))
 					return Add (targetNamespace, r);
 		}
+#endif
 
 		public XmlSchema Add (string targetNamespace, XmlReader schemaDocument)
 		{

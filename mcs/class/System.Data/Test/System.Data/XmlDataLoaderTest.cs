@@ -29,6 +29,7 @@ using System.Collections;
 using System.Data;
 using System.IO;
 using System.Xml;
+using MonoTests.System.Data.Utils;
 
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
@@ -61,11 +62,7 @@ namespace Monotests_System.Data
 		[SetUp]
 		public void SetUp ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			tempFile = Path.GetTempFileName ();
-#else
-			tempFile = "temp_" + Guid.NewGuid ().ToString ("N") + ".tmp";
-#endif
+			tempFile = AssertHelpers.GetTempFileName ();
 		}
 
 		[TearDown]
@@ -86,10 +83,12 @@ namespace Monotests_System.Data
 			dr["CustName"] = DBNull.Value;
 			dr["Type"] = typeof (DBNull);
 			dt.Rows.Add (dr);
-			ds.WriteXml (tempFile, XmlWriteMode.DiffGram);
+			using (Stream file = File.Create (tempFile))
+				ds.WriteXml (file, XmlWriteMode.DiffGram);
 
 			ds = Create ();
-			ds.ReadXml (tempFile, XmlReadMode.DiffGram);
+			using (Stream file = File.OpenRead (tempFile))
+				ds.ReadXml (file, XmlReadMode.DiffGram);
 		}
 
 		private static DataSet Create ()

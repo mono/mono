@@ -32,14 +32,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NETFX_CORE
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+#endif
 
 namespace System
 {
+#if !NETFX_CORE
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class DBNull : ISerializable, IConvertible
+#endif
+	public sealed class DBNull
+#if !NETFX_CORE
+		: ISerializable, IConvertible
+#endif
 	{
 		// Fields
 		public static readonly DBNull Value = new DBNull ();
@@ -49,6 +56,7 @@ namespace System
 		{
 		}
 
+#if !NETFX_CORE
 		private DBNull (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotSupportedException ();
@@ -143,6 +151,7 @@ namespace System
 		{
 			throw new InvalidCastException ();
 		}
+#endif
 
 		public override string ToString ()
 		{

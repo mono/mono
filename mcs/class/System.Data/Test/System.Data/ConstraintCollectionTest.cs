@@ -55,6 +55,7 @@ using NUnit.Framework;
 #endif // USE_MSUNITTEST
 using System;
 using System.Data;
+using System.Diagnostics;
 #if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
 #endif
@@ -403,7 +404,7 @@ namespace MonoTests.System.Data
 				_table2.Constraints.Clear ();
 				Assert.AreEqual (0, _table2.Constraints.Count, "A2"); //No constraints should remain
 			} catch (Exception e) {
-				Console.WriteLine (e);
+				Debug.WriteLine (e);
 			}
 		}
 

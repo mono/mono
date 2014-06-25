@@ -34,6 +34,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using MonoTests.System.Data.Utils;
 
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
@@ -888,9 +889,10 @@ namespace MonoTests.System.Data
 			dataSet1.Tables.Add(table);
 			table.LoadDataRow(new object[]{1, "One"}, false);
 			table.LoadDataRow(new object[]{2, "Two"}, false);
-			string file = Path.Combine (Path.GetTempPath (), "schemas-test.xml");
+			string file = AssertHelpers.GetTempFileName ("schemas-test.xml");
 			try {
-				dataSet1.WriteXml (file, XmlWriteMode.WriteSchema);
+				using (Stream f = File.Create (file))
+					dataSet1.WriteXml (f, XmlWriteMode.WriteSchema);
 			}
 			catch (Exception ex) {
 				Assert.Fail ("DSExtPropTest failed: WriteXml failed with : "+ex.Message);

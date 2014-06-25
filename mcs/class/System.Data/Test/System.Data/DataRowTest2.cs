@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 
@@ -681,7 +682,7 @@ namespace MonoTests.System.Data
 			drChild = dtChild.Select("ParentId=" + drParent["ParentId"])[0];
 
 			DataRow[] drTemp = dtParent.Select("ParentId=" + drParent["ParentId"]);
-			//				Console.WriteLine("********");
+			//				Debug.WriteLine ("********");
 			//				foreach (DataRow d in drTemp)
 			//				{
 			//					CheckRowVersion(d);
@@ -691,12 +692,12 @@ namespace MonoTests.System.Data
 			drTemp[1].BeginEdit();
 			drTemp[1]["String1"] = "NewValue"; //row now has versions: Proposed,Current,Original,Default
 
-			//		Console.WriteLine("********");
+			//		Debug.WriteLine ("********");
 			//		foreach (DataRow d in drTemp)
 			//		{
 			//			CheckRowVersion(d);
 			//		}
-			//		Console.WriteLine("********");
+			//		Debug.WriteLine ("********");
 
 			// Check DataRowVersion.Current
 			//Check DataRowVersion.Current 
@@ -729,11 +730,11 @@ namespace MonoTests.System.Data
 
 		private void CheckRowVersion(DataRow dr)
 		{
-			Console.WriteLine("");
-			if (dr.HasVersion(DataRowVersion.Current)) Console.WriteLine("Has " + DataRowVersion.Current.ToString());
-			if (dr.HasVersion(DataRowVersion.Default)) Console.WriteLine("Has " + DataRowVersion.Default.ToString());
-			if (dr.HasVersion(DataRowVersion.Original)) Console.WriteLine("Has " + DataRowVersion.Original.ToString());
-			if (dr.HasVersion(DataRowVersion.Proposed)) Console.WriteLine("Has " + DataRowVersion.Proposed.ToString());
+			Debug.WriteLine ("");
+			if (dr.HasVersion (DataRowVersion.Current)) Debug.WriteLine ("Has " + DataRowVersion.Current.ToString ());
+			if (dr.HasVersion (DataRowVersion.Default)) Debug.WriteLine ("Has " + DataRowVersion.Default.ToString ());
+			if (dr.HasVersion (DataRowVersion.Original)) Debug.WriteLine ("Has " + DataRowVersion.Original.ToString ());
+			if (dr.HasVersion (DataRowVersion.Proposed)) Debug.WriteLine ("Has " + DataRowVersion.Proposed.ToString ());
 		}
 
 		[Test] public new void GetType()
@@ -2137,7 +2138,7 @@ namespace MonoTests.System.Data
 
 			foreach( DataRow row in ds.Tables[0].Rows )
 			{
-				Console.WriteLine(row["ValueListValueMember"].ToString() + " " );
+				Debug.WriteLine (row ["ValueListValueMember"].ToString () + " " );
 				if( row.IsNull("ValueListValueMember") == true )
 					Assert.AreEqual("Failed", "SubTest", "DRW98");
 				else

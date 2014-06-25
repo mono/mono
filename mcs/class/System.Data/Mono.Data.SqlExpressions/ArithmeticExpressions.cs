@@ -34,6 +34,10 @@ using System;
 using System.Collections;
 using System.Data;
 
+#if NETFX_CORE
+using IConvertible = System.Object;
+#endif
+
 namespace Mono.Data.SqlExpressions {
 	internal class Negative : UnaryExpression {
 		public Negative (IExpression e) : base (e) {}

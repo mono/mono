@@ -126,7 +126,7 @@ namespace Mono.Xml.Schema
 			XDocument xmldoc = new XDocument();
 			xmldoc.Add(XNode.ReadFrom(reader));
 			XElement root = xmldoc.FirstNode as XElement;
-			if(root != null && root.Nodes().Any() != null)
+			if (root != null && root.Nodes ().Any ())
 			{
 				appinfo.Markup = root.Nodes().ToArray();
 			}

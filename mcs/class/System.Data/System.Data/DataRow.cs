@@ -176,7 +176,7 @@ namespace System.Data {
 				_table.ChangingDataColumn (this, column, value);
 
 #if NET_2_0
-				if (value == null && column.DataType.IsValueType)
+				if (value == null && column.DataType.GetIsValueType ())
 #else
 				if (value == null && column.DataType != typeof (string))
 #endif

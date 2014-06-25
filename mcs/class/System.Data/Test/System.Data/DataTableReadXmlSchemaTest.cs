@@ -481,13 +481,9 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = new DataSet ();
 			ds.Tables.Add( new DataTable("foo"));
-			XmlReader xtr = null;
-			try {
-				xtr = XmlReader.Create ("Test/System.Data/schemas/test010.xsd");
+			using (Stream file = File.OpenRead ("Test/System.Data/schemas/test010.xsd"))
+			using (XmlReader xtr = XmlReader.Create (file)) {
 				ds.Tables[0].ReadXmlSchema (xtr);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
 			}
 			AssertDataSet ("010", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];

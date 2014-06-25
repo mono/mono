@@ -24,8 +24,11 @@
 //
 
 using System;
+using System.Globalization;
+using System.IO;
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
+using Windows.Storage;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
@@ -45,10 +48,8 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 #endif // USE_MSUNITTEST
 
-namespace MonoTests.System.Data.Utils
-{
-	public static class AssertHelpers
-	{
+namespace MonoTests.System.Data.Utils {
+	public static class AssertHelpers {
 		public static void AssertThrowsException<T> (Action action) 
 			where T : Exception
 		{
@@ -105,5 +106,58 @@ namespace MonoTests.System.Data.Utils
 			Assert.AreEqual (expected, actual, message);
 #endif
 		}
-	} 
+
+		public static string GetTempFileName ()
+		{
+#if !WINDOWS_PHONE && !NETFX_CORE
+			return Path.GetTempFileName ();
+#else
+			return GetTempFileName ("temp_" + Guid.NewGuid ().ToString ("N") + ".tmp");
+#endif
+		}
+
+		public static string GetTempFileName (string filename)
+		{
+#if WINDOWS_PHONE
+			return filename;
+#elif NETFX_CORE
+			return Path.Combine (ApplicationData.Current.TemporaryFolder.Path, filename);
+#else
+			return Path.Combine (Path.GetTempPath (), filename);
+#endif
+		}
+	}
 }
+
+#if NETFX_CORE
+// dummy class and namespace to forward the culture changing to the new property
+namespace System.Threading {
+	static class Thread {
+		internal static class CurrentThread {
+			internal static CultureInfo CurrentCulture {
+				get { return new CultureInfo (global::Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride); }
+				set { global::Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = value.Name; }
+			}
+		}
+	}
+}
+namespace System.IO {
+	static class File {
+		internal static void Delete (string fileName)
+		{
+			StorageFile file = StorageFile.GetFileFromPathAsync (fileName).AsTask ().Result;
+			file.DeleteAsync ().AsTask ().Wait ();
+		}
+		internal static Stream Create (string fileName)
+		{
+			StorageFolder root = ApplicationData.Current.TemporaryFolder;
+			return root.OpenStreamForWriteAsync (Path.GetFileName (fileName), CreationCollisionOption.ReplaceExisting).Result;
+		}
+		internal static Stream OpenRead (string fileName)
+		{
+			StorageFile file = StorageFile.GetFileFromPathAsync (fileName).AsTask ().Result;
+			return file.OpenStreamForReadAsync ().Result;
+		}
+	}
+}
+#endif

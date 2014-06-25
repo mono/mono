@@ -79,7 +79,7 @@ namespace System.Data.SqlTypes
 		{
 			if (value > 922337203685477.5807m || value < -922337203685477.5808m)
 				throw new OverflowException ();
-			this.value = Decimal.Round (value, 4);
+			this.value = Math.Round (value, 4);
 			notNull = true;
 		}
 

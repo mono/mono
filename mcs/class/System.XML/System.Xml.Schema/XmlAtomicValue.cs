@@ -30,24 +30,14 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
 
-#if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
-#else
-namespace Mono.Xml.Schema
-#endif
 {
 	[MonoTODO] // This class is unused and thus won't be finished.
-#if !INCLUDE_MONO_XML_SCHEMA
-	public
-#else
-	internal
-#endif
-	sealed class XmlAtomicValue : XPathItem, ICloneable
+	public sealed class XmlAtomicValue : XPathItem, ICloneable
 	{
 		bool booleanValue;
 		DateTime dateTimeValue;
@@ -364,11 +354,7 @@ namespace Mono.Xml.Schema
 			case XmlTypeCode.Item:
 				return TypedValue;
 			case XmlTypeCode.QName:
-#if !WINDOWS_PHONE && !NETFX_CORE
 				return XmlQualifiedName.Parse (Value, nsResolver, true);
-#else
-				return XmlSchemaUtil.Parse (Value, nsResolver, true);
-#endif
 			case XmlTypeCode.Base64Binary:
 			case XmlTypeCode.HexBinary:
 				if (bytesValue != null)

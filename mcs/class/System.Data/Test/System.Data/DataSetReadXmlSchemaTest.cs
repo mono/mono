@@ -352,7 +352,12 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
-			Assert.AreEqual ("fi-FI", ds.Locale.Name); // DataSet's Locale comes from current thread
+			string locale = "fi-FI";
+#if NETFX_CORE
+			// windows store apps only have the two letter code for the thread locale
+			locale = "fi"; 
+#endif
+			Assert.AreEqual (locale, ds.Locale.Name); // DataSet's Locale comes from current thread
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "Root", 2, 0, 0, 0, 0, 0);
 			Assert.AreEqual ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
@@ -627,13 +632,9 @@ namespace MonoTests.System.Data
 		public void TestSampleFileImportSimple ()
 		{
 			DataSet ds = new DataSet ();
-			XmlReader xtr = null;
-			try {
-				xtr = XmlReader.Create ("Test/System.Data/schemas/test010.xsd");
+			using (Stream file = File.OpenRead ("Test/System.Data/schemas/test010.xsd"))
+			using (XmlReader xtr = XmlReader.Create (file)) {
 				ds.ReadXmlSchema (xtr);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
 			}
 			AssertDataSet ("010", ds, "NewDataSet", 1, 0);
 

@@ -2038,7 +2038,7 @@ namespace MonoTests_System.Data
 			//write xml  schema only
 			ds1.WriteXmlSchema(ms);
 
-			System.IO.MemoryStream ms1 = new System.IO.MemoryStream(ms.GetBuffer());
+			System.IO.MemoryStream ms1 = new System.IO.MemoryStream (ms.ToArray ());
 			//copy schema
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
@@ -2068,13 +2068,10 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(0, ds2.Tables[1].Rows.Count , "DS275");
 		}
 
+#if !NETFX_CORE
 		[Test] public void ReadXmlSchema_ByFileName()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			string sTempFileName = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899.xml");
-#else
-			string sTempFileName = "temp_" + Guid.NewGuid ().ToString ("N") + ".tmp";
-#endif
+			string sTempFileName = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899.xml");
 
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
@@ -2115,6 +2112,7 @@ namespace MonoTests_System.Data
 			//try to delete the file
 			System.IO.File.Delete(sTempFileName);
 		}
+#endif
 
 		[Test] public void ReadXmlSchema_ByTextReader()
 		{
@@ -2216,7 +2214,8 @@ namespace MonoTests_System.Data
 			ds1.Tables[1].Rows.Add(new object[] {7,3,"","",new DateTime(2000,1,1,0,0,0,0),35});
 
 			//write xml file, data only
-			ds1.WriteXml(sTempFileName);
+			using (Stream file = File.Create (sTempFileName))
+				ds1.WriteXml (file);
 
 			//copy both data and schema
 			DataSet ds2 = ds1.Copy();
@@ -2274,7 +2273,7 @@ namespace MonoTests_System.Data
 			// ReadXml - Table 2 row count
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS302");
 
-			ms.Close();
+			ms.Dispose ();
 		}
 
 		[Test] public void ReadXml_Strm2()
@@ -2800,8 +2799,8 @@ namespace MonoTests_System.Data
 			// ReadXml - Table 2 row count
 			Assert.AreEqual(ds2.Tables[1].Rows.Count, ds1.Tables[1].Rows.Count , "DS341");
 
-			sr.Close();
-			sw.Close();
+			sr.Dispose ();
+			sw.Dispose ();
 		}
 
 		[Test]
@@ -2927,7 +2926,7 @@ namespace MonoTests_System.Data
 			ms = new System.IO.MemoryStream();
 			ds1.WriteXmlSchema (ms);
 
-			ms1 = new System.IO.MemoryStream (ms.GetBuffer());
+			ms1 = new System.IO.MemoryStream (ms.ToArray());
 			DataSet ds2 = new DataSet();
 			ds2.ReadXmlSchema(ms1);
 		
@@ -3155,7 +3154,7 @@ namespace MonoTests_System.Data
 			}
 			finally	
 			{
-				sw.Close();
+				sw.Dispose ();
 			}
 		}
 
@@ -3423,7 +3422,7 @@ namespace MonoTests_System.Data
 			ds.WriteXmlSchema (ms);
 
 			DataSet ds1 = new DataSet ();
-			ds1.ReadXmlSchema (new MemoryStream (ms.GetBuffer ()));
+			ds1.ReadXmlSchema (new MemoryStream (ms.ToArray ()));
 
 			// no new relation, and <table>_Id columns, should get created when 
 			// Relation.Nested = true
@@ -3476,7 +3475,7 @@ namespace MonoTests_System.Data
 
 			// When table schema is missing, it shud load up the data
 			// for the existing schema
-			ds1.ReadXml (new MemoryStream (ms.GetBuffer ()), XmlReadMode.DiffGram);
+			ds1.ReadXml (new MemoryStream (ms.ToArray ()), XmlReadMode.DiffGram);
 
 			Assert.AreEqual (2, ds1.Tables [0].Rows.Count, "#1");
 			Assert.AreEqual (1, ds1.Tables [0].Columns.Count, "#2");

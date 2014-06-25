@@ -38,6 +38,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 #if !WINDOWS_PHONE && !NETFX_CORE
@@ -3083,8 +3084,8 @@ namespace MonoTests.System.Data
 			ds1.Tables[0].WriteXmlSchema (ms1);
 			ds1.Tables[1].WriteXmlSchema (ms2);
 
-			MemoryStream ms11 = new MemoryStream (ms1.GetBuffer ());
-			MemoryStream ms22 = new MemoryStream (ms2.GetBuffer ());
+			MemoryStream ms11 = new MemoryStream (ms1.ToArray ());
+			MemoryStream ms22 = new MemoryStream (ms2.ToArray ());
 			//copy schema
 			//DataSet ds2 = new DataSet ();
 			DataTable dt1 = new DataTable ();
@@ -3119,16 +3120,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, dt2.Rows.Count, "DS275");
 		}
 
+#if !NETFX_CORE
 		[Test]
 		public void ReadWriteXmlSchema_ByFileName ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
-			string sTempFileName1 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-1.xml");
-			string sTempFileName2 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-2.xml");
-#else
-			string sTempFileName1 = "temp_" + Guid.NewGuid ().ToString ("N") + ".tmp";
-			string sTempFileName2 = "temp_" + Guid.NewGuid ().ToString ("N") + ".tmp";
-#endif
+			string sTempFileName1 = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899-1.xml");
+			string sTempFileName2 = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899-2.xml");
 
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
@@ -3153,6 +3150,7 @@ namespace MonoTests.System.Data
 			File.Delete (sTempFileName1);
 			File.Delete (sTempFileName2);
 		}
+#endif
 
 		[Test]
 		public void ReadXmlSchema_ByTextReader ()
@@ -3758,11 +3756,11 @@ namespace MonoTests.System.Data
 			ms2 = new MemoryStream ();
 			ds1.Tables[1].WriteXmlSchema (ms2);
 
-			msA = new MemoryStream (ms1.GetBuffer ());
+			msA = new MemoryStream (ms1.ToArray ());
 			DataTable dtA = new DataTable ();
 			dtA.ReadXmlSchema (msA);
 
-			msB = new MemoryStream (ms2.GetBuffer ());
+			msB = new MemoryStream (ms2.ToArray ());
 			DataTable dtB = new DataTable ();
 			dtB.ReadXmlSchema (msB);
 
@@ -4025,7 +4023,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			Console.WriteLine ("{0} - {1}", TextString1, expected1);
+			Debug.WriteLine ("{0} - {1}", TextString1, expected1);
 			Assert.AreEqual (expected1, TextString1.Replace ("\r\n", "").Replace ("  ", "").Replace ("\n", ""), "#1");
 
 			TextWriter writer2 = new StringWriter ();
@@ -4103,8 +4101,8 @@ namespace MonoTests.System.Data
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add ();
 			ds1.Tables.Add ();
-			ds1.Tables[0].ReadXmlSchema (new MemoryStream (ms1.GetBuffer ()));
-			ds1.Tables[1].ReadXmlSchema (new MemoryStream (ms2.GetBuffer ()));
+			ds1.Tables[0].ReadXmlSchema (new MemoryStream (ms1.ToArray ()));
+			ds1.Tables[1].ReadXmlSchema (new MemoryStream (ms2.ToArray ()));
 
 			Assert.AreEqual (0, ds1.Relations.Count, "#1");
 			Assert.AreEqual (1, ds1.Tables[0].Columns.Count, "#2");
@@ -4135,6 +4133,7 @@ namespace MonoTests.System.Data
 			}
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		[Test]
 		public void ReadWriteXmlSchemaExp_NoFileName ()
 		{
@@ -4145,6 +4144,7 @@ namespace MonoTests.System.Data
 			} catch (ArgumentException) {
 			}
 		}
+#endif
 
 		[Test]
 		public void ReadWriteXmlSchemaExp_TableNameConflict ()
