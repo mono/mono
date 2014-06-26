@@ -57,6 +57,8 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: size = sizeof (SGenProtocolDislinkProcessStaged); break;
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: size = sizeof (SGenProtocolDomainUnload); break;
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: size = sizeof (SGenProtocolDomainUnload); break;
+	case SGEN_PROTOCOL_GRAY_ENQUEUE: size = sizeof (SGenProtocolGrayQueue); break;
+	case SGEN_PROTOCOL_GRAY_DEQUEUE: size = sizeof (SGenProtocolGrayQueue); break;
 	default: assert (0);
 	}
 
@@ -91,6 +93,8 @@ is_always_match (int type)
 	case SGEN_PROTOCOL_CEMENT_RESET:
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN:
 	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END:
+	case SGEN_PROTOCOL_GRAY_ENQUEUE:
+	case SGEN_PROTOCOL_GRAY_DEQUEUE:
 		return TRUE;
 	default:
 		return FALSE;
@@ -292,6 +296,16 @@ print_entry (int type, void *data)
 		printf ("dislink_unload_end domain %p\n", entry->domain);
 		break;
 	}
+	case SGEN_PROTOCOL_GRAY_ENQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		printf ("enqueue queue %p cursor %p value %p\n", entry->queue, entry->cursor, entry->value);
+		break;
+	}
+	case SGEN_PROTOCOL_GRAY_DEQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		printf ("dequeue queue %p cursor %p value %p\n", entry->queue, entry->cursor, entry->value);
+		break;
+	}
 	default:
 		assert (0);
 	}
@@ -378,6 +392,14 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
 		SGenProtocolDislinkProcessStaged *entry = data;
 		return ptr == entry->obj || ptr == entry->link;
+	}
+	case SGEN_PROTOCOL_GRAY_ENQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		return ptr == entry->cursor || ptr == entry->value;
+	}
+	case SGEN_PROTOCOL_GRAY_DEQUEUE: {
+		SGenProtocolGrayQueue *entry = data;
+		return ptr == entry->cursor || ptr == entry->value;
 	}
 	default:
 		if (is_always_match (type))
