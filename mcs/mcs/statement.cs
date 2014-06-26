@@ -1879,7 +1879,14 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
+			var l = ec.LoopEnd;
+
+			if (ec.TryFinallyUnwind != null) {
+				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
+				l = TryFinally.EmitRedirectedJump (ec, async_body, l, enclosing_loop.Statement as Block);
+			}
+
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
@@ -1920,7 +1927,14 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
+			var l = ec.LoopBegin;
+
+			if (ec.TryFinallyUnwind != null) {
+				var async_body = (AsyncInitializer) ec.CurrentAnonymousMethod;
+				l = TryFinally.EmitRedirectedJump (ec, async_body, l, enclosing_loop.Statement as Block);
+			}
+
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
 		}
 
 		protected override bool DoResolve (BlockContext bc)
@@ -6740,9 +6754,21 @@ namespace Mono.CSharp {
 
 		public static Label EmitRedirectedJump (EmitContext ec, AsyncInitializer initializer, Label label, Block labelBlock)
 		{
+			int idx;
+			if (labelBlock != null) {
+				for (idx = ec.TryFinallyUnwind.Count; idx != 0; --idx) {
+					var fin = ec.TryFinallyUnwind [idx - 1];
+					if (!fin.IsParentBlock (labelBlock))
+						break;
+				}
+			} else {
+				idx = 0;
+			}
+
 			bool set_return_state = true;
 
-			foreach (var fin in ec.TryFinallyUnwind) {
+			for (; idx < ec.TryFinallyUnwind.Count; ++idx) {
+				var fin = ec.TryFinallyUnwind [idx];
 				if (labelBlock != null && !fin.IsParentBlock (labelBlock))
 					break;
 
@@ -6771,8 +6797,9 @@ namespace Mono.CSharp {
 
 				// Add fallthrough label
 				redirected_jumps.Add (ec.DefineLabel ());
+
 				if (setReturnState)
-					initializer.HoistedReturnState = ec.GetTemporaryField (ec.Module.Compiler.BuiltinTypes.Int);
+					initializer.HoistedReturnState = ec.GetTemporaryField (ec.Module.Compiler.BuiltinTypes.Int, true);
 			}
 
 			int index = redirected_jumps.IndexOf (label);
@@ -6782,7 +6809,7 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Indicates we have captured return value
+			// Indicates we have captured exit jump
 			//
 			if (setReturnState) {
 				var value = new IntConstant (initializer.HoistedReturnState.Type, index, Location.Null);
@@ -6981,8 +7008,13 @@ namespace Mono.CSharp {
 				c.Emit (ec);
 
 				if (catch_sm != null) {
-					if (state_variable == null)
-						state_variable = ec.GetTemporaryLocal (ec.Module.Compiler.BuiltinTypes.Int);
+					if (state_variable == null) {
+						//
+						// Cannot reuse temp variable because non-catch path assumes the value is 0
+						// which may not be true for reused local variable
+						//
+						state_variable = ec.DeclareLocal (ec.Module.Compiler.BuiltinTypes.Int, false);
+					}
 
 					var index = catch_sm.IndexOf (c);
 					if (index < 0)

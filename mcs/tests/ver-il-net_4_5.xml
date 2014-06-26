@@ -62971,6 +62971,49 @@
       </method>
     </type>
   </test>
+  <test name="test-async-72.cs">
+    <type name="Test">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] YieldValue(Int32)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] BreakTest()" attrs="150">
+        <size>33</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] ContinueTest()" attrs="150">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>64</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;YieldValue&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>172</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test+&lt;BreakTest&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>898</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ContinueTest&gt;c__async2">
+      <method name="Void MoveNext()" attrs="486">
+        <size>898</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
