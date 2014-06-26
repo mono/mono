@@ -1783,7 +1783,7 @@ namespace MonoTests.System.Net.Sockets
 			/* Longer wait here, because the ms runtime
 			 * takes a lot longer to not connect
 			 */
-			if (BCCalledBack.WaitOne (10000, false) == false) {
+			if (BCCalledBack.WaitOne (30000, false) == false) {
 				Assert.Fail ("BeginConnectMultiple wait failed");
 			}
 			
