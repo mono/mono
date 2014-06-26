@@ -43,5 +43,27 @@ namespace MonoTests.Mono.Data.Sqlite
 				return string.Compare (param1, param2);
 			}
 		}
+
+		[SqliteFunction(Name = "TestScalar", FuncType = FunctionType.Scalar)]
+		public class TestScalar : SqliteFunction
+		{
+			public override object Invoke (object[] args)
+			{
+				return null;
+			}
+		}
+
+		[SqliteFunction(Name = "TestAggregate", FuncType = FunctionType.Aggregate)]
+		public class TestAggregate : SqliteFunction
+		{
+			public override void Step(object[] args, int stepNumber, ref object contextData)
+			{
+			}
+
+			public override object Final (object contextData)
+			{
+				return null;
+			}
+		}
 	}
 }
