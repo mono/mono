@@ -38,7 +38,7 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public class CryptographicException : SystemException, _Exception {
 		public CryptographicException ()
-			: base (Locale.GetText ("Error occured during a cryptographic operation."))
+			: base (Locale.GetText ("Error occurred during a cryptographic operation."))
 		{
 			// default to CORSEC_E_CRYPTO
 			// defined as EMAKEHR(0x1430) in CorError.h
