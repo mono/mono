@@ -567,7 +567,7 @@ namespace Mono.CSharp
 			return field;
 		}
 
-		public Field AddCapturedLocalVariable (TypeSpec type)
+		public Field AddCapturedLocalVariable (TypeSpec type, bool requiresUninitialized = false)
 		{
 			if (mutator != null)
 				type = mutator.Mutate (type);
@@ -575,7 +575,7 @@ namespace Mono.CSharp
 			List<Field> existing_fields = null;
 			if (stack_fields == null) {
 				stack_fields = new Dictionary<TypeSpec, List<Field>> ();
-			} else if (stack_fields.TryGetValue (type, out existing_fields)) {
+			} else if (stack_fields.TryGetValue (type, out existing_fields) && !requiresUninitialized) {
 				foreach (var f in existing_fields) {
 					if (f.IsAvailableForReuse) {
 						f.IsAvailableForReuse = false;

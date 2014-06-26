@@ -390,9 +390,9 @@ namespace Mono.CSharp
 		//
 		// Creates temporary field in current async storey
 		//
-		public StackFieldExpr GetTemporaryField (TypeSpec type)
+		public StackFieldExpr GetTemporaryField (TypeSpec type, bool initializedFieldRequired = false)
 		{
-			var f = AsyncTaskStorey.AddCapturedLocalVariable (type);
+			var f = AsyncTaskStorey.AddCapturedLocalVariable (type, initializedFieldRequired);
 			var fexpr = new StackFieldExpr (f);
 			fexpr.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location.Null);
 			return fexpr;
