@@ -44,14 +44,15 @@ namespace MonoTests.System.Runtime.CompilerServices
 		class Scheduler : TaskScheduler
 		{
 			string name;
+			int ic, qc;
 
 			public Scheduler (string name)
 			{
 				this.name = name;
 			}
 
-			public int InlineCalls { get; set; }
-			public int QueueCalls { get; set; }
+			public int InlineCalls { get { return ic; } }
+			public int QueueCalls { get { return qc; } }
 
 			protected override IEnumerable<Task> GetScheduledTasks ()
 			{
@@ -60,7 +61,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			protected override void QueueTask (Task task)
 			{
-				++QueueCalls;
+				Interlocked.Increment (ref qc);
 				ThreadPool.QueueUserWorkItem (o => {
 					TryExecuteTask (task);
 				});
@@ -68,7 +69,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
 			{
-				++InlineCalls;
+				Interlocked.Increment (ref ic);
 				return false;
 			}
 		}
