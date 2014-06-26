@@ -35,5 +35,11 @@ namespace MonoTests.System
 			var str = j.ToString ();
 			Assert.AreEqual (str, "[1, 2, 3, null]");
 		}
+
+		[Test]
+		public void QuoteEscapeBug_20869 () 
+		{
+			Assert.AreEqual ((new JsonPrimitive ("\"\"")).ToString (), "\"\\\"\\\"\"");
+		}
 	}
 }

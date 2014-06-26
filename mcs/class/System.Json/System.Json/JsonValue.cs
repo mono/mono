@@ -218,8 +218,8 @@ namespace System.Json
 				if (src [i] == '"' || src [i] == '\\') {
 					sb.Append (src, start, i - start);
 					sb.Append ('\\');
-					sb.Append (src [i++]);
-					start = i;
+					sb.Append (src [i]);
+					start = i + 1;
 				}
 			sb.Append (src, start, src.Length - start);
 			return sb.ToString ();
