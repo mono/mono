@@ -725,6 +725,11 @@ namespace Mono.CSharp {
 			if (MethodData != null)
 				MethodData.Emit (Parent);
 
+			if (block != null && block.StateMachine is AsyncTaskStorey) {
+				var psm = Module.PredefinedAttributes.AsyncStateMachine;
+				psm.EmitAttribute (MethodBuilder, block.StateMachine);
+			}
+
 			if ((ModFlags & Modifiers.PARTIAL) == 0)
 				Block = null;
 		}
@@ -1347,12 +1352,6 @@ namespace Mono.CSharp {
 						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
-				}
-
-				if (block != null && block.StateMachine is AsyncTaskStorey) {
-					var psm = Module.PredefinedAttributes.AsyncStateMachine;
-					
-					psm.EmitAttribute (MethodBuilder, block.StateMachine);
 				}
 
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
