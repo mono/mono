@@ -14,6 +14,15 @@ namespace N.M
 			return 0;
 		}
 
+		public static async Task NestedAsyncAnonymousMethod ()
+		{
+			Action a = async delegate {
+				await Task.Yield();
+			};
+
+			await Task.Yield();
+		}
+
 		public static int Main ()
 		{
 			var m = typeof (C).GetMethod ("AsyncMethod");
@@ -31,6 +40,28 @@ namespace N.M
 
 			if (c != 1)
 				return 3;
+
+
+			m = typeof (C).GetMethod ("NestedAsyncAnonymousMethod");
+			attr = m.GetCustomAttribute<AsyncStateMachineAttribute> ();
+			if (attr == null)
+				return 10;
+
+			if (attr.StateMachineType == null)
+				return 11;
+
+			var n = typeof (C).GetNestedTypes (BindingFlags.NonPublic).Single (l => l.Name.Contains ("NestedAsyncAnonymousMethod"));
+			if (n == null)
+				return 12;
+
+			m = n.GetMethods (BindingFlags.NonPublic | BindingFlags.Static).Single (l => l.Name.Contains ("m__"));
+
+			attr = m.GetCustomAttribute<AsyncStateMachineAttribute> ();
+			if (attr == null)
+				return 13;
+
+			if (attr.StateMachineType == null)
+				return 14;
 
 			return 0;
 		}
