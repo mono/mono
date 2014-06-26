@@ -229,6 +229,7 @@ typedef struct {
  	 * The callee address of the last mono_runtime_invoke call
 	 */
 	gpointer invoke_addr;
+	GQueue  *invoke_addr_stack;
 
 	gboolean abort_requested;
 
@@ -3153,6 +3154,7 @@ thread_startup (MonoProfiler *prof, gsize tid)
 	tls->resume_event = CreateEvent (NULL, FALSE, FALSE, NULL);
 	MONO_GC_REGISTER_ROOT (tls->thread);
 	tls->thread = thread;
+	tls->invoke_addr_stack = NULL;
 	TlsSetValue (debugger_tls_id, tls);
 
 	DEBUG (1, fprintf (log_file, "[%p] Thread started, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls));
@@ -3283,8 +3285,13 @@ start_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 
 	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
 	/* Could be the debugger thread with assembly/type load hooks */
-	if (tls)
+	if (tls) {
+		if (!tls->invoke_addr_stack)
+			tls->invoke_addr_stack = g_queue_new();
+
+		g_queue_push_head(tls->invoke_addr_stack, tls->invoke_addr);
 		tls->invoke_addr = stackptr;
+	}
 
 	mono_loader_unlock ();
 }
@@ -3292,6 +3299,8 @@ start_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 static void
 end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 {
+	DebuggerTlsData *tls;
+
 	int i;
 #if defined(HOST_WIN32) && !defined(__GNUC__)
 	gpointer stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));
@@ -3299,15 +3308,24 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 	gpointer stackptr = __builtin_frame_address (1);
 #endif
 
-	if (!embedding || ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ())
+	mono_loader_lock ();
+
+	tls = mono_g_hash_table_lookup (thread_to_tls, mono_thread_internal_current ());
+	if (tls) {
+		tls->invoke_addr = g_queue_pop_head(tls->invoke_addr_stack);
+	}
+
+	if (!embedding || ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ()) {
+		mono_loader_unlock ();
 		return;
+	}
 
 	/*
 	 * We need to stop single stepping when exiting a runtime invoke, since if it is
 	 * a step out, it may return to native code, and thus never end.
 	 */
-	mono_loader_lock ();
 	ss_invoke_addr = NULL;
+
 
 	for (i = 0; i < event_requests->len; ++i) {
 		EventRequest *req = g_ptr_array_index (event_requests, i);
@@ -4307,6 +4325,24 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointI
 	}
 }
 
+
+static gboolean
+is_parentframe_managed(DebuggerTlsData* tls)
+{
+	// if we have 0 frames, that should never happen anyway.
+	// if we have 1 frame, our parent is defenitely native.
+	if (tls->frame_count < 2)
+		return FALSE;
+
+	//if we have at least two frames, the parent could be native.  if it is, then the tls->invoke_addr,
+	//which is the value of the stackpointer when the last mono_runtime_invoke was done, should be "more pushed"
+	//on the stack than the stackpointer of the candidate parent frame.
+	if (tls->invoke_addr <= MONO_CONTEXT_GET_SP(&tls->frames[1]->ctx))
+		return FALSE;
+
+	return TRUE;
+}
+
 /*
  * Start single stepping of thread THREAD
  */
@@ -4352,6 +4388,12 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 
 		g_assert (tls->frame_count);
 		frame = tls->frames [0];
+
+		if (ss_req->depth == STEP_DEPTH_OUT && !is_parentframe_managed(tls))
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
 
 		ss_req->last_method = frame->method;
 		ss_req->last_line = -1;

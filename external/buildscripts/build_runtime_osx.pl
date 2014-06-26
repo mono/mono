@@ -36,7 +36,30 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 		print "\n\nARE YOU SURE YOU DONT WANT TO MAKE A DEBUG BUILD?!?!?!!!!!\n\n\n";
 	}
 	$jobs = "-j$jobs";
-	$ENV{'LIBTOOLIZE'} = 'glibtoolize';
+	my $libtoolize = $ENV{'LIBTOOLIZE'};
+	my $libtool = $ENV{'LIBTOOL'};
+	if($teamcity)
+	{
+		$libtoolize = `which glibtoolize`;
+		chomp($libtoolize);
+		if(!-e $libtoolize)
+		{
+			$libtoolize = `which libtoolize`;
+			chomp($libtoolize);
+		}
+	}
+	if(!-e $libtoolize)
+	{
+		$libtoolize = 'libtoolize';
+	}
+	if(!-e $libtool)
+	{
+		$libtool = $libtoolize;
+		$libtool =~ s/ize$//;
+	}
+	print("Libtool: using $libtoolize and $libtool\n");
+	$ENV{'LIBTOOLIZE'} = $libtoolize;
+	$ENV{'LIBTOOL'} = $libtool;
 }
 
 my @arches = ('x86_64','i386');
