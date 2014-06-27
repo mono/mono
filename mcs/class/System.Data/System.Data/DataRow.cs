@@ -1257,6 +1257,14 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (DataColumn column, DataRowVersion version)
 		{
+			// use the expresion if there is one
+			if (column.Expression != String.Empty) {
+				// FIXME: how does this handle 'version'?
+				// TODO: Can we avoid the Eval each time by using the cached value?
+				object o = column.CompiledExpression.Eval (this);
+				return o == null && o == DBNull.Value;
+			}
+
 			return column.DataContainer.IsNull (IndexFromVersion (version));
 		}
 
