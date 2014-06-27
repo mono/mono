@@ -2147,6 +2147,37 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("the value", row ["second"], "second level value check failed");
 		}
 
+		[Test]
+		public void IsNull_NullValueArguments ()
+		{
+			DataTable table = new DataTable ();
+
+			// add the row, with the value in the column
+			DataColumn staticColumn = table.Columns.Add ("static", typeof(string), null);
+			DataRow row = table.Rows.Add ("the value");
+
+			try {
+				row.IsNull ((string)null);
+				Assert.Fail ("expected an arg null exception for passing a null string");
+			} catch (ArgumentNullException) {
+				// do nothing as null columns aren't allowed
+			}
+
+			try {
+				row.IsNull ("");
+				Assert.Fail ("expected an arg exception for passing an empty string");
+			} catch (ArgumentException) {
+				// do nothing as we can't find a col with no name
+			}
+
+			try {
+				row.IsNull (null, DataRowVersion.Default);
+				Assert.Fail ("null column with version check failed");
+			} catch (ArgumentNullException) {
+				// do nothing as null columns aren't allowed
+			}
+		}
+
 		[Test] public void Item()
 		{
 			// init table with columns
