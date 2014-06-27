@@ -112,15 +112,9 @@ namespace System.IO.Compression
 			if (Archive.Mode == ZipArchiveMode.Create && openStream != null)
 				throw new IOException("The archive for this entry was opened with the Create mode, and this entry has already been written to.");
 
-			var memoryStream = new MemoryStream();
-			openStream = memoryStream;
+			openStream = entry.OpenEntryStream();
 
-			if (Archive.Mode == ZipArchiveMode.Read || Archive.Mode == ZipArchiveMode.Update)
-				entry.WriteTo(memoryStream);
-
-			memoryStream.Seek(0, SeekOrigin.Begin);
-
-			return memoryStream;
+			return openStream;
 		}
 	}
 }
