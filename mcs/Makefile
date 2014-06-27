@@ -24,7 +24,6 @@ centum_tests := \
 	class/System.XML					\
 	class/Commons.Xml.Relaxng				\
 	class/Cscompmgd						\
-	class/Microsoft.JScript					\
 	class/Mono.Posix					\
 	class/Mono.Security					\
 	class/System.Design					\
