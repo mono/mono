@@ -262,6 +262,10 @@ namespace Mono.XBuild.CommandLine {
 					if (info != null)
 						projectInfo.Dependencies [info.Guid] = info;
 				}
+
+				// unload the project after reading info from it
+				// it'll be reloaded with proper context when building the solution
+				p.ParentEngine.UnloadProject (currentProject);
 			}
 
 			// fill in the project info for deps found in the .sln file
