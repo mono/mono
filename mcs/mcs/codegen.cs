@@ -528,8 +528,16 @@ namespace Mono.CSharp
 				type = EnumSpec.GetUnderlyingType (type);
 
 			switch (type.BuiltinType) {
-			case BuiltinTypeSpec.Type.Byte:
 			case BuiltinTypeSpec.Type.Bool:
+				//
+				// Workaround MSIL limitation. Load bool element as single bit,
+				// bool array can actually store any byte value
+				//
+				ig.Emit (OpCodes.Ldelem_U1);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.And);
+				break;
+			case BuiltinTypeSpec.Type.Byte:
 				ig.Emit (OpCodes.Ldelem_U1);
 				break;
 			case BuiltinTypeSpec.Type.SByte:
@@ -744,8 +752,12 @@ namespace Mono.CSharp
 				ig.Emit (OpCodes.Ldind_U1);
 				break;
 			case BuiltinTypeSpec.Type.SByte:
+				ig.Emit (OpCodes.Ldind_I1);
+				break;
 			case BuiltinTypeSpec.Type.Bool:
 				ig.Emit (OpCodes.Ldind_I1);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.And);
 				break;
 			case BuiltinTypeSpec.Type.ULong:
 			case BuiltinTypeSpec.Type.Long:
