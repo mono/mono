@@ -157,8 +157,7 @@ namespace MonoTests.System.IO.Compression
 				var entry = archive.CreateEntry("foo.txt");
 				using (var stream = entry.Open())
 				{
-
-					using(var streamWriter = new StreamWriter(stream))
+					using (var streamWriter = new StreamWriter(stream))
 						streamWriter.Write("foo");
 				}
 			}
