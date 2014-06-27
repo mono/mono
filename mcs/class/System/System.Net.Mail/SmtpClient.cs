@@ -766,7 +766,7 @@ namespace System.Net.Mail {
 
 		static void SendMailAsyncCompletedHandler (TaskCompletionSource<object> source, AsyncCompletedEventArgs e, SendCompletedEventHandler handler, SmtpClient client)
 		{
-			if (handler != e.UserState)
+			if ((object) handler != e.UserState)
 				return;
 
 			client.SendCompleted -= handler;
