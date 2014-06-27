@@ -274,7 +274,11 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 
 				if (!Directory.Exists (extn_path)) {
-					project.ParentEngine.LogMessage (MessageImportance.Low, "Extension path '{0}' not found, ignoring.", extn_path);
+					if (extn_path != DotConfigExtensionsPath)
+						project.ParentEngine.LogMessage (
+							MessageImportance.Low,
+							"Extension path '{0}' not found, ignoring.",
+							extn_path);
 					continue;
 				}
 
