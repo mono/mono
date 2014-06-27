@@ -19175,6 +19175,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-616.cs">
+    <type name="S">
+      <method name="Void Dispose()" attrs="486">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="A`1[T]">
+      <method name="Boolean Test[U](U)" attrs="454">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Boolean Test[U](U)" attrs="198">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>43</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
