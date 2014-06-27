@@ -3901,8 +3901,15 @@ namespace Mono.CSharp {
 
 			// TODO: When in probing mode do IsApplicable only and when called again do VerifyArguments for full error reporting
 			best_candidate = r.ResolveMember<MethodSpec> (ec, ref args);
-			if (best_candidate == null)
-				return r.BestCandidateIsDynamic ? this : null;
+			if (best_candidate == null) {
+				if (!r.BestCandidateIsDynamic)
+					return null;
+
+				if (simple_name != null && ec.IsStatic)
+					InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
+
+				return this;
+			}
 
 			// Overload resolver had to create a new method group, all checks bellow have already been executed
 			if (r.BestCandidateNewMethodGroup != null)
@@ -3913,7 +3920,7 @@ namespace Mono.CSharp {
 					if (best_candidate.IsExtensionMethod && args[0].Expr == InstanceExpression) {
 						InstanceExpression = null;
 					} else {
-						if (best_candidate.IsStatic && simple_name != null) {
+						if (simple_name != null && best_candidate.IsStatic) {
 							InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
 						}
 

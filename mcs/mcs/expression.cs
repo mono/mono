@@ -6315,17 +6315,18 @@ namespace Mono.CSharp
 
 				MemberAccess ma = expr as MemberAccess;
 				if (ma != null) {
-					var left_type = ma.LeftExpression as TypeExpr;
+					var inst = mg.InstanceExpression;
+					var left_type = inst as TypeExpr;
 					if (left_type != null) {
 						args.Insert (0, new Argument (new TypeOf (left_type.Type, loc).Resolve (ec), Argument.AType.DynamicTypeName));
-					} else {
+					} else if (inst != null) {
 						//
 						// Any value type has to be pass as by-ref to get back the same
 						// instance on which the member was called
 						//
-						var mod = ma.LeftExpression is IMemoryLocation && TypeSpec.IsValueType (ma.LeftExpression.Type) ?
+						var mod = inst is IMemoryLocation && TypeSpec.IsValueType (inst.Type) ?
 							Argument.AType.Ref : Argument.AType.None;
-						args.Insert (0, new Argument (ma.LeftExpression.Resolve (ec), mod));
+						args.Insert (0, new Argument (inst.Resolve (ec), mod));
 					}
 				} else {	// is SimpleName
 					if (ec.IsStatic) {
