@@ -533,33 +533,31 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void SetPropertyItem(PropertyItem propitem)
 	{
-    if(propitem == null)
-      throw new ArgumentNullException ("propitem");
+		if(propitem == null)
+			throw new ArgumentNullException ("propitem");
 
-    int nItemSize =  Marshal.SizeOf (propitem.Value[0]);
-    int size = nItemSize * propitem.Value.Length;
-    IntPtr dest = Marshal.AllocHGlobal (size);
-    try {
-        
-      GdipPropertyItem pi = new GdipPropertyItem ();
-      pi.id    = propitem.Id;
-      pi.len   = propitem.Len;
-      pi.type  = propitem.Type;
+		int nItemSize =  Marshal.SizeOf (propitem.Value[0]);
+		int size = nItemSize * propitem.Value.Length;
+		IntPtr dest = Marshal.AllocHGlobal (size);
+		try {
+				
+			GdipPropertyItem pi = new GdipPropertyItem ();
+			pi.id    = propitem.Id;
+			pi.len   = propitem.Len;
+			pi.type  = propitem.Type;
 
-      IntPtr pos = dest;
-      for (int i=0; i<propitem.Value.Length; i++, pos = new IntPtr (pos.ToInt64 () + nItemSize))
-        Marshal.StructureToPtr (propitem.Value[i], pos, false);	
-      pi.value = dest;
+			Marshal.Copy (propitem.Value, 0, dest, size);
+			pi.value = dest;
 
-      unsafe {
-        Status status = GDIPlus.GdipSetPropertyItem (nativeObject, &pi);
+			unsafe {
+				Status status = GDIPlus.GdipSetPropertyItem (nativeObject, &pi);
 			
-        GDIPlus.CheckStatus (status);
-      }
-    }
-    finally {
-      Marshal.FreeHGlobal (dest);
-    }
+				GDIPlus.CheckStatus (status);
+			}
+		}
+		finally {
+			Marshal.FreeHGlobal (dest);
+		}
 	}
 
 	// properties	
