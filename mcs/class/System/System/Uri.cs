@@ -90,6 +90,17 @@ namespace System {
 		private string cachedToString;
 		private string cachedLocalPath;
 		private int cachedHashCode;
+		
+#if NET_4_5
+		private static volatile bool s_IriParsing = true;
+#else
+		private static volatile bool s_IriParsing = false;
+#endif
+
+		public static bool IriParsing {
+			get { return s_IriParsing; }
+			set { s_IriParsing = value; }
+		}
 
 #if BOOTSTRAP_BASIC
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
