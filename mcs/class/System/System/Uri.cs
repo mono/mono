@@ -112,7 +112,11 @@ namespace System {
 		public static readonly string UriSchemeNntp = "nntp";
 		public static readonly string UriSchemeNetPipe = "net.pipe";
 		public static readonly string UriSchemeNetTcp = "net.tcp";
-		
+
+		internal static readonly string UriSchemeTelnet = "telnet";
+		internal static readonly string UriSchemeLdap = "ldap";
+		internal static readonly string UriSchemeUuid = "uuid";
+
 		private static readonly string [] knownUriSchemes =
 		{
 			UriSchemeFile,
