@@ -1369,7 +1369,7 @@ namespace System {
 
 		private bool SupportsQuery ()
 		{
-			return ((scheme != Uri.UriSchemeNntp) && (scheme != Uri.UriSchemeFtp) && (scheme != Uri.UriSchemeFile));
+			return UriHelper.SupportsQuery (scheme);
 		}
 
 		//
