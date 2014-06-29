@@ -49,7 +49,8 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			_currentTest = t;
 			_doNext.Set ();
-			_done.WaitOne ();
+			if (!_done.WaitOne (TimeSpan.FromSeconds (20)))
+				throw new TimeoutException ("No signal received for _done.");
 			if (_e != null) {
 				Exception e = _e;
 				_e = null;
@@ -61,7 +62,8 @@ namespace MonoTests.SystemWeb.Framework
 		void AsyncRun (object param)
 		{
 			for (;;) {
-			_doNext.WaitOne ();
+			if (!_doNext.WaitOne (TimeSpan.FromSeconds (20)))
+				throw new TimeoutException ("No signal received for _doNext.");
 			try {
 			WebTest t = _currentTest;
 			HttpWorkerRequest wr = t.Request.CreateWorkerRequest ();
