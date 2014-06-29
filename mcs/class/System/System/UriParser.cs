@@ -78,11 +78,11 @@ namespace System {
 				return String.Empty;
 			}
 			case UriComponents.Path:
-				return Format (IgnoreFirstCharIf (elements.path, '/'), format);
+				return UriHelper.Format (IgnoreFirstCharIf (elements.path, '/'), scheme, UriKind.Absolute, UriComponents.Path, format);
 			case UriComponents.Query:
-				return Format (elements.query, format);
+				return UriHelper.Format (elements.query, scheme, UriKind.Absolute, UriComponents.Query, format);
 			case UriComponents.Fragment:
-				return Format (elements.fragment, format);
+				return UriHelper.Format (elements.fragment, scheme, UriKind.Absolute, UriComponents.Fragment, format);
 			case UriComponents.StrongPort: {
 				return elements.port.Length != 0 ? elements.port : dp.ToString ();
 			}
@@ -131,28 +131,29 @@ namespace System {
 			}
 
 			if ((components & UriComponents.Path) != 0) {
+				string path = elements.path;
 				if ((components & UriComponents.PathAndQuery) != 0 &&
-					(elements.path.Length == 0 || !elements.path.StartsWith ("/")))
+					(path.Length == 0 || !path.StartsWith ("/")))
 					sb.Append ("/");
-				sb.Append (elements.path);
+				sb.Append (UriHelper.Format (path, scheme, UriKind.Absolute, UriComponents.Path, format));
 			}
 
 			if ((components & UriComponents.Query) != 0) {
 				string query = elements.query;
 				if (query != null) {
 					sb.Append ("?");
-					sb.Append (elements.query);
+					sb.Append (UriHelper.Format (query, scheme, UriKind.Absolute, UriComponents.Query, format));
 				}
 			}
 
-			string result = Format (sb.ToString (), format);
 			if ((components & UriComponents.Fragment) != 0) {
 				string f = elements.fragment;
 				if (f != null) {
-					result += "#" + Format (f, format);
+					sb.Append ("#");
+					sb.Append (UriHelper.Format (f, scheme, UriKind.Absolute, UriComponents.Fragment, format));
 				}
 			}
-			return result;
+			return sb.ToString ();
 		}
 
 		protected internal virtual void InitializeAndValidate (Uri uri, out UriFormatException parsingError)
@@ -224,23 +225,6 @@ namespace System {
 			if (s[0] == c)
 				return s.Substring (1);
 			return s;
-		}
-
-		private string Format (string s, UriFormat format)
-		{
-			if (s.Length == 0)
-				return String.Empty;
-
-			switch (format) {
-			case UriFormat.UriEscaped:
-				return Uri.EscapeString (s, Uri.EscapeCommonHexBrackets);
-			case UriFormat.SafeUnescaped:
-				return Uri.UnescapeDataString (s, true);
-			case UriFormat.Unescaped:
-				return Uri.Unescape (s, false);
-			default:
-				throw new ArgumentOutOfRangeException ("format");
-			}
 		}
 
 		// static methods
