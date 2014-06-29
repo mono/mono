@@ -48,7 +48,6 @@ namespace MonoTests.System.Web.Compilation
 		}
 
 		[Test (Description="Bug #548768")]
-		[Category ("NotWorking")]
 		public void GlobalResourcesLocalization ()
 		{
 			string pageHtml = new WebTest ("GlobalResourcesLocalization.aspx").Run ();
