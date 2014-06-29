@@ -221,7 +221,9 @@ namespace System {
 				
 				char ch = part [index];
 				
-				if (ch == '#' || ch == '?')
+				var supportsQuery = UriHelper.SupportsQuery (state.elements.scheme);
+
+				if (ch == '#' || (supportsQuery && ch == '?'))
 					break;
 				
 				sb.Append (ch);
