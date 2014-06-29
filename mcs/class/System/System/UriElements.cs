@@ -37,8 +37,8 @@ namespace System {
 			host = String.Empty;
 			port = String.Empty;
 			path = String.Empty;
-			query = String.Empty;
-			fragment = String.Empty;
+			query = null;
+			fragment = null;
 		}
 		
 		public string scheme;

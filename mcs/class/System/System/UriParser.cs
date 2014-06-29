@@ -139,7 +139,7 @@ namespace System {
 
 			if ((components & UriComponents.Query) != 0) {
 				string query = elements.query;
-				if (!String.IsNullOrEmpty (query)) {
+				if (query != null) {
 					sb.Append ("?");
 					sb.Append (elements.query);
 				}
@@ -148,7 +148,7 @@ namespace System {
 			string result = Format (sb.ToString (), format);
 			if ((components & UriComponents.Fragment) != 0) {
 				string f = elements.fragment;
-				if (!String.IsNullOrEmpty (f)) {
+				if (f != null) {
 					result += "#" + Format (f, format);
 				}
 			}
