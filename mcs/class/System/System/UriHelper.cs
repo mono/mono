@@ -106,14 +106,14 @@ namespace System {
 			for (int i = 0; i < len; i++) {
 				char c = str [i];
 				if (c == '%') {
+					int iStart = i;
 					char surrogate;
 					char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
 
-					if (surrogate != char.MinValue) {
-						s.Append (FormatChar (x, true, scheme, uriKind, component, uriFormat));
+					bool isEscaped = i - iStart > 1;
+					s.Append (FormatChar (x, isEscaped, scheme, uriKind, component, uriFormat));
+					if (surrogate != char.MinValue)
 						s.Append (surrogate);
-					} else
-						s.Append (FormatChar (x, true, scheme, uriKind, component, uriFormat));
 
 					i--;
 				} else
