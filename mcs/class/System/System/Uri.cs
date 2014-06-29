@@ -1795,7 +1795,7 @@ namespace System {
 
 		// A variant of HexUnescape() which can decode multi-byte escaped
 		// sequences such as (e.g.) %E3%81%8B into a single character
-		private static char HexUnescapeMultiByte (string pattern, ref int index, out char surrogate) 
+		internal static char HexUnescapeMultiByte (string pattern, ref int index, out char surrogate) 
 		{
 			surrogate = char.MinValue;
 
