@@ -19220,6 +19220,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-617.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>57</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="System.Collections.Generic.IEnumerator`1[System.String] GetEnumerator()" attrs="134">
+        <size>37</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.Collections.Generic.IEnumerator`1[System.Int32] GetEnumerator(Int32[])" attrs="134">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
