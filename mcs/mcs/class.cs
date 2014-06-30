@@ -1775,7 +1775,7 @@ namespace Mono.CSharp
 
 		protected virtual bool DoResolveTypeParameters ()
 		{
-			var tparams = CurrentTypeParameters;
+			var tparams = MemberName.TypeParameters;
 			if (tparams == null)
 				return true;
 
@@ -1786,6 +1786,20 @@ namespace Mono.CSharp
 				if (!tp.ResolveConstraints (base_context)) {
 					error = true;
 					return false;
+				}
+
+				if (IsPartialPart) {
+					var pc_tp = PartialContainer.CurrentTypeParameters [i];
+
+					tp.Create (spec, this);
+					tp.Define (pc_tp);
+
+					if (tp.OptAttributes != null) {
+						if (pc_tp.OptAttributes == null)
+							pc_tp.OptAttributes = tp.OptAttributes;
+						else
+							pc_tp.OptAttributes.Attrs.AddRange (tp.OptAttributes.Attrs);
+					}
 				}
 			}
 
