@@ -4047,7 +4047,8 @@ namespace Mono.CSharp {
 			ProbingOnly	= 1 << 1,
 			CovariantDelegate = 1 << 2,
 			NoBaseMembers = 1 << 3,
-			BaseMembersIncluded = 1 << 4
+			BaseMembersIncluded = 1 << 4,
+			GetEnumeratorLookup = 1 << 5
 		}
 
 		public interface IBaseMembersProvider
@@ -5168,13 +5169,17 @@ namespace Mono.CSharp {
 							if (candidate_rate < 0)
 								return null;
 
-							best_candidate_rate = candidate_rate;
-							best_candidate = member;
-							best_candidate_args = candidate_args;
-							best_candidate_params = params_expanded_form;
-							best_candidate_dynamic = dynamic_argument;
-							best_parameter_member = pm;
-							best_candidate_return_type = rt;
+							if ((restrictions & Restrictions.GetEnumeratorLookup) != 0 && candidate_args.Count != 0) {
+								// Only parameterless methods are considered
+							} else {
+								best_candidate_rate = candidate_rate;
+								best_candidate = member;
+								best_candidate_args = candidate_args;
+								best_candidate_params = params_expanded_form;
+								best_candidate_dynamic = dynamic_argument;
+								best_parameter_member = pm;
+								best_candidate_return_type = rt;
+							}
 						} else if (candidate_rate == 0) {
 							//
 							// The member look is done per type for most operations but sometimes

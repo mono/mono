@@ -6089,6 +6089,20 @@ namespace Mono.CSharp
 	/// </summary>
 	public class Invocation : ExpressionStatement
 	{
+		public class Predefined : Invocation
+		{
+			public Predefined (MethodGroupExpr expr, Arguments arguments)
+				: base (expr, arguments)
+			{
+				this.mg = expr;
+			}
+
+			protected override MethodGroupExpr DoResolveOverload (ResolveContext ec)
+			{
+				return mg;
+			}
+		}
+
 		protected Arguments arguments;
 		protected Expression expr;
 		protected MethodGroupExpr mg;
