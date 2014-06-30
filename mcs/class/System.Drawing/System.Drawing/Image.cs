@@ -533,14 +533,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void SetPropertyItem(PropertyItem propitem)
 	{
-		if(propitem == null)
+		if (propitem == null)
 			throw new ArgumentNullException ("propitem");
 
 		int nItemSize =  Marshal.SizeOf (propitem.Value[0]);
 		int size = nItemSize * propitem.Value.Length;
 		IntPtr dest = Marshal.AllocHGlobal (size);
 		try {
-				
 			GdipPropertyItem pi = new GdipPropertyItem ();
 			pi.id    = propitem.Id;
 			pi.len   = propitem.Len;
