@@ -1335,6 +1335,12 @@ namespace Mono.CSharp {
 				if (IsPartialDefinition) {
 					if (partialMethodImplementation != null && CurrentTypeParameters != null) {
 						CurrentTypeParameters.CheckPartialConstraints (partialMethodImplementation);
+
+						var otp = partialMethodImplementation.CurrentTypeParameters;
+						for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+							var tp = CurrentTypeParameters [i];
+							tp.Define (otp[i]);
+						}
 					}
 
 					return;
@@ -1392,17 +1398,40 @@ namespace Mono.CSharp {
 
 			// Ensure we are always using method declaration parameters
 			for (int i = 0; i < methodDefinition.parameters.Count; ++i ) {
-				parameters [i].Name = methodDefinition.parameters [i].Name;
-				parameters [i].DefaultValue = methodDefinition.parameters [i].DefaultValue;
+				var md_p = methodDefinition.parameters [i];
+				var p = parameters [i];
+				p.Name = md_p.Name;
+				p.DefaultValue = md_p.DefaultValue;
+				if (md_p.OptAttributes != null) {
+					if (p.OptAttributes == null) {
+						p.OptAttributes = md_p.OptAttributes;
+					} else {
+						p.OptAttributes.Attrs.AddRange (md_p.OptAttributes.Attrs);
+					}
+				}
 			}
 
-			if (methodDefinition.attributes == null)
-				return;
+			if (methodDefinition.attributes != null) {
+				if (attributes == null) {
+					attributes = methodDefinition.attributes;
+				} else {
+					attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+				}
+			}
 
-			if (attributes == null) {
-				attributes = methodDefinition.attributes;
-			} else {
-				attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+			if (CurrentTypeParameters != null) {
+				for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+					var tp_other = methodDefinition.CurrentTypeParameters [i];
+					if (tp_other.OptAttributes == null)
+						continue;
+
+					var tp = CurrentTypeParameters [i];
+					if (tp.OptAttributes == null) {
+						tp.OptAttributes = tp_other.OptAttributes;
+					} else {
+						tp.OptAttributes.Attrs.AddRange (tp.OptAttributes.Attrs);
+					}
+				}
 			}
 		}
 	}

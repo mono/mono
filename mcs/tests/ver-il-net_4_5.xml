@@ -67031,7 +67031,20 @@
     </type>
   </test>
   <test name="test-partial-26.cs">
-    <type name="ConsoleApplication1.X">
+    <type name="TestAttributesCollecting.A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestAttributesCollecting.X">
+      <method name="Void Foo[T](Int32)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestAttributesCollecting.Y">
       <method name="Void Foo()" attrs="129">
         <size>2</size>
       </method>
@@ -67039,17 +67052,9 @@
         <size>7</size>
       </method>
     </type>
-    <type name="ConsoleApplication1.Y">
-      <method name="Void Foo()" attrs="129">
-        <size>2</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="ConsoleApplication1.Program">
+    <type name="TestAttributesCollecting.Program">
       <method name="Int32 Main()" attrs="150">
-        <size>116</size>
+        <size>151</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
