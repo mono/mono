@@ -179,7 +179,6 @@ net_4_0_dirs := \
 	System.Xaml \
 	WindowsBase \
 	System.ServiceModel.Activation \
-	System.ServiceModel \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
