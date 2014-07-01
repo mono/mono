@@ -83,7 +83,6 @@ net_2_0_dirs := \
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
-	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
 	System.IdentityModel		\
