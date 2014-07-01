@@ -6097,8 +6097,15 @@ namespace Mono.CSharp
 				this.mg = expr;
 			}
 
-			protected override MethodGroupExpr DoResolveOverload (ResolveContext ec)
+			protected override MethodGroupExpr DoResolveOverload (ResolveContext rc)
 			{
+				if (!rc.IsObsolete) {
+					var member = mg.BestCandidate;
+					ObsoleteAttribute oa = member.GetAttributeObsolete ();
+					if (oa != null)
+						AttributeTester.Report_ObsoleteMessage (oa, member.GetSignatureForError (), loc, rc.Report);
+				}
+
 				return mg;
 			}
 		}
