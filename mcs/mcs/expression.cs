@@ -9067,6 +9067,8 @@ namespace Mono.CSharp
 				} else {
 					texpr = new GenericOpenTypeExpr (nested, loc);
 				}
+			} else if (expr_resolved is GenericOpenTypeExpr) {
+				texpr = new GenericOpenTypeExpr (nested, loc);
 			} else {
 				texpr = new TypeExpression (nested, loc);
 			}

@@ -16382,8 +16382,13 @@
     </type>
     <type name="M">
       <method name="Int32 Main()" attrs="150">
-        <size>53</size>
+        <size>90</size>
       </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D`1[U]">
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
