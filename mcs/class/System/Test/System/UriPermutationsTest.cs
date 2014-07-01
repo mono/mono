@@ -10,7 +10,7 @@ namespace MonoTests.System {
 		// Set this to true to generate the expected values
 		// The tests should run first on .NET with CreateMode = true
 		// The generated files should then be used when running the tests in Mono with CreateMode = false
-		private const bool createMode = true;
+		private const bool createMode = false;
 
 		private const string location = "./Test/System/UriPermutationsTest/";
 
