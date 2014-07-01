@@ -5781,6 +5781,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+			return base.DoFlowAnalysis (fc);
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
