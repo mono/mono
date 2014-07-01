@@ -64702,6 +64702,19 @@
       </method>
     </type>
   </test>
+  <test name="test-ex-filter-06.cs">
+    <type name="C">
+      <method name="Int32 Test[T]()" attrs="145">
+        <size>61</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>49</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

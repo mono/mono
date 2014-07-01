@@ -6384,6 +6384,9 @@ namespace Mono.CSharp {
 						ctch.hoisted_temp.Emit (ec);
 					else
 						ctch.li.Emit (ec);
+
+					if (!ctch.IsGeneral && ctch.type.Kind == MemberKind.TypeParameter)
+						ec.Emit (OpCodes.Box, ctch.type);
 				}
 
 				var expr_start = ec.DefineLabel ();
