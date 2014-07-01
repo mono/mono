@@ -48,7 +48,6 @@ common_dirs := \
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
-	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
