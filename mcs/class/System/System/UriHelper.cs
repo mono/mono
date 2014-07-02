@@ -11,6 +11,12 @@ namespace System {
 		}
 
 		[Flags]
+		internal enum FormatFlags {
+			None = 0,
+			HasCharactersToNormalize = 1 << 0,
+		}
+
+		[Flags]
 		internal enum UriSchemes {
 			Http = 1 << 0,
 			Https = 1 << 1,
@@ -93,8 +99,53 @@ namespace System {
 			return !SchemeContains (scheme, UriSchemes.Ftp | UriSchemes.Gopher | UriSchemes.Nntp | UriSchemes.Telnet);
 		}
 
-		internal static string Format (string str, string schemeName, UriKind uriKind,
-			UriComponents component, UriFormat uriFormat)
+		internal static bool HasCharactersToNormalize(string str)
+		{
+			if (!IriParsing)
+				return false;
+
+			int len = str.Length;
+			for (int i = 0; i < len; i++) {
+				char c = str [i];
+				if (c != '%')
+					continue;
+
+				int iStart = i;
+				char surrogate;
+				char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
+
+				bool isEscaped = i - iStart > 1;
+				if (!isEscaped)
+					continue;
+
+				if ((x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9') || 
+					 x == '-' || x == '.' || x == '_' || x == '~')
+					return true;
+
+				if (x > 0x7f)
+					return true;
+			}
+
+			return false;
+		}
+
+		internal static string FormatAbsolute (string str, string schemeName,
+			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags = FormatFlags.None)
+		{
+			return Format (str, schemeName, UriKind.Absolute, component, uriFormat, formatFlags);
+		}
+
+		internal static string FormatRelative (string str, string schemeName, UriFormat uriFormat)
+		{
+			var formatFlags = FormatFlags.None;
+			if (HasCharactersToNormalize (str))
+				formatFlags |= FormatFlags.HasCharactersToNormalize;
+
+			return Format (str, schemeName, UriKind.Relative, UriComponents.Path, uriFormat, formatFlags);
+		}
+
+		private static string Format (string str, string schemeName, UriKind uriKind,
+			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
 		{
 			if (string.IsNullOrEmpty (str))
 				return "";
@@ -111,23 +162,23 @@ namespace System {
 					char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
 
 					bool isEscaped = i - iStart > 1;
-					s.Append (FormatChar (x, isEscaped, scheme, uriKind, component, uriFormat));
+					s.Append (FormatChar (x, isEscaped, scheme, uriKind, component, uriFormat, formatFlags));
 					if (surrogate != char.MinValue)
 						s.Append (surrogate);
 
 					i--;
 				} else
-					s.Append (FormatChar (c, false, scheme, uriKind, component, uriFormat));
+					s.Append (FormatChar (c, false, scheme, uriKind, component, uriFormat, formatFlags));
 			}
 
 			return s.ToString ();
 		}
 
-		internal static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
-			UriComponents component, UriFormat uriFormat)
+		private static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
+			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
 		{
 			if (!isEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat) ||
-				isEscaped && !NeedToUnescape (c, scheme, component, uriKind, uriFormat))
+				isEscaped && !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))
 				return HexEscapeMultiByte (c);
 
 			if (c == '\\' && component == UriComponents.Path) {
@@ -149,7 +200,7 @@ namespace System {
 		}
 
 		private static bool NeedToUnescape (char c, UriSchemes scheme, UriComponents component, UriKind uriKind,
-			UriFormat uriFormat)
+			UriFormat uriFormat, FormatFlags formatFlags)
 		{
 			string cStr = c.ToString (CultureInfo.InvariantCulture);
 
@@ -213,7 +264,11 @@ namespace System {
 				if ("-._~".Contains (cStr))
 					return true;
 
-				if (" !\"'()*:<>[]^`{}|".Contains (cStr))
+				if (" !\"'()*<>^`{}|".Contains (cStr))
+					return uriKind != UriKind.Relative ||
+						(formatFlags & FormatFlags.HasCharactersToNormalize) != 0;
+
+				if (":[]".Contains (cStr))
 					return uriKind != UriKind.Relative;
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
@@ -239,6 +294,10 @@ namespace System {
 				}
 
 				if ("-._~".Contains (cStr))
+					return true;
+				
+				if ((formatFlags & FormatFlags.HasCharactersToNormalize) != 0 &&
+					"!'()*:[]".Contains (cStr))
 					return true;
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))

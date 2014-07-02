@@ -62,6 +62,10 @@ namespace System {
 				throw new SystemException ("URI Parser: scheme mismatch: " + scheme + " vs. " + elements.scheme);
 			}
 
+			var formatFlags = UriHelper.FormatFlags.None;
+			if (UriHelper.HasCharactersToNormalize (uri.OriginalString))
+				formatFlags |= UriHelper.FormatFlags.HasCharactersToNormalize;
+
 			// it's easier to answer some case directly (as the output isn't identical 
 			// when mixed with others components, e.g. leading slash, # ...)
 			switch (components) {
@@ -78,11 +82,11 @@ namespace System {
 				return String.Empty;
 			}
 			case UriComponents.Path:
-				return UriHelper.Format (IgnoreFirstCharIf (elements.path, '/'), scheme, UriKind.Absolute, UriComponents.Path, format);
+				return UriHelper.FormatAbsolute (IgnoreFirstCharIf (elements.path, '/'), scheme, UriComponents.Path, format, formatFlags);
 			case UriComponents.Query:
-				return UriHelper.Format (elements.query, scheme, UriKind.Absolute, UriComponents.Query, format);
+				return UriHelper.FormatAbsolute (elements.query, scheme, UriComponents.Query, format, formatFlags);
 			case UriComponents.Fragment:
-				return UriHelper.Format (elements.fragment, scheme, UriKind.Absolute, UriComponents.Fragment, format);
+				return UriHelper.FormatAbsolute (elements.fragment, scheme, UriComponents.Fragment, format, formatFlags);
 			case UriComponents.StrongPort: {
 				return elements.port.Length != 0 ? elements.port : dp.ToString ();
 			}
@@ -135,14 +139,14 @@ namespace System {
 				if ((components & UriComponents.PathAndQuery) != 0 &&
 					(path.Length == 0 || !path.StartsWith ("/")))
 					sb.Append ("/");
-				sb.Append (UriHelper.Format (path, scheme, UriKind.Absolute, UriComponents.Path, format));
+				sb.Append (UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, format, formatFlags));
 			}
 
 			if ((components & UriComponents.Query) != 0) {
 				string query = elements.query;
 				if (query != null) {
 					sb.Append ("?");
-					sb.Append (UriHelper.Format (query, scheme, UriKind.Absolute, UriComponents.Query, format));
+					sb.Append (UriHelper.FormatAbsolute (query, scheme, UriComponents.Query, format, formatFlags));
 				}
 			}
 
@@ -150,7 +154,7 @@ namespace System {
 				string f = elements.fragment;
 				if (f != null) {
 					sb.Append ("#");
-					sb.Append (UriHelper.Format (f, scheme, UriKind.Absolute, UriComponents.Fragment, format));
+					sb.Append (UriHelper.FormatAbsolute (f, scheme, UriComponents.Fragment, format, formatFlags));
 				}
 			}
 			return sb.ToString ();
