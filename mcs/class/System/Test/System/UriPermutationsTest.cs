@@ -16,13 +16,18 @@ namespace MonoTests.System {
 
 		private const string nonAsciiTestedChars = "☕";
 
+		// Chars that can change the current component.
+		// Those characters are tested alone.
+		private const string specialTestedChars = "@:?#";
+
 		private static readonly string [] schemes = {
 			"http://", "https://", "file://", "ftp://", "gopher://", "ldap://", "mailto:",
 			"net.pipe://", "net.tcp://", "news:", "nntp://", "telnet://", "custom:", "custom://"
 		};
 
 		private static readonly string [] componentLocations = {
-			"a/a", "a/a/a", "a/a?", "a/a#"
+			"a/a{0}?#1", "a/a?{0}#2", "a/a?#",
+			"a/a{0}?%30#", "a/a?{0}#%30", "a/a%30?#",   // see why on TestChars comment
 		};
 
 		private static readonly string [] reduceLocations = {
@@ -53,16 +58,36 @@ namespace MonoTests.System {
 			StringTester.Save();
 		}
 
-		private string GetTestedChars ()
+		// With IriParsing: http://a/a%21 does not unescape to http://a/a!
+		// but http://a/a%21%30 does unescape to http://a/a!0
+		// This happens with alpha numeric characters, non ASCII,'-','.','_' and '~'.
+		// So we tests characters with and without those characters.
+		private void TestChars (Action<string> action)
 		{
-			var sb = new StringBuilder ();
-			for (int c = 0; c <= 0x7f; c++)
-				sb.Append ((char) c);
+			var sb1 = new StringBuilder ();
+			var sb2 = new StringBuilder ();
+			for (char c = '\0'; c <= 0x7f; c++) {
+				if (specialTestedChars.Contains ("" + c))
+					continue;
+
+				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
+					 c == '-' || c == '.' || c == '_' || c == '~') {
+					 sb2.Append (c);
+					 continue;
+				}
+
+				sb1.Append (c);
+				sb2.Append (c);
+			}
 
 			foreach (char c in nonAsciiTestedChars)
-				sb.Append (c);
+				sb2.Append (c);
 
-			return sb.ToString ();
+			action (sb1.ToString ());
+			action (sb2.ToString ());
+
+			foreach (char c in specialTestedChars)
+				action ("" + c);
 		}
 
 		internal static string HexEscapeMultiByte (char character)
@@ -89,34 +114,38 @@ namespace MonoTests.System {
 			TestScheme (scheme => {
 				string uri = scheme + str;
 				string actual = toString (new Uri (scheme + str, UriKind.Absolute));
-				StringTester.Assert (scheme + id, actual, "");
+				StringTester.Assert (scheme + id, actual);
 			});
 
 			if (!testRelative)
 				return;
 
 			string relActual = toString (new Uri ("./" + str, UriKind.Relative));
-			StringTester.Assert ("./" + id, relActual, "");
+			StringTester.Assert ("./" + id, relActual);
 		}
 
 		private void TestLocations (string [] locations, string id, string str, UriToStringDelegate toString,
 			bool testRelative = true)
 		{
-			foreach (string location in locations)
-				TestLocation (location + id, location + str, toString, testRelative);
+			foreach (string location in locations) {
+				if (location.Contains ("{0}"))
+					TestLocation (string.Format (location, id), string.Format (location, str), toString, testRelative);
+				else
+					TestLocation (location + id, location + str, toString, testRelative);
+			}
 		}
 
 		private void TestPercentageEncoding (UriToStringDelegate toString, bool testRelative = false, string id = "")
 		{
-			string unescapedStr = GetTestedChars ();
+			TestChars (unescapedStr => {
+				var sb = new StringBuilder ();
+				foreach (char c in unescapedStr)
+					sb.Append (HexEscapeMultiByte (c));
+				string escapedStr = sb.ToString ();
 
-			var sb = new StringBuilder ();
-			foreach (char c in unescapedStr)
-				sb.Append (HexEscapeMultiByte (c));
-			string escapedStr = sb.ToString ();
-
-			TestLocations (componentLocations, "[un]" + id, escapedStr, toString, testRelative);
-			TestLocations (componentLocations, "[es]" + id, escapedStr, toString, testRelative);
+				TestLocations (componentLocations, unescapedStr+id, unescapedStr, toString, testRelative);
+				TestLocations (componentLocations, escapedStr+id, escapedStr, toString, testRelative);
+			});
 		}
 
 		private void TestReduce (UriToStringDelegate toString, bool testRelative = true)
