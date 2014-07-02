@@ -27,6 +27,15 @@ namespace Mono.CSharp {
 	//
 	static class Convert
 	{
+		[Flags]
+		public enum UserConversionRestriction
+		{
+			None = 0,
+			ImplicitOnly = 1,
+			ProbingOnly = 1 << 1,
+			NullableSourceOnly = 1 << 2
+
+		}
 		//
 		// From a one-dimensional array-type S[] to System.Collections.IList<T> and base
 		// interfaces of this interface, provided there is an implicit reference conversion
@@ -700,7 +709,8 @@ namespace Mono.CSharp {
 			if (expr.Type == InternalType.Arglist)
 				return target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec;
 
-			return UserDefinedConversion (ec, expr, target_type, true, true, Location.Null) != null;
+			return UserDefinedConversion (ec, expr, target_type,
+				UserConversionRestriction.ImplicitOnly | UserConversionRestriction.ProbingOnly, Location.Null) != null;
 		}
 
 		//
@@ -1010,7 +1020,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, true, false, loc);
+			return UserDefinedConversion (ec, source, target, UserConversionRestriction.ImplicitOnly, loc);
 		}
 
 		/// <summary>
@@ -1018,10 +1028,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Expression ExplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, false, false, loc);
+			return UserDefinedConversion (ec, source, target, 0, loc);
 		}
 
-		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
+		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, UserConversionRestriction restr, ref List<MethodSpec> candidates)
 		{
 			if (source.Type.IsInterface) {
 				// Neither A nor B are interface-types
@@ -1044,12 +1054,15 @@ namespace Mono.CSharp {
 
 				var t = op.Parameters.Types[0];
 				if (source.Type != t && !ImplicitStandardConversionExists (source, t)) {
-					if (implicitOnly)
+					if ((restr & UserConversionRestriction.ImplicitOnly) != 0)
 						continue;
 
 					if (!ImplicitStandardConversionExists (new EmptyExpression (t), source.Type))
 						continue;
 				}
+
+				if ((restr & UserConversionRestriction.NullableSourceOnly) != 0 && !t.IsNullableType)
+					continue;
 
 				t = op.ReturnType;
 
@@ -1061,7 +1074,7 @@ namespace Mono.CSharp {
 						t = Nullable.NullableInfo.GetUnderlyingType (t);
 
 					if (!ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
-						if (implicitOnly)
+						if ((restr & UserConversionRestriction.ImplicitOnly) != 0)
 							continue;
 
 						if (texpr == null)
@@ -1082,7 +1095,7 @@ namespace Mono.CSharp {
 		//
 		// User-defined conversions
 		//
-		static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, bool implicitOnly, bool probingOnly, Location loc)
+		public static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, UserConversionRestriction restr, Location loc)
 		{
 			List<MethodSpec> candidates = null;
 
@@ -1094,6 +1107,7 @@ namespace Mono.CSharp {
 			TypeSpec target_type = target;
 			Expression source_type_expr;
 			bool nullable_source = false;
+			var implicitOnly = (restr & UserConversionRestriction.ImplicitOnly) != 0;
 
 			if (source_type.IsNullableType) {
 				// No unwrapping conversion S? -> T for non-reference types
@@ -1119,13 +1133,13 @@ namespace Mono.CSharp {
 
 				var operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Implicit, declared_only);
 				if (operators != null) {
-					FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, implicitOnly, ref candidates);
+					FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, restr, ref candidates);
 				}
 
 				if (!implicitOnly) {
 					operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Explicit, declared_only);
 					if (operators != null) {
-						FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, false, ref candidates);
+						FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, restr, ref candidates);
 					}
 				}
 			}
@@ -1135,13 +1149,13 @@ namespace Mono.CSharp {
 
 				var operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Implicit, declared_only);
 				if (operators != null) {
-					FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, implicitOnly, ref candidates);
+					FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, restr, ref candidates);
 				}
 
 				if (!implicitOnly) {
 					operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Explicit, declared_only);
 					if (operators != null) {
-						FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, false, ref candidates);
+						FindApplicableUserDefinedConversionOperators (operators, source_type_expr, target_type, restr, ref candidates);
 					}
 				}
 			}
@@ -1183,7 +1197,7 @@ namespace Mono.CSharp {
 					//
 					// Unless running in probing more
 					//
-					if (!probingOnly) {
+					if ((restr & UserConversionRestriction.ProbingOnly) == 0) {
 						MethodSpec ambig_arg = null;
 						foreach (var candidate in candidates) {
 							if (candidate.ReturnType == t_x)

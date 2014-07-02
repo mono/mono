@@ -187,6 +187,11 @@ namespace Mono.CSharp.Nullable
 			call.EmitPredefined (ec, NullableInfo.GetHasValue (expr.Type), null);
 		}
 
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			expr.EmitSideEffect (ec);
+		}
+
 		public override Expression EmitToField (EmitContext ec)
 		{
 			if (temp_field == null)
