@@ -1527,14 +1527,15 @@ create_delegate_trampoline_data (MonoDomain *domain, MonoClass *klass, MonoMetho
 		info->impl_this = mono_arch_get_delegate_invoke_impl (info->invoke_sig, TRUE);
 		info->impl_nothis = mono_arch_get_delegate_invoke_impl (info->invoke_sig, FALSE);
 	} else {
-		if (klass && method) {
-			info->impl_this = mono_arch_get_delegate_virtual_invoke_impl (info->invoke_sig, method);
-			info->impl_nothis = info->impl_this;
+		info->impl_this = mono_arch_get_delegate_virtual_invoke_impl (info->invoke_sig, method);
+		info->impl_nothis = info->impl_this;
+	}
 
-			mono_error_init (&err);
-			info->sig = mono_method_signature_checked (method, &err);
-			info->need_rgctx_tramp = mono_method_needs_static_rgctx_invoke (method, FALSE);
-		}
+	if (method) {
+		mono_error_init (&err);
+
+		info->sig = mono_method_signature_checked (method, &err);
+		info->need_rgctx_tramp = mono_method_needs_static_rgctx_invoke (method, FALSE);
 	}
 
 	return info;
@@ -1546,36 +1547,35 @@ create_delegate_trampoline_data (MonoDomain *domain, MonoClass *klass, MonoMetho
  *   Create delegate trampoline information for the KLASS+METHOD pair.
  */
 MonoDelegateTrampInfo*
-mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
+mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method, gboolean virtual)
 {
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	MonoDelegateTrampInfo *info;
 	MonoClassMethodPair pair, *dpair;
-	MonoError err;
+	GHashTable *hashtable;
+
+	mono_domain_lock (domain);
+
+	if (virtual)
+		hashtable = domain_jit_info (domain)->delegate_virtual_trampoline_info_hash;
+	else
+		hashtable = domain_jit_info (domain)->delegate_trampoline_info_hash;
+
+	mono_domain_unlock (domain);
 
 	pair.klass = klass;
 	pair.method = method;
-	mono_domain_lock (domain);
-	info = g_hash_table_lookup (domain_jit_info (domain)->delegate_trampoline_info_hash, &pair);
-	mono_domain_unlock (domain);
-	if (info)
+
+	if ((info = g_hash_table_lookup (hashtable, &pair)))
 		return info;
 
-	info = create_delegate_trampoline_data (domain, klass, method, FALSE);
-
-	if (method) {
-		mono_error_init (&err);
-		info->sig = mono_method_signature_checked (method, &err);
-		info->need_rgctx_tramp = mono_method_needs_static_rgctx_invoke (method, FALSE);
-	}
+	info = create_delegate_trampoline_data (domain, klass, method, virtual);
 
 	dpair = mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));
 	memcpy (dpair, &pair, sizeof (MonoClassMethodPair));
 
 	/* store trampoline address */
-	mono_domain_lock (domain);
-	g_hash_table_insert (domain_jit_info (domain)->delegate_trampoline_info_hash, dpair, info);
-	mono_domain_unlock (domain);
+	g_hash_table_insert (hashtable, dpair, info);
 
 	return info;
 #else
@@ -1587,38 +1587,7 @@ gpointer
 mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 {
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-	return mono_create_delegate_trampoline_info (domain, klass, NULL)->invoke_impl;
-#else
-	return NULL;
-#endif
-}
-
-MonoDelegateTrampInfo*
-mono_create_delegate_virtual_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
-{
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-	MonoDelegateTrampInfo* info;
-	MonoClassMethodPair pair, *dpair;
-
-	pair.klass = klass;
-	pair.method = method;
-	mono_domain_lock (domain);
-	info = g_hash_table_lookup (domain_jit_info (domain)->delegate_virtual_trampoline_info_hash, &pair);
-	mono_domain_unlock (domain);
-	if (info)
-		return info;
-
-	info = create_delegate_trampoline_data (domain, klass, method, TRUE);
-
-	dpair = mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));
-	memcpy (dpair, &pair, sizeof (MonoClassMethodPair));
-
-	/* store trampoline address */
-	mono_domain_lock (domain);
-	g_hash_table_insert (domain_jit_info (domain)->delegate_virtual_trampoline_info_hash, dpair, info);
-	mono_domain_unlock (domain);
-
-	return info;
+	return mono_create_delegate_trampoline_info (domain, klass, NULL, FALSE)->invoke_impl;
 #else
 	return NULL;
 #endif

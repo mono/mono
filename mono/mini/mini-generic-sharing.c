@@ -1509,10 +1509,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	}
 	case MONO_RGCTX_INFO_METHOD_DELEGATE_INFO: {
 		MonoDelegateClassMethodPair *info = data;
-		if (info->virtual)
-			return mono_create_delegate_virtual_trampoline_info (domain, info->klass, info->method);
-		else
-			return mono_create_delegate_trampoline_info (domain, info->klass, info->method);
+		return mono_create_delegate_trampoline_info (domain, info->klass, info->method, info->virtual);
 	}
 	default:
 		g_assert_not_reached ();

@@ -8088,6 +8088,9 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 
 	static guint8 *cache[4] = { NULL, NULL, NULL, NULL };
 
+	if (!method)
+		return NULL;
+
 	/* FIXME Support more cases */
 	if (MONO_TYPE_ISSTRUCT (sig->ret))
 		return NULL;
