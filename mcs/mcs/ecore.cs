@@ -5670,7 +5670,7 @@ namespace Mono.CSharp {
 			//
 			// Fill not provided arguments required by params modifier
 			//
-			if (params_initializers == null && pd.HasParams && arg_count + 1 == pd.Count) {
+			if (params_initializers == null && arg_count + 1 == pd.Count) {
 				if (args == null)
 					args = new Arguments (1);
 
