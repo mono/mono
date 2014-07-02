@@ -4719,7 +4719,7 @@ namespace Mono.CSharp {
 		// expression might be the expression from the switch, or an
 		// expression that includes any potential conversions to
 		//
-		Expression SwitchGoverningType (ResolveContext ec, Expression expr)
+		static Expression SwitchGoverningType (ResolveContext rc, Expression expr, bool unwrapExpr)
 		{
 			switch (expr.Type.BuiltinType) {
 			case BuiltinTypeSpec.Type.Byte:
@@ -4746,10 +4746,18 @@ namespace Mono.CSharp {
 			// conversions, we have to report an error
 			//
 			Expression converted = null;
-			foreach (TypeSpec tt in ec.BuiltinTypes.SwitchUserTypes) {
-				Expression e;
-				
-				e = Convert.ImplicitUserConversion (ec, expr, tt, loc);
+			foreach (TypeSpec tt in rc.Module.PredefinedTypes.SwitchUserTypes) {
+
+				if (!unwrapExpr && tt.IsNullableType && expr.Type.IsNullableType)
+					break;
+
+				var restr = Convert.UserConversionRestriction.ImplicitOnly |
+					Convert.UserConversionRestriction.ProbingOnly;
+
+				if (unwrapExpr)
+					restr |= Convert.UserConversionRestriction.NullableSourceOnly;
+
+				var e = Convert.UserDefinedConversion (rc, expr, tt, restr, Location.Null);
 				if (e == null)
 					continue;
 
@@ -4757,11 +4765,12 @@ namespace Mono.CSharp {
 				// Ignore over-worked ImplicitUserConversions that do
 				// an implicit conversion in addition to the user conversion.
 				// 
-				if (!(e is UserCast))
+				var uc = e as UserCast;
+				if (uc == null)
 					continue;
 
 				if (converted != null){
-					ec.Report.ExtraInformation (loc, "(Ambiguous implicit user defined conversion in previous ");
+//					rc.Report.ExtraInformation (loc, "(Ambiguous implicit user defined conversion in previous ");
 					return null;
 				}
 
@@ -4770,10 +4779,12 @@ namespace Mono.CSharp {
 			return converted;
 		}
 
-		public static TypeSpec[] CreateSwitchUserTypes (BuiltinTypes types)
+		public static TypeSpec[] CreateSwitchUserTypes (ModuleContainer module, TypeSpec nullable)
 		{
+			var types = module.Compiler.BuiltinTypes;
+
 			// LAMESPEC: For some reason it does not contain bool which looks like csc bug
-			return new[] {
+			TypeSpec[] stypes = new[] {
 				types.SByte,
 				types.Byte,
 				types.Short,
@@ -4785,6 +4796,17 @@ namespace Mono.CSharp {
 				types.Char,
 				types.String
 			};
+
+			if (nullable != null) {
+
+				Array.Resize (ref stypes, stypes.Length + 9);
+
+				for (int i = 0; i < 9; ++i) {
+					stypes [10 + i] = nullable.MakeGenericType (module, new [] { stypes [i] });
+				}
+			}
+
+			return stypes;
 		}
 
 		public void RegisterLabel (BlockContext rc, SwitchLabel sl)
@@ -5005,14 +5027,23 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			new_expr = SwitchGoverningType (ec, Expr);
+			//
+			// LAMESPEC: User conversion from non-nullable governing type has a priority
+			//
+			new_expr = SwitchGoverningType (ec, Expr, false);
 
-			if (new_expr == null && Expr.Type.IsNullableType) {
-				unwrap = Nullable.Unwrap.Create (Expr, false);
-				if (unwrap == null)
-					return false;
+			if (new_expr == null) {
+				if (Expr.Type.IsNullableType) {
+					unwrap = Nullable.Unwrap.Create (Expr, false);
+					if (unwrap == null)
+						return false;
 
-				new_expr = SwitchGoverningType (ec, unwrap);
+					//
+					// Unwrap + user conversion using non-nullable type is not allowed but user operator
+					// involving nullable Expr and nullable governing type is
+					//
+					new_expr = SwitchGoverningType (ec, unwrap, true);
+				}
 			}
 
 			if (new_expr == null) {
@@ -5025,8 +5056,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			// Validate switch.
 			SwitchType = new_expr.Type;
+			if (SwitchType.IsNullableType) {
+				new_expr = unwrap = Nullable.Unwrap.Create (new_expr, true);
+				SwitchType = Nullable.NullableInfo.GetUnderlyingType (SwitchType);
+			}
 
 			if (SwitchType.BuiltinType == BuiltinTypeSpec.Type.Bool && ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
 				ec.Report.FeatureIsNotAvailable (ec.Module.Compiler, loc, "switch expression of boolean type");
@@ -5442,6 +5476,8 @@ namespace Mono.CSharp {
 				//
 				ec.Mark (block.StartLocation);
 				block.IsCompilerGenerated = true;
+			} else {
+				new_expr.EmitSideEffect (ec);
 			}
 
 			block.Emit (ec);

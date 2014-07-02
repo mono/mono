@@ -73,7 +73,6 @@ namespace Mono.CSharp
 		public readonly TypeSpec[] OperatorsUnaryMutator;
 
 		public readonly TypeSpec[] BinaryPromotionsTypes;
-		public readonly TypeSpec[] SwitchUserTypes;
 
 		readonly BuiltinTypeSpec[] types;
 
@@ -125,7 +124,6 @@ namespace Mono.CSharp
 			OperatorsUnaryMutator = UnaryMutator.CreatePredefinedOperatorsTable (this);
 
 			BinaryPromotionsTypes = ConstantFold.CreateBinaryPromotionsTypes (this);
-			SwitchUserTypes = Switch.CreateSwitchUserTypes (this);
 
 			types = new BuiltinTypeSpec[] {
 				Object, ValueType, Attribute,
@@ -200,6 +198,7 @@ namespace Mono.CSharp
 		public readonly PredefinedType SecurityAction;
 		public readonly PredefinedType Dictionary;
 		public readonly PredefinedType Hashtable;
+		public readonly TypeSpec[] SwitchUserTypes;
 
 		//
 		// C# 3.0
@@ -321,6 +320,8 @@ namespace Mono.CSharp
 			Task.Define ();
 			if (TaskGeneric.Define ())
 				TaskGeneric.TypeSpec.IsGenericTask = true;
+
+			SwitchUserTypes = Switch.CreateSwitchUserTypes (module, Nullable.TypeSpec);
 		}
 	}
 
