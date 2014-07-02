@@ -10688,7 +10688,10 @@ namespace Mono.CSharp
 					return null;
 				}
 
-				if (!(member is PropertyExpr || member is FieldExpr)) {
+				var me = member as MemberExpr;
+				if (me is EventExpr) {
+					me = me.ResolveMemberAccess (ec, null, null);
+				} else if (!(member is PropertyExpr || member is FieldExpr)) {
 					ec.Report.Error (1913, loc,
 						"Member `{0}' cannot be initialized. An object initializer may only be used for fields, or properties",
 						member.GetSignatureForError ());
@@ -10696,7 +10699,6 @@ namespace Mono.CSharp
 					return null;
 				}
 
-				var me = member as MemberExpr;
 				if (me.IsStatic) {
 					ec.Report.Error (1914, loc,
 						"Static field or property `{0}' cannot be assigned in an object initializer",
