@@ -14428,6 +14428,17 @@
       <method name="Boolean Test(System.Object, Int32)" attrs="145">
         <size>10</size>
       </method>
+      <method name="Void Test_17()" attrs="129">
+        <size>52</size>
+      </method>
+    </type>
+    <type name="ConditionalParsing+MyTestStruct">
+      <method name="Void Dispose()" attrs="486">
+        <size>2</size>
+      </method>
+      <method name="MyTestStruct op_Implicit(Int32)" attrs="2198">
+        <size>18</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">
@@ -47331,7 +47342,7 @@
   <test name="test-77.cs">
     <type name="XX">
       <method name="Int32 Main()" attrs="150">
-        <size>393</size>
+        <size>443</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
