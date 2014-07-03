@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.Collections.Generic;
 
 namespace System {
 	internal class UriHelper {
@@ -152,6 +153,17 @@ namespace System {
 
 			UriSchemes scheme = GetScheme (schemeName);
 
+			var reduceBefore = UriSchemes.None;
+			var reduceAfter = UriSchemes.Http | UriSchemes.Https | UriSchemes.NetPipe | UriSchemes.NetTcp;
+
+			if (IriParsing)
+				reduceAfter |= UriSchemes.Ftp;
+			else
+				reduceBefore |= UriSchemes.Ftp;
+
+			if (component == UriComponents.Path && SchemeContains (scheme, reduceBefore))
+				str = Reduce(str);
+
 			var s = new StringBuilder ();
 			int len = str.Length;
 			for (int i = 0; i < len; i++) {
@@ -170,8 +182,13 @@ namespace System {
 				} else
 					s.Append (FormatChar (c, false, scheme, uriKind, component, uriFormat, formatFlags));
 			}
+			
+			str = s.ToString();
 
-			return s.ToString ();
+			if (component == UriComponents.Path && SchemeContains (scheme, reduceAfter))
+				str = Reduce(str);
+
+			return str;
 		}
 
 		private static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
@@ -365,6 +382,75 @@ namespace System {
 			}
 
 			return false;
+		}
+
+		// This is called "compacting" in the MSDN documentation
+		private static string Reduce (string path)
+		{
+			// quick out, allocation-free, for a common case
+			if (path == "/")
+				return path;
+
+			List<string> result = new List<string> ();
+
+			bool begin = true;
+			for (int startpos = 0; startpos < path.Length; ) {
+				int endpos = path.IndexOf ('/', startpos);
+				if (endpos == -1)
+					endpos = path.Length;
+				string current = path.Substring (startpos, endpos-startpos);
+				startpos = endpos + 1;
+				if (begin && current.Length == 0) {
+					begin = false;
+					continue;
+				}
+
+				begin = false;
+				if (current == "..") {
+					int resultCount = result.Count;
+					// in 2.0 profile, skip leading ".." parts
+					if (resultCount == 0) {
+						continue;
+					}
+
+					result.RemoveAt (resultCount - 1);
+					continue;
+				}
+
+				if (!IriParsing)
+					current = current.TrimEnd('.');
+
+				if (current == ".")
+					current = "";
+
+				if (current == "" && startpos < path.Length)
+					continue;
+
+				result.Add (current);
+			}
+
+			if (result.Count == 0)
+				return "/";
+
+			StringBuilder res = new StringBuilder ();
+
+			if (path [0] == '/')
+				res.Append ('/');
+
+			bool first = true;
+			foreach (string part in result) {
+				if (first) {
+					first = false;
+				} else {
+					res.Append ('/');
+				}
+				res.Append(part);
+			}
+
+			if (path [path.Length - 1] == '/')
+				res.Append ('/');
+				
+			return res.ToString();
 		}
 	}
 }
