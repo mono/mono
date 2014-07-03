@@ -1648,7 +1648,15 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket sock = (Socket)asyncResult.AsyncState;
 			
-			sock.EndConnect (asyncResult);
+			try {
+				sock.EndConnect (asyncResult);
+			} catch (Exception e) {
+				Console.WriteLine ("BCCallback exception:");
+				Console.WriteLine (e);
+
+				throw;
+			}
+
 			BCConnected = true;
 			
 			BCCalledBack.Set ();
