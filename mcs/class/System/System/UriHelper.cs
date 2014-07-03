@@ -161,6 +161,9 @@ namespace System {
 			else
 				reduceBefore |= UriSchemes.Ftp;
 
+			if (SchemeContains (scheme, UriSchemes.Ftp) && component == UriComponents.Path)
+				str = str.Replace('\\', '/');
+
 			if (component == UriComponents.Path && SchemeContains (scheme, reduceBefore))
 				str = Reduce(str);
 
