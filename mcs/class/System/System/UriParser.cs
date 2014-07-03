@@ -50,6 +50,11 @@ namespace System {
 			if ((format < UriFormat.UriEscaped) || (format > UriFormat.SafeUnescaped))
 				throw new ArgumentOutOfRangeException ("format");
 
+			return GetComponentsHelper (uri, components, format);
+		}
+
+		internal string GetComponentsHelper (Uri uri, UriComponents components, UriFormat format)
+		{
 			UriElements elements = UriParseComponents.ParseComponents (uri.OriginalString.Trim ());
 
 			string scheme = scheme_name;
