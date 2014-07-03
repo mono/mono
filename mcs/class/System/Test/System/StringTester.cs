@@ -16,7 +16,7 @@ namespace MonoTests.System {
 
 		private static readonly Dictionary<string, Asserts> asserts = new Dictionary<string, Asserts> ();
 
-		public static void Assert (string id, string actual, string message)
+		public static void Assert (string id, string actual, string message = "")
 		{
 			string testFullName = GetTestMethodName ();
 
@@ -41,6 +41,9 @@ namespace MonoTests.System {
 				testAsserts.AddExpected (id, actual);
 				return;
 			}
+
+			if (string.IsNullOrEmpty(message))
+				message = id;
 
 			string expected = testAsserts.GetExpected (id);
 			NUnit.Framework.Assert.AreEqual (expected, actual, message);
