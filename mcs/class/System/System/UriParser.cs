@@ -69,7 +69,7 @@ namespace System {
 
 			var formatFlags = UriHelper.FormatFlags.None;
 			if (UriHelper.HasCharactersToNormalize (uri.OriginalString))
-				formatFlags |= UriHelper.FormatFlags.HasCharactersToNormalize;
+				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
 
 			// it's easier to answer some case directly (as the output isn't identical 
 			// when mixed with others components, e.g. leading slash, # ...)

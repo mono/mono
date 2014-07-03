@@ -1454,7 +1454,7 @@ namespace System {
 
 			var formatFlags = UriHelper.FormatFlags.None;
 			if (UriHelper.HasCharactersToNormalize (uriString))
-				formatFlags |= UriHelper.FormatFlags.HasCharactersToNormalize;
+				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
 
 			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
 			int startpos = pos + 1;
