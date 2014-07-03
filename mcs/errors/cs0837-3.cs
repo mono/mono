@@ -1,12 +1,12 @@
 // CS0837: The `is' operator cannot be applied to a lambda expression, anonymous method, or method group
-// Line: 8
+// Line: 10
 
-class X
+using System;
+ 
+class Test
 {
 	static void Main ()
 	{
-		if (delegate {} is int) {
-			return;
-		}
+		var res = Main is object;
 	}
 }
