@@ -4609,7 +4609,7 @@ namespace Mono.CSharp {
 		// 0 = the best, int.MaxValue = the worst
 		// -1 = fatal error
 		//
-		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType)
+		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType, bool errorMode)
 		{
 			// Parameters of most-derived type used mainly for named and optional parameters
 			var pd = pm.Parameters;
@@ -4802,6 +4802,13 @@ namespace Mono.CSharp {
 						lambda_conv_msgs.ClearSession ();
 
 					if (i_args.Length != 0) {
+						if (!errorMode) {
+							foreach (var ta in i_args) {
+								if (!ta.IsAccessible (ec))
+									return ti.InferenceScore - 10000;
+							}
+						}
+
 						ms = ms.MakeGenericMethod (ec, i_args);
 					}
 				}
@@ -5155,7 +5162,7 @@ namespace Mono.CSharp {
 						bool params_expanded_form = false;
 						bool dynamic_argument = false;
 						TypeSpec rt = pm.MemberType;
-						int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt);
+						int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt, error_mode);
 
 						if (lambda_conv_msgs != null)
 							lambda_conv_msgs.EndSession ();
