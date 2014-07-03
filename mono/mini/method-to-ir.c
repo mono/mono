@@ -4520,7 +4520,7 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 	int dreg;
 	MonoDelegateClassMethodPair *info;
 	MonoDelegateTrampInfo *trampoline;
-	MonoInst *obj, *tramp_ins;
+	MonoInst *obj, *method_ins, *tramp_ins;
 
 	obj = handle_alloc (cfg, klass, FALSE, 0);
 	if (!obj)
@@ -4539,6 +4539,15 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 		}
 	}
 
+	/* Set method field */
+	method_ins = emit_get_rgctx_method (cfg, context_used, method, MONO_RGCTX_INFO_METHOD);
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), method_ins->dreg);
+	if (cfg->gen_write_barriers) {
+		dreg = alloc_preg (cfg);
+		EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method));
+		emit_write_barrier (cfg, ptr, method_ins);
+	}
+
 	if (!context_used && !cfg->compile_aot) {
 		trampoline = mono_create_delegate_trampoline_info (cfg->domain, klass, method, virtual);
 		if (virtual && (!trampoline->impl_this || !trampoline->impl_nothis))
@@ -4555,10 +4564,6 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 		else
 			EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, info);
 	}
-
-	dreg = alloc_preg (cfg);
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method));
-	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), dreg);
 
 	dreg = alloc_preg (cfg);
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, tramp_ins->dreg, G_STRUCT_OFFSET (MonoDelegateTrampInfo, method_ptr));
