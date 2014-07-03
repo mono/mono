@@ -478,13 +478,10 @@ namespace System {
 		public string AbsoluteUri { 
 			get { 
 				EnsureAbsoluteUri ();
-				if (cachedAbsoluteUri == null) {
-					cachedAbsoluteUri = GetLeftPart (UriPartial.Path);
-					if (query.Length > 0)
-						cachedAbsoluteUri += query;
-					if (fragment.Length > 0)
-						cachedAbsoluteUri += fragment;
-				}
+
+				if (cachedAbsoluteUri == null)
+					cachedAbsoluteUri = GetComponents (UriComponents.AbsoluteUri, UriFormat.UriEscaped);
+
 				return cachedAbsoluteUri;
 			} 
 		}
@@ -1458,6 +1455,10 @@ namespace System {
 			
 			scheme = TryGetKnownUriSchemeInstance (scheme);
 
+			var formatFlags = UriHelper.FormatFlags.None;
+			if (UriHelper.HasCharactersToNormalize (uriString))
+				formatFlags |= UriHelper.FormatFlags.HasCharactersToNormalize;
+
 			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
 			int startpos = pos + 1;
 			int endpos = uriString.Length;
@@ -1465,12 +1466,12 @@ namespace System {
 			// 8 fragment
 			pos = uriString.IndexOf ('#', startpos);
 			if (!IsUnc && pos != -1) {
-				if (userEscaped)
-					fragment = uriString.Substring (pos);
-				else
-					fragment = "#" + EscapeString (uriString.Substring (pos+1));
-
+				fragment = uriString.Substring (pos);
 				endpos = pos;
+				if (!userEscaped) {
+					fragment = "#" + UriHelper.FormatAbsolute(fragment.Substring (1), scheme, 
+						UriComponents.Fragment, UriFormat.UriEscaped, formatFlags);
+				}
 			}
 
 			// special case: there is no query part for 'news'
@@ -1487,8 +1488,10 @@ namespace System {
 				if (pos != -1) {
 					query = uriString.Substring (pos, endpos-pos);
 					endpos = pos;
-					if (!userEscaped)
-						query = EscapeString (query);
+					if (!userEscaped){
+						query = "?" + UriHelper.FormatAbsolute(query.Substring (1), scheme, 
+							UriComponents.Query, UriFormat.UriEscaped, formatFlags);
+					}
 				}
 			}
 
