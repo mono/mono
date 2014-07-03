@@ -11654,7 +11654,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>46</size>
+        <size>29</size>
       </method>
     </type>
     <type name="TestFunc`1[T]">
@@ -28344,7 +28344,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>45</size>
+        <size>28</size>
       </method>
     </type>
   </test>
@@ -50253,6 +50253,16 @@
       </method>
     </type>
   </test>
+  <test name="test-901.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-91.cs">
     <type name="Abstract">
       <method name="Void .ctor()" attrs="6276">
@@ -50825,7 +50835,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>35</size>
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -55148,7 +55158,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>35</size>
+        <size>18</size>
       </method>
     </type>
     <type name="DelegateInit+FooDelegate">
@@ -55629,7 +55639,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>46</size>
+        <size>29</size>
       </method>
     </type>
     <type name="TestFunc">
@@ -55899,7 +55909,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
-        <size>35</size>
+        <size>18</size>
       </method>
     </type>
     <type name="FooDelegate">

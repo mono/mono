@@ -1827,7 +1827,7 @@ namespace Mono.CSharp {
 			}
 
 			bool is_static = (method.ModFlags & Modifiers.STATIC) != 0;
-			if (is_static && am_cache == null) {
+			if (is_static && am_cache == null && !ec.IsStaticConstructor) {
 				//
 				// Creates a field cache to store delegate instance if it's not generic
 				//
