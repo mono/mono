@@ -157,7 +157,8 @@ namespace Mono.Debugger.Soft
 	enum InvokeFlags {
 		NONE = 0x0,
 		DISABLE_BREAKPOINTS = 0x1,
-		SINGLE_THREADED = 0x2
+		SINGLE_THREADED = 0x2,
+		OUT_THIS = 0x4
 	}
 
 	enum ElementType {
@@ -414,7 +415,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 34;
+		internal const int MINOR_VERSION = 35;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1667,24 +1668,30 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		internal delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ErrorCode error, object state);
+		internal delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ValueImpl out_this, ErrorCode error, object state);
 
 		internal int VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
 			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments), delegate (PacketReader r) {
-					ValueImpl v, exc;
+					ValueImpl v, exc, out_this = null;
 
 					if (r.ErrorCode != 0) {
-						callback (null, null, (ErrorCode)r.ErrorCode, state);
+						callback (null, null, null, (ErrorCode)r.ErrorCode, state);
 					} else {
-						if (r.ReadByte () == 0) {
+						int restype = r.ReadByte ();
+						if (restype == 0) {
 							exc = r.ReadValue ();
 							v = null;
-						} else {
+						} else if (restype == 1) {
 							v = r.ReadValue ();
 							exc = null;
+						} else if (restype == 2) {
+							v = r.ReadValue ();
+							out_this = r.ReadValue ();
+							exc = null;
+						} else {
+							throw new NotSupportedException ();
 						}
-
-						callback (v, exc, 0, state);
+						callback (v, exc, out_this, 0, state);
 					}
 				}, 1);
 		}
@@ -1702,20 +1709,26 @@ namespace Mono.Debugger.Soft
 				w.WriteValues (arguments [i]);
 			}
 			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHODS, w, delegate (PacketReader r) {
-					ValueImpl v, exc;
+					ValueImpl v, exc, out_this = null;
 
 					if (r.ErrorCode != 0) {
-						callback (null, null, (ErrorCode)r.ErrorCode, state);
+						callback (null, null, null, (ErrorCode)r.ErrorCode, state);
 					} else {
-						if (r.ReadByte () == 0) {
+						int restype = r.ReadByte ();
+						if (restype == 0) {
 							exc = r.ReadValue ();
 							v = null;
-						} else {
+						} else if (restype == 1) {
 							v = r.ReadValue ();
 							exc = null;
+						} else if (restype == 2) {
+							v = r.ReadValue ();
+							out_this = r.ReadValue ();
+							exc = null;
+						} else {
+							throw new NotSupportedException ();
 						}
-
-						callback (v, exc, 0, state);
+						callback (v, exc, out_this, 0, state);
 					}
 				}, methods.Length);
 		}
