@@ -1107,13 +1107,10 @@ namespace System {
 			if (cachedToString != null) 
 				return cachedToString;
 
-			if (isAbsoluteUri) {
-				cachedToString = Unescape (GetLeftPart (UriPartial.Path), true);
-				AppendQueryAndFragment (ref cachedToString);
-			} else {
-				// Everything is contained in path in this case. 
-				cachedToString = path;
-			}
+			if (isAbsoluteUri)
+				cachedToString = parser.GetComponentsHelper (this, UriComponents.AbsoluteUri, UriHelper.ToStringUnescape);
+			else
+				cachedToString = UriHelper.FormatRelative (source, scheme, UriHelper.ToStringUnescape);
 
 			return cachedToString;
 		}
