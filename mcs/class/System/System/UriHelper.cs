@@ -14,7 +14,8 @@ namespace System {
 		[Flags]
 		internal enum FormatFlags {
 			None = 0,
-			HasCharactersToNormalize = 1 << 0,
+			HasComponentCharactersToNormalize = 1 << 0,
+			HasUriCharactersToNormalize = 1 << 1,
 		}
 
 		[Flags]
@@ -102,9 +103,6 @@ namespace System {
 
 		internal static bool HasCharactersToNormalize(string str)
 		{
-			if (!IriParsing)
-				return false;
-
 			int len = str.Length;
 			for (int i = 0; i < len; i++) {
 				char c = str [i];
@@ -140,7 +138,7 @@ namespace System {
 		{
 			var formatFlags = FormatFlags.None;
 			if (HasCharactersToNormalize (str))
-				formatFlags |= FormatFlags.HasCharactersToNormalize;
+				formatFlags |= FormatFlags.HasUriCharactersToNormalize;
 
 			return Format (str, schemeName, UriKind.Relative, UriComponents.Path, uriFormat, formatFlags);
 		}
@@ -150,6 +148,9 @@ namespace System {
 		{
 			if (string.IsNullOrEmpty (str))
 				return "";
+
+			if (UriHelper.HasCharactersToNormalize (str))
+				formatFlags |= UriHelper.FormatFlags.HasComponentCharactersToNormalize;
 
 			UriSchemes scheme = GetScheme (schemeName);
 
@@ -197,7 +198,7 @@ namespace System {
 		private static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
 			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
 		{
-			if (!isEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat) ||
+			if (!isEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags) ||
 				isEscaped && !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))
 				return HexEscapeMultiByte (c);
 
@@ -286,7 +287,7 @@ namespace System {
 
 				if (" !\"'()*<>^`{}|".Contains (cStr))
 					return uriKind != UriKind.Relative ||
-						(formatFlags & FormatFlags.HasCharactersToNormalize) != 0;
+						(IriParsing && (formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0);
 
 				if (":[]".Contains (cStr))
 					return uriKind != UriKind.Relative;
@@ -316,7 +317,7 @@ namespace System {
 				if ("-._~".Contains (cStr))
 					return true;
 				
-				if ((formatFlags & FormatFlags.HasCharactersToNormalize) != 0 &&
+				if ((formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0 &&
 					"!'()*:[]".Contains (cStr))
 					return true;
 
@@ -330,7 +331,7 @@ namespace System {
 		}
 
 		private static bool NeedToEscape (char c, UriSchemes scheme, UriComponents component, UriKind uriKind,
-			UriFormat uriFormat)
+			UriFormat uriFormat, FormatFlags formatFlags)
 		{
 			string cStr = c.ToString (CultureInfo.InvariantCulture);
 
