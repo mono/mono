@@ -31,7 +31,20 @@ namespace MonoTests.System {
 		};
 
 		private static readonly string [] reduceLocations = {
-			"a/b/a./a", "a/b/.a/a", "a/b/./a", "a/b/a../a", "a/b/..a/a", "a/b/../a", "a/b/.../a"
+			"a/b/{0}", "a/b/{0}a", "a/b/a{0}",
+			"a/b/{0}/a", "a/b/{0}a/a", "a/b/a{0}/a",
+			// Test '/' %2F
+			"a/b%2F{0}", "a/b%2F{0}a", "a/b%2Fa{0}",
+			"a/b/{0}%2Fa", "a/b/{0}a%2Fa", "a/b/a{0}%2Fa",
+			"a/b%2F{0}/a", "a/b%2F{0}a/a", "a/b%2Fa{0}/a",
+			// Test '\\' %5C
+			"a/b%5C{0}", "a/b%5C{0}a", "a/b%5C{0}",
+			"a/b/{0}%5Ca", "a/b/{0}a%5Ca", "a/b/a{0}%5Ca",
+			"a/b%5C{0}/a", "a/b%5C{0}a/a", "a/b%5Ca{0}/a",
+		};
+
+		private static readonly string [] reduceElements = {
+			".", "..", "...", "%2E", "%2E%2E", "%2E%2E%2E"
 		};
 
 		public static readonly bool IriParsing;
@@ -150,7 +163,8 @@ namespace MonoTests.System {
 
 		private void TestReduce (UriToStringDelegate toString, bool testRelative = true)
 		{
-			TestLocations (reduceLocations, "", "", toString, testRelative);
+			foreach(var el in reduceElements)
+				TestLocations (reduceLocations, el, el, toString, testRelative);
 		}
 
 		private void TestComponent (UriComponents component)
