@@ -155,6 +155,12 @@ namespace Mono.CSharp
 			get { return member_context.IsStatic; }
 		}
 
+		public bool IsStaticConstructor {
+			get {
+				return member_context.IsStatic && (flags & Options.ConstructorScope) != 0;
+			}
+		}
+
 		public bool IsAnonymousStoreyMutateRequired {
 			get {
 				return CurrentAnonymousMethod != null &&
