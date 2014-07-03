@@ -1499,7 +1499,7 @@ namespace MonoTests.System.Net
 			Assert.IsNotNull (webEx, "Exception thrown should be WebException, but was: " +
 			                  timeoutWorker.Exception.GetType ().FullName);
 
-			Assert.AreEqual (webEx.Status, WebExceptionStatus.Timeout,
+			Assert.AreEqual (WebExceptionStatus.Timeout, webEx.Status,
 			                 "WebException was thrown, but with a wrong status (should be timeout): " + webEx.Status);
 
 			Assert.IsFalse (timeoutWorker.End > (timeoutWorker.Start + TimeSpan.FromMilliseconds (three_seconds_in_milliseconds + 500)),
@@ -1525,7 +1525,7 @@ namespace MonoTests.System.Net
 		[Test] // 2nd possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
 		public void TestTimeoutPropertyWithServerThatDoesntExist ()
 		{
-			string url = "http://10.128.200.100:8271/"; // some endpoint that is unlikely to exist
+			string url = "http://8.8.8.8:8271/"; // some endpoint that is unlikely to exist
 
 			TestTimeOut (url);
 		}
