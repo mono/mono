@@ -278,6 +278,10 @@ namespace Mono.CSharp {
 			var res = TrueStatement.FlowAnalysis (fc);
 
 			if (FalseStatement == null) {
+				var c = expr as Constant;
+				if (c != null && !c.IsDefaultValue)
+					return true_returns;
+
 				if (true_returns)
 					fc.DefiniteAssignment = da_false;
 				else
