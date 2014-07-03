@@ -4541,6 +4541,8 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 
 	if (!context_used && !cfg->compile_aot) {
 		trampoline = mono_create_delegate_trampoline_info (cfg->domain, klass, method, virtual);
+		if (virtual && (!trampoline->impl_this || !trampoline->impl_nothis))
+			return NULL;
 		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
 	} else {
 		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoDelegateClassMethodPair));
