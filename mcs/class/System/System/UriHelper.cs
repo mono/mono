@@ -354,7 +354,11 @@ namespace System {
 				if (component == UriComponents.Path || component == UriComponents.Query)
 					return false;
 
-				return !IriParsing && uriFormat == UriFormat.UriEscaped;
+				if (IriParsing)
+					return false;
+
+				return uriFormat == UriFormat.UriEscaped ||
+					(uriFormat != UriFormat.Unescaped && (formatFlags & FormatFlags.HasComponentCharactersToNormalize) != 0);
 			}
 
 			if (uriFormat == UriFormat.SafeUnescaped || uriFormat == ToStringUnescape) {
