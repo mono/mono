@@ -242,7 +242,9 @@ namespace System
 				} else {
 					argsMatch = arg_type_match (target.GetType (), args [0].ParameterType);
 					for (int i = 1; i < args.Length; i++)
-						argsMatch &= arg_type_match (delargs [i - 1].ParameterType, args [i].ParameterType);					
+						argsMatch &= arg_type_match (delargs [i - 1].ParameterType, args [i].ParameterType);
+
+					delegate_data =	DelegateData.ClosedDelegateForStaticMethod;
 				}
 			} else {
 				if (!method.IsStatic) {
