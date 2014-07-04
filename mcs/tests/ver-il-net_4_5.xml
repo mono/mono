@@ -29583,6 +29583,66 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-33.cs">
+    <type name="TestCallerLineNumber">
+      <method name="Void Test(System.Object)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Decimal)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(Double)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(Single)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(Int32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(UInt32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(Int64)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(UInt64)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.Decimal])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.Double])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.Single])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.Int32])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.UInt32])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.Int64])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(System.Nullable`1[System.UInt64])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">
