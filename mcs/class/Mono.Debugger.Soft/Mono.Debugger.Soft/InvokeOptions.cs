@@ -18,6 +18,10 @@ namespace Mono.Debugger.Soft
 		 * Return the changed receiver when invoking
 		 * a valuetype method.
 		 */
-		ReturnOutThis = 4
+		ReturnOutThis = 4,
+		/*
+		 * Return the values of out arguments
+		 */
+		ReturnOutArgs = 8
 	}
 }

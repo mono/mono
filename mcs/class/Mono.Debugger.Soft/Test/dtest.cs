@@ -2110,6 +2110,19 @@ public class DebuggerTests
 			Assert.AreEqual ("Exception", ex.Exception.Type.Name);
 		}
 
+#if NET_4_5
+		// out argument
+		m = t.GetMethod ("invoke_out");
+		var out_task = this_obj.InvokeMethodAsyncWithResult (e.Thread, m, new Value [] { vm.CreateValue (1) }, InvokeOptions.ReturnOutArgs);
+		var out_args = out_task.Result.OutArgs;
+		AssertValue (5, out_args [0]);
+
+		// without ReturnOutArgs flag
+		out_task = this_obj.InvokeMethodAsyncWithResult (e.Thread, m, new Value [] { vm.CreateValue (1) });
+		out_args = out_task.Result.OutArgs;
+		Assert.IsNull (out_args);
+#endif
+
 		// newobj
 		m = t.GetMethod (".ctor");
 		v = t.InvokeMethod (e.Thread, m, null);
