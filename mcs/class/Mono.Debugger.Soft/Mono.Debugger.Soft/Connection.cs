@@ -158,7 +158,8 @@ namespace Mono.Debugger.Soft
 		NONE = 0x0,
 		DISABLE_BREAKPOINTS = 0x1,
 		SINGLE_THREADED = 0x2,
-		OUT_THIS = 0x4
+		OUT_THIS = 0x4,
+		OUT_ARGS = 0x8,
 	}
 
 	enum ElementType {
@@ -1668,30 +1669,39 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		internal delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ValueImpl out_this, ErrorCode error, object state);
+		internal delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ValueImpl out_this, ValueImpl[] out_args, ErrorCode error, object state);
+
+		void read_invoke_res (PacketReader r, out ValueImpl v, out ValueImpl exc, out ValueImpl out_this, out ValueImpl[] out_args) {
+			int resflags = r.ReadByte ();
+			v = null;
+			exc = null;
+			out_this = null;
+			out_args = null;
+			if (resflags == 0) {
+				exc = r.ReadValue ();
+			} else {
+				v = r.ReadValue ();
+				if ((resflags & 2) != 0)
+					out_this = r.ReadValue ();
+				if ((resflags & 4) != 0) {
+					int nargs = r.ReadInt ();
+					out_args = new ValueImpl [nargs];
+					for (int i = 0; i < nargs; ++i)
+						out_args [i] = r.ReadValue ();
+				}
+			}
+		}
 
 		internal int VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
 			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments), delegate (PacketReader r) {
 					ValueImpl v, exc, out_this = null;
+					ValueImpl[] out_args = null;
 
 					if (r.ErrorCode != 0) {
-						callback (null, null, null, (ErrorCode)r.ErrorCode, state);
+						callback (null, null, null, null, (ErrorCode)r.ErrorCode, state);
 					} else {
-						int restype = r.ReadByte ();
-						if (restype == 0) {
-							exc = r.ReadValue ();
-							v = null;
-						} else if (restype == 1) {
-							v = r.ReadValue ();
-							exc = null;
-						} else if (restype == 2) {
-							v = r.ReadValue ();
-							out_this = r.ReadValue ();
-							exc = null;
-						} else {
-							throw new NotSupportedException ();
-						}
-						callback (v, exc, out_this, 0, state);
+						read_invoke_res (r, out v, out exc, out out_this, out out_args);
+						callback (v, exc, out_this, out_args, 0, state);
 					}
 				}, 1);
 		}
@@ -1710,25 +1720,13 @@ namespace Mono.Debugger.Soft
 			}
 			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHODS, w, delegate (PacketReader r) {
 					ValueImpl v, exc, out_this = null;
+					ValueImpl[] out_args = null;
 
 					if (r.ErrorCode != 0) {
-						callback (null, null, null, (ErrorCode)r.ErrorCode, state);
+						callback (null, null, null, null, (ErrorCode)r.ErrorCode, state);
 					} else {
-						int restype = r.ReadByte ();
-						if (restype == 0) {
-							exc = r.ReadValue ();
-							v = null;
-						} else if (restype == 1) {
-							v = r.ReadValue ();
-							exc = null;
-						} else if (restype == 2) {
-							v = r.ReadValue ();
-							out_this = r.ReadValue ();
-							exc = null;
-						} else {
-							throw new NotSupportedException ();
-						}
-						callback (v, exc, out_this, 0, state);
+						read_invoke_res (r, out v, out exc, out out_this, out out_args);
+						callback (v, exc, out_this, out_args, 0, state);
 					}
 				}, methods.Length);
 		}

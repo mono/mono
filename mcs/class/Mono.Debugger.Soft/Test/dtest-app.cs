@@ -959,6 +959,10 @@ public class Tests : TestsBase, ITest2
 		return 42;
 	}
 
+	public void invoke_out (out int foo) {
+		foo = 5;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void exceptions () {
 		try {

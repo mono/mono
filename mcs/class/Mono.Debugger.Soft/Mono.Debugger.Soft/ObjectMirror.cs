@@ -16,6 +16,12 @@ namespace Mono.Debugger.Soft
 		// Since protocol version 2.35
 		//
 		public Value OutThis { get; set; }
+		//
+		// The value of the arguments after the call
+		// Only set when using the InvokeOptions.ReturnOutArgs flag.
+		// Since protocol version 2.35
+		//
+		public Value[] OutArgs { get; set; }
 	}
 
 	public class ObjectMirror : Value {
@@ -174,6 +180,21 @@ namespace Mono.Debugger.Soft
 					}, null);
 			return tcs.Task;
 		}
+
+		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<InvokeResult> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (EndInvokeMethodInternalWithResult (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
 #endif
 
 		//
@@ -237,6 +258,10 @@ namespace Mono.Debugger.Soft
 				get; set;
 			}
 
+			public ValueImpl[] OutArgs {
+				get; set;
+			}
+
 			public ValueImpl Exception {
 				get; set;
 			}
@@ -276,6 +301,8 @@ namespace Mono.Debugger.Soft
 				f |= InvokeFlags.SINGLE_THREADED;
 			if ((options & InvokeOptions.ReturnOutThis) != 0)
 				f |= InvokeFlags.OUT_THIS;
+			if ((options & InvokeOptions.ReturnOutArgs) != 0)
+				f |= InvokeFlags.OUT_ARGS;
 
 			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Thread = thread, Callback = callback };
 			thread.InvalidateFrames ();
@@ -285,7 +312,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		// This is called when the result of an invoke is received
-		static void InvokeCB (ValueImpl v, ValueImpl exc, ValueImpl out_this, ErrorCode error, object state) {
+		static void InvokeCB (ValueImpl v, ValueImpl exc, ValueImpl out_this, ValueImpl[] out_args, ErrorCode error, object state) {
 			InvokeAsyncResult r = (InvokeAsyncResult)state;
 
 			if (error != 0) {
@@ -296,6 +323,7 @@ namespace Mono.Debugger.Soft
 			}
 
 			r.OutThis = out_this;
+			r.OutArgs = out_args;
 
 			r.IsCompleted = true;
 			((ManualResetEvent)r.AsyncWaitHandle).Set ();
@@ -327,7 +355,14 @@ namespace Mono.Debugger.Soft
 				if (r.Exception != null)
 					throw new InvocationException ((ObjectMirror)r.VM.DecodeValue (r.Exception));
 
-				return new InvokeResult () { Result = r.VM.DecodeValue (r.Value), OutThis = r.OutThis != null ? r.VM.DecodeValue (r.OutThis) : null };
+				Value out_this = null;
+				if (r.OutThis != null)
+					out_this = r.VM.DecodeValue (r.OutThis);
+				Value[] out_args = null;
+				if (r.OutArgs != null)
+					out_args = r.VM.DecodeValues (r.OutArgs);
+
+				return new InvokeResult () { Result = r.VM.DecodeValue (r.Value), OutThis = out_this, OutArgs = out_args };
 			}
 		}
 
@@ -400,7 +435,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		// This is called when the result of an invoke is received
-		static void InvokeMultipleCB (ValueImpl v, ValueImpl exc, ValueImpl out_this, ErrorCode error, object state) {
+		static void InvokeMultipleCB (ValueImpl v, ValueImpl exc, ValueImpl out_this, ValueImpl[] out_args, ErrorCode error, object state) {
 			var r = (InvokeAsyncResult)state;
 
 			Interlocked.Decrement (ref r.NumPending);
