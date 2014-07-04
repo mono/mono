@@ -1118,16 +1118,26 @@ namespace MonoTests.System
 		}
 
 		[Test] // #664205
-		public void DynamicInvokeNullTarget ()
+		public void DynamicInvokeClosedStatic ()
 		{
 			var d1 = Delegate.CreateDelegate (typeof(Func<int>), null, typeof(DelegateTest).GetMethod ("DynamicInvokeClosedStaticDelegate_CB"));
-			Assert.AreEqual (4, d1.DynamicInvoke ());
+			Assert.AreEqual (1, d1.DynamicInvoke (), "#1");
+
+			var d2 = Delegate.CreateDelegate (typeof(Func<int>), "arg", typeof(DelegateTest).GetMethod ("DynamicInvokeClosedStaticDelegate_CB"));
+			Assert.AreEqual (2, d2.DynamicInvoke (), "#2");
 		}
 
-		public static int DynamicInvokeClosedStaticDelegate_CB (object instance)
+		public static int DynamicInvokeClosedStaticDelegate_CB (string instance)
 		{
-			Assert.IsNull (instance);
-			return 4;
+			switch (instance) {
+			case null:
+				return 1;
+			case "arg":
+				return 2;
+			default:
+				Assert.Fail ();
+				return -1;
+			}
 		}
 
 		[Test]
