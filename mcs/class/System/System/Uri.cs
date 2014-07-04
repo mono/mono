@@ -142,7 +142,16 @@ namespace System {
 			UriSchemeNetTcp
 		};
 
-		// Constructors		
+		// Constructors
+
+		static Uri()
+		{
+			var iriparsingVar = Environment.GetEnvironmentVariable ("MONO_URI_IRIPARSING");
+			if (iriparsingVar == "true")
+				IriParsing = true;
+			if (iriparsingVar == "false")
+				IriParsing = false;
+		}
 
 		public Uri (string uriString) : this (uriString, false) 
 		{
