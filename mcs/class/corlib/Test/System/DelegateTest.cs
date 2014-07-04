@@ -1116,20 +1116,58 @@ namespace MonoTests.System
 				typeof (Action),
 				this.GetType ().GetMethod ("Banga"));
 		}
-#if !MONOTOUCH
+
 		[Test] // #664205
 		public void DynamicInvokeNullTarget ()
 		{
-			var method = new DynamicMethod ("test", typeof (int), new [] { typeof (object) }, true);
-			var il = method.GetILGenerator ();
-			il.Emit (OpCodes.Ldc_I4, 42);
-			il.Emit (OpCodes.Ret);
-
-			var @delegate = method.CreateDelegate (typeof (Func<int>), null);
-
-			Assert.AreEqual (42, (int) @delegate.DynamicInvoke ());
+			var d1 = Delegate.CreateDelegate (typeof(Func<int>), null, typeof(DelegateTest).GetMethod ("DynamicInvokeClosedStaticDelegate_CB"));
+			Assert.AreEqual (4, d1.DynamicInvoke ());
 		}
-#endif
+
+		public static int DynamicInvokeClosedStaticDelegate_CB (object instance)
+		{
+			Assert.IsNull (instance);
+			return 4;
+		}
+
+		[Test]
+		public void DynamicInvokeOpenInstanceDelegate ()
+		{
+			var d1 = Delegate.CreateDelegate (typeof (Func<DelegateTest, int>), typeof(DelegateTest).GetMethod ("DynamicInvokeOpenInstanceDelegate_CB"));
+			Assert.AreEqual (5, d1.DynamicInvoke (new DelegateTest ()), "#1");
+
+			var d3 = (Func<DelegateTest, int>) d1;
+			Assert.AreEqual (5, d3 (null), "#2");
+		}
+
+		public int DynamicInvokeOpenInstanceDelegate_CB ()
+		{
+			return 5;
+		}
+
+		[Test]
+		public void DynamicInvoke_InvalidArguments ()
+		{
+			Delegate d = new Func<int, int> (TestMethod);
+
+			try {
+				d.DynamicInvoke (null);
+				Assert.Fail ("#1");
+			} catch (TargetParameterCountException) {
+			}
+
+			try {
+				d.DynamicInvoke (new object [0]);
+				Assert.Fail ("#2");
+			} catch (TargetParameterCountException) {
+			}
+		}
+
+		public static int TestMethod (int i)
+		{
+			throw new NotSupportedException ();
+		}
+
 #endif
 		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
 
@@ -1329,7 +1367,7 @@ namespace MonoTests.System
 			} catch (ArgumentException) {}
 		}
 
-        private static Func<Int32, Int32, bool> Int32D = (x, y) => (x & y) == y;
+		private static Func<Int32, Int32, bool> Int32D = (x, y) => (x & y) == y;
 
 		[Test]
 		public void EnumBaseTypeConversion () {
