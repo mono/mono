@@ -211,9 +211,36 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="julianDay">The value to convert</param>
     /// <returns>A .NET DateTime</returns>
-    public DateTime ToDateTime(double julianDay)
+	/// <remarks>This function is a C# version of the original sqlite C functions</remarks>
+    public static DateTime ToDateTime(double julianDay)
     {
-      return DateTime.FromOADate(julianDay - 2415018.5);
+      int Z, A, B, C, D, E, X1;
+      julianDay *= 86400000.0;
+      
+      Z = (int)((julianDay + 43200000) / 86400000);
+      A = (int)((Z - 1867216.25) / 36524.25);
+      A = Z + 1 + A - (A / 4);
+      B = A + 1524;
+      C = (int)((B - 122.1) / 365.25);
+      D = (36525 * C) / 100;
+      E = (int)((B - D) / 30.6001);
+      X1 = (int)(30.6001 * E);
+      
+      int day = B - D - X1;
+      int month = E < 14 ? E - 1 : E - 13;
+      int year = month > 2 ? C - 4716 : C - 4715;
+      
+      int tms = (int)((julianDay + 43200000) % 86400000);
+      double s = tms / 1000.0;
+      int ms = (int)s;
+      s -= ms;
+      int h = ms / 3600;
+      ms -= h * 3600;
+      int m = ms / 60;
+      s += ms - m * 60;
+      ms = (int)Math.Round ((s - (int)s) * 1000.0);
+      
+      return new DateTime (year, month, day, h, m, (int)s, ms);
     }
 
     /// <summary>
@@ -221,9 +248,29 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="value">The DateTime to convert</param>
     /// <returns>The JulianDay value the Datetime represents</returns>
-    public double ToJulianDay(DateTime value)
+	/// <remarks>This function is a C# version of the original sqlite C functions</remarks>
+    public static double ToJulianDay(DateTime value)
     {
-      return value.ToOADate() + 2415018.5;
+      int Y, M, D, A, B, X1, X2;
+      long iJD;
+      
+      Y = value.Year;
+      M = value.Month;
+      D = value.Day;
+      
+      if (M <= 2) {
+      	Y--;
+      	M += 12;
+      }
+      
+      A = Y / 100;
+      B = 2 - A + (A / 4);
+      X1 = 36525 * (Y + 4716) / 100;
+      X2 = 306001 * (M + 1) / 10000;
+      iJD = (long)((X1 + X2 + D + B - 1524.5) * 86400000);
+      iJD += (long)value.TimeOfDay.TotalMilliseconds;
+      
+      return iJD / 86400000.0;
     }
 
     /// <summary>
@@ -422,7 +469,7 @@ namespace Mono.Data.Sqlite
     /// <returns>The corresponding (closest match) DbType</returns>
     internal static DbType TypeToDbType(Type typ)
     {
-      TypeCode tc = Type.GetTypeCode(typ);
+      TypeCode tc = TypeUtil.GetTypeCode(typ);
       if (tc == TypeCode.Object)
       {
         if (typ == typeof(byte[])) return DbType.Binary;
@@ -633,7 +680,7 @@ namespace Mono.Data.Sqlite
     /// <returns>The SQLite type affinity for that type.</returns>
     internal static TypeAffinity TypeToAffinity(Type typ)
     {
-      TypeCode tc = Type.GetTypeCode(typ);
+      TypeCode tc = TypeUtil.GetTypeCode(typ);
       if (tc == TypeCode.Object)
       {
         if (typ == typeof(byte[]) || typ == typeof(Guid))
@@ -682,7 +729,7 @@ namespace Mono.Data.Sqlite
         
       for (int n = 0; n < _typeNames.Length; n++)
       {
-        if (string.Compare (nameToCompare, _typeNames [n].typeName, StringComparison.InvariantCultureIgnoreCase) == 0)
+        if (string.Compare (nameToCompare, _typeNames [n].typeName, StringComparison.OrdinalIgnoreCase) == 0)
           return _typeNames[n].dataType; 
       }
       

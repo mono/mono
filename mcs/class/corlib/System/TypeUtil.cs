@@ -29,6 +29,10 @@
 #if NETFX_CORE
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.IO;
+using Windows.ApplicationModel;
+using Windows.Storage;
 using IConvertible = System.Object;
 #endif
 using System.Reflection;
@@ -101,6 +105,8 @@ namespace System {
 			if (type == typeof (System.DateTime)) return TypeCode.DateTime;
 			if (type == typeof (System.String)) return TypeCode.String;
 
+			if (type.GetTypeInfo ().IsEnum) return TypeCode.Int32;
+
 			return TypeCode.Object;
 #else
 			return Type.GetTypeCode (type);
@@ -149,6 +155,21 @@ namespace System {
 			return type.GetTypeInfo ().IsAssignableFrom (value.GetType ().GetTypeInfo ());
 		}
 
+		internal static Type[] GetTypes (this Assembly assembly)
+		{
+			return assembly.DefinedTypes.Select (t => t.AsType ()).ToArray ();
+		}
+
+		internal static object[] GetCustomAttributes (this Type type, Type attributeType, bool inherit)
+		{
+			return type.GetTypeInfo ().GetCustomAttributes (attributeType, inherit).Cast<object> ().ToArray ();
+		}
+
+		internal static IEnumerable<PropertyInfo> GetProperties (this Type type)
+		{
+			return type.GetTypeInfo ().DeclaredProperties;
+		}
+
 		internal static MethodInfo GetMethod (this Type type, string methodName)
 		{
 			return type.GetTypeInfo ().GetDeclaredMethod (methodName);
@@ -157,7 +178,7 @@ namespace System {
 		internal static MethodInfo GetMethod (this Type type, string methodName, Type[] types)
 		{
 			IEnumerable<MethodInfo> methods = type.GetTypeInfo ().GetDeclaredMethods (methodName);
-			return methods.First (m => {
+			return methods.FirstOrDefault (m => {
 				ParameterInfo[] parameters = m.GetParameters ();
 				if (parameters.Length != types.Length)
 					return false;
@@ -176,4 +197,41 @@ namespace System {
 		}
 #endif
 	}
+
+#if NETFX_CORE
+	// dummy class to allow loading of assemblies in the "current domain"
+	sealed class AppDomain {
+
+        static AppDomain ()
+        {
+            CurrentDomain = new AppDomain ();
+        }
+
+		internal static AppDomain CurrentDomain { get; private set; }
+ 
+        internal Assembly[] GetAssemblies ()
+        {
+            return GetAssemblyListAsync ().Result.ToArray ();
+        }
+ 
+        private async Task<IEnumerable<Assembly>> GetAssemblyListAsync ()
+        {
+            StorageFolder folder = Package.Current.InstalledLocation;
+            List<Assembly> assemblies = new List<Assembly> ();
+            foreach (StorageFile file in await folder.GetFilesAsync ()) {
+                if (string.Compare (file.FileType, ".dll", StringComparison.OrdinalIgnoreCase) == 0 || 
+					string.Compare (file.FileType, ".exe", StringComparison.OrdinalIgnoreCase) == 0) {
+                    AssemblyName name = new AssemblyName () { Name = Path.GetFileNameWithoutExtension (file.Name) };
+					try { 
+						Assembly asm = Assembly.Load (name);
+						assemblies.Add (asm);
+					} catch {
+						// if there is a problem loading this one, then skip it
+					}
+                }
+            }
+            return assemblies;
+        }
+    }
+#endif
 }

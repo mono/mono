@@ -11,6 +11,7 @@ namespace Mono.Data.Sqlite
   using System.Collections;
   using System.Collections.Generic;
   using System.Runtime.InteropServices;
+  using System.Reflection;
   using System.Globalization;
 
   /// <summary>
@@ -403,15 +404,17 @@ namespace Mono.Data.Sqlite
       {
 #if !PLATFORM_COMPACTFRAMEWORK
         SqliteFunctionAttribute at;
-        System.Reflection.Assembly[] arAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+        Assembly[] arAssemblies = AppDomain.CurrentDomain.GetAssemblies ();
         int w = arAssemblies.Length;
-        System.Reflection.AssemblyName sqlite = System.Reflection.Assembly.GetCallingAssembly().GetName();
+#if !WINDOWS_PHONE && !NETFX_CORE
+        AssemblyName sqlite = Assembly.GetCallingAssembly ().GetName ();
+#endif
 
-        for (int n = 0; n < w; n++)
+		for (int n = 0; n < w; n++)
         {
           Type[] arTypes;
           bool found = false;
-          System.Reflection.AssemblyName[] references;
+          AssemblyName[] references;
           try
           {
 #if !WINDOWS_PHONE && !NETFX_CORE
@@ -433,7 +436,7 @@ namespace Mono.Data.Sqlite
 
             arTypes = arAssemblies[n].GetTypes();
           }
-          catch (global::System.Reflection.ReflectionTypeLoadException e)
+          catch (ReflectionTypeLoadException e)
           {
             arTypes = e.Types;
           }
