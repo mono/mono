@@ -6,3 +6,4 @@ SqliteExceptionUnitTests.cs
 SqliteParameterUnitTests.cs
 SqliteFunctionTests.cs
 SqliteUnitTestsBase.cs
+SqliteConvertUnitTests.cs
