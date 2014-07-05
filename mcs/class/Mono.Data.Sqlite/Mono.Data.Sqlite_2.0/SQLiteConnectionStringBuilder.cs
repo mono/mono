@@ -61,7 +61,7 @@ namespace Mono.Data.Sqlite
     /// <param name="cnnString">The connection string to assign</param>
     private void Initialize(string cnnString)
     {
-      _properties = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
+      _properties = new Hashtable (StringComparer.OrdinalIgnoreCase);
 #if !WINDOWS_PHONE && !NETFX_CORE
       try {
         base.GetProperties (_properties);

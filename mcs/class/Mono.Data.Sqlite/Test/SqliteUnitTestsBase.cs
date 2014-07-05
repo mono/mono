@@ -41,10 +41,10 @@ namespace MonoTests.Mono.Data.Sqlite {
 				_conn.Dispose ();
 				_conn = null;
 			}
-			if (File.Exists (_uri)) {
+			if (SqliteConnection.FileExists (_uri)) {
 				// We want to start with a fresh db for each full run
 				// The database is created on the first open()
-				File.Delete (_uri);
+				SqliteConnection.DeleteFile (_uri);
 			}
 		}
 
@@ -53,6 +53,7 @@ namespace MonoTests.Mono.Data.Sqlite {
 		{
 			Drop ();
 
+			SqliteConnection.CreateFile (_uri);
 			_conn = new SqliteConnection (_connectionString);
 		}
 	}
@@ -64,8 +65,8 @@ namespace MonoTests.Mono.Data.Sqlite {
 			base.Create ();
 
 			try {
-				using (SqliteCommand createCommand = new SqliteCommand ("CREATE TABLE t1(t  TEXT,  f FLOAT, i INTEGER, b TEXT);", _conn))
-				using (SqliteCommand insertCommand = new SqliteCommand ("INSERT INTO t1  (t, f, i, b ) VALUES('" + stringvalue + "',123,123,'123')", _conn)) {
+				using (SqliteCommand createCommand = new SqliteCommand ("CREATE TABLE t1 (t TEXT, f FLOAT, i INTEGER, b TEXT);", _conn))
+				using (SqliteCommand insertCommand = new SqliteCommand ("INSERT INTO t1 (t, f, i, b ) VALUES ('" + stringvalue + "', 123, 123, '123')", _conn)) {
 					_conn.Open ();
 					createCommand.ExecuteNonQuery ();
 					insertCommand.ExecuteNonQuery ();

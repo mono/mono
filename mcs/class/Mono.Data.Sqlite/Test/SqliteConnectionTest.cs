@@ -71,7 +71,7 @@ namespace MonoTests.Mono.Data.Sqlite {
 			// close command after
 			cmd.Dispose ();
 			// ensure file is not locked
-			File.Delete (filename);
+			SqliteConnection.DeleteFile (filename);
 		}		
 
 		[Test]

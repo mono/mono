@@ -267,8 +267,8 @@ namespace Mono.Data.Sqlite
         || String.IsNullOrEmpty(quotedIdentifier))
         return quotedIdentifier;
 
-      if (quotedIdentifier.StartsWith(QuotePrefix, StringComparison.InvariantCultureIgnoreCase) == false
-        || quotedIdentifier.EndsWith(QuoteSuffix, StringComparison.InvariantCultureIgnoreCase) == false)
+      if (quotedIdentifier.StartsWith (QuotePrefix, StringComparison.OrdinalIgnoreCase) == false
+		  || quotedIdentifier.EndsWith (QuoteSuffix, StringComparison.OrdinalIgnoreCase) == false)
         return quotedIdentifier;
 
       return quotedIdentifier.Substring(QuotePrefix.Length, quotedIdentifier.Length - (QuotePrefix.Length + QuoteSuffix.Length)).Replace(QuoteSuffix + QuoteSuffix, QuoteSuffix);

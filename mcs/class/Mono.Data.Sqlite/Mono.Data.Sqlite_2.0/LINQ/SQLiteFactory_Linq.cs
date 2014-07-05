@@ -5,6 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 namespace Mono.Data.Sqlite
 {
   using System;
@@ -40,9 +41,7 @@ namespace Mono.Data.Sqlite
       return null;
     }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
     [ReflectionPermission(SecurityAction.Assert, MemberAccess = true)]
-#endif
     private object GetSQLiteProviderServicesInstance()
     {
       if (_sqliteServices == null)
@@ -58,3 +57,4 @@ namespace Mono.Data.Sqlite
     }
   }
 }
+#endif

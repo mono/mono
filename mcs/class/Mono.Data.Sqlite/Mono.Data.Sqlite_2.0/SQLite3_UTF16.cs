@@ -59,7 +59,7 @@ namespace Mono.Data.Sqlite
 #if !SQLITE_STANDARD
         int n = UnsafeNativeMethods.sqlite3_open16_interop(ToUTF8(strFilename), (int)flags, out db);
 #else
-        if ((flags & SQLiteOpenFlagsEnum.Create) == 0 && System.IO.File.Exists(strFilename) == false)
+        if ((flags & SQLiteOpenFlagsEnum.Create) == 0 && SqliteConnection.FileExists(strFilename) == false)
           throw new SqliteException((int)SQLiteErrorCode.CantOpen, strFilename);
 
         int n = UnsafeNativeMethods.sqlite3_open16 (ToUTF16 (strFilename), out db);
