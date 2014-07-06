@@ -28,15 +28,22 @@
 //
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_PHONE
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
+#if !NETFX_CORE
 	[Serializable]
-	public abstract class DbException : ExternalException
+#endif
+	public abstract class DbException : 
+#if !NETFX_CORE
+		ExternalException
+#else
+		Exception
+#endif
 	{
 		protected DbException ()
 		{
@@ -51,13 +58,23 @@ namespace System.Data.Common {
 		{
 		}
 
+#if !NETFX_CORE
 		protected DbException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
+#else
+		public virtual int ErrorCode { get; private set; }
+#endif
 
-		protected DbException (string message, int errorCode) : base(message,errorCode) 
+		protected DbException (string message, int errorCode) 
+#if !NETFX_CORE
+			: base(message, errorCode) 
+#endif
 		{
+#if NETFX_CORE
+			this.ErrorCode = errorCode;
+#endif
 		}
 	}
 }

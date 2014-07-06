@@ -29,6 +29,9 @@ using System.IO;
 #if USE_MSUNITTEST
 #if WINDOWS_PHONE || NETFX_CORE
 using Windows.Storage;
+#if NETFX_CORE
+using Windows.Globalization;
+#endif // NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
@@ -135,28 +138,9 @@ namespace System.Threading {
 	static class Thread {
 		internal static class CurrentThread {
 			internal static CultureInfo CurrentCulture {
-				get { return new CultureInfo (global::Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride); }
-				set { global::Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = value.Name; }
+				get { return new CultureInfo (ApplicationLanguages.PrimaryLanguageOverride); }
+				set { ApplicationLanguages.PrimaryLanguageOverride = value.Name; }
 			}
-		}
-	}
-}
-namespace System.IO {
-	static class File {
-		internal static void Delete (string fileName)
-		{
-			StorageFile file = StorageFile.GetFileFromPathAsync (fileName).AsTask ().Result;
-			file.DeleteAsync ().AsTask ().Wait ();
-		}
-		internal static Stream Create (string fileName)
-		{
-			StorageFolder root = ApplicationData.Current.TemporaryFolder;
-			return root.OpenStreamForWriteAsync (Path.GetFileName (fileName), CreationCollisionOption.ReplaceExisting).Result;
-		}
-		internal static Stream OpenRead (string fileName)
-		{
-			StorageFile file = StorageFile.GetFileFromPathAsync (fileName).AsTask ().Result;
-			return file.OpenStreamForReadAsync ().Result;
 		}
 	}
 }

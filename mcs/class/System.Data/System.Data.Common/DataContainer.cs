@@ -178,7 +178,7 @@ namespace System.Data.Common
 #if !NETFX_CORE
 			} else if (value is IConvertible) {
 #else
-			} else if (value.GetTypeCode () > TypeCode.Object && value.GetTypeCode () < TypeCode.String) {
+			} else if (value.GetTypeCode () > TypeCode.Object && value.GetTypeCode () <= TypeCode.String) {
 #endif
 				switch (tc) {
 					case TypeCode.Int16:
