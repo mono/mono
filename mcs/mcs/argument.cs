@@ -276,6 +276,16 @@ namespace Mono.CSharp
 				ordered.Add (arg);
 			}
 
+			public override void FlowAnalysis (FlowAnalysisContext fc, List<MovableArgument> movable = null)
+			{
+				foreach (var arg in ordered) {
+					if (arg.ArgType != Argument.AType.Out)
+						arg.FlowAnalysis (fc);
+				}
+
+				base.FlowAnalysis (fc, ordered);
+			}
+
 			public override Arguments Emit (EmitContext ec, bool dup_args, bool prepareAwait)
 			{
 				foreach (var a in ordered) {
@@ -497,7 +507,7 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public void FlowAnalysis (FlowAnalysisContext fc)
+		public virtual void FlowAnalysis (FlowAnalysisContext fc, List<MovableArgument> movable = null)
 		{
 			bool has_out = false;
 			foreach (var arg in args) {
@@ -506,7 +516,14 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				arg.FlowAnalysis (fc);
+				if (movable == null) {
+					arg.FlowAnalysis (fc);
+					continue;
+				}
+
+				var ma = arg as MovableArgument;
+				if (ma != null && !movable.Contains (ma))
+					arg.FlowAnalysis (fc);
 			}
 
 			if (!has_out)
