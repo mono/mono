@@ -20,9 +20,12 @@ namespace MonoTests.System {
 		// Those characters are tested alone.
 		private const string specialTestedChars = "@:?#";
 
+		// Scheme news: and custom: are not tested because there is a strange behavior on .NET 4.5
+		// new Uri("news:a/a%30").ToString() == "news:a/a%30a/a0"
 		private static readonly string [] schemes = {
 			"http://", "https://", "file://", "ftp://", "gopher://", "ldap://", "mailto:",
-			"net.pipe://", "net.tcp://", "news:", "nntp://", "telnet://", "custom:", "custom://"
+			"net.pipe://", "net.tcp://",  "nntp://", "telnet://", "custom://",
+			//"news:", "custom:"
 		};
 
 		private static readonly string [] componentLocations = {
