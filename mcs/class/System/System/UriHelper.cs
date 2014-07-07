@@ -105,7 +105,7 @@ namespace System {
 			if (SchemeContains (scheme, UriSchemes.File))
 				return IriParsing;
 
-			return !SchemeContains (scheme, UriSchemes.Ftp | UriSchemes.Gopher | UriSchemes.Nntp | UriSchemes.Telnet);
+			return !SchemeContains (scheme, UriSchemes.Ftp | UriSchemes.Gopher | UriSchemes.Nntp | UriSchemes.Telnet | UriSchemes.News);
 		}
 
 		internal static bool HasCharactersToNormalize(string str)
