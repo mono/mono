@@ -5158,8 +5158,17 @@ namespace Mono.CSharp {
 			if (!omit_args && Arguments != null)
 				Arguments.Emit (ec, dup_args, this_arg);
 
+			/* Note from MSDN:
+			 * "When calling methods of System.Object on value types, consider using the constrained prefix 
+			 *  with the callvirt instruction instead of emitting a call instruction. This removes the need 
+			 *  to emit different IL depending on whether or not the value type overrides the method, 
+			 *  avoiding a potential versioning problem."
+			 * Value types can't derive from other value types so System.Object should be the /only/ thing
+			 * we need to check for in this way. */
+			bool isSystemObjectMethod = (decl_type == TypeManager.object_type);
+
 			OpCode call_op;
-			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)) {
+			if (is_static || struct_call || ((is_base || (this_call && !method.IsVirtual)) && !(TypeManager.IsValueType(instance_expr.Type) && isSystemObjectMethod))) {
 				call_op = OpCodes.Call;
 			} else {
 				call_op = OpCodes.Callvirt;
