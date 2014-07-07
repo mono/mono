@@ -79,6 +79,11 @@ namespace System {
 			return (keys & flag) != 0;
 		}
 
+		internal static bool IsKnownScheme(string scheme)
+		{
+			return GetScheme(scheme) != UriSchemes.Custom;
+		}
+
 		internal static string HexEscapeMultiByte (char character)
 		{
 			const string hex_upper_chars = "0123456789ABCDEF";
