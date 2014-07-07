@@ -106,7 +106,7 @@ namespace System {
 
 			if ((components & UriComponents.Scheme) != 0) {
 				sb.Append (scheme);
-				sb.Append (Uri.GetSchemeDelimiter (scheme));
+				sb.Append (elements.delimiter);
 			}
 
 			if ((components & UriComponents.UserInfo) != 0) {

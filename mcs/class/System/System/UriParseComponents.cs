@@ -102,10 +102,17 @@ namespace System {
 		{
 			string part = state.remaining;
 			
-			if (part.Length < 2 || part [0] != '/' || part [1] != '/')
+			state.elements.delimiter = Uri.GetSchemeDelimiter (state.elements.scheme);
+
+			// : was already consumed in ParseScheme
+			if (!part.StartsWith (state.elements.delimiter.Substring (1))) {
+				if (!UriHelper.IsKnownScheme (state.elements.scheme))
+					state.elements.delimiter = ":";
+
 				return part.Length > 0;
-			
-			state.remaining = part.Substring (2);
+			}
+
+			state.remaining = part.Substring (state.elements.delimiter.Length-1);
 			
 			bool ok = ParseUser (ref state);
 			if (ok)

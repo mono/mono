@@ -33,6 +33,7 @@ namespace System {
 		public UriElements()
 		{
 			scheme = String.Empty;
+			delimiter = String.Empty;
 			user = String.Empty;
 			host = String.Empty;
 			port = String.Empty;
@@ -42,6 +43,7 @@ namespace System {
 		}
 		
 		public string scheme;
+		public string delimiter;
 		public string user;
 		public string host;
 		public string port;
