@@ -91,7 +91,7 @@ namespace System {
 			}
 			
 			if (index + 1 <= part.Length && part [index] == ':') {
-				state.elements.scheme = sb.ToString ();
+				state.elements.scheme = sb.ToString ().ToLower ();
 				state.remaining = part.Substring (index + 1);
 			}
 				
