@@ -1117,7 +1117,7 @@ namespace System {
 				return cachedToString;
 
 			if (isAbsoluteUri)
-				cachedToString = parser.GetComponentsHelper (this, UriComponents.AbsoluteUri, UriHelper.ToStringUnescape);
+				cachedToString = Parser.GetComponentsHelper (this, UriComponents.AbsoluteUri, UriHelper.ToStringUnescape);
 			else
 				cachedToString = UriHelper.FormatRelative (source, scheme, UriHelper.ToStringUnescape);
 
