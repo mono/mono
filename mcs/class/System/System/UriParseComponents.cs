@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Net;
 using System.Text;
 
 
@@ -172,21 +173,38 @@ namespace System {
 			string part = state.remaining;
 			StringBuilder sb = new StringBuilder ();
 			
+			var tmpHost = "";
+
 			int index;
 			for (index = 0; index < part.Length; index++) {	
 				
 				char ch = part [index];
 				
-				if (ch == '/' || ch == ':' || ch == '#' || ch == '?')
+				if (ch == '/' || ch == '#' || ch == '?')
 					break;
+
+				// Possible IPv6
+				if (string.IsNullOrEmpty (tmpHost) && ch == ':')
+					tmpHost = sb.ToString ();
 				
 				sb.Append (ch);
 			}
 			
-			if (index  <= part.Length)
-				state.remaining = part.Substring (index);
-			
-			state.elements.host = sb.ToString();
+			if (!string.IsNullOrEmpty (tmpHost)) {
+				IPv6Address ipv6addr;
+				if (IPv6Address.TryParse (sb.ToString (), out ipv6addr)) {
+					state.elements.host = "[" + ipv6addr.ToString (!Uri.IriParsing) + "]";
+
+					state.remaining = part.Substring (sb.Length);
+					return state.remaining.Length > 0;
+				}
+				state.elements.host = tmpHost;
+			} else
+				state.elements.host = sb.ToString ();
+
+			state.elements.host = state.elements.host.ToLower ();
+
+			state.remaining = part.Substring (state.elements.host.Length);
 				
 			return state.remaining.Length > 0;
 		}
