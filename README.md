@@ -1,6 +1,8 @@
 Mono is a software platform designed to allow developers to easily create cross platform applications.
 Mono is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
 
+[![Build Status](http://monojenkins.cloudapp.net/job/Mono/badge/icon)](http://monojenkins.cloudapp.net/job/Mono/)
+
 1. [Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
 3. [Directory Roadmap](#directory-roadmap)
