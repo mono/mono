@@ -90,7 +90,10 @@ namespace System {
 				return String.Empty;
 			}
 			case UriComponents.Path:
-				return UriHelper.FormatAbsolute (IgnoreFirstCharIf (elements.path, '/'), scheme, UriComponents.Path, format, formatFlags);
+				var path = elements.path;
+				if (scheme != Uri.UriSchemeMailto && scheme != Uri.UriSchemeNews)
+					path = IgnoreFirstCharIf (elements.path, '/');
+				return UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, format, formatFlags);
 			case UriComponents.Query:
 				return UriHelper.FormatAbsolute (elements.query, scheme, UriComponents.Query, format, formatFlags);
 			case UriComponents.Fragment:
@@ -145,7 +148,8 @@ namespace System {
 			if ((components & UriComponents.Path) != 0) {
 				string path = elements.path;
 				if ((components & UriComponents.PathAndQuery) != 0 &&
-					(path.Length == 0 || !path.StartsWith ("/")))
+					(path.Length == 0 || !path.StartsWith ("/")) &&
+					scheme != Uri.UriSchemeNews && UriHelper.IsKnownScheme(scheme))
 					sb.Append ("/");
 				sb.Append (UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, format, formatFlags));
 			}
