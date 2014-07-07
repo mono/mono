@@ -71,6 +71,9 @@ namespace System {
 			if (UriHelper.HasCharactersToNormalize (uri.OriginalString))
 				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
 
+			if (!string.IsNullOrEmpty(elements.host))
+				formatFlags |= UriHelper.FormatFlags.HasHost;
+
 			// it's easier to answer some case directly (as the output isn't identical 
 			// when mixed with others components, e.g. leading slash, # ...)
 			switch (components) {

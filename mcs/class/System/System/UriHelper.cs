@@ -16,6 +16,7 @@ namespace System {
 			None = 0,
 			HasComponentCharactersToNormalize = 1 << 0,
 			HasUriCharactersToNormalize = 1 << 1,
+			HasHost = 1 << 2,
 		}
 
 		[Flags]
@@ -34,6 +35,7 @@ namespace System {
 			Telnet = 1 << 11,
 			Uuid = 1 << 12,
 			Custom = 1 << 13,
+			CustomWithHost = 1 << 14,
 			All = ~0,
 			None = 0
 		}
@@ -154,20 +156,35 @@ namespace System {
 
 			UriSchemes scheme = GetScheme (schemeName);
 
-			var reduceBefore = UriSchemes.None;
-			var reduceAfter = UriSchemes.Http | UriSchemes.Https | UriSchemes.NetPipe | UriSchemes.NetTcp;
+			if (scheme == UriSchemes.Custom && (formatFlags & FormatFlags.HasHost) != 0)
+				scheme = UriSchemes.CustomWithHost;
 
-			if (IriParsing)
+			var reduceAfter = UriSchemes.Http | UriSchemes.Https | UriSchemes.File | UriSchemes.NetPipe | UriSchemes.NetTcp;
+
+			if (IriParsing) {
 				reduceAfter |= UriSchemes.Ftp;
-			else
-				reduceBefore |= UriSchemes.Ftp;
+			} else if (component == UriComponents.Path) {
+				if(scheme == UriSchemes.Ftp)
+					str = Reduce (str.Replace ('\\', '/'), !IriParsing);
+				if (scheme == UriSchemes.CustomWithHost)
+					str = Reduce (str.Replace ('\\', '/'), false);
+			}
 
-			if (SchemeContains (scheme, UriSchemes.Ftp) && component == UriComponents.Path)
-				str = str.Replace('\\', '/');
+			str = FormatString (str, scheme, uriKind, component, uriFormat, formatFlags);
 
-			if (component == UriComponents.Path && SchemeContains (scheme, reduceBefore))
-				str = Reduce(str);
+			if (component == UriComponents.Path) {
+				if (SchemeContains (scheme, reduceAfter))
+					str = Reduce (str, !IriParsing);
+				if(IriParsing && scheme == UriSchemes.CustomWithHost)
+					str = Reduce (str, false);
+			}
 
+			return str;
+		}
+
+		private static string FormatString (string str, UriSchemes scheme, UriKind uriKind,
+			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
+		{
 			var s = new StringBuilder ();
 			int len = str.Length;
 			for (int i = 0; i < len; i++) {
@@ -187,12 +204,7 @@ namespace System {
 					s.Append (FormatChar (c, false, scheme, uriKind, component, uriFormat, formatFlags));
 			}
 			
-			str = s.ToString();
-
-			if (component == UriComponents.Path && SchemeContains (scheme, reduceAfter))
-				str = Reduce(str);
-
-			return str;
+			return s.ToString();
 		}
 
 		private static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
@@ -207,13 +219,10 @@ namespace System {
 					SchemeContains (scheme, UriSchemes.Http | UriSchemes.Https))
 					return "/";
 
-				if (SchemeContains (scheme, UriSchemes.Http | UriSchemes.Https | UriSchemes.Ftp | UriSchemes.Custom))
+				if (SchemeContains (scheme, UriSchemes.Http | UriSchemes.Https | UriSchemes.Ftp | UriSchemes.CustomWithHost))
 					return (isEscaped && uriFormat != UriFormat.UriEscaped) ? "\\" : "/";
 
-				if (SchemeContains (scheme, UriSchemes.NetPipe | UriSchemes.NetTcp))
-					return "/";
-
-				if (SchemeContains (scheme, UriSchemes.File))
+				if (SchemeContains (scheme, UriSchemes.NetPipe | UriSchemes.NetTcp | UriSchemes.File))
 					return "/";
 			}
 
@@ -385,7 +394,7 @@ namespace System {
 					return component != UriComponents.Path ||
 						   SchemeContains (scheme,
 							   UriSchemes.Gopher | UriSchemes.Ldap | UriSchemes.Mailto | UriSchemes.Nntp |
-							   UriSchemes.Telnet);
+							   UriSchemes.Telnet | UriSchemes.News | UriSchemes.Custom);
 				}
 			}
 
@@ -393,7 +402,7 @@ namespace System {
 		}
 
 		// This is called "compacting" in the MSDN documentation
-		private static string Reduce (string path)
+		private static string Reduce (string path, bool trimDots)
 		{
 			// quick out, allocation-free, for a common case
 			if (path == "/")
@@ -425,7 +434,7 @@ namespace System {
 					continue;
 				}
 
-				if (!IriParsing)
+				if (trimDots)
 					current = current.TrimEnd('.');
 
 				if (current == ".")
