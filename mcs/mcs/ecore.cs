@@ -2760,6 +2760,15 @@ namespace Mono.CSharp {
 					}
 				}
 
+				var mg = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
+				if (mg != null) {
+					if (Arity > 0) {
+						targs.Resolve (rc);
+						mg.SetTypeArguments (rc, targs);
+					}
+					return mg;
+				}
+
 				if (errorMode) {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
