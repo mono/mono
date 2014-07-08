@@ -1071,8 +1071,14 @@ namespace MonoTests.System
 			// IPv6 Address
 			Uri ftp = new Uri ("FTP://[::ffFF:169.32.14.5]/");
 			Assert.AreEqual ("ftp", ftp.Scheme, "#7");
-			Assert.AreEqual ("[0000:0000:0000:0000:0000:FFFF:A920:0E05]", ftp.Host, "#8");
-			Assert.AreEqual ("ftp://[0000:0000:0000:0000:0000:FFFF:A920:0E05]/", ftp.ToString (), "#9");
+
+			if (Uri.IriParsing) {
+				Assert.AreEqual ("[::ffff:169.32.14.5]", ftp.Host, "#8");
+				Assert.AreEqual ("ftp://[::ffff:169.32.14.5]/", ftp.ToString (), "#9");
+			} else {
+				Assert.AreEqual ("[0000:0000:0000:0000:0000:FFFF:A920:0E05]", ftp.Host, "#8");
+				Assert.AreEqual ("ftp://[0000:0000:0000:0000:0000:FFFF:A920:0E05]/", ftp.ToString (), "#9");
+			}
 		}
 
 		[Test]
