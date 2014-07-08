@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using NUnit.Framework;
@@ -167,10 +168,10 @@ namespace MonoTests.System {
 			});
 		}
 
-		private void TestReduce (UriToStringDelegate toString, bool testRelative = true)
+		private void TestReduce (UriToStringDelegate toString, bool testRelative = true, string id = "")
 		{
 			foreach(var el in reduceElements)
-				TestLocations (reduceLocations, el, el, toString, testRelative);
+				TestLocations (reduceLocations, el + id, el, toString, testRelative);
 		}
 
 		private void TestComponent (UriComponents component)
@@ -178,6 +179,27 @@ namespace MonoTests.System {
 			TestPercentageEncoding (uri => uri.GetComponents (component, UriFormat.SafeUnescaped), id: "[SafeUnescaped]");
 			TestPercentageEncoding (uri => uri.GetComponents (component, UriFormat.Unescaped), id: "[Unescaped]");
 			TestPercentageEncoding (uri => uri.GetComponents (component, UriFormat.UriEscaped), id: "[UriEscaped]");
+		}
+
+		private delegate void TestStringDelegate (UriToStringDelegate toString, bool testRelative = true, string id = "");
+
+		private void TestLocalPath (TestStringDelegate test)
+		{
+			var id = (Path.DirectorySeparatorChar == '/') ? "[UNIX]" : "[MS]";
+			test (uri => uri.LocalPath, false, id);
+
+			if (!createMode)
+				return;
+
+			var altId = (Path.AltDirectorySeparatorChar == '/') ? "[UNIX]" : "[MS]";
+			test (uri => {
+				var result = uri.LocalPath;
+
+				if (uri.Scheme == Uri.UriSchemeFile)
+					result = result.Replace (Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+				return result;
+			}, false, altId);
 		}
 
 		[Test]
@@ -231,7 +253,7 @@ namespace MonoTests.System {
 		[Test]
 		public void PercentageEncoding_LocalPath ()
 		{
-			TestPercentageEncoding (uri => uri.LocalPath);
+			TestLocalPath (TestPercentageEncoding);
 		}
 
 		[Test]
@@ -255,7 +277,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Reduce_LocalPath ()
 		{
-			TestReduce (uri => uri.LocalPath, false);
+			TestLocalPath (TestReduce);
 		}
 
 		[Test]
