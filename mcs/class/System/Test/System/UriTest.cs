@@ -848,7 +848,11 @@ namespace MonoTests.System
 		public void Fragment_Escape ()
 		{
 			Uri u = new Uri("http://localhost/index.asp#main#start", false);
-			Assert.AreEqual (u.Fragment, "#main%23start", "#1");
+
+			if (Uri.IriParsing)
+				Assert.AreEqual (u.Fragment, "#main#start", "#1");
+			else
+				Assert.AreEqual (u.Fragment, "#main%23start", "#1");
 
 			u = new Uri("http://localhost/index.asp#main#start", true);
 			Assert.AreEqual (u.Fragment, "#main#start", "#2");
