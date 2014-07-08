@@ -439,14 +439,12 @@ namespace System {
 					continue;
 				}
 
-				if (trimDots)
+				if (current == "." ||
+					(trimDots && current.EndsWith("."))) {
 					current = current.TrimEnd('.');
-
-				if (current == ".")
-					current = "";
-
-				if (current == "" && startpos < path.Length)
-					continue;
+					if (current == "" && endpos < path.Length)
+						continue;
+				}
 
 				result.Add (current);
 			}
