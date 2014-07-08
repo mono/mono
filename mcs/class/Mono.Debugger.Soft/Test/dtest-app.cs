@@ -959,8 +959,9 @@ public class Tests : TestsBase, ITest2
 		return 42;
 	}
 
-	public void invoke_out (out int foo) {
+	public void invoke_out (out int foo, out int[] arr) {
 		foo = 5;
+		arr = new int [10];
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
