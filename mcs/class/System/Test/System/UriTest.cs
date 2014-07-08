@@ -604,7 +604,11 @@ namespace MonoTests.System
 			Uri u1 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
 			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
 
-			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
+			if (Uri.IriParsing)
+				Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx", u1.ToString (), "QE1");
+			else
+				Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx", u1.ToString (), "QE1");
+
 			Assert.AreEqual ("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx", u2.ToString (), "QE2");
 		}
 
