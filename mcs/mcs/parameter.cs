@@ -789,6 +789,11 @@ namespace Mono.CSharp {
 			return new TypeExpression (p_type, location);
 		}
 
+		public void SetIndex (int index)
+		{
+			idx = index;
+		}
+
 		public void Warning_UselessOptionalParameter (Report Report)
 		{
 			Report.Warning (1066, 1, Location,
@@ -1149,6 +1154,23 @@ namespace Mono.CSharp {
 		public static ParametersCompiled CreateFullyResolved (Parameter[] parameters, TypeSpec[] types)
 		{
 			return new ParametersCompiled (parameters, types);
+		}
+
+		public static ParametersCompiled Prefix (ParametersCompiled parameters, Parameter p, TypeSpec type)
+		{
+			var ptypes = new TypeSpec [parameters.Count + 1];
+			ptypes [0] = type;
+			Array.Copy (parameters.Types, 0, ptypes, 1, parameters.Count);
+
+			var param = new Parameter [ptypes.Length];
+			param [0] = p;
+			for (int i = 0; i < parameters.Count; ++i) {
+				var pi = parameters [i];
+				param [i + 1] = pi;
+				pi.SetIndex (i + 1);
+			}
+
+			return ParametersCompiled.CreateFullyResolved (param, ptypes);
 		}
 
 		//
