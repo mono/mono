@@ -196,9 +196,13 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
 			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object> ();
-		List<object> keepAlive;
-		List<WeakReference> keys;
-		FillStuff (cwt, out keepAlive, out keys);
+		List<object> keepAlive = null;
+		List<WeakReference> keys = null;
+		Thread t = new Thread (delegate () {
+				FillStuff (cwt, out keepAlive, out keys);
+			});
+		t.Start ();
+		t.Join ();
 
 		GC.Collect ();
 
