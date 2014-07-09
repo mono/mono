@@ -49,7 +49,7 @@ namespace Monodoc.Providers
 				ObjectEntryToParams (inner, out caption, out element);
 				// Don't add if the backing file doesn't exist
 				if (!File.Exists (element)) {
-					Console.Error.WriteLine ("File `{0}' referenced in TOC but it doesn't exist.", element);
+					Console.Error.WriteLine ("Warning: File `{0}' referenced in TOC but it doesn't exist. It will be ignored.", element);
 					continue;
 				}
 				using (var file = File.OpenRead (element))
