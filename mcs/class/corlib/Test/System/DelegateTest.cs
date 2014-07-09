@@ -1377,15 +1377,18 @@ namespace MonoTests.System
 			} catch (ArgumentException) {}
 		}
 
-		private static Func<Int32, Int32, bool> Int32D = (x, y) => (x & y) == y;
-
 		[Test]
 		public void EnumBaseTypeConversion () {
+			Func<int, int, bool> dm = Int32D2;
 			var d =
-				Delegate.CreateDelegate(typeof (Func<StringComparison,
-												StringComparison, bool>), Int32D.Method) as
+				Delegate.CreateDelegate(typeof (Func<StringComparison, StringComparison, bool>), dm.Method) as
 				Func<StringComparison, StringComparison, bool>; 
 			Assert.IsTrue (d (0, 0));
+		}
+
+		static bool Int32D2 (int x, int y)
+		{
+			return (x & y) == y; 
 		}
 
 		public class B {
