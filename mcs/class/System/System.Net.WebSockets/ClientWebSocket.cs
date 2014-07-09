@@ -196,7 +196,30 @@ namespace System.Net.WebSockets
 				underlyingSocket.Send (sendBuffer, 0, buffer.Count + headerLength, SocketFlags.None);
 			});
 		}
+		
+		const int messageTypeText = 1;
+		const int messageTypeBinary = 2;
+		const int messageTypeClose = 8;
 
+		static WebSocketMessageType WireToMessageType (byte msgType)
+		{
+			
+			if (msgType == messageTypeText)
+				return WebSocketMessageType.Text;
+			if (msgType == messageTypeBinary)
+				return WebSocketMessageType.Binary;
+			return WebSocketMessageType.Close;
+		}
+
+		static byte MessageTypeToWire (WebSocketMessageType type)
+		{
+			if (type == WebSocketMessageType.Text)
+				return messageTypeText;
+			if (type == WebSocketMessageType.Binary)
+				return messageTypeBinary;
+			return messageTypeClose;
+		}
+		
 		public override Task<WebSocketReceiveResult> ReceiveAsync (ArraySegment<byte> buffer, CancellationToken cancellationToken)
 		{
 			EnsureWebSocketConnected ();
@@ -208,7 +231,7 @@ namespace System.Net.WebSockets
 				var isLast = (headerBuffer[0] >> 7) > 0;
 				var isMasked = (headerBuffer[1] >> 7) > 0;
 				int mask = 0;
-				var type = (WebSocketMessageType)(headerBuffer[0] & 0xF);
+				var type = WireToMessageType ((byte)(headerBuffer[0] & 0xF));
 				long length = headerBuffer[1] & 0x7F;
 				int offset = 0;
 				if (length == 126) {
@@ -279,7 +302,7 @@ namespace System.Net.WebSockets
 
 		int WriteHeader (WebSocketMessageType type, ArraySegment<byte> buffer, bool endOfMessage)
 		{
-			var opCode = (byte)type;
+			var opCode = MessageTypeToWire (type);
 			var length = buffer.Count;
 
 			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0 : 0x80));
