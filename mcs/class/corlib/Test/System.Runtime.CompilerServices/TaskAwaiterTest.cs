@@ -278,7 +278,9 @@ namespace MonoTests.System.Runtime.CompilerServices
 			SynchronizationContext.SetSynchronizationContext (syncContext);
 
 			syncContext.Post (delegate {
-				Go2 (syncContext);
+				Task t = new Task (delegate() { });
+				Go2 (syncContext, t);
+				t.Start ();
 			}, null);
 
 			// Custom message loop
@@ -289,24 +291,29 @@ namespace MonoTests.System.Runtime.CompilerServices
 				Thread.Sleep (0);
 			}
 
-			Assert.AreEqual ("132", progress);
+			Assert.AreEqual ("13xa2", progress);
 		}
 
-		async void Go2 (SynchronizationContext ctx)
+		async void Go2 (SynchronizationContext ctx, Task t)
 		{
-			await Wait2 (ctx);
+			await Wait2 (ctx, t);
+
+			progress += "a";
 
 			if (mre.WaitOne (5000))
 				progress += "2";
+			else
+				progress += "b";
 		}
 
-		async Task Wait2 (SynchronizationContext ctx)
+		async Task Wait2 (SynchronizationContext ctx, Task t)
 		{
-			await Task.Delay (10); // Force block suspend/return
+			await t; // Force block suspend/return
 
 			ctx.Post (l => {
 				progress += "3";
 				mre.Set ();
+				progress += "x";
 			}, null);
 
 			progress += "1";
