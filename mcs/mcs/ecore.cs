@@ -3367,7 +3367,7 @@ namespace Mono.CSharp {
 			//
 			// Check intermediate value modification which won't have any effect
 			//
-			if (rhs != null && InstanceExpression.Type.IsStruct) {
+			if (rhs != null && TypeSpec.IsValueType (InstanceExpression.Type)) {
 				var fexpr = InstanceExpression as FieldExpr;
 				if (fexpr != null) {
 					if (!fexpr.Spec.IsReadOnly || rc.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.ConstructorScope))
