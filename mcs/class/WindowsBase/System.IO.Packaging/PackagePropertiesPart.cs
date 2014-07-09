@@ -257,7 +257,14 @@ namespace System.IO.Packaging
 			if (ContentType != null)
 			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSPackageProperties)).InnerXml = ContentType;
 			if (Created.HasValue)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "created", NSDcTerms)).InnerXml = Created.Value.ToString ();
+			{
+				XmlAttribute att = doc.CreateAttribute ("xsi", "type", NSXsi);
+				att.Value = "dcterms:W3CDTF";
+				
+				XmlNode created = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "created", NSDcTerms));
+				created.Attributes.Append (att);
+				created.InnerXml = Created.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
+			}
 			if (Creator != null)
 				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerXml = Creator;
 			if (Description != null)
@@ -271,7 +278,11 @@ namespace System.IO.Packaging
 			if (LastModifiedBy != null)
 				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSPackageProperties)).InnerXml = LastModifiedBy;
 			if (LastPrinted.HasValue)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastPrinted", NSPackageProperties)).InnerXml = LastPrinted.Value.ToString ();
+			{
+				XmlNode lastPrinted = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastPrinted", NSPackageProperties));
+
+				lastPrinted.InnerXml = LastPrinted.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z"; 
+			}
 			if (Revision != null)
 				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSPackageProperties)).InnerXml = Revision;
 			if (Subject != null)
@@ -288,7 +299,7 @@ namespace System.IO.Packaging
 				
 				XmlNode modified = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "modified", NSDcTerms));
 				modified.Attributes.Append (att);
-				modified.InnerXml = Modified.Value.ToString ();
+				modified.InnerXml = Modified.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
 			}
 			
 			doc.WriteContentTo (writer);
