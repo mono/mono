@@ -6,12 +6,6 @@
       <param name="Auto Generated" value="No"/>
 	</object>
     <ul>
-      <li>
-        <object type="text/sitemap">
-          <param name="Name" value="Mono Runtime API"/>
-          <param name="Local" value="DoesNotExist"/>
-        </object>
-      </li>
 	  <li>
 		<object type="text/sitemap">
 	      <param name="Name" value="Assemblies"/>
