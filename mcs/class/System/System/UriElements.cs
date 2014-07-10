@@ -34,7 +34,7 @@ namespace System {
 		{
 			scheme = String.Empty;
 			delimiter = String.Empty;
-			user = String.Empty;
+			user = null;
 			host = String.Empty;
 			port = String.Empty;
 			path = String.Empty;
