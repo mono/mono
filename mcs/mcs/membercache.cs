@@ -721,6 +721,9 @@ namespace Mono.CSharp {
 					if (!fs.IsPublic && container.MemberDefinition.IsImported && (!fs.MemberType.IsArray && TypeSpec.IsReferenceType (fs.MemberType)))
 						continue;
 
+					//if ((fs.Modifiers & (Modifiers.BACKING_FIELD) != 0)
+					//	continue;
+
 					if (fields == null)
 						fields = new List<FieldSpec> ();
 
