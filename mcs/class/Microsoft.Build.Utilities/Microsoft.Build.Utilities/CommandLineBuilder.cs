@@ -329,7 +329,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 		
-		protected void AppendTextUnquoted (string textToAppend)
+		public void AppendTextUnquoted (string textToAppend)
 		{
 			commandLine.Append (textToAppend);
 		}
