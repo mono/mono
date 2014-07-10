@@ -1,3 +1,7 @@
+2010-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_got_info): Double the buffer size to avoid an assert.
+
 2009-11-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoDebugOptions): Add 'explicit_null_checks' option.
