@@ -17,6 +17,7 @@ namespace System {
 			HasComponentCharactersToNormalize = 1 << 0,
 			HasUriCharactersToNormalize = 1 << 1,
 			HasHost = 1 << 2,
+			HasFragmentPercentage = 1 << 3,
 		}
 
 		[Flags]
@@ -135,6 +136,26 @@ namespace System {
 			return false;
 		}
 
+		internal static bool HasPercentage (string str)
+		{
+			int len = str.Length;
+			for (int i = 0; i < len; i++) {
+				char c = str [i];
+				if (c != '%')
+					continue;
+
+				int iStart = i;
+				char surrogate;
+				char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
+
+				bool isEscaped = i - iStart > 1;
+				if (!isEscaped || x == '%')
+					return true;
+			}
+
+			return false;
+		}
+
 		internal static string FormatAbsolute (string str, string schemeName,
 			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags = FormatFlags.None)
 		{
@@ -158,6 +179,9 @@ namespace System {
 
 			if (UriHelper.HasCharactersToNormalize (str))
 				formatFlags |= UriHelper.FormatFlags.HasComponentCharactersToNormalize;
+
+			if (component == UriComponents.Fragment && UriHelper.HasPercentage (str))
+				formatFlags |= UriHelper.FormatFlags.HasFragmentPercentage;
 
 			UriSchemes scheme = GetScheme (schemeName);
 
@@ -367,6 +391,11 @@ namespace System {
 				//Avoid removing fragment
 				if (component == UriComponents.Path || component == UriComponents.Query)
 					return false;
+
+				if (component == UriComponents.Fragment &&
+					(uriFormat == ToStringUnescape || uriFormat == UriFormat.SafeUnescaped) &&
+					(formatFlags & FormatFlags.HasFragmentPercentage) != 0)
+					return true;
 
 				if (IriParsing)
 					return false;
