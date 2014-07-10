@@ -3049,6 +3049,20 @@ namespace Mono.CSharp
 			base.Emit ();
 		}
 
+		bool HasExplicitConstructor ()
+		{
+			foreach (var m in Members) {
+				var c = m as Constructor;
+				if (c == null)
+					continue;
+
+				if (!c.ParameterInfo.IsEmpty)
+					return true;
+			}
+
+			return false;
+		}
+
 		public override bool IsUnmanagedType ()
 		{
 			if (has_unmanaged_check_done)
@@ -3104,14 +3118,15 @@ namespace Mono.CSharp
 
 		public override void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
-			if ((field.ModFlags & Modifiers.STATIC) == 0) {
-				Report.Error (573, field.Location, "`{0}': Structs cannot have instance field initializers",
+			if ((field.ModFlags & Modifiers.STATIC) == 0 && !HasExplicitConstructor ()) {
+				Report.Error (8054, field.Location, "`{0}': Structs without explicit constructors cannot contain members with initializers",
 					field.GetSignatureForError ());
+
 				return;
 			}
+
 			base.RegisterFieldForInitialization (field, expression);
 		}
-
 	}
 
 	/// <summary>

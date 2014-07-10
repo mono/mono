@@ -1708,13 +1708,14 @@ arglist_modifier
 	  		report.Error (1669, GetLocation ($1), "__arglist is not valid in this context");
 	  }
 	;
-	
+
 property_declaration
 	: opt_attributes
 	  opt_modifiers
 	  member_type
 	  member_declaration_name
 	  {
+		lexer.parsing_generic_declaration = false;
 		if (doc_support)
 			tmpComment = Lexer.consume_doc_comment ();
 	  }
@@ -1742,10 +1743,31 @@ property_declaration
 	  CLOSE_BRACE
 	  {
 		lbag.AppendToMember (current_property, GetLocation ($10));
+		lexer.parsing_modifiers = true;
+	  }
+	  opt_property_initializer
+	  {
 		current_property = null;
 	  }
 	;
 
+opt_property_initializer
+	: /* empty */
+	| ASSIGN
+	  {
+		++lexer.parsing_block;
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+		start_block (GetLocation ($1));
+	  }
+	  expression SEMICOLON
+	  {
+		--lexer.parsing_block;
+		((Property)current_property).Initializer = (Expression) $3;
+		lbag.AppendToMember (current_property, GetLocation ($1), GetLocation ($4));
+		end_block (GetLocation ($4));
+		current_local_parameters = null;
+	  }
+	;
 
 indexer_declaration
 	: opt_attributes opt_modifiers
