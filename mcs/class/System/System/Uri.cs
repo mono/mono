@@ -341,6 +341,7 @@ namespace System {
 				this.path = baseUri.path;
 				this.query = baseUri.query;
 				this.fragment = baseUri.fragment;
+				this.source = baseUri.OriginalString;
 				return;
 			}
 
@@ -376,13 +377,14 @@ namespace System {
 
 			if (relativeUri.Length > 0 && relativeUri [0] == '/') {
 				if (relativeUri.Length > 1 && relativeUri [1] == '/') {
-					source = scheme + ':' + relativeUri;
+					source = scheme + ':' + relativeUri + query + original_fragment;
 					ParseUri (UriKind.Absolute);
 					return;
 				} else {
 					path = relativeUri;
 					if (!userEscaped)
 						path = EscapeString (path);
+					source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
 					return;
 				}
 			}
@@ -397,7 +399,7 @@ namespace System {
 
 			if (relativeUri.Length == 0) {
 				// when merging URI the OriginalString is not quite original
-				source = GetLeftPart (UriPartial.Authority) + query + original_fragment;
+				source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
 				return;
 			}
 	
@@ -748,13 +750,8 @@ namespace System {
 			get { return isAbsoluteUri; }
 		}
 
-		// LAMESPEC: source field is supplied in such case that this
-		// property makes sense. For such case that source field is
-		// not supplied (i.e. .ctor(Uri, string), this property
-		// makes no sense. To avoid silly regression it just returns
-		// ToString() value now. See bug #78374.
 		public string OriginalString {
-			get { return source != null ? source : ToString (); }
+			get { return source; }
 		}
 
 		// Methods		
