@@ -43,6 +43,8 @@ namespace System {
 
 		private static UriSchemes GetScheme (string schemeName)
 		{
+			schemeName = schemeName.ToLower ();
+
 			if (schemeName == "")
 				return UriSchemes.None;
 			if (schemeName == Uri.UriSchemeHttp)
