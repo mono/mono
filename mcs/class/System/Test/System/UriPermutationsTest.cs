@@ -34,6 +34,10 @@ namespace MonoTests.System {
 			"a/a{0}?%30#", "a/a?{0}#%30", "a/a%30?#",   // see why on TestChars comment
 		};
 
+		private static readonly string [] specialCases = {
+			"a/a#%#", "a/a#%25#" // '%' cause '#' to escape in some cases
+		};
+
 		private static readonly string [] reduceLocations = {
 			"a/b/{0}", "a/b/{0}a", "a/b/c{0}",
 			"a/b/{0}/a", "a/b/{0}a/a", "a/b/c{0}/a",
@@ -166,6 +170,8 @@ namespace MonoTests.System {
 				TestLocations (componentLocations, unescapedStr+id, unescapedStr, toString, testRelative);
 				TestLocations (componentLocations, escapedStr+id, escapedStr, toString, testRelative);
 			});
+
+			TestLocations (specialCases, id, "", toString, testRelative);
 		}
 
 		private void TestReduce (UriToStringDelegate toString, bool testRelative = true, string id = "")
