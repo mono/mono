@@ -449,6 +449,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			th.Join ();
 			GC.Collect ();
 			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
 
 			Assert.AreEqual (0, reachable, "#1");
 		}
