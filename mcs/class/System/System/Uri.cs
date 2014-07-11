@@ -1462,6 +1462,9 @@ namespace System {
 			if (UriHelper.HasCharactersToNormalize (uriString))
 				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
 
+			if (userEscaped)
+				formatFlags |= UriHelper.FormatFlags.UserEscaped;
+
 			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
 			int startpos = pos + 1;
 			int endpos = uriString.Length;

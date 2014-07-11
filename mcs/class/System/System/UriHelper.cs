@@ -18,6 +18,7 @@ namespace System {
 			HasUriCharactersToNormalize = 1 << 1,
 			HasHost = 1 << 2,
 			HasFragmentPercentage = 1 << 3,
+			UserEscaped = 1 << 4,
 		}
 
 		[Flags]
@@ -241,8 +242,9 @@ namespace System {
 		private static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
 			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
 		{
-			if (!isEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags) ||
-				isEscaped && !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))
+			var userEscaped = (formatFlags & FormatFlags.UserEscaped) != 0;
+			if (!isEscaped && !userEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags) ||
+				isEscaped && (userEscaped || !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags)))
 				return HexEscapeMultiByte (c);
 
 			if (c == '\\' && component == UriComponents.Path) {
