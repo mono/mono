@@ -1287,6 +1287,7 @@ decode_resolve_method_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
  * - Add a way to disable by the user
  * - Avoid waiting for the aot process to finish ?
  *   (less overhead, but multiple processes could aot the same assembly at the same time)
+ * - locking
  */
 
 /* The cache directory */
@@ -1375,6 +1376,8 @@ aot_cache_init (void)
 static MonoDl*
 aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 {
+	MonoAotCacheConfig *config;
+	GSList *l;
 	char *fname, *tmp2, *aot_options;
 	const char *home;
 	MonoDl *module;
@@ -1420,6 +1423,17 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 	if (!strcmp (assembly->aname.name, "mscorlib") && !mono_defaults.corlib)
 		/* Can't AOT this during startup */
+		return NULL;
+
+	/* Check in the list of assemblies enabled for aot caching */
+	config = mono_get_aot_cache_config ();
+	for (l = config->assemblies; l; l = l->next) {
+		char *n = l->data;
+
+		if (!strcmp (assembly->aname.name, n))
+			break;
+	}
+	if (!l)
 		return NULL;
 
 	/* Only AOT one assembly per run to avoid slowing down execution too much */
