@@ -237,9 +237,6 @@ namespace System {
 					success = false;
 					break;
 				}
-
-				if (success && isAbsoluteUri && (path.Length > 0))
-					path = EscapeString (path);
 			}
 		}
 
@@ -345,16 +342,22 @@ namespace System {
 				return;
 			}
 
+			var formatFlags = UriHelper.FormatFlags.None;
+			if (UriHelper.HasCharactersToNormalize (relativeUri))
+				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
+
+			if (userEscaped)
+				formatFlags |= UriHelper.FormatFlags.UserEscaped;
+
 			// 8 fragment
 			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
 			string original_fragment = String.Empty;
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
 				original_fragment = relativeUri.Substring (pos);
-				if (userEscaped)
-					fragment = original_fragment;
-				else
-					fragment = "#" + EscapeString (relativeUri.Substring (pos+1));
+				fragment = "#" + UriHelper.FormatAbsolute(relativeUri.Substring (pos+1), scheme,
+					UriComponents.Fragment, UriFormat.UriEscaped, formatFlags);
+
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
 			}
 
@@ -364,8 +367,8 @@ namespace System {
 			pos = relativeUri.IndexOf ('?');
 			if (pos != -1) {
 				query = relativeUri.Substring (pos);
-				if (!userEscaped)
-					query = EscapeString (query);
+				query = UriHelper.FormatAbsolute(query, scheme,
+					UriComponents.Query, UriFormat.UriEscaped, formatFlags);
 #if !NET_4_0 && !MOBILE
 				consider_query = query.Length > 0;
 #endif
@@ -382,9 +385,9 @@ namespace System {
 					return;
 				} else {
 					path = relativeUri;
-					if (!userEscaped)
-						path = EscapeString (path);
 					source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
+					path = UriHelper.FormatAbsolute (path, scheme,
+						UriComponents.Path, UriFormat.UriEscaped, formatFlags);;
 					return;
 				}
 			}
@@ -458,12 +461,12 @@ namespace System {
 			// 6 g)
 			while (path.StartsWith ("/../", StringComparison.Ordinal))
 				path = path.Substring (3);
-			
-			if (!userEscaped)
-				path = EscapeString (path);
 
 			// when merging URI the OriginalString is not quite original
 			source = GetLeftPart (UriPartial.Authority) + path + query + original_fragment;
+
+			path = UriHelper.FormatAbsolute (path, scheme,
+					UriComponents.Path, UriFormat.UriEscaped, formatFlags);
 		}
 		
 		// Properties
@@ -1237,9 +1240,6 @@ namespace System {
 				// host name present (but not an IPv6 address)
 				host = host.ToLower (CultureInfo.InvariantCulture);
 			}
-
-			if (isAbsoluteUri && (path.Length > 0))
-				path = EscapeString (path);
 		}
 
 		[Obsolete]
@@ -1474,16 +1474,15 @@ namespace System {
 			if (!IsUnc && pos != -1) {
 				fragment = uriString.Substring (pos);
 				endpos = pos;
-				if (!userEscaped) {
-					fragment = "#" + UriHelper.FormatAbsolute(fragment.Substring (1), scheme, 
-						UriComponents.Fragment, UriFormat.UriEscaped, formatFlags);
-				}
+				fragment = "#" + UriHelper.FormatAbsolute (fragment.Substring (1), scheme,
+					UriComponents.Fragment, UriFormat.UriEscaped, formatFlags);
 			}
 
 			// special case: there is no query part for 'news'
 			if (scheme == Uri.UriSchemeNews) {
 				pos = scheme.Length + 1;
-				path = EscapeString (uriString.Substring (pos, endpos - pos), EscapeNews);
+				path = UriHelper.FormatAbsolute (uriString.Substring (pos, endpos - pos), scheme,
+						UriComponents.Path, UriFormat.UriEscaped, formatFlags);
 				return null;
 			}
 
@@ -1494,10 +1493,8 @@ namespace System {
 				if (pos != -1) {
 					query = uriString.Substring (pos, endpos-pos);
 					endpos = pos;
-					if (!userEscaped){
-						query = "?" + UriHelper.FormatAbsolute(query.Substring (1), scheme, 
+					query = "?" + UriHelper.FormatAbsolute (query.Substring (1), scheme,
 							UriComponents.Query, UriFormat.UriEscaped, formatFlags);
-					}
 				}
 			}
 
@@ -1542,6 +1539,8 @@ namespace System {
 
 			} else if (!IsPredefinedScheme (scheme)) {
 				path = uriString.Substring(startpos, endpos-startpos);
+				path = UriHelper.FormatAbsolute (path, scheme,
+					UriComponents.Path, UriFormat.UriEscaped, formatFlags);
 				isOpaquePart = true;
 				return null;
 			}
@@ -1556,11 +1555,6 @@ namespace System {
 			}
 			if (pos != -1) {
 				path = uriString.Substring (pos, endpos - pos);
-				if (!SupportsQuery ()) {
-					if (scheme != Uri.UriSchemeNntp)
-						path = path.Replace ('\\', '/');
-					path = EscapeString (path, EscapeNews);
-				}
 				endpos = pos;
 			} else {
 				if (scheme != Uri.UriSchemeMailto)
@@ -1654,11 +1648,12 @@ namespace System {
 				case UriHostNameType.IPv6:
 					IPv6Address ipv6addr;
 					if (IPv6Address.TryParse (host, out ipv6addr)) {
-						host = "[" + ipv6addr.ToString (true) + "]";
+						host = "[" + ipv6addr.ToString (!IriParsing) + "]";
 						scope_id = ipv6addr.ScopeId;
 					}
 					break;
 				}
+				formatFlags |= UriHelper.FormatFlags.HasHost;
 			}
 			// delayed reporting (to throw the expected exception in the right order)
 			if (!valid_port)
@@ -1670,9 +1665,8 @@ namespace System {
 			if (ex != null)
 				return ex.Message;
 
-			if ((scheme != Uri.UriSchemeMailto) && (scheme != Uri.UriSchemeFile)) {
-				path = Reduce (path, CompactEscaped (scheme));
-			}
+			path = UriHelper.FormatAbsolute (path, scheme,
+					UriComponents.Path, UriFormat.UriEscaped, formatFlags);
 
 			return null;
 		}
