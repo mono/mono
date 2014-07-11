@@ -1906,6 +1906,7 @@ namespace System {
 			new UriScheme (UriSchemeFile, SchemeDelimiter, -1),
 			new UriScheme (UriSchemeMailto, ":", 25),
 			new UriScheme (UriSchemeNews, ":", 119),
+			new UriScheme (UriSchemeUuid, ":", -1),
 			new UriScheme (UriSchemeNntp, SchemeDelimiter, 119),
 			new UriScheme (UriSchemeGopher, SchemeDelimiter, 70),
 		};
