@@ -1391,6 +1391,17 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 	if (image_is_dynamic (assembly->image))
 		return NULL;
 
+	/* Check in the list of assemblies enabled for aot caching */
+	config = mono_get_aot_cache_config ();
+	for (l = config->assemblies; l; l = l->next) {
+		char *n = l->data;
+
+		if (!strcmp (assembly->aname.name, n))
+			break;
+	}
+	if (!l)
+		return NULL;
+
 	if (!cache_dir) {
 		home = g_get_home_dir ();
 		if (!home)
@@ -1423,17 +1434,6 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 	if (!strcmp (assembly->aname.name, "mscorlib") && !mono_defaults.corlib)
 		/* Can't AOT this during startup */
-		return NULL;
-
-	/* Check in the list of assemblies enabled for aot caching */
-	config = mono_get_aot_cache_config ();
-	for (l = config->assemblies; l; l = l->next) {
-		char *n = l->data;
-
-		if (!strcmp (assembly->aname.name, n))
-			break;
-	}
-	if (!l)
 		return NULL;
 
 	/* Only AOT one assembly per run to avoid slowing down execution too much */
@@ -2063,10 +2063,8 @@ mono_aot_init (void)
 	if (g_getenv ("MONO_LASTAOT"))
 		mono_last_aot_method = atoi (g_getenv ("MONO_LASTAOT"));
 #ifdef ENABLE_AOT_CACHE
-	if (g_getenv ("MONO_AOT_CACHE")) {
-		enable_aot_cache = TRUE;
-		aot_cache_init ();
-	}
+	enable_aot_cache = TRUE;
+	aot_cache_init ();
 #endif
 }
 
