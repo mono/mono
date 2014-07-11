@@ -1365,6 +1365,7 @@ get_aot_config_hash (MonoAssembly *assembly)
 static void
 aot_cache_init (void)
 {
+	enable_aot_cache = TRUE;
 	in_process = TRUE;
 }
 
@@ -2063,7 +2064,6 @@ mono_aot_init (void)
 	if (g_getenv ("MONO_LASTAOT"))
 		mono_last_aot_method = atoi (g_getenv ("MONO_LASTAOT"));
 #ifdef ENABLE_AOT_CACHE
-	enable_aot_cache = TRUE;
 	aot_cache_init ();
 #endif
 }
