@@ -904,7 +904,11 @@ namespace MonoTests.System.Threading.Tasks
 				args.SetObserved ();
 			};
 			var inner = new ApplicationException ();
-			Task.Factory.StartNew (() => { throw inner; });
+			Thread t = new Thread (delegate () {
+					Task.Factory.StartNew (() => { Console.WriteLine ("HIT!"); throw inner; });
+				});
+			t.Start ();
+			t.Join ();
 			Thread.Sleep (1000);
 			GC.Collect ();
 			Thread.Sleep (1000);
