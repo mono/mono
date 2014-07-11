@@ -71,6 +71,9 @@ namespace System {
 			if (UriHelper.HasCharactersToNormalize (uri.OriginalString))
 				formatFlags |= UriHelper.FormatFlags.HasUriCharactersToNormalize;
 
+			if (uri.UserEscaped)
+				formatFlags |= UriHelper.FormatFlags.UserEscaped;
+
 			if (!string.IsNullOrEmpty(elements.host))
 				formatFlags |= UriHelper.FormatFlags.HasHost;
 
