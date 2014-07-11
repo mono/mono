@@ -46,6 +46,26 @@ namespace MonoTests.System
 			Assert.AreEqual (str, "[1, 2, 3, null]");
 		}
 
+		// Test that we correctly serialize JsonObject with null elements.
+		[Test]
+		public void ToStringOnJsonObjectWithNulls () {
+			var j = JsonValue.Load (new StringReader ("{\"a\":null,\"b\":2}"));
+			Assert.AreEqual (2, j.Count, "itemcount");
+			Assert.AreEqual (JsonType.Object, j.JsonType, "type");
+			var str = j.ToString ();
+			Assert.AreEqual (str, "{\"a\": null, \"b\": 2}");
+		}
+
+		[Test]
+		public void JsonObjectOrder () {
+			var obj = new JsonObject ();
+			obj["a"] = 1;
+			obj["c"] = 3;
+			obj["b"] = 2;
+			var str = obj.ToString ();
+			Assert.AreEqual (str, "{\"a\": 1, \"b\": 2, \"c\": 3}");
+		}
+
 		[Test]
 		public void QuoteEscapeBug_20869 () 
 		{
