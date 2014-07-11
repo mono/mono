@@ -1295,6 +1295,9 @@ static char *cache_dir;
 /* The number of assemblies AOTed in this run */
 static int cache_count;
 
+/* Whenever to AOT in-process */
+static gboolean in_process;
+
 static void
 collect_assemblies (gpointer data, gpointer user_data)
 {
@@ -1361,8 +1364,14 @@ get_aot_config_hash (MonoAssembly *assembly)
 static void
 aot_cache_init (void)
 {
+	in_process = TRUE;
 }
 
+/*
+ * aot_cache_load_module:
+ *
+ *   Load the AOT image corresponding to ASSEMBLY from the aot cache, AOTing it if neccessary.
+ */
 static MonoDl*
 aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 {
@@ -1428,34 +1437,46 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 	 * the AOT compiler.
 	 * - fork a new process and do the work there. This is the current approach.
 	 */
-	pid = fork ();
-	if (pid == 0) {
+	if (in_process) {
 		FILE *logfile;
 		char *logfile_name;
 
-		/* Child */
-
 		logfile_name = g_strdup_printf ("%s/aot.log", cache_dir);
 		logfile = fopen (logfile_name, "a+");
-		g_free (logfile_name);
-
-		dup2 (fileno (logfile), 1);
-		dup2 (fileno (logfile), 2);
 
 		aot_options = g_strdup_printf ("outfile=%s", fname);
 		res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
-		if (!res) {
-			exit (1);
-		} else {
-			exit (0);
-		}
+		// FIXME: Cache failures
 	} else {
-		/* Parent */
-		waitpid (pid, &exit_status, 0);
-		if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
-			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: failed.");
-		else
-			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: succeeded.");
+		pid = fork ();
+		if (pid == 0) {
+			FILE *logfile;
+			char *logfile_name;
+
+			/* Child */
+
+			logfile_name = g_strdup_printf ("%s/aot.log", cache_dir);
+			logfile = fopen (logfile_name, "a+");
+			g_free (logfile_name);
+
+			dup2 (fileno (logfile), 1);
+			dup2 (fileno (logfile), 2);
+
+			aot_options = g_strdup_printf ("outfile=%s", fname);
+			res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
+			if (!res) {
+				exit (1);
+			} else {
+				exit (0);
+			}
+		} else {
+			/* Parent */
+			waitpid (pid, &exit_status, 0);
+			if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
+				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: failed.");
+			else
+				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: succeeded.");
+		}
 	}
 
 	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
