@@ -226,26 +226,31 @@ namespace System {
 					char surrogate;
 					char x = Uri.HexUnescapeMultiByte (str, ref i, out surrogate);
 
-					bool isEscaped = i - iStart > 1;
-					s.Append (FormatChar (x, isEscaped, scheme, uriKind, component, uriFormat, formatFlags));
+					string cStr = str.Substring(iStart, i-iStart);
+					s.Append (FormatChar (x, cStr, scheme, uriKind, component, uriFormat, formatFlags));
 					if (surrogate != char.MinValue)
 						s.Append (surrogate);
 
 					i--;
 				} else
-					s.Append (FormatChar (c, false, scheme, uriKind, component, uriFormat, formatFlags));
+					s.Append (FormatChar (c, "" + c, scheme, uriKind, component, uriFormat, formatFlags));
 			}
 			
 			return s.ToString();
 		}
 
-		private static string FormatChar (char c, bool isEscaped, UriSchemes scheme, UriKind uriKind,
+		private static string FormatChar (char c, string cStr, UriSchemes scheme, UriKind uriKind,
 			UriComponents component, UriFormat uriFormat, FormatFlags formatFlags)
 		{
+			var isEscaped = cStr.Length != 1;
+
 			var userEscaped = (formatFlags & FormatFlags.UserEscaped) != 0;
-			if (!isEscaped && !userEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags) ||
-				isEscaped && (userEscaped || !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags)))
+			if (!isEscaped && !userEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags))
 				return HexEscapeMultiByte (c);
+
+			if (isEscaped && (userEscaped || !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))) {
+				return cStr; //Keep original case
+			}
 
 			if (c == '\\' && component == UriComponents.Path) {
 				if (!IriParsing && uriFormat != UriFormat.UriEscaped &&
