@@ -3172,10 +3172,14 @@ namespace Mono.CSharp
 		public static PredefinedOperator[] CreateStandardLiftedOperatorsTable (ModuleContainer module)
 		{
 			var nullable = module.PredefinedTypes.Nullable.TypeSpec;
-			if (nullable == null)
-				return new PredefinedOperator [0];
-
 			var types = module.Compiler.BuiltinTypes;
+			if (nullable == null) {
+				return new [] {
+					new PredefinedStringOperator (types.String, types.Object, Operator.AdditionMask, types.String),
+					new PredefinedStringOperator (types.Object, types.String, Operator.AdditionMask, types.String)
+				};
+			}
+
 			var bool_type = types.Bool;
 
 			var nullable_bool = nullable.MakeGenericType (module, new[] { bool_type });
