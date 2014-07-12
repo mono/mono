@@ -249,6 +249,10 @@ namespace System {
 				return HexEscapeMultiByte (c);
 
 			if (isEscaped && (userEscaped || !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))) {
+				if (IriParsing && ("<>^{|}".Contains(""+c) || c > 0x7F) &&
+					(formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0)
+					return HexEscapeMultiByte (c); //Upper case escape
+
 				return cStr; //Keep original case
 			}
 
