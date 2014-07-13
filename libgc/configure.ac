@@ -381,8 +381,6 @@ AC_SUBST(addtests)
 AM_CONDITIONAL(TARGET_IA64,test x$target_ia64 = xtrue)
 
 AC_PROG_LIBTOOL
-# Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
-DOLT
 
 #
 # Check for AViiON Machines running DGUX

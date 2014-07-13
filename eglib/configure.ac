@@ -17,8 +17,6 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_PROG_CC
 AM_PROG_LIBTOOL
-# Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.
-DOLT
 GNUC_PRETTY=
 GNUC_UNUSED=
 BREAKPOINT="G_STMT_START { raise (SIGTRAP); } G_STMT_END"
