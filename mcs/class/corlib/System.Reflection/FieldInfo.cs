@@ -278,19 +278,19 @@ namespace System.Reflection {
 		
 		public virtual bool IsSecurityCritical {
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 		
 		public virtual bool IsSecuritySafeCritical {
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
 		public virtual bool IsSecurityTransparent {
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 #endif
