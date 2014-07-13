@@ -26,14 +26,13 @@
 
 #if NET_4_0
 using System;
-using System.Threading;
 
 namespace System.Threading
 {
 	public struct CancellationTokenRegistration: IDisposable, IEquatable<CancellationTokenRegistration>
 	{
-		int id;
-		CancellationTokenSource source;
+		readonly int id;
+		readonly CancellationTokenSource source;
 		
 		internal CancellationTokenRegistration (int id, CancellationTokenSource source)
 		{
@@ -52,7 +51,7 @@ namespace System.Threading
 		#region IEquatable<CancellationTokenRegistration> implementation
 		public bool Equals (CancellationTokenRegistration other)
 		{
-			return this.id == other.id && this.source == other.source;
+			return id == other.id && source == other.source;
 		}
 		
 		public static bool operator== (CancellationTokenRegistration left, CancellationTokenRegistration right)
@@ -73,7 +72,7 @@ namespace System.Threading
 
 		public override bool Equals (object obj)
 		{
-			return (obj is CancellationTokenRegistration) ? Equals ((CancellationTokenRegistration)obj) : false;
+			return (obj is CancellationTokenRegistration) && Equals ((CancellationTokenRegistration)obj);
 		}
 	}
 }
