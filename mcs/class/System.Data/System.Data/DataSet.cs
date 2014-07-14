@@ -730,15 +730,11 @@ namespace System.Data
 		/// <param name="fileName">Fully qualified filename to write to</param>
 		public void WriteXml (string fileName)
 		{
-			FileStream file = File.Create (fileName);
-			XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
-			writer.WriteStartDocument (true);
-			try {
+			using (FileStream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true})) {
+				writer.WriteStartDocument (true);
 				WriteXml (writer);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
-				file.Dispose ();
 			}
 		}
 
@@ -755,16 +751,11 @@ namespace System.Data
 
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
-			FileStream file = File.Create (fileName);
-			XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});
-			writer.WriteStartDocument (true);
-
-			try {
+			using (FileStream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true})) {
+				writer.WriteStartDocument (true);
 				WriteXml (writer, mode);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
-				file.Dispose ();
 			}
 		}
 
@@ -825,24 +816,18 @@ namespace System.Data
 
 		public void WriteXmlSchema (string fileName)
 		{
-			FileStream file = File.Create (fileName);
-			XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true});
-			try {
+			using (FileStream file = File.Create (fileName))
+			using (XmlWriter writer = XmlWriter.Create (file, new XmlWriterSettings {Indent = true})) { 
 				writer.WriteStartDocument (true);
 				WriteXmlSchema (writer);
-			} finally {
 				writer.WriteEndDocument ();
-				writer.Close ();
-				file.Dispose ();
 			}
 		}
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
-			XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true});
-			try {
+			using (XmlWriter xwriter = XmlWriter.Create (writer, new XmlWriterSettings {Indent = true})) {
 				WriteXmlSchema (xwriter);
-			} finally {
 				xwriter.Close ();
 			}
 		}
@@ -862,11 +847,8 @@ namespace System.Data
 
 		public void ReadXmlSchema (string fileName)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				ReadXmlSchema (reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -897,11 +879,8 @@ namespace System.Data
 
 		public XmlReadMode ReadXml (string fileName)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader);
-			} finally {
-				reader.Close ();
 			}
 		}
 
@@ -922,11 +901,8 @@ namespace System.Data
 
 		public XmlReadMode ReadXml (string fileName, XmlReadMode mode)
 		{
-			XmlReader reader = XmlReader.Create (fileName);
-			try {
+			using (XmlReader reader = XmlReader.Create (fileName)) {
 				return ReadXml (reader, mode);
-			} finally {
-				reader.Close ();
 			}
 		}
 
