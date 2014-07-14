@@ -4023,7 +4023,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			Debug.WriteLine ("{0} - {1}", TextString1, expected1);
+			Debug.WriteLine (TextString1 + " - " + expected1);
 			Assert.AreEqual (expected1, TextString1.Replace ("\r\n", "").Replace ("  ", "").Replace ("\n", ""), "#1");
 
 			TextWriter writer2 = new StringWriter ();

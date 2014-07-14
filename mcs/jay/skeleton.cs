@@ -14,7 +14,12 @@
 .  /** error output stream.
 .      It should be changeable.
 .    */
-.  public System.IO.TextWriter ErrorOutput = System.Console.Out;
+.  public System.IO.TextWriter ErrorOutput = 
+.#if !WINDOWS_PHONE && !NETFX_CORE
+.    System.Console.Out;
+.#else
+.    System.IO.TextWriter.Null;
+.#endif
 .
 .  /** simplified error message.
 .      @see <a href="#yyerror(java.lang.String, java.lang.String[])">yyerror</a>
@@ -292,7 +297,9 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .	 
 .	 class yyDebugSimple : yyDebug {
 .		 void println (string s){
+.#if !WINDOWS_PHONE && !NETFX_CORE
 .			 Console.Error.WriteLine (s);
+.#endif
 .		 }
 .		 
 .		 public void push (int state, Object value) {

@@ -86,7 +86,6 @@ namespace Monotests_System.Data
 				xw.WriteStartElement ("start");
 				idt.WriteXml (xw);
 				xw.WriteEndElement ();
-				xw.Dispose ();
 			}
 		}
 
@@ -99,10 +98,11 @@ namespace Monotests_System.Data
 
 		private static void ReadXmlSerializable (DataTable dt, XmlReader xr)
 		{
-			XmlSerializer serializer = new XmlSerializer (dt.GetType ());
-			IXmlSerializable idt = dt;
-			idt.ReadXml (xr);
-			xr.Dispose ();
+			using (xr) {
+				XmlSerializer serializer = new XmlSerializer (dt.GetType ());
+				IXmlSerializable idt = dt;
+				idt.ReadXml (xr);
+			}
 		}
 
 		void ReadXmlSerializable (string fileName, DataTable dt)

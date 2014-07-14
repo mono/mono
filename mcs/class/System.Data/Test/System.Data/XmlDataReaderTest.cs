@@ -123,9 +123,7 @@ namespace Monotests_System.Data
 						"</FuncXml>" + Environment.NewLine +
 						"</CustomTypesTable>" + Environment.NewLine +
 						"</CustomTypesData>" + Environment.NewLine;
-			
-			StringReader sr = new StringReader (xml);
-			XmlReader xr = XmlReader.Create (sr);
+
 			DataTable tbl = new DataTable("CustomTypesTable");
 			tbl.Columns.Add("Dummy", typeof(System.UInt32));
 			tbl.Columns.Add("FuncXml", typeof(CustomTypeXml));
@@ -133,13 +131,14 @@ namespace Monotests_System.Data
 			DataSet ds = new DataSet("CustomTypesData");
 			ds.Tables.Add(tbl);
 
-			ds.ReadXml(xr);
+			using (StringReader sr = new StringReader (xml))
+			using (XmlReader xr = XmlReader.Create (sr)) {
+				ds.ReadXml(xr);
+			}
 
 			Assert.AreEqual (1, ds.Tables["CustomTypesTable"].Rows.Count, "XDR2");
 			Assert.AreEqual (99, Convert.ToInt32(ds.Tables["CustomTypesTable"].Rows[0][0]), "XDR3");
 			Assert.IsTrue (ds.Tables["CustomTypesTable"].Rows[0][1].ToString().StartsWith("<Func "), "XDR4");
-			
-			xr.Dispose ();
 		}
 		
 #if !WINDOWS_PHONE && !NETFX_CORE

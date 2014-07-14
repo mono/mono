@@ -43,7 +43,7 @@ namespace Mono.Data.Sqlite
       if (rnd == null) // First time we've encountered the lock
         rnd = new Random ();
 #if !WINDOWS_PHONE && !NETFX_CORE
-      Thread.Sleep (rnd.Next (1, 150));
+      System.Threading.Thread.Sleep (rnd.Next (1, 150));
 #else
 	  System.Threading.Tasks.Task.Delay (rnd.Next (1, 150)).Wait ();
 #endif

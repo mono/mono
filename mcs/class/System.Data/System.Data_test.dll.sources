@@ -1,4 +1,4 @@
-../corlib/System.IO/FileUtil.cs
+../../corlib/System.IO/FileUtil.cs
 
 System.Data.Test.Utils/DataProvider.cs
 System.Data.Test.Utils/AssertHelpers.cs
