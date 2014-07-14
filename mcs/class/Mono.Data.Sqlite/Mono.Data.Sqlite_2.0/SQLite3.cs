@@ -37,17 +37,17 @@ namespace Mono.Data.Sqlite
     GCHandle gch;
 #endif
 
-	Random rnd = null;
+    Random rnd = null;
     private void Sleep ()
-	{
+    {
       if (rnd == null) // First time we've encountered the lock
         rnd = new Random ();
 #if !WINDOWS_PHONE && !NETFX_CORE
       System.Threading.Thread.Sleep (rnd.Next (1, 150));
 #else
-	  System.Threading.Tasks.Task.Delay (rnd.Next (1, 150)).Wait ();
+      System.Threading.Tasks.Task.Delay (rnd.Next (1, 150)).Wait ();
 #endif
-	}
+    }
 
     /// <summary>
     /// The user-defined functions registered on this connection
@@ -144,7 +144,7 @@ namespace Mono.Data.Sqlite
         // Compatibility with versions < 3.5.0
         int n;
         try {
-			n = UnsafeNativeMethods.sqlite3_open_v2 (ToUTF8 (strFilename), out db, (int)flags, IntPtr.Zero);
+          n = UnsafeNativeMethods.sqlite3_open_v2 (ToUTF8 (strFilename), out db, (int)flags, IntPtr.Zero);
         } catch (EntryPointNotFoundException) {
           Debug.WriteLine ("Your sqlite3 version is old - please upgrade to at least v3.5.0!");
           n = UnsafeNativeMethods.sqlite3_open (ToUTF8 (strFilename), out db);
@@ -613,7 +613,7 @@ namespace Mono.Data.Sqlite
     }
 
     internal override long GetBytes(SqliteStatement stmt, int index, int nDataOffset, byte[] bDest, int nStart, int nLength)
-    {
+	{
       IntPtr ptr;
       int nlen;
       int nCopied = nLength;

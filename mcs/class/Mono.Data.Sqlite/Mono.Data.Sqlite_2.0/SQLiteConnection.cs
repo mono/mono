@@ -1144,7 +1144,7 @@ namespace Mono.Data.Sqlite
             '/', '\\'
 #endif
           };
-		  if (sourceFile [0] == separators [0] || sourceFile [0] == separators [1])
+          if (sourceFile [0] == separators [0] || sourceFile [0] == separators [1])
             sourceFile = sourceFile.Substring (1);
         }
         sourceFile = Path.Combine(dataDirectory, sourceFile);

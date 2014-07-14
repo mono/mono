@@ -211,7 +211,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="julianDay">The value to convert</param>
     /// <returns>A .NET DateTime</returns>
-	/// <remarks>This function is a C# version of the original sqlite C functions</remarks>
+    /// <remarks>This function is a C# version of the original sqlite C functions</remarks>
     public static DateTime ToDateTime(double julianDay)
     {
       int Z, A, B, C, D, E, X1;
@@ -248,7 +248,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="value">The DateTime to convert</param>
     /// <returns>The JulianDay value the Datetime represents</returns>
-	/// <remarks>This function is a C# version of the original sqlite C functions</remarks>
+    /// <remarks>This function is a C# version of the original sqlite C functions</remarks>
     public static double ToJulianDay(DateTime value)
     {
       int Y, M, D, A, B, X1, X2;

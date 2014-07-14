@@ -410,7 +410,7 @@ namespace Mono.Data.Sqlite
         AssemblyName sqlite = Assembly.GetCallingAssembly ().GetName ();
 #endif
 
-		for (int n = 0; n < w; n++)
+        for (int n = 0; n < w; n++)
         {
           Type[] arTypes;
           bool found = false;
