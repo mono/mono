@@ -314,8 +314,6 @@ namespace Mono.CSharp
 			if (type.IsStructOrEnum)
 				ec.Emit (OpCodes.Box, type);
 
-			Console.WriteLine ("EMIT: {0} => {1},{2}", name, loc.Row, loc.Column);
-
 			ec.EmitInt (loc.Row);
 			ec.EmitInt (loc.Column);
 			ec.Emit (OpCodes.Ldstr, name);
