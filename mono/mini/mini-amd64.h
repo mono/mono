@@ -275,11 +275,7 @@ typedef struct {
 
 #endif /* !HOST_WIN32 && !__native_client__ */
 
-#if defined (__APPLE__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__NetBSD__)
+#if defined (__NetBSD__)
 
 #define REG_RAX 14
 #define REG_RCX 3
@@ -298,16 +294,6 @@ typedef struct {
 #define REG_R14 10
 #define REG_R15 11
 #define REG_RIP 21
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__OpenBSD__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__DragonFly__)
-
-#define MONO_ARCH_NOMAP32BIT
 
 #elif defined (__FreeBSD__)
 
@@ -329,13 +315,15 @@ typedef struct {
 #define REG_R15 15
 #define REG_RIP 20
 
-/* 
- * FreeBSD does not have MAP_32BIT, so code allocated by the code manager might not have a
- * 32 bit address.
- */
-#define MONO_ARCH_NOMAP32BIT
-
 #endif /* __FreeBSD__ */
+
+/*
+ * Assume mmap() potentially returns 64-bit pointers above 2 GiB if the
+ * operating system doesn't supply the MAP_32bit flag for mmap().
+ */
+#if !defined(MAP_32BIT)
+#define MONO_ARCH_NOMAP32BIT
+#endif
 
 #ifdef HOST_WIN32
 #define MONO_AMD64_ARG_REG1 AMD64_RCX
