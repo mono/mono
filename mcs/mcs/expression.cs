@@ -3171,11 +3171,21 @@ namespace Mono.CSharp
 		}
 		public static PredefinedOperator[] CreateStandardLiftedOperatorsTable (ModuleContainer module)
 		{
+			var types = module.Compiler.BuiltinTypes;
+
+			//
+			// Not strictly lifted but need to be in second group otherwise expressions like
+			// int + null would resolve to +(object, string) instead of +(int?, int?)
+			//
+			var string_operators = new [] {
+				new PredefinedStringOperator (types.String, types.Object, Operator.AdditionMask, types.String),
+				new PredefinedStringOperator (types.Object, types.String, Operator.AdditionMask, types.String),
+			};
+
 			var nullable = module.PredefinedTypes.Nullable.TypeSpec;
 			if (nullable == null)
-				return new PredefinedOperator [0];
+				return string_operators;
 
-			var types = module.Compiler.BuiltinTypes;
 			var bool_type = types.Bool;
 
 			var nullable_bool = nullable.MakeGenericType (module, new[] { bool_type });
@@ -3210,13 +3220,8 @@ namespace Mono.CSharp
 				new PredefinedOperator (nullable_long, nullable_int, Operator.NullableMask | Operator.ShiftMask),
 				new PredefinedOperator (nullable_ulong, nullable_int, Operator.NullableMask | Operator.ShiftMask),
 
-				//
-				// Not strictly lifted but need to be in second group otherwise expressions like
-				// int + null would resolve to +(object, string) instead of +(int?, int?)
-				//
-				new PredefinedStringOperator (types.String, types.Object, Operator.AdditionMask, types.String),
-				new PredefinedStringOperator (types.Object, types.String, Operator.AdditionMask, types.String),
-
+				string_operators [0],
+				string_operators [1]
 			};
 		}
 
