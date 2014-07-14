@@ -27,7 +27,7 @@ namespace Mono.CSharp
 	/// <summary>
 	/// Experimental!
 	/// </summary>
-	public delegate void ValueModificationHandler (string variableName, int row, int column, object value);
+	public delegate void ValueModificationHandler (string variableName, int variableRow, int variableColumn, int valueRow, int valueColumn, object value);
 
 	/// <summary>
 	///   Evaluator: provides an API to evaluate C# statements and
@@ -299,7 +299,7 @@ namespace Mono.CSharp
 		}
 
 		static MethodInfo listener_proxy_value;
-		internal void EmitValueChangedCallback (EmitContext ec, string name, TypeSpec type, Location loc)
+		internal void EmitValueChangedCallback (EmitContext ec, string name, TypeSpec type, Location varLoc, Location valLoc)
 		{
 			if (listener_id == null)
 				listener_id = ListenerProxy.Register (ModificationListener);
@@ -314,8 +314,10 @@ namespace Mono.CSharp
 			if (type.IsStructOrEnum)
 				ec.Emit (OpCodes.Box, type);
 
-			ec.EmitInt (loc.Row);
-			ec.EmitInt (loc.Column);
+			ec.EmitInt (varLoc.Row);
+			ec.EmitInt (varLoc.Column);
+			ec.EmitInt (valLoc.Row);
+			ec.EmitInt (valLoc.Column);
 			ec.Emit (OpCodes.Ldstr, name);
 			ec.EmitInt (listener_id.Value);
 			ec.Emit (OpCodes.Call, listener_proxy_value);
@@ -1322,7 +1324,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static void ValueChanged (object value, int row, int col, string name, int listenerId)
+		public static void ValueChanged (object value, int varRow, int varCol, int valRow, int valCol, string name, int listenerId)
 		{
 			ValueModificationHandler action;
 			lock (listeners) {
@@ -1330,7 +1332,7 @@ namespace Mono.CSharp
 					return;
 			}
 
-			action (name, row, col, value);
+			action (name, varRow, varCol, valRow, valCol, value);
 		}
 	}
 }
