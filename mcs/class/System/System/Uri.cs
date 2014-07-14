@@ -2091,19 +2091,19 @@ namespace System {
 		//
 		static bool NeedToEscapeDataChar (char b)
 		{
-#if NET_4_0
-			// .NET 4.0 follows RFC 3986 Unreserved Characters
-			return !((b >= 'A' && b <= 'Z') ||
-				 (b >= 'a' && b <= 'z') ||
-				 (b >= '0' && b <= '9') ||
-				 b == '-' || b == '.' || b == '_' || b == '~');
-#else
+			if (IriParsing) {
+				// .NET 4.0 follows RFC 3986 Unreserved Characters
+				return !((b >= 'A' && b <= 'Z') ||
+					 (b >= 'a' && b <= 'z') ||
+					 (b >= '0' && b <= '9') ||
+					 b == '-' || b == '.' || b == '_' || b == '~');
+			}
+
 			return !((b >= 'A' && b <= 'Z') ||
 				 (b >= 'a' && b <= 'z') ||
 				 (b >= '0' && b <= '9') ||
 				 b == '_' || b == '~' || b == '!' || b == '\'' ||
 				 b == '(' || b == ')' || b == '*' || b == '-' || b == '.');
-#endif
 		}
 		
 		public static string EscapeDataString (string stringToEscape)
@@ -2145,24 +2145,14 @@ namespace System {
 			if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '&' && b <= ';'))
 				return false;
 
-			switch (b) {
-			case '!':
-			case '#':
-			case '$':
-			case '=':
-			case '?':
-			case '@':
-			case '_':
-			case '~':
-#if NET_4_0
-			// .NET 4.0 follows RFC 3986
-			case '[':
-			case ']':
-#endif
+			if ("!#$=?@_~".IndexOf(b) != -1)
 				return false;
-			default:
-				return true;
-			}
+
+#if NET_4_0
+			if ("[]".IndexOf(b) != -1)
+				return !IriParsing;
+#endif
+			return true;
 		}
 		
 		public static string EscapeUriString (string stringToEscape)
