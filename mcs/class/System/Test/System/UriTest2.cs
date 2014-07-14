@@ -912,7 +912,7 @@ TextWriter sw = Console.Out;
 			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
 
 			// special characters
-			uri = new Uri ("file://host/<>%\"{}|\\^`;/?:@&=+$,[]#abc");
+			uri = new Uri ("file://host/<>%\"{}|\\^`;/:@&=+$,[]?#abc");
 			if (IriParsing)
 				Assert.AreEqual ("/%3C%3E%25%22%7B%7D%7C/%5E%60;/:@&=+$,[]", uri.AbsolutePath, "Special");
 			else
