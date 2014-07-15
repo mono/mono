@@ -440,7 +440,7 @@ namespace System {
 
 			if (uriFormat == UriFormat.UriEscaped) {
 				if (c < 0x20 || c >= 0x7F)
-					return true;
+					return component != UriComponents.Host;
 
 				if (" \"%<>^`{}|".Contains (cStr))
 					return true;
