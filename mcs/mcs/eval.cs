@@ -54,6 +54,33 @@ namespace Mono.CSharp
 		public Type ValueType { get; internal set; }
 	}
 
+	public struct EvaluateResult
+	{
+		/// <summary>
+		/// If not null, parsing did not complete and evaluation did not happen.
+		/// EvaluateFull should be called again with more input.
+		/// </summary>
+		public string PartialInput { get; internal set; }
+
+		/// <summary>
+		/// The location where the result was set.
+		/// </summary>
+		public Location Location { get; internal set; }
+
+		/// <summary>
+		/// The value of the result statement. null may be a valid result
+		/// value. Check ValueType to ensure a result was set.
+		/// </summary>
+		public object Value { get; internal set; }
+
+		/// <summary>
+		/// The type of the value of the result statement. Will not be
+		/// null if a result was set. If null, no result is set, and
+		/// you should not use Value.
+		/// </summary>
+		public Type ValueType { get; internal set; }
+	}
+
 	/// <summary>
 	///   Evaluator: provides an API to evaluate C# statements and
 	///   expressions dynamically.
@@ -373,20 +400,43 @@ namespace Mono.CSharp
 		///   that the input is partial and that the user
 		///   should provide an updated string.
 		/// </remarks>
-		public string Evaluate (string input, out object result, out Type resultType, out bool isResultSet)
+		[Obsolete ("Use EvaluateFull")]
+		public string Evaluate (string input, out object result, out bool result_set)
+		{
+			result = null;
+			result_set = false;
+
+			var fullResult = EvaluateFull (input);
+
+			if (fullResult.PartialInput != null)
+				return fullResult.PartialInput;
+
+			if (fullResult.ValueType != null) {
+				result_set = true;
+				result = fullResult.Value;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Evaluates and expression or statement and returns any state
+		/// as a result of the evaluation.
+		/// </summary>
+		public EvaluateResult EvaluateFull (string input)
 		{
 			CompiledMethod compiled;
 
-			isResultSet = false;
-			result = null;
-			resultType = null;
+			var result = new EvaluateResult ();
 
 			input = Compile (input, out compiled);
-			if (input != null)
-				return input;
-			
+			if (input != null) {
+				result.PartialInput = input;
+				return result;
+			}
+
 			if (compiled == null)
-				return null;
+				return result;
 				
 			//
 			// The code execution does not need to keep the compiler lock
@@ -415,12 +465,11 @@ namespace Mono.CSharp
 			// Driver as a flag to indicate that this was a statement
 			//
 			if (!ReferenceEquals (retval, typeof (QuitValue))) {
-				isResultSet = true;
-				result = retval;
-				resultType = rettype;
+				result.Value = retval;
+				result.ValueType = rettype;
 			}
 
-			return null;
+			return result;
 		}
 
 		public string [] GetCompletions (string input, out string prefix)
@@ -484,11 +533,7 @@ namespace Mono.CSharp
 		/// </remarks>
 		public bool Run (string statement)
 		{
-			object result;
-			Type result_type;
-			bool result_set;
-
-			return Evaluate (statement, out result, out result_type, out result_set) == null;
+			return EvaluateFull (statement).PartialInput == null;
 		}
 
 		/// <summary>
@@ -503,19 +548,15 @@ namespace Mono.CSharp
 		/// </remarks>
 		public object Evaluate (string input)
 		{
-			object result;
-			Type result_type;
-			bool result_set;
-			
-			string r = Evaluate (input, out result, out result_type, out result_set);
+			var result = EvaluateFull (input);
 
-			if (r != null)
+			if (result.PartialInput != null)
 				throw new ArgumentException ("Syntax error on input: partial input");
 			
-			if (result_set == false)
+			if (result.ValueType == null)
 				throw new ArgumentException ("The expression failed to resolve");
 
-			return result;
+			return result.Value;
 		}
 
 		/// <summary>
