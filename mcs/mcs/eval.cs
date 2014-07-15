@@ -373,12 +373,13 @@ namespace Mono.CSharp
 		///   that the input is partial and that the user
 		///   should provide an updated string.
 		/// </remarks>
-		public string Evaluate (string input, out object result, out bool result_set)
+		public string Evaluate (string input, out object result, out Type resultType, out bool isResultSet)
 		{
 			CompiledMethod compiled;
 
-			result_set = false;
+			isResultSet = false;
 			result = null;
+			resultType = null;
 
 			input = Compile (input, out compiled);
 			if (input != null)
@@ -391,11 +392,12 @@ namespace Mono.CSharp
 			// The code execution does not need to keep the compiler lock
 			//
 			object retval = typeof (QuitValue);
+			var rettype = retval.GetType ();
 
 			try {
 				invoke_thread = System.Threading.Thread.CurrentThread;
 				invoking = true;
-				compiled (ref retval);
+				compiled (ref retval, ref rettype);
 			} catch (ThreadAbortException e){
 				Thread.ResetAbort ();
 				Console.WriteLine ("Interrupted!\n{0}", e);
@@ -413,8 +415,9 @@ namespace Mono.CSharp
 			// Driver as a flag to indicate that this was a statement
 			//
 			if (!ReferenceEquals (retval, typeof (QuitValue))) {
-				result_set = true;
-				result = retval; 
+				isResultSet = true;
+				result = retval;
+				resultType = rettype;
 			}
 
 			return null;
@@ -989,7 +992,8 @@ namespace Mono.CSharp
 	///   NoValueSet.   
 	/// </remarks>
 	
-	public delegate void CompiledMethod (ref object retvalue);
+
+	public delegate void CompiledMethod (ref object retvalue, ref Type rettype);
 
 	/// <summary>
 	///   The default base class for every interaction line
@@ -1287,6 +1291,16 @@ namespace Mono.CSharp
 			}
 
 			base.EmitStatement(ec);
+
+			var assignType = source.Type;
+			var boxed = source as BoxedCast;
+			if (boxed != null)
+				assignType = boxed.Child.Type;
+
+			ec.Emit (OpCodes.Ldarg_1);
+			ec.Emit (OpCodes.Ldtoken, assignType);
+			ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.TypeGetTypeFromHandle.Get ());
+			ec.Emit (OpCodes.Stind_Ref);
 		}
 	}
 
