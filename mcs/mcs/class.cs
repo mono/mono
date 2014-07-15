@@ -732,6 +732,10 @@ namespace Mono.CSharp
 
 		public ParametersCompiled PrimaryConstructorParameters { get; set; }
 
+		public Arguments PrimaryConstructorBaseArguments { get; set; }
+
+		public Location PrimaryConstructorBaseArgumentsStart { get; set; }
+
 		public TypeParameters TypeParametersAll {
 			get {
 				return all_type_parameters;
@@ -813,7 +817,7 @@ namespace Mono.CSharp
 				Report.Error (692, symbol.Location,
 					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
 			} else if (symbol is PrimaryConstructorField && mc is TypeParameter) {
-				Report.Error (9003, symbol.Location, "Primary constructor of type `{0}' has parameter of same name as type parameter `{1}'",
+				Report.Error (8038, symbol.Location, "Primary constructor of type `{0}' has parameter of same name as type parameter `{1}'",
 					symbol.Parent.GetSignatureForError (), symbol.GetSignatureForError ());
 			} else {
 				Report.Error (102, symbol.Location,
@@ -1526,7 +1530,7 @@ namespace Mono.CSharp
 
 				if (PrimaryConstructorParameters != null) {
 					if (PartialContainer.PrimaryConstructorParameters != null) {
-						Report.Error (9001, Location, "Only one part of a partial type can declare primary constructor parameters");
+						Report.Error (8036, Location, "Only one part of a partial type can declare primary constructor parameters");
 					} else {
 						PartialContainer.PrimaryConstructorParameters = PrimaryConstructorParameters;
 					}
@@ -1559,6 +1563,10 @@ namespace Mono.CSharp
 			}
 
 			if (iface_exprs != null) {
+				if (!PrimaryConstructorBaseArgumentsStart.IsNull) {
+					Report.Error (8049, PrimaryConstructorBaseArgumentsStart, "Implemented interfaces cannot have arguments");
+				}
+
 				foreach (var iface_type in iface_exprs) {
 					// Prevents a crash, the interface might not have been resolved: 442144
 					if (iface_type == null)
@@ -2553,8 +2561,6 @@ namespace Mono.CSharp
 		{
 		}
 
-		public Arguments PrimaryConstructorBaseArguments { get; set; }
-
 		protected override TypeAttributes TypeAttr {
 			get {
 				TypeAttributes ta = base.TypeAttr;
@@ -2584,7 +2590,7 @@ namespace Mono.CSharp
 				}
 
 				if (symbol is PrimaryConstructorField) {
-					Report.Error (9004, symbol.Location, "Primary constructor of type `{0}' has parameter of same name as containing type",
+					Report.Error (8039, symbol.Location, "Primary constructor of type `{0}' has parameter of same name as containing type",
 						symbol.Parent.GetSignatureForError ());
 					return;
 				}
@@ -2632,17 +2638,20 @@ namespace Mono.CSharp
 			// The default static constructor is private
 
 			Modifiers mods;
+			ParametersCompiled parameters = null;
 			if (is_static) {
 				mods = Modifiers.STATIC | Modifiers.PRIVATE;
+				parameters = ParametersCompiled.EmptyReadOnlyParameters;
 			} else {
 				mods = ((ModFlags & Modifiers.ABSTRACT) != 0) ? Modifiers.PROTECTED : Modifiers.PUBLIC;
+				parameters = PrimaryConstructorParameters ?? ParametersCompiled.EmptyReadOnlyParameters;
 			}
 
-			var c = new Constructor (this, MemberName.Name, mods, null, PrimaryConstructorParameters ?? ParametersCompiled.EmptyReadOnlyParameters, Location);
+			var c = new Constructor (this, MemberName.Name, mods, null, parameters, Location);
 			if (Kind == MemberKind.Class)
 				c.Initializer = new GeneratedBaseInitializer (Location, PrimaryConstructorBaseArguments);
 
-			if (PrimaryConstructorParameters != null)
+			if (PrimaryConstructorParameters != null && !is_static)
 				c.IsPrimaryConstructor = true;
 			
 			AddConstructor (c, true);

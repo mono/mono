@@ -4698,6 +4698,9 @@ primary_parameters
 
 		// Cannot use opt_formal_parameter_list because it can be shared instance for empty parameters
 	  	lbag.AppendToMember (current_container, GetLocation ($1), GetLocation ($3));
+
+		if (lang_version < LanguageVersion.V_6)
+			FeatureIsNotAvailable (GetLocation ($1), "primary constructor");
 	  }
 	;
 
@@ -4714,14 +4717,19 @@ opt_primary_parameters_with_class_base
 	  {
 		$$ = $1;
 	  }
+	| primary_parameters class_base
+	  {
+		$$ = $1;
+	  }
 	| primary_parameters class_base OPEN_PARENS
 	  {
 		++lexer.parsing_block;
+		current_type.PrimaryConstructorBaseArgumentsStart = GetLocation ($3);
 	  }
 	  opt_argument_list CLOSE_PARENS
 	  {
-		lbag.AppendToMember (current_container, GetLocation ($3), GetLocation ($6));
-		((Class)current_type).PrimaryConstructorBaseArguments = (Arguments) $5;
+		lbag.AppendToMember (current_container, GetLocation ($6));
+		current_type.PrimaryConstructorBaseArguments = (Arguments) $5;
 		--lexer.parsing_block;
 
 		$$ = $1;
