@@ -23,11 +23,36 @@ using System.Linq;
 
 namespace Mono.CSharp
 {
-
 	/// <summary>
-	/// Experimental!
+	/// Experimental! Tracks updates (assigns) to variables.
 	/// </summary>
-	public delegate void ValueModificationHandler (string variableName, int variableRow, int variableColumn, int valueRow, int valueColumn, object value);
+	public struct VariableModification
+	{
+		/// <summary>
+		/// The name of the variable being updated.
+		/// </summary>
+		public string VariableName { get; internal set; }
+
+		/// <summary>
+		/// The location where the variable was defined.
+		/// </summary>
+		public Location VariableLocation { get; internal set; }
+
+		/// <summary>
+		/// The location where the variable was updated.
+		/// </summary>
+		public Location ModificationLocation { get; internal set; }
+
+		/// <summary>
+		/// The new value of the variable.
+		/// </summary>
+		public object Value { get; internal set; }
+
+		/// <summary>
+		/// The type of the variable.
+		/// </summary>
+		public Type ValueType { get; internal set; }
+	}
 
 	/// <summary>
 	///   Evaluator: provides an API to evaluate C# statements and
@@ -314,6 +339,8 @@ namespace Mono.CSharp
 			if (type.IsStructOrEnum)
 				ec.Emit (OpCodes.Box, type);
 
+			ec.Emit (OpCodes.Ldtoken, type);
+			ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.TypeGetTypeFromHandle.Get ());
 			ec.EmitInt (varLoc.Row);
 			ec.EmitInt (varLoc.Column);
 			ec.EmitInt (valLoc.Row);
@@ -489,7 +516,7 @@ namespace Mono.CSharp
 		/// <summary>
 		/// Experimental!
 		/// </summary>
-		public ValueModificationHandler ModificationListener { get; set; }
+		public Action<VariableModification> ModificationListener { get; set; }
 
 		enum InputKind {
 			EOF,
@@ -1304,11 +1331,11 @@ namespace Mono.CSharp
 
 	static class ListenerProxy
 	{
-		static readonly Dictionary<int, ValueModificationHandler> listeners = new Dictionary<int, ValueModificationHandler> ();
+		static readonly Dictionary<int, Action<VariableModification>> listeners = new Dictionary<int, Action<VariableModification>> ();
 
 		static int counter;
 
-		public static int Register (ValueModificationHandler listener)
+		public static int Register (Action<VariableModification> listener)
 		{
 			lock (listeners) {
 				var id = counter++;
@@ -1324,15 +1351,21 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static void ValueChanged (object value, int varRow, int varCol, int valRow, int valCol, string name, int listenerId)
+		public static void ValueChanged (object value, Type valueType, int varRow, int varCol, int valRow, int valCol, string name, int listenerId)
 		{
-			ValueModificationHandler action;
+			Action<VariableModification> action;
 			lock (listeners) {
 				if (!listeners.TryGetValue (listenerId, out action))
 					return;
 			}
 
-			action (name, varRow, varCol, valRow, valCol, value);
+			action (new VariableModification {
+				VariableName = name,
+				VariableLocation = new Location (null, varRow, varCol),
+				ModificationLocation = new Location (null, valRow, valCol),
+				Value = value,
+				ValueType = valueType
+			});
 		}
 	}
 }
