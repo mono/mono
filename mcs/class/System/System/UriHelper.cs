@@ -19,6 +19,7 @@ namespace System {
 			HasHost = 1 << 2,
 			HasFragmentPercentage = 1 << 3,
 			UserEscaped = 1 << 4,
+			IPv6Host = 1 << 5,
 		}
 
 		[Flags]
@@ -186,6 +187,10 @@ namespace System {
 			if (component == UriComponents.Fragment && UriHelper.HasPercentage (str))
 				formatFlags |= UriHelper.FormatFlags.HasFragmentPercentage;
 
+			if (component == UriComponents.Host &&
+				str.Length > 1 && str [0] == '[' && str [str.Length - 1] == ']')
+				 formatFlags |= UriHelper.FormatFlags.IPv6Host;
+
 			UriSchemes scheme = GetScheme (schemeName);
 
 			if (scheme == UriSchemes.Custom && (formatFlags & FormatFlags.HasHost) != 0)
@@ -274,6 +279,9 @@ namespace System {
 		private static bool NeedToUnescape (char c, UriSchemes scheme, UriComponents component, UriKind uriKind,
 			UriFormat uriFormat, FormatFlags formatFlags)
 		{
+			if ((formatFlags & FormatFlags.IPv6Host) != 0)
+				return false;
+
 			string cStr = c.ToString (CultureInfo.InvariantCulture);
 
 			if (uriFormat == UriFormat.Unescaped)
@@ -384,6 +392,9 @@ namespace System {
 		private static bool NeedToEscape (char c, UriSchemes scheme, UriComponents component, UriKind uriKind,
 			UriFormat uriFormat, FormatFlags formatFlags)
 		{
+			if ((formatFlags & FormatFlags.IPv6Host) != 0)
+				return false;
+
 			string cStr = c.ToString (CultureInfo.InvariantCulture);
 
 			if (c == '?') {
