@@ -1620,7 +1620,6 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsPrimaryConstructor { get; set; }
-
 		
 		MethodBase IMethodDefinition.Metadata {
 			get {
@@ -1709,12 +1708,12 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor) {
-				if (Parent.Kind == MemberKind.Struct) {
-					Report.Error (9009, Location, "`{0}': Structs with primary constructor cannot have explicit constructor",
+			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor && !IsStatic) {
+				if (Parent.Kind == MemberKind.Struct && Initializer is ConstructorThisInitializer && Initializer.Arguments == null) {
+					Report.Error (8043, Location, "`{0}': Structs with primary constructor cannot specify default constructor initializer",
 						GetSignatureForError ());
 				} else if (Initializer == null || Initializer is ConstructorBaseInitializer) {
-					Report.Error (9002, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
+					Report.Error (8037, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
 						GetSignatureForError ());
 				}
 			}
@@ -1774,6 +1773,14 @@ namespace Mono.CSharp {
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
 			if (block != null) {
+				if (!IsStatic && Initializer == null && Parent.PartialContainer.Kind == MemberKind.Struct) {
+					//
+					// If this is a non-static `struct' constructor and doesn't have any
+					// initializer, it must initialize all of the struct's fields.
+					//
+					block.AddThisVariable (bc);
+				}
+
 				//
 				// If we use a "this (...)" constructor initializer, then
 				// do not emit field initializers, they are initialized in the other constructor
@@ -1782,16 +1789,8 @@ namespace Mono.CSharp {
 					Parent.PartialContainer.ResolveFieldInitializers (bc);
 
 				if (!IsStatic) {
-					if (Initializer == null) {
-						if (Parent.PartialContainer.Kind == MemberKind.Struct) {
-							//
-							// If this is a non-static `struct' constructor and doesn't have any
-							// initializer, it must initialize all of the struct's fields.
-							//
-							block.AddThisVariable (bc);
-						} else if (Parent.PartialContainer.Kind == MemberKind.Class) {
-							Initializer = new GeneratedBaseInitializer (Location, null);
-						}
+					if (Initializer == null && Parent.PartialContainer.Kind == MemberKind.Class) {
+						Initializer = new GeneratedBaseInitializer (Location, null);
 					}
 
 					if (Initializer != null) {
