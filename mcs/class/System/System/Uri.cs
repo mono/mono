@@ -1234,8 +1234,6 @@ namespace System {
 			if (userEscaped)
 				return;
 
-			// non-ascii characters are not escaped for the host name
-			host = EscapeString (host, EscapeCommonHex, false);
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)
 				host = host.ToLower (CultureInfo.InvariantCulture);
@@ -1664,6 +1662,9 @@ namespace System {
 				Parser.InitializeAndValidate (this, out ex);
 			if (ex != null)
 				return ex.Message;
+
+			host = UriHelper.FormatAbsolute (host, scheme,
+					UriComponents.Host, UriFormat.UriEscaped, formatFlags);
 
 			path = UriHelper.FormatAbsolute (path, scheme,
 					UriComponents.Path, UriFormat.UriEscaped, formatFlags);
