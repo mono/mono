@@ -6805,9 +6805,11 @@ interactive_parsing
 		current_container = current_type = new Class (current_container, new MemberName ("<InteractiveExpressionClass>"), Modifiers.PUBLIC, null);
 
 		// (ref object retval, ref Type rettype)
-		Parameter [] mpar = new Parameter [2];
+		Parameter [] mpar = new Parameter [4];
 		mpar [0] = new Parameter (new TypeExpression (compiler.BuiltinTypes.Object, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null);
 		mpar [1] = new Parameter (new TypeExpression (compiler.BuiltinTypes.Type, Location.Null), "$rettype", Parameter.Modifier.REF, null, Location.Null);
+		mpar [2] = new Parameter (new TypeExpression (compiler.BuiltinTypes.Int, Location.Null), "$locrow", Parameter.Modifier.REF, null, Location.Null);
+		mpar [3] = new Parameter (new TypeExpression (compiler.BuiltinTypes.Int, Location.Null), "$loccol", Parameter.Modifier.REF, null, Location.Null);
 
 		ParametersCompiled pars = new ParametersCompiled (mpar);
 		var mods = Modifiers.PUBLIC | Modifiers.STATIC;

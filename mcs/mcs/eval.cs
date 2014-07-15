@@ -443,11 +443,14 @@ namespace Mono.CSharp
 			//
 			object retval = typeof (QuitValue);
 			var rettype = retval.GetType ();
+			int row = -1;
+			int column = -1;
 
 			try {
 				invoke_thread = System.Threading.Thread.CurrentThread;
 				invoking = true;
-				compiled (ref retval, ref rettype);
+				compiled (ref retval, ref rettype, ref row, ref column);
+				result.Location = new Location (null, row, column);
 			} catch (ThreadAbortException e){
 				Thread.ResetAbort ();
 				Console.WriteLine ("Interrupted!\n{0}", e);
@@ -1036,7 +1039,7 @@ namespace Mono.CSharp
 	/// </remarks>
 	
 
-	public delegate void CompiledMethod (ref object retvalue, ref Type rettype);
+	public delegate void CompiledMethod (ref object retvalue, ref Type rettype, ref int row, ref int column);
 
 	/// <summary>
 	///   The default base class for every interaction line
@@ -1344,6 +1347,14 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Ldtoken, assignType);
 			ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.TypeGetTypeFromHandle.Get ());
 			ec.Emit (OpCodes.Stind_Ref);
+
+			ec.Emit (OpCodes.Ldarg_2);
+			ec.EmitInt (target.Location.Row);
+			ec.Emit (OpCodes.Stind_I4);
+
+			ec.Emit (OpCodes.Ldarg_3);
+			ec.EmitInt (target.Location.Column);
+			ec.Emit (OpCodes.Stind_I4);
 		}
 	}
 
