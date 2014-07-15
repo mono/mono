@@ -18,11 +18,6 @@ namespace MonoTests.SystemWeb.Framework
 {
 	internal class MyHost : MarshalByRefObject
 	{
-		AutoResetEvent _done;
-		AutoResetEvent _doNext;
-		WebTest _currentTest;
-		Exception _e;
-
 		#region MyData
 		class MyData
 		{
@@ -30,40 +25,12 @@ namespace MonoTests.SystemWeb.Framework
 			public Exception exception;
 		}
 		#endregion
-		
-		public MyHost ()
-		{
-			_done = new AutoResetEvent (false);
-			_doNext = new AutoResetEvent (false);
-			ThreadPool.QueueUserWorkItem (new WaitCallback (param => {
-				try {
-					AsyncRun (param);
-				} catch {}
-				}), null);
-		}
 
 		public AppDomain AppDomain
 		{ get { return AppDomain.CurrentDomain; } }
 		
 		public WebTest Run (WebTest t)
 		{
-			_currentTest = t;
-			_doNext.Set ();
-			_done.WaitOne ();
-			if (_e != null) {
-				Exception e = _e;
-				_e = null;
-				throw e;
-			}
-			return t;
-		}
-
-		void AsyncRun (object param)
-		{
-			for (;;) {
-			_doNext.WaitOne ();
-			try {
-			WebTest t = _currentTest;
 			HttpWorkerRequest wr = t.Request.CreateWorkerRequest ();
 			MyData data = GetMyData (wr);
 			data.currentTest = t;
@@ -74,12 +41,8 @@ namespace MonoTests.SystemWeb.Framework
 			
 			if (data.exception != null)
 				RethrowException (data.exception);
-			} catch (Exception e) {
-				_e = e;
-			}
-
-			_done.Set ();
-			}
+			
+			return t;
 		}
 
 		private static void RethrowException (Exception inner)

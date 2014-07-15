@@ -1726,6 +1726,7 @@ namespace Mono.CSharp {
 			Modifiers modifiers;
 			TypeDefinition parent = null;
 			TypeParameters hoisted_tparams = null;
+			ParametersCompiled method_parameters = parameters;
 
 			var src_block = Block.Original.Explicit;
 			if (src_block.HasCapturedVariable || src_block.HasCapturedThis) {
@@ -1773,6 +1774,18 @@ namespace Mono.CSharp {
 					parent = storey = ec.CurrentAnonymousMethod.Storey;
 
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
+
+				//
+				// Convert generated method to closed delegate method where unused
+				// this argument is generated during compilation which speeds up dispatch
+				// by about 25%
+				//
+
+				//
+				// Disabled for now due to JIT bug
+				//
+				//method_parameters = ParametersCompiled.Prefix (method_parameters,
+				//	new Parameter (null, null, 0, null, loc), ec.Module.Compiler.BuiltinTypes.Object);
 			}
 
 			if (storey == null && hoisted_tparams == null)
@@ -1798,7 +1811,7 @@ namespace Mono.CSharp {
 
 			return new AnonymousMethodMethod (parent,
 				this, storey, new TypeExpression (ReturnType, Location), modifiers,
-				member_name, parameters);
+				member_name, method_parameters);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1827,7 +1840,7 @@ namespace Mono.CSharp {
 			}
 
 			bool is_static = (method.ModFlags & Modifiers.STATIC) != 0;
-			if (is_static && am_cache == null) {
+			if (is_static && am_cache == null && !ec.IsStaticConstructor) {
 				//
 				// Creates a field cache to store delegate instance if it's not generic
 				//

@@ -2760,6 +2760,15 @@ namespace Mono.CSharp {
 					}
 				}
 
+				var mg = NamespaceContainer.LookupStaticUsings (rc, Name, Arity, loc);
+				if (mg != null) {
+					if (Arity > 0) {
+						targs.Resolve (rc);
+						mg.SetTypeArguments (rc, targs);
+					}
+					return mg;
+				}
+
 				if (errorMode) {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
@@ -3358,7 +3367,7 @@ namespace Mono.CSharp {
 			//
 			// Check intermediate value modification which won't have any effect
 			//
-			if (rhs != null && InstanceExpression.Type.IsStruct) {
+			if (rhs != null && TypeSpec.IsValueType (InstanceExpression.Type)) {
 				var fexpr = InstanceExpression as FieldExpr;
 				if (fexpr != null) {
 					if (!fexpr.Spec.IsReadOnly || rc.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.ConstructorScope))
@@ -3901,8 +3910,15 @@ namespace Mono.CSharp {
 
 			// TODO: When in probing mode do IsApplicable only and when called again do VerifyArguments for full error reporting
 			best_candidate = r.ResolveMember<MethodSpec> (ec, ref args);
-			if (best_candidate == null)
-				return r.BestCandidateIsDynamic ? this : null;
+			if (best_candidate == null) {
+				if (!r.BestCandidateIsDynamic)
+					return null;
+
+				if (simple_name != null && ec.IsStatic)
+					InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
+
+				return this;
+			}
 
 			// Overload resolver had to create a new method group, all checks bellow have already been executed
 			if (r.BestCandidateNewMethodGroup != null)
@@ -3913,7 +3929,7 @@ namespace Mono.CSharp {
 					if (best_candidate.IsExtensionMethod && args[0].Expr == InstanceExpression) {
 						InstanceExpression = null;
 					} else {
-						if (best_candidate.IsStatic && simple_name != null) {
+						if (simple_name != null && best_candidate.IsStatic) {
 							InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
 						}
 
@@ -4040,7 +4056,8 @@ namespace Mono.CSharp {
 			ProbingOnly	= 1 << 1,
 			CovariantDelegate = 1 << 2,
 			NoBaseMembers = 1 << 3,
-			BaseMembersIncluded = 1 << 4
+			BaseMembersIncluded = 1 << 4,
+			GetEnumeratorLookup = 1 << 5
 		}
 
 		public interface IBaseMembersProvider
@@ -4601,7 +4618,7 @@ namespace Mono.CSharp {
 		// 0 = the best, int.MaxValue = the worst
 		// -1 = fatal error
 		//
-		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType)
+		int IsApplicable (ResolveContext ec, ref Arguments arguments, int arg_count, ref MemberSpec candidate, IParametersMember pm, ref bool params_expanded_form, ref bool dynamicArgument, ref TypeSpec returnType, bool errorMode)
 		{
 			// Parameters of most-derived type used mainly for named and optional parameters
 			var pd = pm.Parameters;
@@ -4794,6 +4811,13 @@ namespace Mono.CSharp {
 						lambda_conv_msgs.ClearSession ();
 
 					if (i_args.Length != 0) {
+						if (!errorMode) {
+							foreach (var ta in i_args) {
+								if (!ta.IsAccessible (ec))
+									return ti.InferenceScore - 10000;
+							}
+						}
+
 						ms = ms.MakeGenericMethod (ec, i_args);
 					}
 				}
@@ -5147,7 +5171,7 @@ namespace Mono.CSharp {
 						bool params_expanded_form = false;
 						bool dynamic_argument = false;
 						TypeSpec rt = pm.MemberType;
-						int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt);
+						int candidate_rate = IsApplicable (rc, ref candidate_args, args_count, ref member, pm, ref params_expanded_form, ref dynamic_argument, ref rt, error_mode);
 
 						if (lambda_conv_msgs != null)
 							lambda_conv_msgs.EndSession ();
@@ -5161,13 +5185,17 @@ namespace Mono.CSharp {
 							if (candidate_rate < 0)
 								return null;
 
-							best_candidate_rate = candidate_rate;
-							best_candidate = member;
-							best_candidate_args = candidate_args;
-							best_candidate_params = params_expanded_form;
-							best_candidate_dynamic = dynamic_argument;
-							best_parameter_member = pm;
-							best_candidate_return_type = rt;
+							if ((restrictions & Restrictions.GetEnumeratorLookup) != 0 && candidate_args.Count != 0) {
+								// Only parameterless methods are considered
+							} else {
+								best_candidate_rate = candidate_rate;
+								best_candidate = member;
+								best_candidate_args = candidate_args;
+								best_candidate_params = params_expanded_form;
+								best_candidate_dynamic = dynamic_argument;
+								best_parameter_member = pm;
+								best_candidate_return_type = rt;
+							}
 						} else if (candidate_rate == 0) {
 							//
 							// The member look is done per type for most operations but sometimes
@@ -5521,6 +5549,9 @@ namespace Mono.CSharp {
 				break;
 			}
 
+			if (args == null)
+				return false;
+
 			foreach (var arg in args) {
 				var na = arg as NamedArgument;
 				if (na == null)
@@ -5658,7 +5689,7 @@ namespace Mono.CSharp {
 			//
 			// Fill not provided arguments required by params modifier
 			//
-			if (params_initializers == null && pd.HasParams && arg_count + 1 == pd.Count) {
+			if (params_initializers == null && arg_count + 1 == pd.Count) {
 				if (args == null)
 					args = new Arguments (1);
 

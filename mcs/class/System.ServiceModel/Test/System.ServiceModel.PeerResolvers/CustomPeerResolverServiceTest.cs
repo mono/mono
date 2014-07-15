@@ -30,6 +30,7 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CloseTest ()
 		{
 			cprs.Open ();
@@ -79,6 +80,7 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void OpenTest4 ()
 		{
 			cprs.Open ();

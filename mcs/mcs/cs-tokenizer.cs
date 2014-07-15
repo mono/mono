@@ -1279,6 +1279,8 @@ namespace Mono.CSharp
 			PushPosition ();
 			current_token = Token.NONE;
 			int next_token;
+			int parens = 0;
+
 			switch (xtoken ()) {
 			case Token.LITERAL:
 			case Token.TRUE:
@@ -1299,6 +1301,13 @@ namespace Mono.CSharp
 			case Token.COLON:
 				next_token = Token.INTERR_NULLABLE;
 				break;
+
+			case Token.OPEN_PARENS:
+			case Token.OPEN_PARENS_CAST:
+			case Token.OPEN_PARENS_LAMBDA:
+				next_token = -1;
+				++parens;
+				break;
 				
 			default:
 				next_token = -1;
@@ -1317,14 +1326,19 @@ namespace Mono.CSharp
 					
 				case Token.COLON:
 					next_token = Token.INTERR;
-					break;							
-					
+					break;
+
+				case Token.OPEN_PARENS:
+				case Token.OPEN_PARENS_CAST:
+				case Token.OPEN_PARENS_LAMBDA:
+					++parens;
+					goto default;
+
 				default:
 					int ntoken;
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
-					int parens = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
@@ -1342,9 +1356,13 @@ namespace Mono.CSharp
 							--braces;
 							continue;
 						case Token.CLOSE_PARENS:
-							if (parens > 0)
+							if (parens > 0) {
 								--parens;
-							continue;
+								continue;
+							}
+
+							PopPosition ();
+							return Token.INTERR_NULLABLE;
 						}
 
 						if (braces != 0)

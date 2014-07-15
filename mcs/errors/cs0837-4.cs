@@ -1,4 +1,4 @@
-// CS1953: An expression tree cannot contain an expression with method group
+// CS0837: The `is' operator cannot be applied to a lambda expression, anonymous method, or method group
 // Line: 11
 
 using System;

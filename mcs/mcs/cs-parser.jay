@@ -1708,13 +1708,14 @@ arglist_modifier
 	  		report.Error (1669, GetLocation ($1), "__arglist is not valid in this context");
 	  }
 	;
-	
+
 property_declaration
 	: opt_attributes
 	  opt_modifiers
 	  member_type
 	  member_declaration_name
 	  {
+		lexer.parsing_generic_declaration = false;
 		if (doc_support)
 			tmpComment = Lexer.consume_doc_comment ();
 	  }
@@ -1742,10 +1743,31 @@ property_declaration
 	  CLOSE_BRACE
 	  {
 		lbag.AppendToMember (current_property, GetLocation ($10));
+		lexer.parsing_modifiers = true;
+	  }
+	  opt_property_initializer
+	  {
 		current_property = null;
 	  }
 	;
 
+opt_property_initializer
+	: /* empty */
+	| ASSIGN
+	  {
+		++lexer.parsing_block;
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+		start_block (GetLocation ($1));
+	  }
+	  expression SEMICOLON
+	  {
+		--lexer.parsing_block;
+		((Property)current_property).Initializer = (Expression) $3;
+		lbag.AppendToMember (current_property, GetLocation ($1), GetLocation ($4));
+		end_block (GetLocation ($4));
+		current_local_parameters = null;
+	  }
+	;
 
 indexer_declaration
 	: opt_attributes opt_modifiers
@@ -4676,6 +4698,9 @@ primary_parameters
 
 		// Cannot use opt_formal_parameter_list because it can be shared instance for empty parameters
 	  	lbag.AppendToMember (current_container, GetLocation ($1), GetLocation ($3));
+
+		if (lang_version < LanguageVersion.V_6)
+			FeatureIsNotAvailable (GetLocation ($1), "primary constructor");
 	  }
 	;
 
@@ -4692,14 +4717,19 @@ opt_primary_parameters_with_class_base
 	  {
 		$$ = $1;
 	  }
+	| primary_parameters class_base
+	  {
+		$$ = $1;
+	  }
 	| primary_parameters class_base OPEN_PARENS
 	  {
 		++lexer.parsing_block;
+		current_type.PrimaryConstructorBaseArgumentsStart = GetLocation ($3);
 	  }
 	  opt_argument_list CLOSE_PARENS
 	  {
-		lbag.AppendToMember (current_container, GetLocation ($3), GetLocation ($6));
-		((Class)current_type).PrimaryConstructorBaseArguments = (Arguments) $5;
+		lbag.AppendToMember (current_container, GetLocation ($6));
+		current_type.PrimaryConstructorBaseArguments = (Arguments) $5;
 		--lexer.parsing_block;
 
 		$$ = $1;

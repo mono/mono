@@ -13,6 +13,15 @@ namespace Mono.Debugger.Soft
 		/*
 		 * Only resume the target thread during the invoke
 		 */
-		SingleThreaded = 2
+		SingleThreaded = 2,
+		/*
+		 * Return the changed receiver when invoking
+		 * a valuetype method.
+		 */
+		ReturnOutThis = 4,
+		/*
+		 * Return the values of out arguments
+		 */
+		ReturnOutArgs = 8
 	}
 }

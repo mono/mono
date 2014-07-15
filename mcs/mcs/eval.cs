@@ -25,6 +25,11 @@ namespace Mono.CSharp
 {
 
 	/// <summary>
+	/// Experimental!
+	/// </summary>
+	public delegate void ValueModificationHandler (string variableName, int row, int column, object value);
+
+	/// <summary>
 	///   Evaluator: provides an API to evaluate C# statements and
 	///   expressions dynamically.
 	/// </summary>
@@ -479,8 +484,10 @@ namespace Mono.CSharp
 			return result;
 		}
 
-		// Experimental
-		public Action<string, int, int, object> ModificationListener { get; set; }
+		/// <summary>
+		/// Experimental!
+		/// </summary>
+		public ValueModificationHandler ModificationListener { get; set; }
 
 		enum InputKind {
 			EOF,
@@ -1295,11 +1302,11 @@ namespace Mono.CSharp
 
 	static class ListenerProxy
 	{
-		static readonly Dictionary<int, Action<string, int, int, object>> listeners = new Dictionary<int, Action<string, int, int, object>> (); 
+		static readonly Dictionary<int, ValueModificationHandler> listeners = new Dictionary<int, ValueModificationHandler> ();
 
 		static int counter;
 
-		public static int Register (Action<string, int, int, object> listener)
+		public static int Register (ValueModificationHandler listener)
 		{
 			lock (listeners) {
 				var id = counter++;
@@ -1317,7 +1324,7 @@ namespace Mono.CSharp
 
 		public static void ValueChanged (object value, int row, int col, string name, int listenerId)
 		{
-			Action<string, int, int, object> action;
+			ValueModificationHandler action;
 			lock (listeners) {
 				if (!listeners.TryGetValue (listenerId, out action))
 					return;

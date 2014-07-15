@@ -2110,6 +2110,21 @@ public class DebuggerTests
 			Assert.AreEqual ("Exception", ex.Exception.Type.Name);
 		}
 
+#if NET_4_5
+		// out argument
+		m = t.GetMethod ("invoke_out");
+		var out_task = this_obj.InvokeMethodAsyncWithResult (e.Thread, m, new Value [] { vm.CreateValue (1), vm.CreateValue (null) }, InvokeOptions.ReturnOutArgs);
+		var out_args = out_task.Result.OutArgs;
+		AssertValue (5, out_args [0]);
+		Assert.IsTrue (out_args [1] is ArrayMirror);
+		Assert.AreEqual (10, (out_args [1] as ArrayMirror).Length);
+
+		// without ReturnOutArgs flag
+		out_task = this_obj.InvokeMethodAsyncWithResult (e.Thread, m, new Value [] { vm.CreateValue (1), vm.CreateValue (null) });
+		out_args = out_task.Result.OutArgs;
+		Assert.IsNull (out_args);
+#endif
+
 		// newobj
 		m = t.GetMethod (".ctor");
 		v = t.InvokeMethod (e.Thread, m, null);
@@ -2212,6 +2227,24 @@ public class DebuggerTests
 		m = t.GetMethod ("invoke_return_int");
 		v = s.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
+
+#if NET_4_5
+		// Invoke a method which changes state
+		s = frame.GetArgument (1) as StructMirror;
+		t = s.Type;
+		m = t.GetMethod ("invoke_mutate");
+		var task = s.InvokeMethodAsyncWithResult (e.Thread, m, null, InvokeOptions.ReturnOutThis);
+		var out_this = task.Result.OutThis as StructMirror;
+		AssertValue (5, out_this ["l"]);
+
+		// Without the ReturnOutThis flag
+		s = frame.GetArgument (1) as StructMirror;
+		t = s.Type;
+		m = t.GetMethod ("invoke_mutate");
+		task = s.InvokeMethodAsyncWithResult (e.Thread, m, null);
+		out_this = task.Result.OutThis as StructMirror;
+		Assert.AreEqual (null, out_this);
+#endif
 	}
 
 	[Test]

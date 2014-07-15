@@ -465,7 +465,7 @@ namespace Mono.CSharp {
 
 				if (atype == pa.CallerLineNumberAttribute) {
 					caller_type = rc.BuiltinTypes.Int;
-					if (caller_type != parameter_type && !Convert.ImplicitNumericConversionExists (caller_type, parameter_type)) {
+					if (caller_type != parameter_type && !Convert.ImplicitStandardConversionExists (new IntConstant (caller_type, int.MaxValue, Location.Null), parameter_type)) {
 						rc.Report.Error (4017, attr.Location,
 							"The CallerLineNumberAttribute attribute cannot be applied because there is no standard conversion from `{0}' to `{1}'",
 							caller_type.GetSignatureForError (), parameter_type.GetSignatureForError ());
@@ -787,6 +787,11 @@ namespace Mono.CSharp {
 		{
 			TypeSpec p_type = ec.Module.PredefinedTypes.ParameterExpression.Resolve ();
 			return new TypeExpression (p_type, location);
+		}
+
+		public void SetIndex (int index)
+		{
+			idx = index;
 		}
 
 		public void Warning_UselessOptionalParameter (Report Report)
@@ -1151,6 +1156,23 @@ namespace Mono.CSharp {
 			return new ParametersCompiled (parameters, types);
 		}
 
+		public static ParametersCompiled Prefix (ParametersCompiled parameters, Parameter p, TypeSpec type)
+		{
+			var ptypes = new TypeSpec [parameters.Count + 1];
+			ptypes [0] = type;
+			Array.Copy (parameters.Types, 0, ptypes, 1, parameters.Count);
+
+			var param = new Parameter [ptypes.Length];
+			param [0] = p;
+			for (int i = 0; i < parameters.Count; ++i) {
+				var pi = parameters [i];
+				param [i + 1] = pi;
+				pi.SetIndex (i + 1);
+			}
+
+			return ParametersCompiled.CreateFullyResolved (param, ptypes);
+		}
+
 		//
 		// TODO: This does not fit here, it should go to different version of AParametersCollection
 		// as the underlying type is not Parameter and some methods will fail to cast
@@ -1409,9 +1431,11 @@ namespace Mono.CSharp {
 			expr = Child;
 
 			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsDefaultStruct))) {
-				rc.Report.Error (1736, Location,
-					"The expression being assigned to optional parameter `{0}' must be a constant or default value",
-					p.Name);
+				if (!(expr is ErrorExpression)) {
+					rc.Report.Error (1736, Location,
+						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
+						p.Name);
+				}
 
 				return;
 			}

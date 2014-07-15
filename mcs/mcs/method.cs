@@ -725,6 +725,11 @@ namespace Mono.CSharp {
 			if (MethodData != null)
 				MethodData.Emit (Parent);
 
+			if (block != null && block.StateMachine is AsyncTaskStorey) {
+				var psm = Module.PredefinedAttributes.AsyncStateMachine;
+				psm.EmitAttribute (MethodBuilder, block.StateMachine);
+			}
+
 			if ((ModFlags & Modifiers.PARTIAL) == 0)
 				Block = null;
 		}
@@ -1330,6 +1335,12 @@ namespace Mono.CSharp {
 				if (IsPartialDefinition) {
 					if (partialMethodImplementation != null && CurrentTypeParameters != null) {
 						CurrentTypeParameters.CheckPartialConstraints (partialMethodImplementation);
+
+						var otp = partialMethodImplementation.CurrentTypeParameters;
+						for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+							var tp = CurrentTypeParameters [i];
+							tp.Define (otp[i]);
+						}
 					}
 
 					return;
@@ -1347,12 +1358,6 @@ namespace Mono.CSharp {
 						tp.CheckGenericConstraints (false);
 						tp.Emit ();
 					}
-				}
-
-				if (block != null && block.StateMachine is AsyncTaskStorey) {
-					var psm = Module.PredefinedAttributes.AsyncStateMachine;
-					
-					psm.EmitAttribute (MethodBuilder, block.StateMachine);
 				}
 
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
@@ -1393,17 +1398,40 @@ namespace Mono.CSharp {
 
 			// Ensure we are always using method declaration parameters
 			for (int i = 0; i < methodDefinition.parameters.Count; ++i ) {
-				parameters [i].Name = methodDefinition.parameters [i].Name;
-				parameters [i].DefaultValue = methodDefinition.parameters [i].DefaultValue;
+				var md_p = methodDefinition.parameters [i];
+				var p = parameters [i];
+				p.Name = md_p.Name;
+				p.DefaultValue = md_p.DefaultValue;
+				if (md_p.OptAttributes != null) {
+					if (p.OptAttributes == null) {
+						p.OptAttributes = md_p.OptAttributes;
+					} else {
+						p.OptAttributes.Attrs.AddRange (md_p.OptAttributes.Attrs);
+					}
+				}
 			}
 
-			if (methodDefinition.attributes == null)
-				return;
+			if (methodDefinition.attributes != null) {
+				if (attributes == null) {
+					attributes = methodDefinition.attributes;
+				} else {
+					attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+				}
+			}
 
-			if (attributes == null) {
-				attributes = methodDefinition.attributes;
-			} else {
-				attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+			if (CurrentTypeParameters != null) {
+				for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+					var tp_other = methodDefinition.CurrentTypeParameters [i];
+					if (tp_other.OptAttributes == null)
+						continue;
+
+					var tp = CurrentTypeParameters [i];
+					if (tp.OptAttributes == null) {
+						tp.OptAttributes = tp_other.OptAttributes;
+					} else {
+						tp.OptAttributes.Attrs.AddRange (tp.OptAttributes.Attrs);
+					}
+				}
 			}
 		}
 	}
@@ -1592,7 +1620,6 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsPrimaryConstructor { get; set; }
-
 		
 		MethodBase IMethodDefinition.Metadata {
 			get {
@@ -1681,12 +1708,12 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor) {
-				if (Parent.Kind == MemberKind.Struct) {
-					Report.Error (9009, Location, "`{0}': Structs with primary constructor cannot have explicit constructor",
+			if (Parent.PrimaryConstructorParameters != null && !IsPrimaryConstructor && !IsStatic) {
+				if (Parent.Kind == MemberKind.Struct && Initializer is ConstructorThisInitializer && Initializer.Arguments == null) {
+					Report.Error (8043, Location, "`{0}': Structs with primary constructor cannot specify default constructor initializer",
 						GetSignatureForError ());
 				} else if (Initializer == null || Initializer is ConstructorBaseInitializer) {
-					Report.Error (9002, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
+					Report.Error (8037, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
 						GetSignatureForError ());
 				}
 			}
@@ -1746,6 +1773,14 @@ namespace Mono.CSharp {
 			bc.Set (ResolveContext.Options.ConstructorScope);
 
 			if (block != null) {
+				if (!IsStatic && Initializer == null && Parent.PartialContainer.Kind == MemberKind.Struct) {
+					//
+					// If this is a non-static `struct' constructor and doesn't have any
+					// initializer, it must initialize all of the struct's fields.
+					//
+					block.AddThisVariable (bc);
+				}
+
 				//
 				// If we use a "this (...)" constructor initializer, then
 				// do not emit field initializers, they are initialized in the other constructor
@@ -1754,16 +1789,8 @@ namespace Mono.CSharp {
 					Parent.PartialContainer.ResolveFieldInitializers (bc);
 
 				if (!IsStatic) {
-					if (Initializer == null) {
-						if (Parent.PartialContainer.Kind == MemberKind.Struct) {
-							//
-							// If this is a non-static `struct' constructor and doesn't have any
-							// initializer, it must initialize all of the struct's fields.
-							//
-							block.AddThisVariable (bc);
-						} else if (Parent.PartialContainer.Kind == MemberKind.Class) {
-							Initializer = new GeneratedBaseInitializer (Location, null);
-						}
+					if (Initializer == null && Parent.PartialContainer.Kind == MemberKind.Class) {
+						Initializer = new GeneratedBaseInitializer (Location, null);
 					}
 
 					if (Initializer != null) {

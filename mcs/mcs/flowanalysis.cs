@@ -139,15 +139,22 @@ namespace Mono.CSharp
 				var field = struct_info.Fields[i];
 
 				if (!fc.IsStructFieldDefinitelyAssigned (vi, field.Name)) {
-					if (field.MemberDefinition is Property.BackingField) {
+					var bf = field.MemberDefinition as Property.BackingField;
+					if (bf != null) {
+						if (bf.Initializer != null)
+							continue;
+
 						fc.Report.Error (843, loc,
 							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling the default struct contructor from a constructor initializer",
 							field.GetSignatureForError ());
-					} else {
-						fc.Report.Error (171, loc,
-							"Field `{0}' must be fully assigned before control leaves the constructor",
-							field.GetSignatureForError ());
+
+						ok = false;
+						continue;
 					}
+
+					fc.Report.Error (171, loc,
+						"Field `{0}' must be fully assigned before control leaves the constructor",
+						field.GetSignatureForError ());
 					ok = false;
 				}
 			}

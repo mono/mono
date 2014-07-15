@@ -26,6 +26,7 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/sgen-conf.h>
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/marshal.h> /* for mono_delegate_free_ftnptr () */
@@ -1061,6 +1062,8 @@ finalize_domain_objects (DomainFinalizationReq *req)
 static guint32
 finalizer_thread (gpointer unused)
 {
+	gboolean wait = TRUE;
+
 	while (!finished) {
 		/* Wait to be notified that there's at least one
 		 * finaliser to run
@@ -1068,12 +1071,15 @@ finalizer_thread (gpointer unused)
 
 		g_assert (mono_domain_get () == mono_get_root_domain ());
 
+		if (wait) {
 		/* An alertable wait is required so this thread can be suspended on windows */
 #ifdef MONO_HAS_SEMAPHORES
-		MONO_SEM_WAIT_ALERTABLE (&finalizer_sem, TRUE);
+			MONO_SEM_WAIT_ALERTABLE (&finalizer_sem, TRUE);
 #else
-		WaitForSingleObjectEx (finalizer_event, INFINITE, TRUE);
+			WaitForSingleObjectEx (finalizer_event, INFINITE, TRUE);
 #endif
+		}
+		wait = TRUE;
 
 		mono_threads_perform_thread_dump ();
 
@@ -1105,7 +1111,16 @@ finalizer_thread (gpointer unused)
 
 		reference_queue_proccess_all ();
 
-		SetEvent (pending_done_event);
+#ifdef MONO_HAS_SEMAPHORES
+		/* Avoid posting the pending done event until there are pending finalizers */
+		if (MONO_SEM_TIMEDWAIT (&finalizer_sem, 0) == 0)
+			/* Don't wait again at the start of the loop */
+			wait = FALSE;
+		else
+			SetEvent (pending_done_event);
+#else
+			SetEvent (pending_done_event);
+#endif
 	}
 
 	SetEvent (shutdown_event);
@@ -1139,6 +1154,14 @@ mono_gc_init (void)
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
 	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.minor_gc_time_usecs);
 	mono_counters_register ("Major GC time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &gc_stats.major_gc_time_usecs);
+#ifdef HEAVY_STATISTICS
+	mono_counters_register ("Gray Queue alloc section", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_section_alloc);
+	mono_counters_register ("Gray Queue free section", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_section_free);
+	mono_counters_register ("Gray Queue enqueue fast path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_enqueue_fast_path);
+	mono_counters_register ("Gray Queue dequeue fast path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_dequeue_fast_path);
+	mono_counters_register ("Gray Queue enqueue slow path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_enqueue_slow_path);
+	mono_counters_register ("Gray Queue dequeue slow path", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &gc_stats.gray_queue_dequeue_slow_path);
+#endif
 
 	mono_gc_base_init ();
 

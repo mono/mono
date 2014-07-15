@@ -474,27 +474,17 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		unwind_info = mono_jinfo_get_unwind_info (ji, &unwind_info_len);
 
-		if (*lmf && ((*lmf) != jit_tls->first_lmf) && 
-		    (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->ebp)) {
-			/* remove any unused lmf */
-			*lmf = (*lmf)->previous_lmf;
-		}
-
 		address = (char *)ip - (char *)ji->code_start;
 
 		memcpy(&regs, &ctx->uc_mcontext.gregs, sizeof(regs));
 		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start,
-				(guint8 *) ji->code_start + ji->code_size,
-				ip, regs, 16, save_locations, 
-				MONO_MAX_IREGS, &cfa);
+						   (guint8 *) ji->code_start + ji->code_size,
+						   ip, NULL, regs, 16, save_locations,
+						   MONO_MAX_IREGS, &cfa);
 		memcpy (&new_ctx->uc_mcontext.gregs, &regs, sizeof(regs));
 		MONO_CONTEXT_SET_IP(new_ctx, regs[14] - 2);
 		MONO_CONTEXT_SET_BP(new_ctx, cfa);
 	
-		if (*lmf && (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->ebp)) {
-			/* remove any unused lmf */
-			*lmf = (*lmf)->previous_lmf;
-		}
 		return TRUE;
 	} else if (*lmf) {
 

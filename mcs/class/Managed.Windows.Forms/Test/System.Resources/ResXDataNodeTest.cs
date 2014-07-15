@@ -144,15 +144,14 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void WriteRead1 ()
 		{
-			ResXResourceWriter rw = new ResXResourceWriter ("resx.resx");
 			serializable ser = new serializable ("aaaaa", "bbbbb");
 			ResXDataNode dn = new ResXDataNode ("test", ser);
 			dn.Comment = "comment";
-			rw.AddResource (dn);
-			rw.Close ();
+
+			string resXFile = GetResXFileWithNode (dn, "resx.resx");
 
 			bool found = false;
-			ResXResourceReader rr = new ResXResourceReader ("resx.resx");
+			ResXResourceReader rr = new ResXResourceReader (resXFile);
 			rr.UseResXDataNodes = true;
 			IDictionaryEnumerator en = rr.GetEnumerator ();
 			while (en.MoveNext ()) {
@@ -224,7 +223,6 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node = ((DictionaryEntry) en.Current).Value as ResXDataNode;
 			rr.Close ();
 
-			File.Delete ("resx.resx");
 			Assert.IsNotNull (node,"#A1");
 
 			serializable o = node.GetValue ((AssemblyName []) null) as serializable;
@@ -245,7 +243,6 @@ namespace MonoTests.System.Resources {
 			ResXDataNode node = ((DictionaryEntry) en.Current).Value as ResXDataNode;
 			rr.Close ();
 
-			File.Delete ("resx.resx");
 			Assert.IsNotNull (node, "#A1");
 
 			object o = node.GetValue ((AssemblyName []) null);

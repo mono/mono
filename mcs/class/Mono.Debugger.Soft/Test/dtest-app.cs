@@ -81,6 +81,7 @@ public struct AStruct {
 	public string s;
 	public byte k;
 	public IntPtr j;
+	public int l;
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public int foo (int val) {
@@ -105,6 +106,11 @@ public struct AStruct {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public IntPtr invoke_return_intptr () {
 		return j;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void invoke_mutate () {
+		l = 5;
 	}
 }
 
@@ -951,6 +957,11 @@ public class Tests : TestsBase, ITest2
 
 	public int invoke_iface () {
 		return 42;
+	}
+
+	public void invoke_out (out int foo, out int[] arr) {
+		foo = 5;
+		arr = new int [10];
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

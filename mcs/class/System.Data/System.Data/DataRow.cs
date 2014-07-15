@@ -134,10 +134,7 @@ namespace System.Data {
 		public object this [string columnName] {
 			get { return this [columnName, DataRowVersion.Default]; }
 			set {
-				DataColumn column = _table.Columns [columnName];
-				if (column == null)
-					throw new ArgumentException ("The column '" + columnName +
-						"' does not belong to the table : " + _table.TableName);
+				DataColumn column = GetColumn (columnName);
 				this [column.Ordinal] = value;
 			}
 		}
@@ -202,10 +199,7 @@ namespace System.Data {
 		/// </summary>
 		public object this [string columnName, DataRowVersion version] {
 			get {
-				DataColumn column = _table.Columns [columnName];
-				if (column == null)
-					throw new ArgumentException ("The column '" + columnName +
-						"' does not belong to the table : " + _table.TableName);
+				DataColumn column = GetColumn (columnName);
 				return this [column.Ordinal, version];
 			}
 		}
@@ -1248,7 +1242,7 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (string columnName)
 		{
-			return IsNull (Table.Columns [columnName]);
+			return IsNull (GetColumn (columnName));
 		}
 
 		/// <summary>
@@ -1257,6 +1251,17 @@ namespace System.Data {
 		/// </summary>
 		public bool IsNull (DataColumn column, DataRowVersion version)
 		{
+			if (column == null)
+				throw new ArgumentNullException ("column");
+
+			// use the expresion if there is one
+			if (column.Expression != String.Empty) {
+				// FIXME: how does this handle 'version'?
+				// TODO: Can we avoid the Eval each time by using the cached value?
+				object o = column.CompiledExpression.Eval (this);
+				return o == null && o == DBNull.Value;
+			}
+
 			return column.DataContainer.IsNull (IndexFromVersion (version));
 		}
 
@@ -1692,5 +1697,15 @@ namespace System.Data {
 			}
 		}
 #endif // NET_2_0
+
+		DataColumn GetColumn (string columnName)
+		{
+			DataColumn column = _table.Columns [columnName];
+
+			if (column == null)
+				throw new ArgumentException ("The column '" + columnName + "' does not belong to the table " + _table.TableName);
+
+			return column;
+		}
 	}
 }

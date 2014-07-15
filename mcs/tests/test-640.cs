@@ -3,6 +3,11 @@ enum MyEnum : byte
 	Value_1 = 1
 }
 
+enum E : ushort
+{
+	V = 1
+}
+
 public class C
 {
 	public static int Main ()
@@ -27,6 +32,11 @@ public class C
 		b &= ~MyEnum.Value_1;
 		if (b != (MyEnum)254)
 			return 4;
+
+		var e = E.V;
+		checked {
+			var res = ~e;
+		}
 
 		System.Console.WriteLine ("OK");
 		return 0;

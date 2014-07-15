@@ -289,7 +289,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 34
+#define MINOR_VERSION 36
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -401,7 +401,9 @@ typedef enum {
 
 typedef enum {
 	INVOKE_FLAG_DISABLE_BREAKPOINTS = 1,
-	INVOKE_FLAG_SINGLE_THREADED = 2
+	INVOKE_FLAG_SINGLE_THREADED = 2,
+	INVOKE_FLAG_RETURN_OUT_THIS = 4,
+	INVOKE_FLAG_RETURN_OUT_ARGS = 8
 } InvokeFlags;
 
 typedef enum {
@@ -694,8 +696,8 @@ static mono_mutex_t debugger_thread_exited_mutex;
 static DebuggerProfiler debugger_profiler;
 
 /* The single step request instance */
-static SingleStepReq *ss_req = NULL;
-static gpointer ss_invoke_addr = NULL;
+static SingleStepReq *ss_req;
+static gpointer ss_invoke_addr;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -1435,6 +1437,41 @@ register_socket_transport (void)
 	register_transport (&trans);
 }
 
+/*
+ * socket_fd_transport_connect:
+ *
+ */
+static void
+socket_fd_transport_connect (const char *address)
+{
+	int res;
+
+	res = sscanf (address, "%d", &conn_fd);
+	if (res != 1) {
+		fprintf (stderr, "debugger-agent: socket-fd transport address is invalid: '%s'\n", address);
+		exit (1);
+	}
+
+	if (!transport_handshake ())
+		exit (1);
+}
+
+static void
+register_socket_fd_transport (void)
+{
+	DebuggerTransport trans;
+
+	/* This is the same as the 'dt_socket' transport, but receives an already connected socket fd */
+	trans.name = "socket-fd";
+	trans.connect = socket_fd_transport_connect;
+	trans.close1 = socket_transport_close1;
+	trans.close2 = socket_transport_close2;
+	trans.send = socket_transport_send;
+	trans.recv = socket_transport_recv;
+
+	register_transport (&trans);
+}
+
 #endif /* DISABLE_SOCKET_TRANSPORT */
 
 /*
@@ -1473,6 +1510,7 @@ transport_init (void)
 
 #ifndef DISABLE_SOCKET_TRANSPORT
 	register_socket_transport ();
+	register_socket_fd_transport ();
 #endif
 
 	for (i = 0; i < ntransports; ++i) {
@@ -6559,9 +6597,14 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			err = decode_value (sig->params [i], domain, (guint8*)&args [i], p, &p, end);
 			if (err)
 				break;
-
 			if (args [i] && ((MonoObject*)args [i])->vtable->domain != domain)
 				NOT_IMPLEMENTED;
+
+			if (sig->params [i]->byref) {
+				arg_buf [i] = g_alloca (sizeof (mgreg_t));
+				*(gpointer*)arg_buf [i] = args [i];
+				args [i] = arg_buf [i];
+			}
 		} else {
 			arg_buf [i] = g_alloca (mono_class_instance_size (mono_class_from_mono_type (sig->params [i])));
 			err = decode_value (sig->params [i], domain, arg_buf [i], p, &p, end);
@@ -6582,7 +6625,6 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	/* 
 	 * Add an LMF frame to link the stack frames on the invoke method with our caller.
 	 */
-	/* FIXME: Move this to arch specific code */
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	if (invoke->has_ctx) {
 		MonoLMF **lmf_addr;
@@ -6611,7 +6653,14 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		buffer_add_byte (buf, 0);
 		buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &exc, domain);
 	} else {
-		buffer_add_byte (buf, 1);
+		gboolean out_this = FALSE;
+		gboolean out_args = FALSE;
+
+		if ((invoke->flags & INVOKE_FLAG_RETURN_OUT_THIS) && CHECK_PROTOCOL_VERSION (2, 35))
+			out_this = TRUE;
+		if ((invoke->flags & INVOKE_FLAG_RETURN_OUT_ARGS) && CHECK_PROTOCOL_VERSION (2, 35))
+			out_args = TRUE;
+		buffer_add_byte (buf, 1 + (out_this ? 2 : 0) + (out_args ? 4 : 0));
 		if (sig->ret->type == MONO_TYPE_VOID) {
 			if (!strcmp (m->name, ".ctor") && !m->klass->valuetype) {
 				buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &this, domain);
@@ -6634,6 +6683,21 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			}
 		} else {
 			NOT_IMPLEMENTED;
+		}
+		if (out_this)
+			/* Return the new value of the receiver after the call */
+			buffer_add_value (buf, &m->klass->byval_arg, this_buf, domain);
+		if (out_args) {
+			buffer_add_int (buf, nargs);
+			for (i = 0; i < nargs; ++i) {
+				if (MONO_TYPE_IS_REFERENCE (sig->params [i]))
+					buffer_add_value (buf, sig->params [i], &args [i], domain);
+				else if (sig->params [i]->byref)
+					/* add_value () does an indirection */
+					buffer_add_value (buf, sig->params [i], &arg_buf [i], domain);
+				else
+					buffer_add_value (buf, sig->params [i], arg_buf [i], domain);
+			}
 		}
 	}
 

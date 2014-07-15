@@ -173,6 +173,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void BuildCSharpTargetBuild ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -254,6 +258,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void CreateProjectInstance ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -270,6 +278,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+#if NET_4_0
+		// BXC #20961
+		[Category ("NotWorking")]
+#endif
 		public void LoadCaseInsensitive ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>

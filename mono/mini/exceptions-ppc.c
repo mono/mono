@@ -550,7 +550,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 			mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 							   (guint8*)ji->code_start + ji->code_size,
-							   ip, regs, ppc_lr + 1,
+							   ip, NULL, regs, ppc_lr + 1,
 							   save_locations, MONO_MAX_IREGS, &cfa);
 
 			/* we substract 4, so that the IP points into the call instruction */
@@ -559,11 +559,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 			for (i = 0; i < MONO_SAVED_GREGS; ++i)
 				new_ctx->regs [i] = regs [ppc_r13 + i];
-		}
-
-		if (*lmf && (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->ebp)) {
-			/* remove any unused lmf */
-			*lmf = (*lmf)->previous_lmf;
 		}
 
 		return TRUE;
