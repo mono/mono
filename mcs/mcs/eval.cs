@@ -485,9 +485,10 @@ namespace Mono.CSharp
 		public bool Run (string statement)
 		{
 			object result;
+			Type result_type;
 			bool result_set;
 
-			return Evaluate (statement, out result, out result_set) == null;
+			return Evaluate (statement, out result, out result_type, out result_set) == null;
 		}
 
 		/// <summary>
@@ -503,9 +504,10 @@ namespace Mono.CSharp
 		public object Evaluate (string input)
 		{
 			object result;
+			Type result_type;
 			bool result_set;
 			
-			string r = Evaluate (input, out result, out result_set);
+			string r = Evaluate (input, out result, out result_type, out result_set);
 
 			if (r != null)
 				throw new ArgumentException ("Syntax error on input: partial input");
