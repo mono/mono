@@ -165,6 +165,10 @@ namespace Mono.Debugger.Soft
 			return EndInvokeMethodInternal (asyncResult);
 		}
 
+		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
+			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+		}
+
 #if NET_4_5
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
 			var tcs = new TaskCompletionSource<Value> ();
