@@ -1646,7 +1646,8 @@ namespace System {
 				case UriHostNameType.IPv6:
 					IPv6Address ipv6addr;
 					if (IPv6Address.TryParse (host, out ipv6addr)) {
-						host = "[" + ipv6addr.ToString (!IriParsing) + "]";
+						host = ipv6addr.ToString (!IriParsing).Split ('%') [0];
+						host = "[" + host + "]";
 						scope_id = ipv6addr.ScopeId;
 					}
 					break;
