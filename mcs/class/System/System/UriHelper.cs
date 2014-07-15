@@ -20,6 +20,7 @@ namespace System {
 			HasFragmentPercentage = 1 << 3,
 			UserEscaped = 1 << 4,
 			IPv6Host = 1 << 5,
+			NoSlashReplace = 1 << 6,
 		}
 
 		[Flags]
@@ -261,7 +262,8 @@ namespace System {
 				return cStr; //Keep original case
 			}
 
-			if (c == '\\' && component == UriComponents.Path) {
+			if ((formatFlags & FormatFlags.NoSlashReplace) == 0 &&
+				c == '\\' && component == UriComponents.Path) {
 				if (!IriParsing && uriFormat != UriFormat.UriEscaped &&
 					SchemeContains (scheme, UriSchemes.Http | UriSchemes.Https))
 					return "/";
