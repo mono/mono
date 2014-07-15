@@ -602,24 +602,29 @@ namespace System {
 				if (cachedLocalPath != null)
 					return cachedLocalPath;
 
+				string unescapedPath = UriHelper.FormatAbsolute (path, scheme,
+					UriComponents.Path, UriFormat.Unescaped, UriHelper.FormatFlags.NoSlashReplace);
+
+				if (path.StartsWith("/") && !unescapedPath.StartsWith("/"))
+					unescapedPath = "/" + unescapedPath;
+
 				if (IsLocalIdenticalToAbsolutePath ()) {
-					cachedLocalPath = Unescape (AbsolutePath);
+					cachedLocalPath = unescapedPath;
 					return cachedLocalPath;
 				}
 
 				if (!IsUnc) {
-					string p = Unescape (path);
 					bool windows = (path.Length > 3 && path [1] == ':' &&
 						(path [2] == '\\' || path [2] == '/'));
 
 					if (windows)
-						cachedLocalPath = p.Replace ('/', '\\');
+						cachedLocalPath = unescapedPath.Replace ('/', '\\');
 					else
-						cachedLocalPath = p;
+						cachedLocalPath = unescapedPath;
 				} else {
 					// support *nix and W32 styles
 					if (path.Length > 1 && path [1] == ':')
-						cachedLocalPath = Unescape (path.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+						cachedLocalPath = unescapedPath.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
 					// LAMESPEC: ok, now we cannot determine
 					// if such URI like "file://foo/bar" is
@@ -629,12 +634,12 @@ namespace System {
 						string h = host;
 						if (path.Length > 0) {
 							if ((path.Length > 1) || (path[0] != '/')) {
-								h += path.Replace ('/', '\\');
+								h += unescapedPath.Replace ('/', '\\');
 							}
 						}
-						cachedLocalPath = "\\\\" + Unescape (h);
+						cachedLocalPath = "\\\\" + h;
 					}  else
-						cachedLocalPath = Unescape (path);
+						cachedLocalPath = unescapedPath;
 				}
 				if (cachedLocalPath.Length == 0)
 					cachedLocalPath = Path.DirectorySeparatorChar.ToString ();
