@@ -31,10 +31,7 @@ struct _WorkerData {
 	void *major_collector_data;
 
 	SgenGrayQueue private_gray_queue; /* only read/written by worker thread */
-
-	mono_mutex_t stealable_stack_mutex;
-	volatile int stealable_stack_fill;
-	char *stealable_stack [STEALABLE_STACK_SIZE];
+	SgenSectionGrayQueue stealable_gray_queue; /* read/written by any worker thread */
 };
 
 typedef void (*JobFunc) (WorkerData *worker_data, void *job_data);
