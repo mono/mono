@@ -183,7 +183,9 @@ namespace Mono.CSharp
 
 		public bool NotifyEvaluatorOnStore {
 			get {
-				return Module.Evaluator != null && Module.Evaluator.ModificationListener != null;
+				return Module.Evaluator != null &&
+					Module.Evaluator.EvaluationListener != null &&
+					Module.Evaluator.NotifyAssignEvaluations;
 			}
 		}
 

@@ -24,32 +24,35 @@ using System.Linq;
 namespace Mono.CSharp
 {
 	/// <summary>
-	/// Experimental! Tracks updates (assigns) to variables.
+	/// Experimental! Tracks updates (assigns) to variables and evaluation results.
 	/// </summary>
-	public struct VariableModification
+	public struct Evaluation
 	{
 		/// <summary>
-		/// The name of the variable being updated.
+		/// The name of the variable being updated. Will only be non-null
+		/// for variable assignment expressions (e.g. var x = 1; x++; etc.)
 		/// </summary>
 		public string VariableName { get; internal set; }
 
 		/// <summary>
-		/// The location where the variable was defined.
+		/// The location where the variable was defined, if the
+		/// variable is being tracked (VariableName is not null).
 		/// </summary>
 		public Location VariableLocation { get; internal set; }
 
 		/// <summary>
-		/// The location where the variable was updated.
+		/// The location where evaluation occurred.
 		/// </summary>
-		public Location ModificationLocation { get; internal set; }
+		public Location EvaluationLocation { get; internal set; }
 
 		/// <summary>
-		/// The new value of the variable.
+		/// The current evaluated value.
 		/// </summary>
 		public object Value { get; internal set; }
 
 		/// <summary>
-		/// The type of the variable.
+		/// The type of the evaluated value. If null, the evaluation
+		/// did not result in a value (e.g. void).
 		/// </summary>
 		public Type ValueType { get; internal set; }
 	}
@@ -63,22 +66,18 @@ namespace Mono.CSharp
 		public string PartialInput { get; internal set; }
 
 		/// <summary>
-		/// The location where the result was set.
+		/// The resulting value of the last evaluation in the input stream.
+		/// For notification evaluated values as they occurr,
+		/// <see cref="Mono.CSharp.Evaluator.EvaluationListener"/>.
 		/// </summary>
-		public Location Location { get; internal set; }
+		public Evaluation Evaluation { get; internal set; }
 
 		/// <summary>
-		/// The value of the result statement. null may be a valid result
-		/// value. Check ValueType to ensure a result was set.
+		/// True if the evaluation resulted in a value. Implies PartialInput is null as well.
 		/// </summary>
-		public object Value { get; internal set; }
-
-		/// <summary>
-		/// The type of the value of the result statement. Will not be
-		/// null if a result was set. If null, no result is set, and
-		/// you should not use Value.
-		/// </summary>
-		public Type ValueType { get; internal set; }
+		public bool IsEvaluationSet {
+			get { return Evaluation.ValueType != null && PartialInput == null; }
+		}
 	}
 
 	/// <summary>
@@ -356,28 +355,35 @@ namespace Mono.CSharp
 		}
 
 		static MethodInfo listener_proxy_value;
-		internal void EmitValueChangedCallback (EmitContext ec, string name, TypeSpec type, Location varLoc, Location valLoc)
+		internal void EmitEvaluatedValue (EmitContext ec, string name, TypeSpec type, Location varLoc, Location valLoc, bool box = true)
 		{
 			if (listener_id == null)
-				listener_id = ListenerProxy.Register (ModificationListener);
+				listener_id = ListenerProxy.Register (EvaluationListener);
 
 			if (listener_proxy_value == null)
-				listener_proxy_value = typeof (ListenerProxy).GetMethod ("ValueChanged");
+				listener_proxy_value = typeof (ListenerProxy).GetMethod ("ValueEvaluated");
 
 #if STATIC
 			throw new NotSupportedException ();
 #else
 			// object value, int row, int col, string name, int listenerId
-			if (type.IsStructOrEnum)
+			if (type.IsStructOrEnum && box)
 				ec.Emit (OpCodes.Box, type);
 
 			ec.Emit (OpCodes.Ldtoken, type);
 			ec.Emit (OpCodes.Call, ec.Module.PredefinedMembers.TypeGetTypeFromHandle.Get ());
+
 			ec.EmitInt (varLoc.Row);
 			ec.EmitInt (varLoc.Column);
+
 			ec.EmitInt (valLoc.Row);
 			ec.EmitInt (valLoc.Column);
-			ec.Emit (OpCodes.Ldstr, name);
+
+			if (name == null)
+				ec.EmitNull ();
+			else
+				ec.Emit (OpCodes.Ldstr, name);
+
 			ec.EmitInt (listener_id.Value);
 			ec.Emit (OpCodes.Call, listener_proxy_value);
 #endif
@@ -408,18 +414,16 @@ namespace Mono.CSharp
 		[Obsolete ("Use EvaluateFull")]
 		public string Evaluate (string input, out object result, out bool result_set)
 		{
-			result = null;
-			result_set = false;
-
 			var fullResult = EvaluateFull (input);
+
+			result = null;
+			result_set = fullResult.IsEvaluationSet;
 
 			if (fullResult.PartialInput != null)
 				return fullResult.PartialInput;
 
-			if (fullResult.ValueType != null) {
-				result_set = true;
-				result = fullResult.Value;
-			}
+			if (result_set)
+				result = fullResult.Evaluation;
 
 			return null;
 		}
@@ -455,7 +459,6 @@ namespace Mono.CSharp
 				invoke_thread = System.Threading.Thread.CurrentThread;
 				invoking = true;
 				compiled (ref retval, ref rettype, ref row, ref column);
-				result.Location = new Location (null, row, column);
 			} catch (ThreadAbortException e){
 				Thread.ResetAbort ();
 				Console.WriteLine ("Interrupted!\n{0}", e);
@@ -472,10 +475,12 @@ namespace Mono.CSharp
 			// We use a reference to a compiler type, in this case
 			// Driver as a flag to indicate that this was a statement
 			//
-			if (!ReferenceEquals (retval, typeof (QuitValue))) {
-				result.Value = retval;
-				result.ValueType = rettype;
-			}
+			if (!ReferenceEquals (retval, typeof(QuitValue)))
+				result.Evaluation = new Evaluation {
+					Value = retval,
+					ValueType = rettype,
+					EvaluationLocation = new Location (null, row, column)
+				};
 
 			return result;
 		}
@@ -561,16 +566,24 @@ namespace Mono.CSharp
 			if (result.PartialInput != null)
 				throw new ArgumentException ("Syntax error on input: partial input");
 			
-			if (result.ValueType == null)
+			if (!result.IsEvaluationSet)
 				throw new ArgumentException ("The expression failed to resolve");
 
-			return result.Value;
+			return result.Evaluation.Value;
 		}
 
 		/// <summary>
-		/// Experimental!
+		/// Experimental! Invoked whenever a value is evaluated. Set
+		/// NotifyAssignEvaluations to receive more granular updates
+		/// when values are assigned to variables.
 		/// </summary>
-		public Action<VariableModification> ModificationListener { get; set; }
+		public Action<Evaluation> EvaluationListener { get; set; }
+
+		/// <summary>
+		/// Experimental! If set, any variable updates (assigns) will
+		/// cause EvaluationListener to be invoked.
+		/// </summary>
+		public bool NotifyAssignEvaluations { get; set; }
 
 		enum InputKind {
 			EOF,
@@ -1364,6 +1377,12 @@ namespace Mono.CSharp
 			ec.Emit (OpCodes.Ldarg_3);
 			ec.EmitInt (target.Location.Column);
 			ec.Emit (OpCodes.Stind_I4);
+
+			if (ec.Module.Evaluator != null && ec.Module.Evaluator.EvaluationListener != null) {
+				source.Emit (ec);
+				ec.Module.Evaluator.EmitEvaluatedValue (ec,
+					null, assignType, Location.Null, target.StartLocation, false);
+			}
 		}
 	}
 
@@ -1408,11 +1427,11 @@ namespace Mono.CSharp
 
 	static class ListenerProxy
 	{
-		static readonly Dictionary<int, Action<VariableModification>> listeners = new Dictionary<int, Action<VariableModification>> ();
+		static readonly Dictionary<int, Action<Evaluation>> listeners = new Dictionary<int, Action<Evaluation>> ();
 
 		static int counter;
 
-		public static int Register (Action<VariableModification> listener)
+		public static int Register (Action<Evaluation> listener)
 		{
 			lock (listeners) {
 				var id = counter++;
@@ -1428,18 +1447,19 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static void ValueChanged (object value, Type valueType, int varRow, int varCol, int valRow, int valCol, string name, int listenerId)
+		public static void ValueEvaluated (object value, Type valueType,
+			int varRow, int varCol, int valRow, int valCol, string name, int listenerId)
 		{
-			Action<VariableModification> action;
+			Action<Evaluation> action;
 			lock (listeners) {
 				if (!listeners.TryGetValue (listenerId, out action))
 					return;
 			}
 
-			action (new VariableModification {
+			action (new Evaluation {
 				VariableName = name,
 				VariableLocation = new Location (null, varRow, varCol),
-				ModificationLocation = new Location (null, valRow, valCol),
+				EvaluationLocation = new Location (null, valRow, valCol),
 				Value = value,
 				ValueType = valueType
 			});

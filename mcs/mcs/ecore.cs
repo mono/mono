@@ -6272,7 +6272,7 @@ namespace Mono.CSharp {
 				if (leave_copy)
 					ec.Emit (OpCodes.Dup);
 
-				ec.Module.Evaluator.EmitValueChangedCallback (ec, Name, type, loc, source.Location);
+				ec.Module.Evaluator.EmitEvaluatedValue (ec, Name, type, loc, source.Location);
 			}
 			
 			if (temp != null) {
