@@ -39,93 +39,92 @@ using System.Text;
 using System.Threading;
 
 namespace System.IO {
+	[Flags]
+	enum EventFlags : ushort {
+		Add         = 0x0001,
+		Delete      = 0x0002,
+		Enable      = 0x0004,
+		Disable     = 0x0008,
+		OneShot     = 0x0010,
+		Clear       = 0x0020,
+		Receipt     = 0x0040,
+		Dispatch    = 0x0080,
 
-        [Flags]
-        enum EventFlags : ushort {
-                Add         = 0x0001,
-                Delete      = 0x0002,
-                Enable      = 0x0004,
-                Disable     = 0x0008,
-                OneShot     = 0x0010,
-                Clear       = 0x0020,
-                Receipt     = 0x0040,
-                Dispatch    = 0x0080,
+		Flag0       = 0x1000,
+		Flag1       = 0x2000,
+		SystemFlags = unchecked (0xf000),
 
-                Flag0       = 0x1000,
-                Flag1       = 0x2000,
-                SystemFlags = unchecked (0xf000),
-                        
-                // Return values.
-                EOF         = 0x8000,
-                Error       = 0x4000,
-        }
+		// Return values.
+		EOF         = 0x8000,
+		Error       = 0x4000,
+	}
         
-        enum EventFilter : short {
-                Read = -1,
-                Write = -2,
-                Aio = -3,
-                Vnode = -4,
-                Proc = -5,
-                Signal = -6,
-                Timer = -7,
-                MachPort = -8,
-                FS = -9,
-                User = -10,
-                VM = -11
-        }
+	enum EventFilter : short {
+		Read     = -1,
+		Write    = -2,
+		Aio      = -3,
+		Vnode    = -4,
+		Proc     = -5,
+		Signal   = -6,
+		Timer    = -7,
+		MachPort = -8,
+		FS       = -9,
+		User     = -10,
+		VM       = -11
+	}
 
 	enum FilterFlags : uint {
-                ReadPoll          = EventFlags.Flag0,
-                ReadOutOfBand     = EventFlags.Flag1,
-                ReadLowWaterMark  = 0x00000001,
+		ReadPoll          = EventFlags.Flag0,
+		ReadOutOfBand     = EventFlags.Flag1,
+		ReadLowWaterMark  = 0x00000001,
 
-                WriteLowWaterMark = ReadLowWaterMark,
+		WriteLowWaterMark = ReadLowWaterMark,
 
-                NoteTrigger       = 0x01000000,
-                NoteFFNop         = 0x00000000,
-                NoteFFAnd         = 0x40000000,
-                NoteFFOr          = 0x80000000,
-                NoteFFCopy        = 0xc0000000,
-                NoteFFCtrlMask    = 0xc0000000,
-                NoteFFlagsMask    = 0x00ffffff,
-                                  
-                VNodeDelete       = 0x00000001,
-                VNodeWrite        = 0x00000002,
-                VNodeExtend       = 0x00000004,
-                VNodeAttrib       = 0x00000008,
-                VNodeLink         = 0x00000010,
-                VNodeRename       = 0x00000020,
-                VNodeRevoke       = 0x00000040,
-                VNodeNone         = 0x00000080,
-                                  
-                ProcExit          = 0x80000000,
-                ProcFork          = 0x40000000,
-                ProcExec          = 0x20000000,
-                ProcReap          = 0x10000000,
-                ProcSignal        = 0x08000000,
-                ProcExitStatus    = 0x04000000,
-                ProcResourceEnd   = 0x02000000,
+		NoteTrigger       = 0x01000000,
+		NoteFFNop         = 0x00000000,
+		NoteFFAnd         = 0x40000000,
+		NoteFFOr          = 0x80000000,
+		NoteFFCopy        = 0xc0000000,
+		NoteFFCtrlMask    = 0xc0000000,
+		NoteFFlagsMask    = 0x00ffffff,
 
-                // iOS only
-                ProcAppactive     = 0x00800000,
-                ProcAppBackground = 0x00400000,
-                ProcAppNonUI      = 0x00200000,
-                ProcAppInactive   = 0x00100000,
-                ProcAppAllStates  = 0x00f00000,
+		VNodeDelete       = 0x00000001,
+		VNodeWrite        = 0x00000002,
+		VNodeExtend       = 0x00000004,
+		VNodeAttrib       = 0x00000008,
+		VNodeLink         = 0x00000010,
+		VNodeRename       = 0x00000020,
+		VNodeRevoke       = 0x00000040,
+		VNodeNone         = 0x00000080,
 
-                // Masks
-                ProcPDataMask     = 0x000fffff,
-                ProcControlMask   = 0xfff00000,
+		ProcExit          = 0x80000000,
+		ProcFork          = 0x40000000,
+		ProcExec          = 0x20000000,
+		ProcReap          = 0x10000000,
+		ProcSignal        = 0x08000000,
+		ProcExitStatus    = 0x04000000,
+		ProcResourceEnd   = 0x02000000,
 
-                VMPressure        = 0x80000000,
-                VMPressureTerminate = 0x40000000,
-                VMPressureSuddenTerminate = 0x20000000,
-                VMError           = 0x10000000,
-                TimerSeconds      =    0x00000001,
-                TimerMicroSeconds =   0x00000002,
-                TimerNanoSeconds  =   0x00000004,
-                TimerAbsolute     =   0x00000008,
-        }
+		// iOS only
+		ProcAppactive     = 0x00800000,
+		ProcAppBackground = 0x00400000,
+		ProcAppNonUI      = 0x00200000,
+		ProcAppInactive   = 0x00100000,
+		ProcAppAllStates  = 0x00f00000,
+
+		// Masks
+		ProcPDataMask     = 0x000fffff,
+		ProcControlMask   = 0xfff00000,
+
+		VMPressure                = 0x80000000,
+		VMPressureTerminate       = 0x40000000,
+		VMPressureSuddenTerminate = 0x20000000,
+		VMError                   = 0x10000000,
+		TimerSeconds              = 0x00000001,
+		TimerMicroSeconds         = 0x00000002,
+		TimerNanoSeconds          = 0x00000004,
+		TimerAbsolute             = 0x00000008,
+	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	struct kevent : IDisposable {
@@ -161,15 +160,15 @@ namespace System.IO {
 	}
 
 	class KeventData {
-                public FileSystemWatcher FSW;
-                public string Path;
-                public string FileMask;
-                public bool IncludeSubdirs;
-                public bool Enabled;
-                public Hashtable DirEntries;
-                public kevent ev;
-                public int fd;
-                public bool IsDirectory;
+		public FileSystemWatcher FSW;
+		public string Path;
+		public string FileMask;
+		public bool IncludeSubdirs;
+		public bool Enabled;
+		public Hashtable DirEntries;
+		public kevent ev;
+		public int fd;
+		public bool IsDirectory;
 	}
 
 	class KeventWatcher : IFileWatcher
