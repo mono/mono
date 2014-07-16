@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.IO;
 using System.Net;
 using System.Text;
 
@@ -55,7 +56,9 @@ namespace System {
 		{
 			ParserState state = new ParserState (uri, kind);
 			
-			bool ok = ParseScheme (ref state);
+			bool ok = ParseFilePath (ref state);
+			if (ok)
+				ok = ParseScheme (ref state);
 			if (ok)
 			    ok = ParseAuthority (ref state);
 			if (ok)
@@ -75,6 +78,101 @@ namespace System {
 		{
 			return (('a' <= ch) && (ch <= 'z')) ||
 				   (('A' <= ch) && (ch <= 'Z'));
+		}
+
+		private static bool ParseFilePath (ref ParserState state)
+		{
+			bool ok = ParseWindowsFilePath (ref state);
+			if (ok)
+				ok = ParseWindowsUNC (ref state);
+			if (ok)
+				ok = ParseUnixFilePath (ref state);
+
+			return ok;
+		}
+
+		private static bool ParseWindowsFilePath (ref ParserState state)
+		{
+			var scheme = state.elements.scheme;
+
+			if (!string.IsNullOrEmpty (scheme) &&
+				 scheme != Uri.UriSchemeFile && UriHelper.IsKnownScheme (scheme))
+				return state.remaining.Length > 0;
+
+			string part = state.remaining;
+
+			if (part.Length < 2 || part [1] != ':')
+				return state.remaining.Length > 0;
+
+			if (!IsAlpha (part [0])) {
+				if (state.kind == UriKind.Absolute) {
+					state.error = "Invalid URI: The URI scheme is not valid.";
+					return false;
+				}
+				//isAbsoluteUri = false;
+				state.elements.path = part;
+				return false;
+			}
+
+			if (part.Length > 2 && part [2] != '\\' && part [2] != '/') {
+				state.error = "Relative file path is not allowed.";
+				return false;
+			}
+
+			if (string.IsNullOrEmpty (scheme)) {
+				state.elements.scheme = Uri.UriSchemeFile;
+				state.elements.delimiter = "://";
+				state.elements.path = "/";
+			}
+
+			state.elements.path += part.Replace ("\\", "/");
+
+			return false;
+		}
+
+		private static bool ParseWindowsUNC (ref ParserState state)
+		{
+			string part = state.remaining;
+
+			if (part.Length < 2 || part [0] != '\\' || part [1] != '\\')
+				return state.remaining.Length > 0;
+
+			state.elements.scheme = Uri.UriSchemeFile;
+			state.elements.delimiter = "://";
+			//state.elements.isUnc = true;
+
+			part = part.TrimStart (new char [] {'\\'});
+			int pos = part.IndexOf ('\\');
+			if (pos > 0) {
+				state.elements.path = part.Substring (pos);
+				state.elements.host = part.Substring (0, pos);
+			} else { // "\\\\server"
+				state.elements.host = part;
+				state.elements.path = String.Empty;
+			}
+			state.elements.path = state.elements.path.Replace ("\\", "/");
+
+			return false;
+		}
+
+		private static bool ParseUnixFilePath (ref ParserState state)
+		{
+			string part = state.remaining;
+
+			if (part.Length < 1 || part [0] != '/' || Path.DirectorySeparatorChar != '/')
+				return state.remaining.Length > 0;
+
+			state.elements.scheme = Uri.UriSchemeFile;
+			state.elements.delimiter = "://";
+			//state.elements.isUnixFilePath = true;
+
+			if (part.Length >= 2 && part [0] == '/' && part [1] == '/') {
+				part = part.TrimStart (new char [] {'/'});
+				state.elements.path = '/' + part;
+			} else
+				state.elements.path = part;
+
+			return false;
 		}
 		
 		// 3.1) scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
