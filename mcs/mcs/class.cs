@@ -553,7 +553,8 @@ namespace Mono.CSharp
 		public int AnonymousMethodsCounter;
 		public int MethodGroupsCounter;
 
-		static readonly string[] attribute_targets = new string[] { "type" };
+		static readonly string[] attribute_targets = new [] { "type" };
+		static readonly string[] attribute_targets_primary = new [] { "type", "method" };
 
 		/// <remarks>
 		///  The pending methods that need to be implemented
@@ -744,7 +745,7 @@ namespace Mono.CSharp
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return attribute_targets;
+				return PrimaryConstructorParameters != null ? attribute_targets_primary : attribute_targets;
 			}
 		}
 
@@ -816,9 +817,6 @@ namespace Mono.CSharp
 			if (symbol is TypeParameter) {
 				Report.Error (692, symbol.Location,
 					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
-			} else if (symbol is PrimaryConstructorField && mc is TypeParameter) {
-				Report.Error (8038, symbol.Location, "Primary constructor of type `{0}' has parameter of same name as type parameter `{1}'",
-					symbol.Parent.GetSignatureForError (), symbol.GetSignatureForError ());
 			} else {
 				Report.Error (102, symbol.Location,
 					"The type `{0}' already contains a definition for `{1}'",
@@ -897,6 +895,21 @@ namespace Mono.CSharp
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
+			if (a.Target == AttributeTargets.Method) {
+				foreach (var m in members) {
+					var c = m as Constructor;
+					if (c == null)
+						continue;
+
+					if (c.IsPrimaryConstructor) {
+						c.ApplyAttributeBuilder (a, ctor, cdata, pa);
+						return;
+					}
+				}
+
+				throw new InternalErrorException ();
+			}
+
 			if (has_normal_indexers && a.Type == pa.DefaultMember) {
 				Report.Error (646, a.Location, "Cannot specify the `DefaultMember' attribute on type containing an indexer");
 				return;
@@ -2561,6 +2574,8 @@ namespace Mono.CSharp
 		{
 		}
 
+		public ToplevelBlock PrimaryConstructorBlock { get; set; }
+
 		protected override TypeAttributes TypeAttr {
 			get {
 				TypeAttributes ta = base.TypeAttr;
@@ -2589,12 +2604,6 @@ namespace Mono.CSharp
 					return;
 				}
 
-				if (symbol is PrimaryConstructorField) {
-					Report.Error (8039, symbol.Location, "Primary constructor of type `{0}' has parameter of same name as containing type",
-						symbol.Parent.GetSignatureForError ());
-					return;
-				}
-			
 				InterfaceMemberBase imb = symbol as InterfaceMemberBase;
 				if (imb == null || !imb.IsExplicitImpl) {
 					Report.SymbolRelatedToPreviousError (this);
@@ -2655,9 +2664,13 @@ namespace Mono.CSharp
 				c.IsPrimaryConstructor = true;
 			
 			AddConstructor (c, true);
-			c.Block = new ToplevelBlock (Compiler, c.ParameterInfo, Location) {
-				IsCompilerGenerated = true
-			};
+			if (PrimaryConstructorBlock == null) {
+				c.Block = new ToplevelBlock (Compiler, c.ParameterInfo, Location) {
+					IsCompilerGenerated = true
+				};
+			} else {
+				c.Block = PrimaryConstructorBlock;
+			}
 
 			return c;
 		}
@@ -2668,14 +2681,20 @@ namespace Mono.CSharp
 
 			if (PrimaryConstructorParameters != null) {
 				foreach (Parameter p in PrimaryConstructorParameters.FixedParameters) {
-					if ((p.ModFlags & Parameter.Modifier.RefOutMask) != 0)
-						continue;
+					if (p.Name == MemberName.Name) {
+						Report.Error (8039, p.Location, "Primary constructor of type `{0}' has parameter of same name as containing type",
+							GetSignatureForError ());
+					}
 
-					var f = new PrimaryConstructorField (this, p);
-					AddField (f);
-
-					generated_primary_constructor.Block.AddStatement (
-						new StatementExpression (new PrimaryConstructorAssign (f, p), p.Location));
+					if (CurrentTypeParameters != null) {
+						for (int i = 0; i < CurrentTypeParameters.Count; ++i) {
+							var tp = CurrentTypeParameters [i];
+							if (p.Name == tp.Name) {
+								Report.Error (8038, p.Location, "Primary constructor of type `{0}' has parameter of same name as type parameter `{1}'",
+									GetSignatureForError (), p.GetSignatureForError ());
+							}
+						}
+					}
 				}
 			}
 

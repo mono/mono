@@ -923,6 +923,7 @@ class_member_declaration
 	| indexer_declaration
 	| operator_declaration
 	| constructor_declaration
+	| primary_constructor_body
 	| destructor_declaration
 	| type_declaration
 	| attributes_without_members
@@ -934,6 +935,31 @@ class_member_declaration
 		$$ = null;
 		lexer.parsing_generic_declaration = false;
 	  }	
+	;
+
+primary_constructor_body
+	: OPEN_BRACE
+	  {
+		current_local_parameters = current_type.PrimaryConstructorParameters;
+		if (current_local_parameters == null) {
+			report.Error (9010, GetLocation ($1), "Primary constructor body is not allowed");
+			current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+		}
+
+		++lexer.parsing_block;
+		start_block (GetLocation ($1));
+	  }
+	  opt_statement_list block_end
+	  {
+		current_local_parameters = null;
+		var t = ((ClassOrStruct)current_type);
+		var b = (ToplevelBlock) $4;
+		if (t.PrimaryConstructorBlock != null) {
+			report.Error (8041, b.StartLocation, "Primary constructor already has a body");
+		} else {
+			t.PrimaryConstructorBlock = b;
+		}
+	  }
 	;
 
 struct_declaration
