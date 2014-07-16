@@ -952,12 +952,14 @@ primary_constructor_body
 	  opt_statement_list block_end
 	  {
 		current_local_parameters = null;
-		var t = ((ClassOrStruct)current_type);
-		var b = (ToplevelBlock) $4;
-		if (t.PrimaryConstructorBlock != null) {
-			report.Error (8041, b.StartLocation, "Primary constructor already has a body");
-		} else {
-			t.PrimaryConstructorBlock = b;
+		var t = current_type as ClassOrStruct;
+		if (t != null) {
+			var b = (ToplevelBlock) $4;
+			if (t.PrimaryConstructorBlock != null) {
+				report.Error (8041, b.StartLocation, "Primary constructor already has a body");
+			} else {
+				t.PrimaryConstructorBlock = b;
+			}
 		}
 	  }
 	;
