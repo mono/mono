@@ -286,6 +286,16 @@ namespace System {
 		private static bool ParseHost (ref ParserState state)
 		{
 			string part = state.remaining;
+
+			if (state.elements.scheme == Uri.UriSchemeFile && part.Length >= 2 &&
+				(part [0] == '\\' || part [0] == '/') && part [1] == part [0]) {
+				part = part.TrimStart (part [0]);
+				state.remaining = part;
+			}
+
+			if (!ParseWindowsFilePath (ref state))
+				return false;
+
 			StringBuilder sb = new StringBuilder ();
 			
 			var tmpHost = "";
@@ -308,7 +318,9 @@ namespace System {
 			if (!string.IsNullOrEmpty (tmpHost)) {
 				IPv6Address ipv6addr;
 				if (IPv6Address.TryParse (sb.ToString (), out ipv6addr)) {
-					state.elements.host = "[" + ipv6addr.ToString (!Uri.IriParsing) + "]";
+					var ipStr = ipv6addr.ToString (!Uri.IriParsing).Split ('%') [0];
+					state.elements.host = "[" + ipStr + "]";
+					//state.elements.scopeId = ipv6addr.ScopeId;
 
 					state.remaining = part.Substring (sb.Length);
 					return state.remaining.Length > 0;
