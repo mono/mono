@@ -392,6 +392,9 @@ namespace System {
 		private static bool ParseQuery (ref ParserState state)
 		{
 			string part = state.remaining;
+
+			if (!UriHelper.SupportsQuery (state.elements.scheme))
+				return part.Length > 0;
 			
 			if (part.Length == 0 || part [0] != '?')
 				return part.Length > 0;
