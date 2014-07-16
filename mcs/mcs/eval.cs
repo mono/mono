@@ -208,6 +208,11 @@ namespace Mono.CSharp
 		public bool Terse = true;
 
 		/// <summary>
+		/// If not null, generated assemblies will be written to the specified directory path.
+		/// </summary>
+		public string AssemblySavePath { get; set; }
+
+		/// <summary>
 		///   The base class for the classes that host the user generated code
 		/// </summary>
 		/// <remarks>
@@ -766,9 +771,13 @@ namespace Mono.CSharp
 			AssemblyDefinitionDynamic assembly;
 			AssemblyBuilderAccess access;
 
-			if (Environment.GetEnvironmentVariable ("SAVE") != null) {
+			if (AssemblySavePath != null || Environment.GetEnvironmentVariable ("SAVE") != null) {
+				var path = current_debug_name;
+				if (AssemblySavePath != null)
+					path = Path.Combine (AssemblySavePath, path);
+
 				access = AssemblyBuilderAccess.RunAndSave;
-				assembly = new AssemblyDefinitionDynamic (module, current_debug_name, current_debug_name);
+				assembly = new AssemblyDefinitionDynamic (module, current_debug_name, path);
 				assembly.Importer = importer;
 			} else {
 #if NET_4_0
