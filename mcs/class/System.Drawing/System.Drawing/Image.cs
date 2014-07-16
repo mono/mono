@@ -10,7 +10,7 @@
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
-// Copyright (C) 2013 Kristof Ralovich
+// Copyright (C) 2013 Kristof Ralovich, changes are available under the terms of the MIT X11 license
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
