@@ -34,23 +34,26 @@ namespace System {
 	
 	internal class ParserState
 	{
-		public ParserState (string uri)
+		public ParserState (string uri, UriKind kind)
 		{
 			remaining = uri;
+			this.kind = kind;
 			elements  = new UriElements ();
 		}
 		
 		public string remaining;
+		public UriKind kind;
 		public UriElements elements;
+		public string error;
 	}
 	
 	// Parse Uri components (scheme, userinfo, host, query, fragment)
 	// http://www.ietf.org/rfc/rfc3986.txt
 	internal static class UriParseComponents
 	{
-		public static UriElements ParseComponents (string uri)
+		public static UriElements ParseComponents (string uri, UriKind kind)
 		{
-			ParserState state = new ParserState (uri);
+			ParserState state = new ParserState (uri, kind);
 			
 			bool ok = ParseScheme (ref state);
 			if (ok)
@@ -61,6 +64,9 @@ namespace System {
 			    ok = ParseQuery (ref state);
 			if (ok)
 			    ParseFragment (ref state);
+
+			if (!string.IsNullOrEmpty (state.error))
+				throw new UriFormatException (state.error);
 			
 			return state.elements;
 		}
