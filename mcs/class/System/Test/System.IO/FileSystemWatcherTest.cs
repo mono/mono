@@ -11,40 +11,12 @@
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Threading;
 
 namespace MonoTests.System.IO
 {
 	[TestFixture]
 	public class FileSystemWatcherTest
 	{
-		string base_path;
-		string path_a;
-
-		FileSystemWatcher SetupWatcher ()
-		{
-			var fsw = new FileSystemWatcher ();
-			fsw.Path = base_path;
-			fsw.IncludeSubdirectories = true;
-			fsw.EnableRaisingEvents = true;
-
-			return fsw;
-		}
-
-		[SetUp]
-		public void Setup ()
-		{
-			base_path = Path.GetTempPath ();
-			path_a = Path.Combine (base_path, "a.txt");
-		}
-
-		[TearDown]
-		public void TearDown ()
-		{
-			if (File.Exists (path_a))
-				File.Delete (path_a);
-		}
-
 		[Test]
 		public void CheckDefaults ()
 		{
@@ -110,25 +82,6 @@ namespace MonoTests.System.IO
 		{
 			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), "*");
 			fw.Path = "*";
-		}
-
-		[Test]
-		public void TestWatchPathForFileCreation ()
-		{
-			bool created = false;
-			var fsw = SetupWatcher ();
-
-			fsw.Created += (object sender, FileSystemEventArgs e) => {
-				created = true;
-			};
-
-			Assert.IsFalse (created);
-
-			File.WriteAllText (path_a, "this should create the file");
-
-			Thread.Sleep (20);
-
-			Assert.IsTrue (created);
 		}
 	}
 }
