@@ -2795,17 +2795,6 @@ namespace Mono.CSharp {
 
 								ct = ct.DeclaringType;
 							} while (ct != null);
-						} else {
-							var cos = rc.CurrentMemberDefinition.Parent as ClassOrStruct;
-							if (cos != null && cos.PrimaryConstructorParameters != null) {
-								foreach (var p in cos.PrimaryConstructorParameters.FixedParameters) {
-									if (p.Name == Name) {
-										rc.Report.Error (9007, loc, "Primary constructor parameter `{0}' is not available in this context when using ref or out modifier",
-											Name);
-										return null;
-									}
-								}
-							}
 						}
 
 						if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {

@@ -67840,7 +67840,7 @@
   <test name="test-primary-ctor-01.cs">
     <type name="Simple">
       <method name="Int32 get_Property()" attrs="2177">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>89</size>
@@ -67854,38 +67854,41 @@
         <size>8</size>
       </method>
       <method name="System.Decimal get_Property()" attrs="2179">
-        <size>15</size>
+        <size>14</size>
       </method>
     </type>
   </test>
   <test name="test-primary-ctor-02.cs">
     <type name="Part">
       <method name="Int32 get_Property()" attrs="2177">
-        <size>22</size>
+        <size>14</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>41</size>
       </method>
       <method name="Void .ctor(String)" attrs="6278">
-        <size>56</size>
+        <size>9</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>21</size>
+        <size>20</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>7</size>
       </method>
     </type>
   </test>
   <test name="test-primary-ctor-03.cs">
     <type name="D">
       <method name="Void .ctor(String)" attrs="6278">
-        <size>15</size>
+        <size>8</size>
       </method>
     </type>
     <type name="Base">
       <method name="System.String get_Prop()" attrs="2182">
-        <size>20</size>
+        <size>14</size>
       </method>
       <method name="Void .ctor(Object)" attrs="6276">
-        <size>14</size>
+        <size>19</size>
       </method>
     </type>
     <type name="X">
@@ -67900,7 +67903,7 @@
   <test name="test-primary-ctor-04.cs">
     <type name="Derived">
       <method name="Void .ctor(Int32, Byte&amp;, Int32&amp;)" attrs="6278">
-        <size>31</size>
+        <size>24</size>
       </method>
     </type>
     <type name="Base">
@@ -67925,10 +67928,10 @@
     </type>
     <type name="X">
       <method name="Int32 get_P()" attrs="2182">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>66</size>
+        <size>63</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
         <size>21</size>
@@ -67962,12 +67965,32 @@
         <size>2</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>15</size>
+        <size>8</size>
       </method>
     </type>
     <type name="X">
       <method name="Int32 Main()" attrs="150">
         <size>69</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-primary-ctor-08.cs">
+    <type name="S">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>62</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
