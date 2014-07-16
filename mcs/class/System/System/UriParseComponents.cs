@@ -195,29 +195,40 @@ namespace System {
 				sb.Append (ch);
 			}
 			
-			if (index + 1 <= part.Length && part [index] == ':') {
-				state.elements.scheme = sb.ToString ().ToLower ();
-				state.remaining = part.Substring (index + 1);
+			if (index >= part.Length || part [index] != ':') {
+				state.error = "Invalid URI: The format of the URI could not be determined.";
+				return false;
+			}
+
+			state.elements.scheme = sb.ToString ().ToLower ();
+			state.remaining = part.Substring (index);
+
+			return ParseDelimiter (ref state);
+		}
+
+		private static bool ParseDelimiter (ref ParserState state)
+		{
+			var delimiter = Uri.GetSchemeDelimiter (state.elements.scheme);
+
+			if (!state.remaining.StartsWith (delimiter)) {
+				if (UriHelper.IsKnownScheme (state.elements.scheme)) {
+					state.error = "Invalid URI: The Authority/Host could not be parsed.";
+					return false;
+				}
+
+				delimiter = ":";
 			}
 				
+			state.elements.delimiter = delimiter;
+
+			state.remaining = state.remaining.Substring (delimiter.Length);
+
 			return state.remaining.Length > 0;
 		}
 		
 		private static bool ParseAuthority (ref ParserState state)
 		{
 			string part = state.remaining;
-			
-			state.elements.delimiter = Uri.GetSchemeDelimiter (state.elements.scheme);
-
-			// : was already consumed in ParseScheme
-			if (!part.StartsWith (state.elements.delimiter.Substring (1))) {
-				if (!UriHelper.IsKnownScheme (state.elements.scheme))
-					state.elements.delimiter = ":";
-
-				return part.Length > 0;
-			}
-
-			state.remaining = part.Substring (state.elements.delimiter.Length-1);
 			
 			bool ok = ParseUser (ref state);
 			if (ok)
