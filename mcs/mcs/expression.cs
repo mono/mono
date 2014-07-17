@@ -1146,7 +1146,7 @@ namespace Mono.CSharp
 		{
 			expr = expr.Resolve (ec);
 			
-			if (expr == null)
+			if (expr == null || expr.Type == InternalType.ErrorType)
 				return null;
 
 			if (expr.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
