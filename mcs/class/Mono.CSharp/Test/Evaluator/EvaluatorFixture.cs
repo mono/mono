@@ -30,24 +30,18 @@ using NUnit.Framework;
 using Mono.CSharp;
 
 namespace MonoTests.EvaluatorTest
- {
- 	public class EvaluatorFixture
+{
+	public class EvaluatorFixture
 	{
-		Evaluator evaluator;
-		protected CompilerSettings settings;
+		protected Evaluator Evaluator { get; set; }
+		protected CompilerSettings Settings { get; set; }
 
- 		[SetUp]
- 		public void Setup ()
- 		{
-			settings = new CompilerSettings ();
-			var ctx = new CompilerContext (settings, new AssertReportPrinter ());
-			evaluator = new Evaluator (ctx);
+		[SetUp]
+		public virtual void Setup ()
+		{
+			Settings = new CompilerSettings ();
+			var ctx = new CompilerContext (Settings, new AssertReportPrinter ());
+			Evaluator = new Evaluator (ctx);
 		}
-
-		public Evaluator Evaluator {
-			get {
-				return evaluator;
-			}
- 		}
  	}
- }
+}

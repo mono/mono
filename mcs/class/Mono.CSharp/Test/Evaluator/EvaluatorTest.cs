@@ -36,7 +36,7 @@ namespace MonoTests.EvaluatorTest
 		[Test]
  		public void SameSettings ()
  		{
-			var ctx = new CompilerContext (settings, new AssertReportPrinter ());
+			var ctx = new CompilerContext (Settings, new AssertReportPrinter ());
 			var evaluator2 = new Evaluator (ctx);
 			evaluator2.Run ("int i = 0;");
 		}
