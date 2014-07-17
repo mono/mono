@@ -613,7 +613,7 @@ namespace Mono.Data.Sqlite
     }
 
     internal override long GetBytes(SqliteStatement stmt, int index, int nDataOffset, byte[] bDest, int nStart, int nLength)
-	{
+    {
       IntPtr ptr;
       int nlen;
       int nCopied = nLength;
