@@ -152,7 +152,7 @@ namespace System {
 				string path = elements.path;
 				if ((components & UriComponents.PathAndQuery) != 0 &&
 					(path.Length == 0 || !path.StartsWith ("/")) &&
-					scheme != Uri.UriSchemeNews && UriHelper.IsKnownScheme(scheme))
+					elements.delimiter == Uri.SchemeDelimiter)
 					sb.Append ("/");
 				sb.Append (UriHelper.FormatAbsolute (path, scheme, UriComponents.Path, format, formatFlags));
 			}
