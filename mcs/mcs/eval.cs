@@ -1360,6 +1360,10 @@ namespace Mono.CSharp
 
 			base.EmitStatement(ec);
 
+#if STATIC
+			throw new NotSupportedException ();
+#else
+
 			var assignType = source.Type;
 			var boxed = source as BoxedCast;
 			if (boxed != null)
@@ -1383,6 +1387,7 @@ namespace Mono.CSharp
 				ec.Module.Evaluator.EmitEvaluatedValue (ec,
 					null, assignType, Location.Null, target.StartLocation, false);
 			}
+#endif
 		}
 	}
 
