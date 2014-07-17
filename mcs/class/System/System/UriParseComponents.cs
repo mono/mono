@@ -54,6 +54,17 @@ namespace System {
 	{
 		public static UriElements ParseComponents (string uri, UriKind kind)
 		{
+			UriElements elements;
+			string error;
+
+			if (!TryParseComponents (uri, kind, out elements, out error))
+				throw new UriFormatException (error);
+
+			return elements;
+		}
+
+		public static bool TryParseComponents (string uri, UriKind kind, out UriElements elements, out string error)
+		{
 			ParserState state = new ParserState (uri, kind);
 			
 			bool ok = ParseFilePath (ref state);
@@ -68,11 +79,17 @@ namespace System {
 			if (ok)
 			    ParseFragment (ref state);
 
-			if (!string.IsNullOrEmpty (state.error))
-				throw new UriFormatException (state.error);
+			if (!string.IsNullOrEmpty (state.error)) {
+				elements = null;
+				error = state.error;
+				return false;
+			}
 			
-			return state.elements;
+			elements = state.elements;
+			error = null;
+			return true;
 		}
+
 				// ALPHA
 		private static bool IsAlpha (char ch)
 		{
