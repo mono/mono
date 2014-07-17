@@ -276,7 +276,7 @@ namespace MonoTests.System.Threading.Tasks
 					tasks[i] = Task.Factory.StartNew (delegate { Thread.Sleep (0); });
 				}
 
-				Assert.IsTrue (Task.WaitAll (tasks, 2000));
+				Assert.IsTrue (Task.WaitAll (tasks, 5000));
 			}
 		}
 
