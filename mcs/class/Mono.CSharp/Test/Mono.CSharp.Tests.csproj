@@ -51,6 +51,7 @@
     <Compile Include="AssertReportPrinter.cs" />
     <Compile Include="Evaluator\BuildinCommands.cs" />
     <Compile Include="Evaluator\CompletionTest.cs" />
+    <Compile Include="Evaluator\EvaluatedValues.cs" />
     <Compile Include="Evaluator\EvaluatorFixture.cs" />
     <Compile Include="Evaluator\EvaluatorTest.cs" />
     <Compile Include="Evaluator\ExpressionsTest.cs" />
