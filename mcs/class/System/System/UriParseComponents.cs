@@ -217,7 +217,7 @@ namespace System {
 				return false;
 			}
 
-			state.elements.scheme = sb.ToString ().ToLower ();
+			state.elements.scheme = sb.ToString ().ToLowerInvariant ();
 			state.remaining = part.Substring (index);
 
 			return ParseDelimiter (ref state);
@@ -346,7 +346,7 @@ namespace System {
 			} else
 				state.elements.host = sb.ToString ();
 
-			state.elements.host = state.elements.host.ToLower ();
+			state.elements.host = state.elements.host.ToLowerInvariant ();
 
 			state.remaining = part.Substring (state.elements.host.Length);
 				
