@@ -91,11 +91,7 @@ namespace System {
 		private string cachedLocalPath;
 		private int cachedHashCode;
 		
-#if NET_4_5
-		private static volatile bool s_IriParsing = true;
-#else
-		private static volatile bool s_IriParsing = false;
-#endif
+		private static bool s_IriParsing;
 
 		public static bool IriParsing {
 			get { return s_IriParsing; }
@@ -146,6 +142,12 @@ namespace System {
 
 		static Uri()
 		{
+#if NET_4_5
+			IriParsing = true;
+#else
+			IriParsing = false;
+#endif
+
 			var iriparsingVar = Environment.GetEnvironmentVariable ("MONO_URI_IRIPARSING");
 			if (iriparsingVar == "true")
 				IriParsing = true;
