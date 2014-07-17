@@ -86,7 +86,21 @@ namespace Mono.Debugger.Soft
 		}
 
 		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
+			var result = ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			var outThis = result.OutThis as StructMirror;
+			if (outThis != null) {
+				SetFields (outThis.Fields);
+			}
+			return result.Result;
+		}
+
+		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
+			var result = ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			var outThis = result.OutThis as StructMirror;
+			if (outThis != null) {
+				SetFields (outThis.Fields);
+			}
+			return result;
 		}
 
 #if NET_4_5

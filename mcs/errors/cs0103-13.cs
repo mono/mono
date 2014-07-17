@@ -1,4 +1,4 @@
-// CS9006: An object reference is required to access primary constructor parameter `value'
+// CS0103: The name `value' does not exist in the current context
 // Line: 8
 
 class X (double value)
