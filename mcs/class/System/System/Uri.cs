@@ -2151,14 +2151,12 @@ namespace System {
 		//
 		static bool NeedToEscapeUriChar (char b)
 		{
-			if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '&' && b <= ';'))
-				return false;
-
-			if ("!#$=?@_~".IndexOf(b) != -1)
+			if ((b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '&' && b <= ';') ||
+				b == '!' || b == '#' || b == '$' || b == '=' || b == '?' || b == '@' || b == '_' || b == '~')
 				return false;
 
 #if NET_4_0
-			if ("[]".IndexOf(b) != -1)
+			if (b == '[' || b == ']')
 				return !IriParsing;
 #endif
 			return true;
