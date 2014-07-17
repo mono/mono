@@ -93,7 +93,7 @@ namespace System {
 		
 		private static bool s_IriParsing;
 
-		public static bool IriParsing {
+		internal static bool IriParsing {
 			get { return s_IriParsing; }
 			set { s_IriParsing = value; }
 		}
