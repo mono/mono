@@ -254,8 +254,9 @@ namespace System {
 			if (!isEscaped && !userEscaped && NeedToEscape (c, scheme, component, uriKind, uriFormat, formatFlags))
 				return HexEscapeMultiByte (c);
 
-			if (isEscaped && (userEscaped || !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))) {
-				if (IriParsing && ("<>^{|}".Contains(""+c) || c > 0x7F) &&
+			if (isEscaped && !NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags)) {
+				if (IriParsing &&
+					(c == '<' || c == '>' || c == '^' || c == '{' || c == '|' || c ==  '}' || c > 0x7F) &&
 					(formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0)
 					return HexEscapeMultiByte (c); //Upper case escape
 
@@ -283,8 +284,6 @@ namespace System {
 		{
 			if ((formatFlags & FormatFlags.IPv6Host) != 0)
 				return false;
-
-			string cStr = c.ToString (CultureInfo.InvariantCulture);
 
 			if (uriFormat == UriFormat.Unescaped)
 				return true;
@@ -335,7 +334,7 @@ namespace System {
 				if (uriKind == UriKind.Relative)
 					return false;
 
-				if ("$&+,;=@".Contains (cStr))
+				if (c == '$' || c == '&' || c == '+' || c == ',' || c == ';' || c == '=' || c == '@')
 					return true;
 
 				if (c < 0x20 || c == 0x7f)
@@ -343,14 +342,15 @@ namespace System {
 			}
 
 			if (uriFormat == UriFormat.SafeUnescaped || uriFormat == ToStringUnescape) {
-				if ("-._~".Contains (cStr))
+				if (c == '-' || c == '.' || c == '_' || c == '~')
 					return true;
 
-				if (" !\"'()*<>^`{}|".Contains (cStr))
+				if (c == ' ' || c == '!' || c == '"' || c == '\'' || c == '(' || c == ')' || c == '*' ||
+					c == '<' || c == '>' || c == '^' || c == '`' || c == '{' || c == '}' || c == '|')
 					return uriKind != UriKind.Relative ||
 						(IriParsing && (formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0);
 
-				if (":[]".Contains (cStr))
+				if (c == ':' || c == '[' || c == ']')
 					return uriKind != UriKind.Relative;
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
@@ -364,7 +364,7 @@ namespace System {
 
 			if (uriFormat == UriFormat.UriEscaped) {
 				if (!IriParsing) {
-					if (".".Contains (cStr)) {
+					if (c == '.') {
 						if (SchemeContains (scheme, UriSchemes.File))
 							return component != UriComponents.Fragment;
 
@@ -375,11 +375,12 @@ namespace System {
 					return false;
 				}
 
-				if ("-._~".Contains (cStr))
+				if (c == '-' || c == '.' || c == '_' || c == '~')
 					return true;
 				
 				if ((formatFlags & FormatFlags.HasUriCharactersToNormalize) != 0 &&
-					"!'()*:[]".Contains (cStr))
+					(c == '!' || c == '\'' || c == '(' || c == ')' || c == '*' ||
+					c == ':' || c == '[' || c == ']'))
 					return true;
 
 				if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
@@ -396,8 +397,6 @@ namespace System {
 		{
 			if ((formatFlags & FormatFlags.IPv6Host) != 0)
 				return false;
-
-			string cStr = c.ToString (CultureInfo.InvariantCulture);
 
 			if (c == '?') {
 				if (uriFormat == UriFormat.Unescaped)
@@ -431,7 +430,7 @@ namespace System {
 			}
 
 			if (uriFormat == UriFormat.SafeUnescaped || uriFormat == ToStringUnescape) {
-				if ("%".Contains (cStr))
+				if (c == '%')
 					return uriKind != UriKind.Relative;
 			}
 
@@ -444,10 +443,11 @@ namespace System {
 				if (c < 0x20 || c >= 0x7F)
 					return component != UriComponents.Host;
 
-				if (" \"%<>^`{}|".Contains (cStr))
+				if (c == ' ' || c == '"' || c == '%' || c == '<' || c == '>' || c == '^' ||
+					c == '`' || c == '{' || c == '}' || c == '|')
 					return true;
 
-				if ("[]".Contains (cStr))
+				if (c == '[' || c == ']')
 					return !IriParsing;
 
 				if (c == '\\') {
