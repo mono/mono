@@ -33,7 +33,7 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
 #endif
 
@@ -43,7 +43,7 @@ namespace System.Xml.Schema
 namespace Mono.Xml.Schema
 #endif
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 #if !INCLUDE_MONO_XML_SCHEMA
@@ -65,7 +65,7 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected XmlSchemaValidationException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -100,7 +100,7 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[SecurityPermission (SecurityAction.LinkDemand,
 			Flags=SecurityPermissionFlag.SerializationFormatter)]
 		public override void GetObjectData (

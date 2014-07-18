@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 using System.Data.Common;
 
 namespace System.Data {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.ForeignKeyConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
@@ -101,7 +101,7 @@ namespace System.Data {
 		}
 
 		//special case
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public ForeignKeyConstraint(string constraintName, string parentTableName, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule) 
@@ -177,7 +177,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
@@ -344,7 +344,7 @@ namespace System.Data {
 		
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -356,7 +356,7 @@ namespace System.Data {
 			set { _acceptRejectRule = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[ReadOnly (true)]
 #endif
@@ -367,7 +367,7 @@ namespace System.Data {
 			get { return _childColumns; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -379,7 +379,7 @@ namespace System.Data {
 			set { _deleteRule = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -391,7 +391,7 @@ namespace System.Data {
 			set { _updateRule = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]	
 		[ReadOnly (true)]
 #endif
@@ -402,7 +402,7 @@ namespace System.Data {
 			get { return _parentColumns; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]	
 		[ReadOnly (true)]
 #endif
@@ -419,7 +419,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[ReadOnly (true)]
 #endif

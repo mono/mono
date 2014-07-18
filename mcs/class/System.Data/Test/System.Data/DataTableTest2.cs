@@ -31,32 +31,21 @@ using System.Collections;
 using System.Data;
 using System.Globalization;
 using System.Collections.Generic;
-
 using MonoTests.System.Data.Utils;
-
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
+using ArrayList = System.Collections.Generic.List<System.Object>;
+#endif
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-using ArrayList = System.Collections.Generic.List<System.Object>;
-using System.Linq;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-using ArrayList = System.Collections.Generic.List<System.Object>;
-using System.Linq;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace MonoTests_System.Data
 {
@@ -1482,7 +1471,7 @@ namespace MonoTests_System.Data
 
 		private DataRow [] GetResultRows (DataTable dt, DataRowState State)
 		{
-			ArrayList al = new ArrayList ();
+			List<DataRow> al = new List<DataRow> ();
 			DataRowVersion drVer = DataRowVersion.Current;
 
 			//From MSDN -	The row the default version for the current DataRowState.
@@ -1503,12 +1492,8 @@ namespace MonoTests_System.Data
 				if (dr.HasVersion(drVer) && ((int)dr["ParentId", drVer] == 1) && ((dr.RowState & State) > 0))
 					al.Add(dr);
 			}
-#if !WINDOWS_PHONE && !NETFX_CORE
-			DataRow[] result = (DataRow[])al.ToArray((typeof(DataRow)));
-#else
-			DataRow[] result = al.Cast<DataRow>().ToArray();
-#endif
-			return result;
+
+			return al.ToArray ();
 		}
 
 		[Test]

@@ -36,7 +36,7 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 #if NET_2_0
 	[TypeConverterAttribute ("System.Data.Common.DataColumnMapping+DataColumnMappingConverter, " + Consts.AssemblySystem_Data)]
 #else
@@ -44,7 +44,7 @@ namespace System.Data.Common {
 #endif
 #endif
 	public sealed class DataColumnMapping : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject,
 #endif
 		IColumnMapping, ICloneable

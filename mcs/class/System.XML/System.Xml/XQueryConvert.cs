@@ -35,10 +35,10 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
-#if NETFX_CORE && INCLUDE_MONO_XML_SCHEMA
+#if NETFX_CORE
 using Mono.Xml.Schema;
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using XmlConvertUtil = System.Xml.XmlConvert;
 #endif
 

@@ -40,7 +40,7 @@ using System.Runtime.InteropServices;
 using System.Data.Common;
 
 namespace System.Data {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.UniqueConstraintEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("ConstraintName")]
@@ -104,7 +104,7 @@ namespace System.Data {
 		}
 
 		//Special case.  Can only be added to the Collection with AddRange
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public UniqueConstraint (string name, string[] columnNames, bool isPrimaryKey) 
@@ -302,7 +302,7 @@ namespace System.Data {
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[ReadOnly (true)]
 #endif
@@ -318,7 +318,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -333,7 +333,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[ReadOnly (true)]
 #endif

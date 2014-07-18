@@ -30,7 +30,7 @@ using System.Diagnostics;
 
 namespace System.Collections 
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 #if INSIDE_CORLIB
@@ -176,7 +176,7 @@ namespace System.Collections
 		/// <summary>
 		/// Adapts various ILists into an ArrayList.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class ArrayListAdapter
@@ -821,7 +821,7 @@ namespace System.Collections
 		/// Base wrapper/decorator for ArrayLists.  Simply delegates all methods to
 		/// the underlying wrappee.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private class ArrayListWrapper
@@ -1098,7 +1098,7 @@ namespace System.Collections
 		/// Works by just synchronizing all method calls.  In the future careful optimisation
 		/// could give better performance...
 		/// </remarks>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class SynchronizedArrayListWrapper
@@ -1492,7 +1492,7 @@ namespace System.Collections
 
 		#region FixedSizeArrayListWrapper
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private class FixedSizeArrayListWrapper
@@ -1598,7 +1598,7 @@ namespace System.Collections
 
 		#region ReadOnlyArrayListWrapper
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class ReadOnlyArrayListWrapper
@@ -1673,7 +1673,7 @@ namespace System.Collections
 
 		#region RangedArrayList
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class RangedArrayList
@@ -2108,7 +2108,7 @@ namespace System.Collections
 
 		#region SynchronizedListWrapper
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class SynchronizedListWrapper
@@ -2270,7 +2270,7 @@ namespace System.Collections
 
 		#region FixedSizeListWrapper
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 			private class FixedSizeListWrapper
@@ -2327,7 +2327,7 @@ namespace System.Collections
 
 		#region ReadOnlyListWrapper
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class ReadOnlyListWrapper
@@ -2375,7 +2375,7 @@ namespace System.Collections
 		/// <summary>
 		/// Decorates/Wraps any <c>IList</c> implementing object.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private class ListWrapper
@@ -2542,7 +2542,7 @@ namespace System.Collections
 		/// </summary>
 		public ArrayList()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			_items = EmptyArray<object>.Value;
 #else
 			_items = new object[0];

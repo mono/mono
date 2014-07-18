@@ -26,8 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+using System;
+using System.IO;
+using System.ComponentModel;
+using System.Collections;
+using System.Data;
+using System.Linq;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
@@ -36,27 +42,9 @@ using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.Test
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
 using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
 using ArrayList = System.Collections.Generic.List<System.Object>;
-using System.Linq;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
-using ArrayList = System.Collections.Generic.List<System.Object>;
-using System.Linq;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
-using System;
-using System.IO;
-using System.ComponentModel;
-using System.Collections;
-using System.Data;
-using MonoTests.System.Data.Utils;
+#endif
 
 namespace MonoTests_System.Data
 {
@@ -624,7 +612,7 @@ namespace MonoTests_System.Data
                 {
                         evProp = null;
                         DataTable dt = new DataTable ();
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
                         IBindingList list = dt.DefaultView;
 #else
                         DataView list = dt.DefaultView;
@@ -646,7 +634,7 @@ namespace MonoTests_System.Data
                 {
                         evProp = null;
                         DataTable dt = new DataTable ();
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
                         IBindingList list = dt.DefaultView;
 #else
                         DataView list = dt.DefaultView;
@@ -879,7 +867,7 @@ namespace MonoTests_System.Data
 					)
 					al.Add(dr);
 			}
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			DataRow[] result = (DataRow[])al.ToArray((typeof(DataRow)));
 #else
 			DataRow[] result = al.Cast<DataRow>().ToArray();

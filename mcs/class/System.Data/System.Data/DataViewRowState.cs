@@ -39,7 +39,7 @@ namespace System.Data
 	/// This enumeration has a FlagsAttribute that allows a bitwise combination of its member values.
 	/// </summary>
 	[Flags]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[EditorAttribute("Microsoft.VSDesigner.Data.Design.DataViewRowStateEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
 #if !NET_2_0
 	[Serializable]

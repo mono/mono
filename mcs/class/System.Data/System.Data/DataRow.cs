@@ -72,7 +72,7 @@ namespace System.Data {
 		private int _rowId;
 		internal bool _rowChanged = false;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private XmlDataDocument.XmlDataElement mappedElement;
 #endif
 		internal bool _inExpressionEvaluation = false;
@@ -563,7 +563,7 @@ namespace System.Data {
 			throw new ArgumentException (String.Format ("The index {0} does not belong to this row.", index));
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		internal XmlDataDocument.XmlDataElement DataElement {
 			get {
 				if (mappedElement != null || _table.DataSet == null || _table.DataSet._xmlDataDocument == null)

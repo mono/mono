@@ -30,24 +30,24 @@ namespace System.Data
 	/// navigation, searching, and sorting.
 	/// </summary>
 	//[Designer]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataSourceEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 #endif
-	public partial class DataView : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, ISupportInitialize,
+	public partial class DataView : MarshalByValueComponent, IEnumerable
+#if !WINDOWS_STORE_APP
+		, ISupportInitialize
 #endif
-		IEnumerable {
+	{
 		internal DataTable dataTable;
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
 		ListSortDirection [] sortOrder;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		PropertyDescriptor sortProperty;
 #endif
 		DataColumn [] sortColumns;
@@ -117,7 +117,7 @@ namespace System.Data
 			Open ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -129,7 +129,7 @@ namespace System.Data
 			set { allowDelete = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -141,7 +141,7 @@ namespace System.Data
 			set { allowEdit = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -153,14 +153,14 @@ namespace System.Data
 			set { allowNew = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates whether to use the default sort if the Sort property is not set.")]
 #endif
 		[DefaultValue (false)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public bool ApplyDefaultSort {
@@ -184,7 +184,7 @@ namespace System.Data
 		}
 		// get the count of rows in the DataView after RowFilter
 		// and RowStateFilter have been applied
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -194,7 +194,7 @@ namespace System.Data
 			get { return rowCache.Length; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -216,7 +216,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -251,7 +251,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -277,7 +277,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -320,7 +320,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[TypeConverter (typeof (DataTableTypeConverter))]
 		[DataCategory ("Data")]
 		[RefreshProperties (RefreshProperties.All)]
@@ -517,7 +517,7 @@ namespace System.Data
 			return dataRowViews.GetEnumerator ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -525,7 +525,7 @@ namespace System.Data
 #endif
 		public event ListChangedEventHandler ListChanged;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -559,20 +559,12 @@ namespace System.Data
 			isOpen = false;
 		}
 
-		protected 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		override 
-#else
-		virtual
-#endif
-		void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			if (disposing)
 				Close ();
 
-#if !WINDOWS_PHONE && !NETFX_CORE
 			base.Dispose (disposing);
-#endif
 		}
 
 		protected virtual void IndexListChanged (object sender, ListChangedEventArgs e)
@@ -837,7 +829,7 @@ namespace System.Data
 				rowCache [size] = new DataRowView (this, _lastAdded, size);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor [] listAccessors)
 		{
 			if (dataTable == null)
@@ -941,7 +933,7 @@ namespace System.Data
 		}
 	}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	partial class DataView : ITypedList {
 		string ITypedList.GetListName (PropertyDescriptor [] listAccessors)
 		{
@@ -1024,7 +1016,7 @@ namespace System.Data
 		}
 	}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	partial class DataView : IBindingList {
 		[MonoTODO]
 		void IBindingList.AddIndex (PropertyDescriptor property)
@@ -1121,7 +1113,7 @@ namespace System.Data
 #endif
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	partial class DataView : IBindingListView {
 		string IBindingListView.Filter {
 			get { return ((DataView) this).RowFilter; }
@@ -1167,13 +1159,13 @@ namespace System.Data
 #endif
 
 	partial class DataView
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		: ISupportInitializeNotification 
 #endif
 	{
 		private bool dataViewInitialized = true;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsInitialized {
@@ -1300,15 +1292,6 @@ namespace System.Data
 				newRow.Original = -1;
 			}
 			return newTable;
-		}
-	}
-#endif
-
-#if WINDOWS_PHONE || NETFX_CORE
-	partial class DataView : IDisposable {
-		public void Dispose()
-		{
-			Dispose(true);
 		}
 	}
 #endif

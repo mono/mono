@@ -44,7 +44,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using XmlAttribute = System.Xml.Linq.XAttribute;
 using XmlElement = System.Xml.Linq.XElement;
 using XmlNode = System.Xml.Linq.XNode;

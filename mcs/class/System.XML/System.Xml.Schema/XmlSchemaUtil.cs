@@ -27,7 +27,7 @@ using Mono.Xml;
 using Mono.Xml.Schema;
 using System.Xml.Serialization;
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using System.Xml.Linq;
 using XmlAttribute = System.Xml.Linq.XAttribute;
 #endif
@@ -56,7 +56,7 @@ namespace Mono.Xml.Schema
 		internal static XmlSchemaDerivationMethod FinalAllowed;
 		internal static XmlSchemaDerivationMethod ElementBlockAllowed;
 		internal static XmlSchemaDerivationMethod ComplexTypeBlockAllowed;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		internal static readonly bool StrictMsCompliant = Environment.GetEnvironmentVariable ("MONO_STRICT_MS_COMPLIANT") == "yes";
 #else
 		internal static readonly bool StrictMsCompliant = true;
@@ -137,7 +137,7 @@ namespace Mono.Xml.Schema
 
 		public static XmlParserContext GetParserContext (XmlReader reader)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			IHasXmlParserContext xctx = reader as IHasXmlParserContext;
 			if (xctx != null)
 				return xctx.ParserContext;
@@ -322,7 +322,7 @@ namespace Mono.Xml.Schema
 			{
 				if(xso.unhandledAttributeList == null)
 					xso.unhandledAttributeList = new System.Collections.ArrayList();
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				XmlAttribute attr = new XmlDocument().CreateAttribute(reader.LocalName,reader.NamespaceURI);
 				attr.Value = reader.Value;
 				ParseWsdlArrayType (reader, attr);
@@ -333,7 +333,7 @@ namespace Mono.Xml.Schema
 			}
 		}
 		
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		static void ParseWsdlArrayType (XmlReader reader, XmlAttribute attr)
 		{
 			if (attr.NamespaceURI == XmlSerializer.WsdlNamespace && attr.LocalName == "arrayType")
@@ -720,7 +720,7 @@ namespace Mono.Xml.Schema
 			return false;
 		}
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 		// copied from mono source code
 		internal static XmlQualifiedName Parse(string name, IXmlNamespaceResolver resolver, bool considerDefaultNamespace)
 		{

@@ -35,15 +35,10 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
-	public class DataException : 
-#if !NETFX_CORE
-		SystemException
-#else
-		Exception
-#endif
+	public class DataException : SystemException
 	{
 		public DataException ()
 			: base (Locale.GetText ("A Data exception has occurred"))
@@ -54,7 +49,7 @@ namespace System.Data
 		{
 		}
 
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected DataException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

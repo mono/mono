@@ -14,7 +14,7 @@ namespace Mono.Data.Sqlite
   using Mono.Data.Sqlite.DllImport;
 #endif
 
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
   [SuppressUnmanagedCodeSecurity]
 #endif
   internal static class UnsafeNativeMethods

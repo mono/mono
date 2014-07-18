@@ -42,12 +42,12 @@ using System.Runtime.Serialization;
 using System.Data.Common;
 
 namespace System.Data {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	internal delegate void DelegateConstraintNameChange (object sender, string newName);
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[DefaultProperty ("ConstraintName")]
 #if !NET_2_0
 	[Serializable]
@@ -90,7 +90,7 @@ namespace System.Data {
 			get { return dataSet; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -109,7 +109,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 #endif

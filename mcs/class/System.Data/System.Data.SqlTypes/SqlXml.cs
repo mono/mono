@@ -40,7 +40,7 @@ using System.Text;
 
 namespace System.Data.SqlTypes
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
 #else
@@ -128,7 +128,7 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("anyType", "http://www.w3.org/2001/XMLSchema");

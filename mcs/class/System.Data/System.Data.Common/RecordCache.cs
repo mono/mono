@@ -21,10 +21,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections;
-#if WINDOWS_PHONE || NETFX_CORE
-using Stack = System.Collections.Generic.Stack<System.Object>;
-#endif
+using System.Collections.Generic;
 
 namespace System.Data.Common
 {
@@ -33,7 +30,7 @@ namespace System.Data.Common
 
 		const int MIN_CACHE_SIZE = 128;
 
-		Stack _records = new Stack (16);
+		Stack<int> _records = new Stack<int> (16);
 		int _nextFreeIndex = 0;
 		int _currentCapacity = 0;
 		DataTable _table;

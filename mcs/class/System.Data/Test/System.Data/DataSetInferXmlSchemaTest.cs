@@ -34,29 +34,21 @@ using System.Collections;
 using System.Data;
 using System.IO;
 using System.Xml;
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
+using System.Linq;
+using System.Xml.Linq;
+#endif
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
-using MonoTests.System.Data.Utils;
-#if WINDOWS_PHONE || NETFX_CORE
-using System.Linq;
-using System.Xml.Linq;
 #endif
 
 namespace MonoTests.System.Data
@@ -367,7 +359,7 @@ namespace MonoTests.System.Data
 			// using XmlNodeReader (that does not have xml:space attribute
 			// column).
 			DataSet ds = new DataSet ();
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			XmlDocument doc = new XmlDocument ();
 			doc.AppendChild (doc.CreateElement ("root"));
 			doc.DocumentElement.AppendChild (doc.CreateSignificantWhitespace
@@ -567,7 +559,7 @@ namespace MonoTests.System.Data
 			ds.ReadXml(new StringReader (sw.ToString ()));
 			sw = new StringWriter ();
 			ds.WriteXml(sw);
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (sw.ToString ());
 			Assert.AreEqual (2, doc.DocumentElement.ChildNodes.Count);

@@ -44,7 +44,7 @@ namespace System.Data
 	/// <summary>
 	/// Contains a read-only collection of DataViewSetting objects for each DataTable in a DataSet.
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataViewSettingsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if !NET_2_0
@@ -74,21 +74,21 @@ namespace System.Data
 
 		#region Properties
 	
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public virtual int Count {
 			get { return settingList.Count; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsReadOnly {
 			get { return settingList.IsReadOnly; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsSynchronized {
@@ -125,7 +125,7 @@ namespace System.Data
 			set { settingList [index] = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public object SyncRoot {

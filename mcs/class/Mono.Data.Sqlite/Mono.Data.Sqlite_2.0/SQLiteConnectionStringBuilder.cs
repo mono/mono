@@ -17,14 +17,14 @@ namespace Mono.Data.Sqlite
 
 #if !PLATFORM_COMPACTFRAMEWORK
 
-#if!WINDOWS_PHONE && !NETFX_CORE
+#if!WINDOWS_STORE_APP
   using System.ComponentModel.Design;
 #endif
 
   /// <summary>
   /// SQLite implementation of DbConnectionStringBuilder.
   /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
   [DefaultProperty ("DataSource")]
   [DefaultMember ("Item")]
 #endif
@@ -62,7 +62,7 @@ namespace Mono.Data.Sqlite
     private void Initialize(string cnnString)
     {
       _properties = new Hashtable (StringComparer.OrdinalIgnoreCase);
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
       try {
         base.GetProperties (_properties);
       } catch (NotImplementedException) {
@@ -79,7 +79,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the default version of the SQLite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (3)]
@@ -103,7 +103,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the synchronization mode (file flushing) of the connection string.  Default is "Normal".
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Synchronous")]
@@ -127,7 +127,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the encoding for the connection string.  The default is "False" which indicates UTF-8 encoding.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (false)]
@@ -148,7 +148,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets whether or not to use connection pooling.  The default is "False"
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (false)]
@@ -170,7 +170,7 @@ namespace Mono.Data.Sqlite
     /// Gets/Sets whethor not to store GUID's in binary format.  The default is True
     /// which saves space in the database.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (true)]
@@ -191,7 +191,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the filename to open on the connection string.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Data Source")]
@@ -213,7 +213,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// An alternate to the data source property
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (false)]
 #endif
     public string Uri
@@ -234,7 +234,7 @@ namespace Mono.Data.Sqlite
     /// Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
     /// commands used internally such as inside a SqliteTransaction, where setting the timeout is not possible.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Default Timeout")]
@@ -257,7 +257,7 @@ namespace Mono.Data.Sqlite
     /// Determines whether or not the connection will automatically participate
     /// in the current distributed transaction (if one exists)
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (true)]
@@ -279,7 +279,7 @@ namespace Mono.Data.Sqlite
     /// If set to true, will throw an exception if the database specified in the connection
     /// string does not exist.  If false, the database will be created automatically.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (false)]
@@ -301,7 +301,7 @@ namespace Mono.Data.Sqlite
     /// If enabled, uses the legacy 3.xx format for maximum compatibility, but results in larger
     /// database sizes.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Legacy Format")]
@@ -323,7 +323,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// When enabled, the database will be opened for read-only access and writing will be disabled.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Read Only")]
@@ -345,7 +345,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/sets the database encryption password
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
     [PasswordPropertyText (true)]
 #endif
@@ -367,7 +367,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the page size for the connection.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Page Size")]
@@ -389,7 +389,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the maximum number of pages the database may hold
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Max Page Count")]
@@ -411,7 +411,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the cache size for the connection.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DisplayName ("Cache Size")]
@@ -433,7 +433,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/Sets the datetime format for the connection.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (SQLiteDateFormats.ISO8601)]
@@ -456,7 +456,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Determines how SQLite handles the transaction journal file.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (SQLiteJournalModeEnum.Delete)]
@@ -481,7 +481,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Sets the default isolation level for transactions on the connection.
     /// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Browsable (true)]
 #endif
     [DefaultValue (IsolationLevel.Serializable)]
@@ -556,7 +556,7 @@ namespace Mono.Data.Sqlite
     }
   }
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
   internal class DisplayNameAttribute : Attribute {
     public DisplayNameAttribute (string displayName)
     {

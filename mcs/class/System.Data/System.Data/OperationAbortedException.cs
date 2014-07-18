@@ -36,15 +36,10 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
-	public sealed class OperationAbortedException : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		SystemException
-#else
-		Exception
-#endif
+	public sealed class OperationAbortedException : SystemException
 	{
 		#region Constructors
 
@@ -63,7 +58,7 @@ namespace System.Data {
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		internal OperationAbortedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

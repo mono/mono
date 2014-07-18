@@ -41,26 +41,17 @@ using System.Xml;
 #if NET_2_0
 using System.Xml.Serialization;
 #endif 
-
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -482,7 +473,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -535,7 +526,7 @@ namespace MonoTests.System.Data.SqlTypes
 			try {
 				ReadWriteXmlTestInternal (xml3, test3, "#BA03");
 				Assert.Fail ("BA03");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			} catch (FormatException e) {
 				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}

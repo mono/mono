@@ -36,7 +36,7 @@ using System.ComponentModel;
 
 namespace System.Data.Common {
 	public abstract class DbParameter : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject, 
 #endif
 		IDbDataParameter, IDataParameter
@@ -51,7 +51,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[RefreshProperties (RefreshProperties.All)]
@@ -59,7 +59,7 @@ namespace System.Data.Common {
 		public abstract DbType DbType { get; set; }
 
 		[DefaultValue (ParameterDirection.Input)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public abstract ParameterDirection Direction { get; set; }
@@ -77,12 +77,12 @@ namespace System.Data.Common {
 		}
 
 		[DefaultValue (null)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public abstract object Value { get; set; }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignOnly (true)]
 #endif
@@ -92,7 +92,7 @@ namespace System.Data.Common {
 		[DefaultValue ("")]
 		public abstract string SourceColumn { get; set; }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		[DefaultValue (false)]

@@ -28,8 +28,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+using System;
+using System.Text;
+using System.IO;
+using System.Data;
+using System.Xml;
+using System.Runtime.Serialization;
+using System.Globalization;
+#if WINDOWS_STORE_APP
+using System.Linq;
+using System.Xml.Linq;
+using System.Collections.Generic;
+using XmlAttribute = System.Xml.Linq.XAttribute;
+using XmlElement = System.Xml.Linq.XElement;
+using XmlNode = System.Xml.Linq.XNode;
+using XmlDocument = System.Xml.Linq.XDocument;
+#else
+using System.Runtime.Serialization.Formatters.Binary;
+#endif
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
@@ -37,37 +55,8 @@ using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
 using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
-using System;
-using System.Text;
-using System.IO;
-using System.Data;
-using MonoTests.System.Data.Utils;
-using System.Xml;
-using System.Runtime.Serialization;
-#if !WINDOWS_PHONE && !NETFX_CORE
-using System.Runtime.Serialization.Formatters.Binary;
-#endif
-using System.Globalization;
-#if WINDOWS_PHONE || NETFX_CORE
-using XmlAttribute = System.Xml.Linq.XAttribute;
-using XmlElement = System.Xml.Linq.XElement;
-using XmlNode = System.Xml.Linq.XNode;
-using XmlDocument = System.Xml.Linq.XDocument;
-using System.Linq;
-using System.Xml.Linq;
-using System.Collections.Generic;
 #endif
 
 namespace MonoTests_System.Data
@@ -1017,7 +1006,7 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(culInfo , ds.Locale , "DS157");
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]
 		[SetCulture ("cs-CZ")]
 		public void DataSetSpecificCulture ()
@@ -2068,7 +2057,6 @@ namespace MonoTests_System.Data
 			Assert.AreEqual(0, ds2.Tables[1].Rows.Count , "DS275");
 		}
 
-#if !NETFX_CORE
 		[Test] public void ReadXmlSchema_ByFileName()
 		{
 			string sTempFileName = AssertHelpers.GetTempFileName ("tmpDataSet_ReadWriteXml_43899.xml");
@@ -2112,7 +2100,6 @@ namespace MonoTests_System.Data
 			//try to delete the file
 			System.IO.File.Delete(sTempFileName);
 		}
-#endif
 
 		[Test] public void ReadXmlSchema_ByTextReader()
 		{
@@ -3272,7 +3259,7 @@ namespace MonoTests_System.Data
 			DataSet ds = new DataSet();
 			ds.Tables.Add(DataProvider.CreateParentDataTable());
 			string strXML = ds.GetXmlSchema();
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			schemaDocInit = new XmlDocument();
 			schemaDocInit.LoadXml(strXML);
 			namespaceManagerToInit = new XmlNamespaceManager(schemaDocInit.NameTable);
@@ -3287,7 +3274,7 @@ namespace MonoTests_System.Data
 
 		private void CheckNode(string description, string xPath, int expectedNodesCout, XmlDocument schemaDoc, XmlNamespaceManager nm)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			int actualNodeCount = schemaDoc.SelectNodes (xPath, nm).Count;
 #else
 			// this is a very simple hacked xpath parser specific to the test cases
@@ -3681,7 +3668,7 @@ namespace MonoTests_System.Data
 
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]	
         	public void Bug537229_BinFormatSerializer_Test ()
         	{

@@ -310,7 +310,7 @@ namespace Mono.Xml.Schema
 			path.LinePosition = reader.LinePosition;
 			path.SourceUri = reader.BaseURI;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			XmlNamespaceManager currentMgr = XmlSchemaUtil.GetParserContext (reader.Reader).NamespaceManager;
 #else
 			XmlNamespaceManager currentMgr = new XmlNamespaceManager (reader.Reader.NameTable);

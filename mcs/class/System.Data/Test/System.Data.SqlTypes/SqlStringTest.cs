@@ -42,26 +42,17 @@ using System.Xml;
 #if NET_2_0
 using System.Xml.Serialization;
 #endif
-
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -97,7 +88,7 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlString TestString = new SqlString ("Test");
 			Assert.AreEqual ("Test", TestString.Value, "#A01");
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			// SqlString (String, int)
 			TestString = new SqlString ("Test", 2057);
 			Assert.AreEqual (2057, TestString.LCID, "#A02");
@@ -107,7 +98,7 @@ namespace MonoTests.System.Data.SqlTypes
 			TestString = new SqlString (2057,
 				SqlCompareOptions.BinarySort|SqlCompareOptions.IgnoreCase,
 				new byte [2] {123, 221});
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (2057, TestString.CompareInfo.LCID, "#A03");
 #endif
 
@@ -115,7 +106,7 @@ namespace MonoTests.System.Data.SqlTypes
 			TestString = new SqlString ("Test", 2057, SqlCompareOptions.IgnoreNonSpace);
 			Assert.IsTrue (!TestString.IsNull, "#A04");
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			// SqlString (int, SqlCompareOptions, byte[], bool)
 			TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [4] {100, 100, 200, 45}, true);
 			Assert.AreEqual ((byte)63, TestString.GetNonUnicodeBytes () [0], "#A05");
@@ -127,7 +118,7 @@ namespace MonoTests.System.Data.SqlTypes
 			TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 2);
 			Assert.IsTrue (!TestString.IsNull, "#A07");
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			// SqlString (int, SqlCompareOptions, byte[], int, int, bool)
 			TestString = new SqlString (2057, SqlCompareOptions.IgnoreCase, new byte [3] {100, 111, 50}, 1, 2, false);
 			Assert.AreEqual ("o2", TestString.Value, "#A08");
@@ -179,7 +170,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void Properties()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			// CompareInfo
 			Assert.AreEqual (3081, Test1.CompareInfo.LCID, "#C01");
 
@@ -244,7 +235,7 @@ namespace MonoTests.System.Data.SqlTypes
 			T2 = new SqlString ("TEST", 2057, SqlCompareOptions.IgnoreCase);
 			Assert.IsTrue (T2.CompareTo (T1) == 0, "#D09");
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			T1 = new SqlString ("test", 2057);
 			T2 = new SqlString ("TEST", 2057);
 			Assert.IsTrue (T2.CompareTo (T1) == 0, "#D10");
@@ -392,29 +383,29 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void UnicodeBytes()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual ((byte)105, Test1.GetNonUnicodeBytes () [1], "#N01");
 			Assert.AreEqual ((byte)32, Test1.GetNonUnicodeBytes () [5], "#N02");
 #endif
 
 			Assert.AreEqual ((byte)70, Test1.GetUnicodeBytes () [0], "#N03");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual ((byte)70, Test1.GetNonUnicodeBytes () [0], "#N03b");
 #endif
 			Assert.AreEqual ((byte)0, Test1.GetUnicodeBytes () [1], "#N03c");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual ((byte)105, Test1.GetNonUnicodeBytes () [1], "#N03d");
 #endif
 			Assert.AreEqual ((byte)105, Test1.GetUnicodeBytes () [2], "#N03e");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual ((byte)114, Test1.GetNonUnicodeBytes () [2], "#N03f");
 #endif
 			Assert.AreEqual ((byte)0, Test1.GetUnicodeBytes () [3], "#N03g");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual ((byte)115, Test1.GetNonUnicodeBytes () [3], "#N03h");
 #endif
 			Assert.AreEqual ((byte)114, Test1.GetUnicodeBytes () [4], "#N03i");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual ((byte)116, Test1.GetNonUnicodeBytes () [4], "#N03j");
 #endif
 
@@ -784,7 +775,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.IsTrue (SqlString.Add (Test1, null).IsNull, "#AE03");
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void GetXsdTypeTest ()
 		{

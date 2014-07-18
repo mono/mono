@@ -34,7 +34,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System.ComponentModel;
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using XmlAttribute = System.Xml.Linq.XAttribute;
 #endif
 
@@ -283,7 +283,7 @@ namespace Mono.Xml.Schema
 		public void Compile (ValidationEventHandler validationEventHandler)
 		{
 			Compile (validationEventHandler, 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				new XmlUrlResolver ()
 #else
 				null
@@ -391,7 +391,7 @@ namespace Mono.Xml.Schema
 				compilationItems.Add (Items [i]);
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
 			for (int i = 0; i < Includes.Count; i++)
@@ -491,7 +491,7 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private string GetResolvedUri (XmlResolver resolver, string relativeUri)
 		{
 			Uri baseUri = null;
@@ -929,7 +929,7 @@ namespace Mono.Xml.Schema
 
 		#region write
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public void Write(System.IO.Stream stream)
 		{
 			Write(stream,null);
@@ -1006,7 +1006,7 @@ namespace Mono.Xml.Schema
 		#endregion
 	}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	class XmlSchemaSerializer : XmlSerializer
 	{
 		protected override void Serialize (object o, XmlSerializationWriter writer)

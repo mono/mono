@@ -26,30 +26,24 @@
 using System;
 using System.Globalization;
 using System.IO;
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Windows.Storage;
+#endif
 #if NETFX_CORE
 using Windows.Globalization;
-#endif // NETFX_CORE
+#endif
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace MonoTests.System.Data.Utils {
 	public static class AssertHelpers {
@@ -59,7 +53,7 @@ namespace MonoTests.System.Data.Utils {
 			AssertThrowsException<T> (action, "Expected an exception of type: " + typeof (T).Name);
 		}
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 		public static void AssertThrowsException<T> (Action action, string message) 
 			where T : Exception
 		{
@@ -89,7 +83,7 @@ namespace MonoTests.System.Data.Utils {
 
 		public static void AssertIsInstanceOfType (object value, Type expectedType, string message)
 		{
-#if USE_MSUNITTEST
+#if WINDOWS_STORE_APP
 			Assert.IsInstanceOfType (value, expectedType, message);
 #else
 			Assert.That (value, new InstanceOfTypeConstraint (expectedType), message);
@@ -98,7 +92,7 @@ namespace MonoTests.System.Data.Utils {
 
 		public static void AreEqualArray<T>(T[] expected, T[] actual, string message)
 		{
-#if USE_MSUNITTEST
+#if WINDOWS_STORE_APP
 			if (expected != actual) {
 				Assert.AreEqual (expected.Length, actual.Length, "Expected arrays of equal length.");
 				for (int i = 0; i < expected.Length; i++) {
@@ -112,7 +106,7 @@ namespace MonoTests.System.Data.Utils {
 
 		public static string GetTempFileName ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			return Path.GetTempFileName ();
 #else
 			return GetTempFileName ("temp_" + Guid.NewGuid ().ToString ("N") + ".tmp");

@@ -18,7 +18,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbParameterCollection.
   /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
   [Editor("Microsoft.VSDesigner.Data.Design.DBParametersEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"), ListBindable(false)]
 #endif
   public sealed class SqliteParameterCollection : DbParameterCollection

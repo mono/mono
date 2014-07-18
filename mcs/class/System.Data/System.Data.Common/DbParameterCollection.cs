@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
 	public abstract class DbParameterCollection : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject,
 #endif
 		IDataParameterCollection, IList, ICollection, IEnumerable
@@ -53,7 +53,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -71,7 +71,7 @@ namespace System.Data.Common {
 			set { this [index] = (DbParameter) value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -80,7 +80,7 @@ namespace System.Data.Common {
 			get;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -89,7 +89,7 @@ namespace System.Data.Common {
 			get;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -114,7 +114,7 @@ namespace System.Data.Common {
 			set { SetParameter (index, value); }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif

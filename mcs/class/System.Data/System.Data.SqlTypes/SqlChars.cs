@@ -42,14 +42,14 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
 #else
 	[XmlRoot("string")]
 #endif
 	public sealed class SqlChars : INullable, IXmlSerializable
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable
 #endif
 	{
@@ -279,7 +279,7 @@ namespace System.Data.SqlTypes
 			Array.Copy (buffer, offsetInBuffer, this.buffer, (int) offset, count);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {
@@ -337,7 +337,7 @@ namespace System.Data.SqlTypes
 			writer.WriteString (this.buffer.ToString ());
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{

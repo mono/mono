@@ -106,7 +106,7 @@ namespace Mono.Xml.Schema
 		public XmlSchema Add (string ns, XmlReader reader)
 		{
 			return Add (ns, reader, 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				new XmlUrlResolver ()
 #else
 				null
@@ -135,7 +135,7 @@ namespace Mono.Xml.Schema
 		public XmlSchema Add (XmlSchema schema)
 		{
 			return Add (schema,
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				new XmlUrlResolver ()
 #else
 				null

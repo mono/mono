@@ -204,7 +204,7 @@ namespace System.Data
 		}
 	}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	partial class DataRowView : ICustomTypeDescriptor {
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
@@ -290,7 +290,7 @@ namespace System.Data
 	}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	partial class DataRowView : IDataErrorInfo {
 		string IDataErrorInfo.Error {
 			[MonoTODO ("Not implemented, always returns String.Empty")]

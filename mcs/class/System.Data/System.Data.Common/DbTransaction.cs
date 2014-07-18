@@ -33,7 +33,7 @@
 namespace System.Data.Common
 {
 	public abstract class DbTransaction : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject, 
 #endif
 		IDbTransaction, IDisposable

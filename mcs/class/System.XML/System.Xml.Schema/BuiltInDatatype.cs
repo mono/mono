@@ -40,7 +40,7 @@ using System.Globalization;
 using Mono.Xml.Schema;
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using XmlConvertUtil = System.Xml.XmlConvert;
 #endif
 #if NET_2_0
@@ -1394,7 +1394,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, NSResolver nsmgr)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		        // If it isnt ASCII it isnt valid base64 data
 			byte[] inArr = new System.Text.ASCIIEncoding().GetBytes(s);
 			FromBase64Transform t = new FromBase64Transform();
@@ -1544,7 +1544,7 @@ namespace Mono.Xml.Schema
 				throw new ArgumentNullException ("name table");
 			if (nsmgr == null)
 				throw new ArgumentNullException ("namespace manager");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			XmlQualifiedName name = XmlQualifiedName.Parse (s, nsmgr, true);
 #else
 			XmlQualifiedName name = XmlSchemaUtil.Parse (s, nsmgr, true);
@@ -1681,7 +1681,7 @@ namespace Mono.Xml.Schema
 		}
 
 		private XmlSchemaUri (string src, bool formal)
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			: base (formal ? src : "anyuri:" + src, !formal)
 #else
 			: base (formal ? src : "anyuri:" + src)

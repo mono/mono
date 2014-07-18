@@ -27,7 +27,7 @@
 //
 
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System;
 using System.IO;
 using System.Data;

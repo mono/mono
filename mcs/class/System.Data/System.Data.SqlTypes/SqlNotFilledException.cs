@@ -35,11 +35,11 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 #endif
 	public sealed class SqlNotFilledException : SqlTypeException
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable
 #endif
 	{
@@ -58,7 +58,7 @@ namespace System.Data.SqlTypes
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue ("SqlNotFilledExceptionMessage", Message, typeof(string));

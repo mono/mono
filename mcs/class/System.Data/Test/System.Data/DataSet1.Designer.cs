@@ -14,7 +14,7 @@
 namespace MonoTests.System.Data {
     
     
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	using global::System.Xml.Schema;
 #else
 	using global::Mono.Xml.Schema;
@@ -24,7 +24,7 @@ namespace MonoTests.System.Data {
     ///Represents a strongly typed in-memory cache of data.
     ///</summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [global::System.Serializable()]
     [global::System.ComponentModel.DesignerCategoryAttribute("code")]
     [global::System.ComponentModel.ToolboxItem(true)]
@@ -48,7 +48,7 @@ namespace MonoTests.System.Data {
             this.EndInit();
         }
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         protected DataSet1(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                 base(info, context, false) {
@@ -86,7 +86,7 @@ namespace MonoTests.System.Data {
 #endif
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
 #endif
@@ -97,7 +97,7 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
 #endif
@@ -111,7 +111,7 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 #endif
         public new global::System.Data.DataTableCollection Tables {
@@ -121,7 +121,7 @@ namespace MonoTests.System.Data {
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Hidden)]
 #endif
         public new global::System.Data.DataRelationCollection Relations {
@@ -179,7 +179,7 @@ namespace MonoTests.System.Data {
             }
         }
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         protected override global::System.Xml.Schema.XmlSchema GetSchemaSerializable() {
             global::System.IO.MemoryStream stream = new global::System.IO.MemoryStream();
@@ -227,7 +227,7 @@ namespace MonoTests.System.Data {
             }
         }
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public static XmlSchemaComplexType GetTypedDataSetSchema(XmlSchemaSet xs) {
             DataSet1 ds = new DataSet1();
@@ -248,7 +248,7 @@ namespace MonoTests.System.Data {
         ///Represents the strongly named DataTable class.
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         [global::System.Serializable()]
 #endif
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
@@ -280,7 +280,7 @@ namespace MonoTests.System.Data {
                 this.MinimumCapacity = table.MinimumCapacity;
             }
             
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             protected DataTable1DataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
@@ -296,7 +296,7 @@ namespace MonoTests.System.Data {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             [global::System.ComponentModel.Browsable(false)]
 #endif
             public int Count {
@@ -415,7 +415,7 @@ namespace MonoTests.System.Data {
                 this.Rows.Remove(row);
             }
             
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             public static XmlSchemaComplexType GetTypedTableSchema(XmlSchemaSet xs) {
                 XmlSchemaComplexType type = new XmlSchemaComplexType();

@@ -66,7 +66,7 @@ namespace System {
 		};
 
 		internal static object CreateInstance (Type type) {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			return Activator.CreateInstance (type, true);
 #else
 			return Activator.CreateInstance (type);

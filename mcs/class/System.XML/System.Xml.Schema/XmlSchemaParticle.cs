@@ -23,11 +23,9 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Serialization;
-#if WINDOWS_PHONE || NETFX_CORE
-using Stack = System.Collections.Generic.Stack<System.Object>;
-#endif
 
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
@@ -269,7 +267,7 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-		internal virtual void CheckRecursion (Stack stack, ValidationEventHandler h, XmlSchema schema)
+		internal virtual void CheckRecursion (Stack<XmlSchemaParticle> stack, ValidationEventHandler h, XmlSchema schema)
 		{
 		}
 
@@ -301,7 +299,7 @@ namespace Mono.Xml.Schema
 				return true;
 			}
 
-			internal override void CheckRecursion (Stack stack, 
+			internal override void CheckRecursion (Stack<XmlSchemaParticle> stack, 
 				ValidationEventHandler h, XmlSchema schema)
 			{
 				// do nothing

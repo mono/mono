@@ -32,7 +32,7 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Runtime.ConstrainedExecution;
 #endif
 using System.Runtime.InteropServices;
@@ -40,7 +40,7 @@ using System.Diagnostics;
 
 namespace System.Collections {
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 #if INSIDE_CORLIB
@@ -49,13 +49,13 @@ namespace System.Collections {
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView))]
 	public class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable, IDeserializationCallback {
-#elif WINDOWS_PHONE || NETFX_CORE
+#elif WINDOWS_STORE_APP
 	public class Hashtable : IDictionary, ICollection, IEnumerable {
 #else
 	class Hashtable : IDictionary, ICollection, IEnumerable {
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		internal struct Slot {
@@ -64,12 +64,12 @@ namespace System.Collections {
 			internal Object value;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		internal class KeyMarker
 #if !NET_2_1
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			: IObjectReference
 #endif
 #endif
@@ -98,7 +98,7 @@ namespace System.Collections {
 		private HashValues hashValues;
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private SerializationInfo serializationInfo;
 #endif
 		private IEqualityComparer equalityComparer;
@@ -115,7 +115,7 @@ namespace System.Collections {
 		public Hashtable () : this (0, 1.0f) {}
 
 		[Obsolete ("Please use Hashtable(int, float, IEqualityComparer) instead")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public
 #endif
 		Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
@@ -169,7 +169,7 @@ namespace System.Collections {
 		}
 			
 		[Obsolete ("Please use Hashtable(int, IEqualityComparer) instead")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public
 #endif
 		Hashtable (int capacity,
@@ -180,7 +180,7 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public
 #endif
 		Hashtable (IDictionary d, float loadFactor,
@@ -210,7 +210,7 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IDictionary, IEqualityComparer) instead")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public
 #endif
 		Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
@@ -219,7 +219,7 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use Hashtable(IEqualityComparer) instead")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public
 #endif
 		Hashtable (IHashCodeProvider hcp, IComparer comparer)
@@ -227,7 +227,7 @@ namespace System.Collections {
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected Hashtable (SerializationInfo info, StreamingContext context)
 		{
 			serializationInfo = info;
@@ -271,7 +271,7 @@ namespace System.Collections {
 		}
 
 		[Obsolete ("Please use EqualityComparer property.")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected
 #endif
 		IHashCodeProvider hcp {
@@ -434,7 +434,7 @@ namespace System.Collections {
 			PutImpl (key, value, false);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public virtual void Clear ()
@@ -459,7 +459,7 @@ namespace System.Collections {
 			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public virtual void Remove (Object key)
@@ -516,7 +516,7 @@ namespace System.Collections {
 			return new Hashtable (this);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -816,7 +816,7 @@ namespace System.Collections {
 
 		private enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
@@ -919,7 +919,7 @@ namespace System.Collections {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 #if INSIDE_CORLIB
@@ -977,7 +977,7 @@ namespace System.Collections {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 #if INSIDE_CORLIB
@@ -1038,7 +1038,7 @@ namespace System.Collections {
 		}
 
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private class SyncHashtable : Hashtable, IEnumerable {
@@ -1052,7 +1052,7 @@ namespace System.Collections {
 				this.host = host;
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			internal SyncHashtable (SerializationInfo info, StreamingContext context)
 			{
 				host = (Hashtable) info.GetValue("ParentTable", typeof(Hashtable));

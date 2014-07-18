@@ -32,26 +32,17 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using MonoTests.System.Data.Utils;
-
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace Monotests_System.Data
 {
@@ -424,7 +415,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("id", col.ColumnName, "#24");
 			Assert.AreEqual (typeof (int), col.DataType, "#25");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#26");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#27");
 #endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#28");
@@ -445,7 +436,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ParentItem", col.ColumnName, "#40");
 			Assert.AreEqual (typeof (string), col.DataType, "#41");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#42");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#43");
 #endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#44");
@@ -466,7 +457,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("DepartmentID", col.ColumnName, "#56");
 			Assert.AreEqual (typeof (int), col.DataType, "#57");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#58");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#59");
 #endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#60");
@@ -592,7 +583,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ChildID", col.ColumnName, "#19");
 			Assert.AreEqual (typeof (int), col.DataType, "#20");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#21");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#22");
 #endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#23");
@@ -612,7 +603,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ChildItem", col.ColumnName, "#34");
 			Assert.AreEqual (typeof (string), col.DataType, "#35");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#36");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#37");
 #endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#38");
@@ -633,7 +624,7 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ParentID", col.ColumnName, "#50");
 			Assert.AreEqual (typeof (int), col.DataType, "#51");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#52");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.AreEqual (false, col.DesignMode, "#53");
 #endif
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#54");

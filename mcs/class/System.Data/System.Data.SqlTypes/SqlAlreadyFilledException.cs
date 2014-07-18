@@ -34,7 +34,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public sealed class SqlAlreadyFilledException : SqlTypeException
@@ -54,7 +54,7 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		new void GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue ("SqlAlreadyFilledExceptionMessage", Message, typeof(string));

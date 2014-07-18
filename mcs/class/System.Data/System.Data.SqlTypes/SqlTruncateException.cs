@@ -34,11 +34,11 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public sealed class SqlTruncateException : SqlTypeException
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable
 #endif
 	{
@@ -57,7 +57,7 @@ namespace System.Data.SqlTypes
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private SqlTruncateException (SerializationInfo si, StreamingContext sc)
 			: base (si.GetString("SqlTruncateExceptionMessage"))
 		{

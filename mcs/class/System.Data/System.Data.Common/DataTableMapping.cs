@@ -36,7 +36,7 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 #if NET_2_0
 	[TypeConverterAttribute ("System.Data.Common.DataTableMapping+DataTableMappingConverter, " + Consts.AssemblySystem_Data)]
 #else
@@ -44,7 +44,7 @@ namespace System.Data.Common {
 #endif
 #endif
 	public sealed class DataTableMapping : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject,
 #endif
 		ITableMapping, ICloneable
@@ -86,7 +86,7 @@ namespace System.Data.Common {
 #if !NET_2_0
 		[DataSysDescription ("Individual columns mappings when this table mapping is matched.")]
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
 		public DataColumnMappingCollection ColumnMappings {

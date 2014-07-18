@@ -38,7 +38,7 @@ using System.Runtime.CompilerServices;
 namespace System.Data.Common
 {
 	public abstract class DbDataRecord : IDataRecord
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ICustomTypeDescriptor
 #endif
 	{
@@ -82,7 +82,7 @@ namespace System.Data.Common
 			throw new NotSupportedException ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{

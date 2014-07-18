@@ -35,7 +35,7 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public class TypedDataSetGeneratorException : DataException
@@ -49,7 +49,7 @@ namespace System.Data
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public 
 #else
 		internal
@@ -60,7 +60,7 @@ namespace System.Data
 			errorList = list;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected TypedDataSetGeneratorException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -84,7 +84,7 @@ namespace System.Data
 #endif
 		#endregion //Constructors
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public 
 #else
 		internal
@@ -95,7 +95,7 @@ namespace System.Data
 
 		#region Methods
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

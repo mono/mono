@@ -202,7 +202,7 @@ namespace Mono.Xml.Schema
 		{
 			get { return  reader.Prefix; }
 		}
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public override char QuoteChar 
 		{
 			get { return  reader.QuoteChar; }
@@ -322,7 +322,7 @@ namespace Mono.Xml.Schema
 			return reader.ReadAttributeValue(); 
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public override string ReadElementString()
 		{
 			return reader.ReadElementString(); 
@@ -369,7 +369,7 @@ namespace Mono.Xml.Schema
 			reader.ReadStartElement(name); 
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public override string ReadString()
 		{
 			return reader.ReadString(); 

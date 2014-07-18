@@ -23,7 +23,7 @@
 //
 using System;
 using System.Collections;
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using CollectionBase = System.Collections.Generic.List<Mono.Xml.Schema.XmlSchemaObject>;
 #endif
 
@@ -55,7 +55,7 @@ namespace Mono.Xml.Schema
 //			this.parent = parent;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		// Properties
 		public virtual XmlSchemaObject this[ int index ] 
 		{  

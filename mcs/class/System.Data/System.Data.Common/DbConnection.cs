@@ -42,11 +42,7 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbConnection : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		Component, 
-#endif
-		IDbConnection, IDisposable
+	public abstract class DbConnection : Component, IDbConnection, IDisposable
 	{
 		#region Constructors
 
@@ -57,7 +53,7 @@ namespace System.Data.Common {
 		#endregion // Constructors
 
 		#region Properties
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
 #endif
@@ -67,12 +63,12 @@ namespace System.Data.Common {
 		public abstract string Database { get; }
 		public abstract string DataSource { get; }
 		
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public abstract string ServerVersion { get; }
 		
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public abstract ConnectionState State { get; }
@@ -776,18 +772,6 @@ namespace System.Data.Common {
 			} catch (Exception e) {
 				return TaskHelper.CreateExceptionTask (e);
 			}
-		}
-#endif
-
-#if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-
-		protected virtual void Dispose (bool release_all)
-		{
-
 		}
 #endif
 

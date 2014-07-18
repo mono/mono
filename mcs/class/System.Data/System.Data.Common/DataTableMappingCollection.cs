@@ -38,12 +38,12 @@ using System.ComponentModel;
 
 namespace System.Data.Common
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableMappingCollectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 #endif
 	public sealed class DataTableMappingCollection : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject,
 #endif
 		ITableMappingCollection, IList, ICollection, IEnumerable
@@ -69,7 +69,7 @@ namespace System.Data.Common
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -80,7 +80,7 @@ namespace System.Data.Common
 			get { return mappings.Count; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -97,7 +97,7 @@ namespace System.Data.Common
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif

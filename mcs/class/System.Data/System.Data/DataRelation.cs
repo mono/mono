@@ -44,7 +44,7 @@ namespace System.Data
 	/// DataRelation is used for a parent/child relationship
 	/// between two DataTable objects
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultProperty ("RelationName")]
@@ -125,7 +125,7 @@ namespace System.Data
 						"Parent Columns and Child Columns don't have matching column types");
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public DataRelation (string relationName, string parentTableName, string childTableName, string [] parentColumnNames, string[] childColumnNames, bool nested)
@@ -140,7 +140,7 @@ namespace System.Data
 		}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public DataRelation (string relationName, string parentTableName,
@@ -205,7 +205,7 @@ namespace System.Data
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -228,7 +228,7 @@ namespace System.Data
 			get { return childColumns [0].Table; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -236,7 +236,7 @@ namespace System.Data
 			get { return childColumns [0].Table.DataSet; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 #endif
@@ -251,7 +251,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -263,7 +263,7 @@ namespace System.Data
 			set { nested = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -291,7 +291,7 @@ namespace System.Data
 			get { return parentColumns [0].Table; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0

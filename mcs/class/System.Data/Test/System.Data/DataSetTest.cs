@@ -33,26 +33,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
-using NUnit.Framework;
-#endif // USE_MSUNITTEST
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -64,6 +44,17 @@ using System.Globalization;
 using System.Threading;
 using System.Text;
 using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -135,7 +126,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("first", column.ColumnName, "test#17");
 			Assert.AreEqual ("System.String", column.DataType.ToString (), "test#18");
 			Assert.AreEqual ("test_default_value", column.DefaultValue.ToString (), "test#19");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column.DesignMode, "test#20");
 #endif
 			Assert.AreEqual ("", column.Expression, "test#21");
@@ -160,7 +151,7 @@ namespace MonoTests.System.Data
 #else
 			Assert.AreEqual (DBNull.Value, column2.DefaultValue, "test#36");
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column2.DesignMode, "test#37");
 #endif
 			Assert.AreEqual ("", column2.Expression, "test#38");
@@ -190,7 +181,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("second_first", column3.ColumnName, "test#58");
 			Assert.AreEqual ("System.String", column3.DataType.ToString (), "test#59");
 			Assert.AreEqual ("default_value", column3.DefaultValue.ToString (), "test#60");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column3.DesignMode, "test#61");
 #endif
 			Assert.AreEqual ("", column3.Expression, "test#62");
@@ -2116,7 +2107,7 @@ namespace MonoTests.System.Data
 				"deserialization after modification oes not give current values");
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void Bug420862 ()
 		{
@@ -2311,7 +2302,7 @@ namespace MonoTests.System.Data
 
 #if NET_2_0
 
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		// it is basically a test for XmlSerializer, but I need it
 		// here to not add dependency on sys.data.dll in sys.xml test.
 		[Test]

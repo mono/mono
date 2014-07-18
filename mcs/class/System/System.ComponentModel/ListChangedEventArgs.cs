@@ -36,7 +36,7 @@ namespace System.ComponentModel {
 		ListChangedType changedType;
 		int oldIndex;
 		int newIndex;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		PropertyDescriptor propDesc;
 #endif
 
@@ -46,7 +46,7 @@ namespace System.ComponentModel {
 		{
 		}
 	
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     PropertyDescriptor propDesc)
 		{
@@ -63,7 +63,7 @@ namespace System.ComponentModel {
 			this.oldIndex = oldIndex;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex,
 					     PropertyDescriptor propDesc)
@@ -87,7 +87,7 @@ namespace System.ComponentModel {
 			get { return newIndex; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public PropertyDescriptor PropertyDescriptor {
 			get { return propDesc; }
 		}

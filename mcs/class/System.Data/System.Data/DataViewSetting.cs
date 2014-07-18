@@ -41,7 +41,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents the default settings for ApplyDefaultSort, DataViewManager, RowFilter, RowStateFilter, Sort, and Table for DataViews created from the DataViewManager.
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[TypeConverterAttribute (typeof (ExpandableObjectConverter))]
 #if !NET_2_0
 	[Serializable]
@@ -77,7 +77,7 @@ namespace System.Data
 			set { applyDefaultSort = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public DataViewManager DataViewManager {
@@ -99,7 +99,7 @@ namespace System.Data
 			set { sort = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public DataTable Table {

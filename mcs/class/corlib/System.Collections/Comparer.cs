@@ -30,14 +30,14 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
 #endif
 
 namespace System.Collections
 {
+#if !WINDOWS_STORE_APP
 	[ComVisible(true)]
-#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
 #endif
 #if INSIDE_CORLIB
@@ -46,7 +46,7 @@ namespace System.Collections
 	internal
 #endif
 	sealed class Comparer : IComparer
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable 
 #endif
 	{
@@ -96,7 +96,7 @@ namespace System.Collections
 			throw new ArgumentException (Locale.GetText ("Neither 'a' nor 'b' implements IComparable."));
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		// ISerializable
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)

@@ -29,7 +29,7 @@ using System.Runtime.Serialization;
 
 namespace System.Collections.Specialized
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public class ListDictionary : IDictionary, ICollection, IEnumerable {
@@ -225,7 +225,7 @@ namespace System.Collections.Specialized
 		}
 
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		private class DictionaryNode {

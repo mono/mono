@@ -13,11 +13,11 @@ using System.Runtime.Serialization;
 namespace System.Transactions
 {
 	[MonoTODO ("Not supported yet")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public sealed class DependentTransaction : Transaction
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable
 #endif
 	{
@@ -42,7 +42,7 @@ namespace System.Transactions
 			throw new NotImplementedException ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)
 		{

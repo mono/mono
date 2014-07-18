@@ -164,7 +164,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Xml;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Xml.Schema;
 #else
 using Mono.Xml.Schema;

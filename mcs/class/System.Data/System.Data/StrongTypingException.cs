@@ -28,14 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data
 {
-#if !WINDOWS_PHONE
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public class StrongTypingException : DataException
@@ -56,12 +56,12 @@ namespace System.Data
 		{
 		}
 
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected StrongTypingException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
 #endif
 	}
-#endif
 }
+#endif

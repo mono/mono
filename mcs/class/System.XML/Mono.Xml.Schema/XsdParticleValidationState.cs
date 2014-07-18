@@ -48,7 +48,7 @@ namespace Mono.Xml.Schema
 
 		public XmlSchemaElement CurrentElement;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public Stack ContextStack = new Stack ();
 
 		public XsdValidationContext Context
@@ -59,7 +59,7 @@ namespace Mono.Xml.Schema
 			get { return processContents; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public void PushContext ()
 		{
 			ContextStack.Push (Context.Clone ());

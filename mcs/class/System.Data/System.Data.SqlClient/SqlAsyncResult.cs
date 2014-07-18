@@ -32,7 +32,7 @@
 
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System;
 using System.Threading;
 
@@ -137,5 +137,5 @@ namespace System.Data.SqlClient
         }
 }
 
-#endif // !WINDOWS_PHONE && !NETFX_CORE
+#endif // !WINDOWS_STORE_APP
 #endif // NET_2_0

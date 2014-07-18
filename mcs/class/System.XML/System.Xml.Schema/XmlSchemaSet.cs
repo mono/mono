@@ -56,7 +56,7 @@ namespace Mono.Xml.Schema
 	{
 		XmlNameTable nameTable;
 		XmlResolver xmlResolver = 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			new XmlUrlResolver ();
 #else
 			null;
@@ -141,7 +141,7 @@ namespace Mono.Xml.Schema
 #endif
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public XmlSchema Add (string targetNamespace, string schemaUri)
 		{
 			var uri = xmlResolver.ResolveUri (null, schemaUri);

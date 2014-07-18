@@ -41,33 +41,23 @@ using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 using System.Threading;
 using System.Xml;
-
 using MonoTests.System.Data.Utils;
-
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -97,7 +87,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, dt.Prefix, "pf");
 			Assert.IsNotNull (dt.PrimaryKey, "pk");
 			Assert.IsNotNull (dt.Rows, "rows");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (dt.Site, "Site");
 #endif
 			Assert.AreEqual (string.Empty, dt.TableName, "tname");
@@ -1851,7 +1841,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("</xs:schema>", TextString, "test#33");
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void Serialize ()
 		{
@@ -2967,7 +2957,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("first", column.ColumnName, "test#17");
 			Assert.AreEqual (typeof (string), column.DataType, "test#18");
 			Assert.AreEqual ("test_default_value", column.DefaultValue.ToString (), "test#19");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column.DesignMode, "test#20");
 #endif
 			Assert.AreEqual ("", column.Expression, "test#21");
@@ -2989,7 +2979,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (typeof (SqlGuid), column2.DataType, "test#35");
 			Assert.AreEqual (SqlGuid.Null, column2.DefaultValue, "test#36");
 			Assert.AreEqual (typeof (SqlGuid), column2.DefaultValue.GetType (), "test#36-2");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column2.DesignMode, "test#37");
 #endif
 			Assert.AreEqual ("", column2.Expression, "test#38");
@@ -3021,7 +3011,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("second_first", column3.ColumnName, "test#58");
 			Assert.AreEqual (typeof (string), column3.DataType, "test#59");
 			Assert.AreEqual ("default_value", column3.DefaultValue.ToString (), "test#60");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (column3.DesignMode, "test#61");
 #endif
 			Assert.AreEqual ("", column3.Expression, "test#62");
@@ -3120,7 +3110,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, dt2.Rows.Count, "DS275");
 		}
 
-#if !NETFX_CORE
 		[Test]
 		public void ReadWriteXmlSchema_ByFileName ()
 		{
@@ -3150,7 +3139,6 @@ namespace MonoTests.System.Data
 			File.Delete (sTempFileName1);
 			File.Delete (sTempFileName2);
 		}
-#endif
 
 		[Test]
 		public void ReadXmlSchema_ByTextReader ()
@@ -4133,7 +4121,7 @@ namespace MonoTests.System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Test]
 		public void ReadWriteXmlSchemaExp_NoFileName ()
 		{
@@ -4175,7 +4163,7 @@ namespace MonoTests.System.Data
 		}
 	}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	[TestFixture]
@@ -4187,7 +4175,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !TARGET_JVM && !MONOTOUCH && !WINDOWS_PHONE && !NETFX_CORE
+#if !TARGET_JVM && !MONOTOUCH && !WINDOWS_STORE_APP
 		[Test]
 		public void NFIFromBug55978 ()
 		{

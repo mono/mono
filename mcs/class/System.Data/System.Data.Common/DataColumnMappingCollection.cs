@@ -40,7 +40,7 @@ using System.Data;
 namespace System.Data.Common
 {
 	public sealed class DataColumnMappingCollection : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject,
 #endif
 		IColumnMappingCollection , IList, ICollection, IEnumerable
@@ -66,7 +66,7 @@ namespace System.Data.Common
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -77,7 +77,7 @@ namespace System.Data.Common
 			get { return list.Count; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -94,7 +94,7 @@ namespace System.Data.Common
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif

@@ -39,7 +39,7 @@ using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Data {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor]
 	[Serializable]
 #endif
@@ -48,7 +48,7 @@ namespace System.Data {
 	/// <summary>
 	/// hold collection of constraints for data table
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[DefaultEvent ("CollectionChanged")]
 	[Editor ("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -363,7 +363,7 @@ namespace System.Data {
 			Remove (this [index]);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected 
 #else
 		internal

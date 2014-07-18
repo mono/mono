@@ -47,19 +47,18 @@ namespace System.Data
 	/// Contains a default DataViewSettingCollection for each DataTable in a DataSet.
 	/// </summary>
 	//[Designer]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewManagerDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 #endif
-	public class DataViewManager : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, IBindingList, ITypedList, ICollection, IList, IEnumerable, 
+	public class DataViewManager : MarshalByValueComponent, IDisposable
+#if !WINDOWS_STORE_APP
+		, IBindingList, ITypedList, ICollection, IList, IEnumerable
 #endif
-		IDisposable
 	{
 		#region Fields
 
 		DataSet dataSet;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		DataViewManagerListItemTypeDescriptor descriptor;
 #endif
 		DataViewSettingCollection settings;
@@ -112,14 +111,14 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
 		public DataViewSettingCollection DataViewSettings {
 			get { return settings; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		int ICollection.Count {
 			get { return 1; }
 		}
@@ -306,7 +305,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		void IBindingList.AddIndex (PropertyDescriptor property)
 		{
 		}
@@ -417,19 +416,19 @@ namespace System.Data
 
 		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			this.OnListChanged (CollectionToListChangeEventArgs (e));
 #endif
 		}
 
 		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			this.OnListChanged (CollectionToListChangeEventArgs (e));
 #endif
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private ListChangedEventArgs CollectionToListChangeEventArgs (CollectionChangeEventArgs e)
 		{
 			ListChangedEventArgs args;
@@ -455,24 +454,11 @@ namespace System.Data
 			return args;
 		}
 #endif
-
-#if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-
-		protected virtual void Dispose(bool release_all)
-		{
-
-		}
-#endif
-
 		#endregion // Methods
 
 		#region Events
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public event ListChangedEventHandler ListChanged;
 #endif
 

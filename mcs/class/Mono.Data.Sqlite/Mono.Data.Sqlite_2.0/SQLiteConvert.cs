@@ -15,7 +15,7 @@ namespace Mono.Data.Sqlite
   using System.Globalization;
   using System.Text;
 
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
   using System.ComponentModel.Design;
 #endif
 

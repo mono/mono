@@ -54,7 +54,7 @@ namespace System.Data {
 		public ArrayList columnNames = new ArrayList ();
 	}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if !NET_2_0
@@ -134,7 +134,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets a list of the DataColumnCollection items.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected 
 #else
 		internal
@@ -549,7 +549,7 @@ namespace System.Data {
 #endif
 		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			parentTable.ResetPropertyDescriptorsCache ();
 #endif
 			if (CollectionChanged != null)
@@ -694,7 +694,7 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs when the columns collection changes, either by adding or removing a column.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 #endif
 		public event CollectionChangeEventHandler CollectionChanged;
@@ -704,7 +704,7 @@ namespace System.Data {
 
 		private void OnCollectionMetaDataChanged (CollectionChangeEventArgs ccevent)
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			parentTable.ResetPropertyDescriptorsCache ();
 #endif
 			if (CollectionMetaDataChanged != null)

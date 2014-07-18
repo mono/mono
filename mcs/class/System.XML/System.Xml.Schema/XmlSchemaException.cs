@@ -31,7 +31,7 @@ using System;
 using System.Xml;
 using System.Globalization;
 using System.Runtime.Serialization;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
 #endif
 
@@ -44,14 +44,13 @@ namespace Mono.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaException.
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 #if !INCLUDE_MONO_XML_SCHEMA
-	public class XmlSchemaException : System.SystemException
-#else
-	internal class XmlSchemaException : Exception
+	public
 #endif
+	class XmlSchemaException : SystemException
 	{
 		//fields
 		private bool hasLineInfo;
@@ -77,7 +76,7 @@ namespace Mono.Xml.Schema
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -193,7 +192,7 @@ namespace Mono.Xml.Schema
 
 		// Methods
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{

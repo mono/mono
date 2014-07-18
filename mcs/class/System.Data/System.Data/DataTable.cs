@@ -55,13 +55,10 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using Mono.Data.SqlExpressions;
-#if NETFX_CORE
-using SystemException = System.Exception;
-#endif
 
 namespace System.Data {
 	//[Designer]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[ToolboxItem (false)]
 	[DefaultEvent ("RowChanging")]
 	[DefaultProperty ("TableName")]
@@ -69,11 +66,10 @@ namespace System.Data {
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	[Serializable]
 #endif
-	public partial class DataTable : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize, 
+	public partial class DataTable : MarshalByValueComponent, IDisposable
+#if !WINDOWS_STORE_APP
+		, IListSource, ISerializable, ISupportInitialize
 #endif
-		IDisposable
 	{
 		#region Fields
 
@@ -95,7 +91,7 @@ namespace System.Data {
 		private string _prefix;
 		private UniqueConstraint _primaryKeyConstraint;
 		private DataRowCollection _rows;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private ISite _site;
 #endif
 		private string _tableName;
@@ -113,7 +109,7 @@ namespace System.Data {
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
 		private bool _virginCaseSensitive = true;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private PropertyDescriptorCollection _propertyDescriptorsCache;
 #endif
 		static DataColumn[] _emptyColumnArray = new DataColumn[0];
@@ -140,7 +136,7 @@ namespace System.Data {
 			_caseSensitive = false;	 	//default value
 			_displayExpression = null;
 			_primaryKeyConstraint = null;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			_site = null;
 #endif
 			_rows = new DataRowCollection (this);
@@ -163,7 +159,7 @@ namespace System.Data {
 			_tableName = tableName;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
@@ -276,7 +272,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -290,7 +286,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of columns that belong to this table.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
@@ -304,7 +300,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of constraints maintained by this table.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
@@ -321,7 +317,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataSet that this table belongs to.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -336,7 +332,7 @@ namespace System.Data {
 		/// Gets a customized view of the table which may
 		/// include a filtered view, or a cursor position.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -363,7 +359,7 @@ namespace System.Data {
 		/// Gets or sets the expression that will return
 		/// a value used to represent this table in the user interface.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -378,7 +374,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of customized user information.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 #endif
@@ -394,7 +390,7 @@ namespace System.Data {
 		/// any of the_rows in any of the tables of the DataSet to
 		/// which the table belongs.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -446,7 +442,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets or sets the initial starting size for this table.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -462,7 +458,7 @@ namespace System.Data {
 		/// Gets or sets the namespace for the XML represenation
 		/// of the data stored in the DataTable.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -483,7 +479,7 @@ namespace System.Data {
 		/// Gets the collection of parent relations for
 		/// this DataTable.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -498,7 +494,7 @@ namespace System.Data {
 		/// Gets or sets the namespace for the XML represenation
 		///  of the data stored in the DataTable.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -521,7 +517,7 @@ namespace System.Data {
 		/// Gets or sets an array of columns that function as
 		/// primary keys for the data table.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.PrimaryKeyEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, " + Consts.AssemblySystem_Data)]
@@ -597,7 +593,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of_rows that belong to this table.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -607,7 +603,7 @@ namespace System.Data {
 			get { return _rows; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// Gets or sets an System.ComponentModel.ISite
 		/// for the DataTable.
@@ -623,7 +619,7 @@ namespace System.Data {
 		/// <summary>
 		/// Gets or sets the name of the the DataTable.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[RefreshProperties (RefreshProperties.All)]
 #endif
@@ -636,7 +632,7 @@ namespace System.Data {
 			set { _tableName = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		bool IListSource.ContainsListCollection {
 			// the collection is a DataView
 			get { return false; }
@@ -917,7 +913,7 @@ namespace System.Data {
 			Copy.Namespace = Namespace;
 			// Copy.ParentRelations
 			Copy.Prefix = Prefix;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Copy.Site = Site;
 #endif
 			Copy.TableName = TableName;
@@ -1091,7 +1087,7 @@ namespace System.Data {
 			return typeof (DataRow);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure
 		///
@@ -1151,7 +1147,7 @@ namespace System.Data {
 			get { return _defaultValuesRowIndex; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure
 		/// </summary>
@@ -1704,7 +1700,7 @@ namespace System.Data {
 		/// Occurs when after a value has been changed for
 		/// the specified DataColumn in a DataRow.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -1716,7 +1712,7 @@ namespace System.Data {
 		/// Occurs when a value is being changed for the specified
 		/// DataColumn in a DataRow.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -1727,7 +1723,7 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs after a DataRow has been changed successfully.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -1738,7 +1734,7 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs when a DataRow is changing.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -1749,7 +1745,7 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs after a row in the table has been deleted.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -1760,7 +1756,7 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs before a row in the table is about to be deleted.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -1825,7 +1821,7 @@ namespace System.Data {
 			return sortColumns;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		private void UpdatePropertyDescriptorsCache ()
 		{
 			PropertyDescriptor[] descriptors = new PropertyDescriptor[Columns.Count + ChildRelations.Count];
@@ -1860,22 +1856,10 @@ namespace System.Data {
 				dataRowID++;
 			}
 		}
-
-#if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-
-		protected virtual void Dispose(bool release_all)
-		{
-
-		}
-#endif
 	}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[XmlSchemaProvider ("GetDataTableSchema")]
 #endif
 	partial class DataTable : IXmlSerializable {
@@ -1916,7 +1900,7 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlSchemaComplexType GetDataTableSchema (XmlSchemaSet schemaSet)
 		{
 			return new XmlSchemaComplexType ();
@@ -2128,12 +2112,10 @@ namespace System.Data {
 			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
 		}
 
-#if !NETFX_CORE
 		public void WriteXml (string fileName)
 		{
 			WriteXml (fileName, XmlWriteMode.IgnoreSchema, false);
 		}
-#endif
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
@@ -2150,24 +2132,20 @@ namespace System.Data {
 			WriteXml (writer, mode, false);
 		}
 
-#if !NETFX_CORE
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
 			WriteXml (fileName, mode, false);
 		}
-#endif
 
 		public void WriteXml (Stream stream, bool writeHierarchy)
 		{
 			WriteXml (stream, XmlWriteMode.IgnoreSchema, writeHierarchy);
 		}
 
-#if !NETFX_CORE
 		public void WriteXml (string fileName, bool writeHierarchy)
 		{
 			WriteXml (fileName, XmlWriteMode.IgnoreSchema, writeHierarchy);
 		}
-#endif
 
 		public void WriteXml (TextWriter writer, bool writeHierarchy)
 		{
@@ -2184,7 +2162,6 @@ namespace System.Data {
 			WriteXml (XmlWriter.Create (stream, GetWriterSettings ()), mode, writeHierarchy);
 		}
 
-#if !NETFX_CORE
 		public void WriteXml (string fileName, XmlWriteMode mode, bool writeHierarchy)
 		{
 			using (Stream file = File.Create (fileName))
@@ -2192,7 +2169,6 @@ namespace System.Data {
 				WriteXml (xw, mode, writeHierarchy);
 			}
 		}
-#endif
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writeHierarchy)
 		{
@@ -2315,7 +2291,6 @@ namespace System.Data {
 */
 		}
 
-#if !NETFX_CORE
 		public void WriteXmlSchema (string fileName)
 		{
 			if (fileName == "") {
@@ -2331,7 +2306,6 @@ namespace System.Data {
 				WriteXmlSchema (writer);
 			}
 		}
-#endif
 
 		public void WriteXmlSchema (Stream stream, bool writeHierarchy)
 		{
@@ -2403,7 +2377,6 @@ namespace System.Data {
 //			}
 		}
 
-#if !NETFX_CORE
 		public void WriteXmlSchema (string fileName, bool writeHierarchy)
 		{
 			if (fileName == "") {
@@ -2419,17 +2392,16 @@ namespace System.Data {
 				WriteXmlSchema (writer, writeHierarchy);
 			}
 		}
-#endif
 	}
 
 	partial class DataTable
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		: ISupportInitializeNotification 
 #endif
 	{
 		private bool tableInitialized = true;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsInitialized {
@@ -2612,7 +2584,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		void BinaryDeserializeTable (SerializationInfo info)
 		{
 			ArrayList arrayList = null;
@@ -3047,12 +3019,12 @@ namespace System.Data {
 		/// <summary>
 		/// Occurs after the Clear method is called on the datatable.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 		public event DataTableClearEventHandler TableCleared;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 		public event DataTableClearEventHandler TableClearing;

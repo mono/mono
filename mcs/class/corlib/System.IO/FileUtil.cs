@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NETFX_CORE
-
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -140,5 +138,3 @@ namespace System.IO {
 		}		
 	}
 }
-
-#endif

@@ -395,7 +395,7 @@ namespace Mono.Data.Sqlite
     /// Using reflection, enumerate all assemblies in the current appdomain looking for classes that
     /// have a SqliteFunctionAttribute attribute, and registering them accordingly.
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [global::System.Security.Permissions.FileIOPermission(global::System.Security.Permissions.SecurityAction.Assert, AllFiles = global::System.Security.Permissions.FileIOPermissionAccess.PathDiscovery)]
 #endif
     static SqliteFunction()
@@ -406,7 +406,7 @@ namespace Mono.Data.Sqlite
         SqliteFunctionAttribute at;
         Assembly[] arAssemblies = AppDomain.CurrentDomain.GetAssemblies ();
         int w = arAssemblies.Length;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
         AssemblyName sqlite = Assembly.GetCallingAssembly ().GetName ();
 #endif
 
@@ -417,7 +417,7 @@ namespace Mono.Data.Sqlite
           AssemblyName[] references;
           try
           {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             // Inspect only assemblies that reference SQLite
             references = arAssemblies[n].GetReferencedAssemblies();
             int t = references.Length;

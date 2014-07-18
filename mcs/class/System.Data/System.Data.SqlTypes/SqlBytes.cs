@@ -42,14 +42,14 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
 #else
 	[XmlRoot("base64Binary")]
 #endif
 	public sealed class SqlBytes : INullable, IXmlSerializable
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable
 #endif
 	{
@@ -226,7 +226,7 @@ namespace System.Data.SqlTypes
 			return new SqlBinary (buffer);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("base64Binary", "http://www.w3.org/2001/XMLSchema");
@@ -252,7 +252,7 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{

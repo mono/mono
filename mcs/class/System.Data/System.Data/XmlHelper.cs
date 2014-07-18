@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Collections;
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using System.Xml.Linq;
 using System.Linq;
 using XmlAttribute = System.Xml.Linq.XAttribute;
@@ -74,7 +74,7 @@ static class XmlHelper {
 	
 	internal static string GetLocalName (this XmlElement el)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return el.LocalName;
 #else
 		return el.Name.LocalName;
@@ -82,7 +82,7 @@ static class XmlHelper {
 	}
 	internal static string GetNamespaceUri (this XmlElement el)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return el.NamespaceURI;
 #else
 		return el.Name.NamespaceName;
@@ -90,7 +90,7 @@ static class XmlHelper {
 	}
 	internal static string GetPrefix (this XmlElement el)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return el.Prefix;
 #else
 		return el.GetPrefixOfNamespace (el.Name.Namespace);
@@ -98,7 +98,7 @@ static class XmlHelper {
 	}
 	internal static bool IsNamespaceAttribute (this XmlAttribute attr)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return attr.Prefix.Equals ("xmlns");
 #else
 		return attr.IsNamespaceDeclaration;
@@ -106,7 +106,7 @@ static class XmlHelper {
 	}
 	internal static string GetLocalName (this XmlAttribute attr)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return attr.LocalName;
 #else
 		return attr.Name.LocalName;
@@ -114,7 +114,7 @@ static class XmlHelper {
 	}
 	internal static string GetNamespaceUri (this XmlAttribute attr)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return attr.NamespaceURI;
 #else
 		return attr.Name.NamespaceName;
@@ -124,7 +124,7 @@ static class XmlHelper {
 	{
 		if (attr == null)
 			return String.Empty;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return attr.Prefix;
 #else
 		return el.GetPrefixOfNamespace (attr.Name.Namespace);
@@ -132,7 +132,7 @@ static class XmlHelper {
 	}
 	internal static XmlElement GetRootElement (this XmlDocument doc)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return doc.DocumentElement;
 #else
 		return doc.Root;
@@ -140,7 +140,7 @@ static class XmlHelper {
 	}
 	internal static XmlAttributeCollection GetAttributes (this XmlElement el)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return el.Attributes;
 #else
 		return el.Attributes ();
@@ -148,7 +148,7 @@ static class XmlHelper {
 	}
 	internal static XmlNodeList GetChildNodes (this XmlElement el)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return el.ChildNodes;
 #else
 		return el.Nodes ();
@@ -156,7 +156,7 @@ static class XmlHelper {
 	}
 	internal static XmlNode GetNextSibling (this XmlNode n)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return n.NextSibling;
 #else
 		return n.NextNode;
@@ -164,7 +164,7 @@ static class XmlHelper {
 	}
 	internal static XmlElement GetFirstElement (this XmlElement n)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return n.FirstChild as XmlElement;
 #else
 		return n.FirstNode as XElement;
@@ -172,7 +172,7 @@ static class XmlHelper {
 	}
 	internal static string GetInnerText (this XmlElement el)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return el.InnerText;
 #else
 		return el.Value;
@@ -180,7 +180,7 @@ static class XmlHelper {
 	}
 	internal static XmlNodeList GetSiblings (this XmlElement n)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return n.ParentNode.ChildNodes;
 #else
 		return n.Parent.Nodes ();
@@ -188,7 +188,7 @@ static class XmlHelper {
 	}
 	internal static XmlDocument CreateXmlDocument (XmlReader reader)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (reader);
 #else
@@ -198,7 +198,7 @@ static class XmlHelper {
 	}
 	internal static XmlElement DeepClone (this XmlDocument doc, XmlElement element)
 	{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		return doc.ImportNode (element, true) as XmlElement;
 #else
 		return new XElement (element);
@@ -207,7 +207,7 @@ static class XmlHelper {
 	
 	// extension methods to polyfil interface
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	internal static XmlReader CreateReader (this XmlDocument doc) 
 	{
 		return new XmlNodeReader (doc);

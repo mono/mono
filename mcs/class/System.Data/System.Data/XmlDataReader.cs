@@ -28,7 +28,7 @@ using System.Data;
 using System.Xml;
 using System.Xml.Serialization;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using XmlConvertUtil = System.Xml.XmlConvert;
 #else
 using XmlAttribute = System.Xml.Linq.XAttribute;

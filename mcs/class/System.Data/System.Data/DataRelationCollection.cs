@@ -45,7 +45,7 @@ namespace System.Data {
 	/// <summary>
 	/// Represents the collection of DataRelation objects for this DataSet.
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
@@ -130,7 +130,7 @@ namespace System.Data {
 				mostRecentRelations = null;
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			protected 
 #else
 			internal
@@ -223,7 +223,7 @@ namespace System.Data {
 				base.RemoveCore (relation);
 			}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			protected 
 #else
 			internal
@@ -290,7 +290,7 @@ namespace System.Data {
 				if (relation.RelationName == string.Empty)
 					relation.RelationName = GenerateRelationName ();
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				relation.ParentTable.ResetPropertyDescriptorsCache ();
 				relation.ChildTable.ResetPropertyDescriptorsCache ();
 #endif
@@ -640,7 +640,7 @@ namespace System.Data {
 
 		#region Events
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 #endif
 		public event CollectionChangeEventHandler CollectionChanged;
@@ -649,7 +649,7 @@ namespace System.Data {
 	}
 
 #if !NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	partial class DataRelationCollection {
@@ -661,7 +661,7 @@ namespace System.Data {
 			CopyTo ((Array) array, index);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		internal void BinarySerialize (SerializationInfo si)
 		{
 			ArrayList l = new ArrayList ();

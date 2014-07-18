@@ -41,7 +41,7 @@ using System.Text;
 namespace System.Data.Common
 {
 	public class DbConnectionStringBuilder : IDictionary, ICollection, IEnumerable
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ICustomTypeDescriptor
 #endif
 	{
@@ -68,7 +68,7 @@ namespace System.Data.Common
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
@@ -79,7 +79,7 @@ namespace System.Data.Common
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public string ConnectionString {
@@ -105,7 +105,7 @@ namespace System.Data.Common
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
                 public virtual int Count
@@ -113,7 +113,7 @@ namespace System.Data.Common
                         get { return _dictionary.Count; }
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
                 public virtual bool IsFixedSize
@@ -121,7 +121,7 @@ namespace System.Data.Common
                         get { return false; }
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
                 public bool IsReadOnly
@@ -129,7 +129,7 @@ namespace System.Data.Common
                         get { throw new NotImplementedException (); }
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public virtual object this [string keyword] {
@@ -170,7 +170,7 @@ namespace System.Data.Common
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public virtual ICollection Keys
@@ -199,7 +199,7 @@ namespace System.Data.Common
                         set { this [(string) keyword] = value; }
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public virtual ICollection Values {
@@ -376,7 +376,7 @@ namespace System.Data.Common
                         return ret;
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		protected virtual void GetProperties (Hashtable propertyDescriptors)
 		{
@@ -437,7 +437,7 @@ namespace System.Data.Common
                         return (IEnumerator) _dictionary.GetEnumerator ();
                 }
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
                 private static object _staticAttributeCollection = null;
                 AttributeCollection ICustomTypeDescriptor.GetAttributes ()
                 {

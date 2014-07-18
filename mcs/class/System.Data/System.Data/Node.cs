@@ -22,9 +22,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-#if NETFX_CORE
-using SystemException = System.Exception;
-#endif
 
 namespace System.Data
 {

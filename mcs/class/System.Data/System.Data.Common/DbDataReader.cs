@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 
 namespace System.Data.Common {
 	public abstract class DbDataReader : 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		MarshalByRefObject, 
 #endif
 		IDataReader, IDataRecord, IDisposable, IEnumerable

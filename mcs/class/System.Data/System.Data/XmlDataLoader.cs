@@ -45,7 +45,7 @@ using System.Data;
 using System.Xml;
 using System.Collections;
 using System.Globalization;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using XmlConvertUtil = System.Xml.XmlConvert;
 #else
 using System.Linq;
@@ -389,7 +389,7 @@ namespace System.Data
 		{
 			int maxDepth = -1;
             if ((node != null)) {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				if  ((node.HasChildNodes) && (node.FirstChild.NodeType == XmlNodeType.Element)) {
 					for (int i=0; i<node.ChildNodes.Count; i++) {
 						if (node.ChildNodes[i].NodeType == XmlNodeType.Element) {

@@ -49,7 +49,7 @@ namespace System.Data.SqlTypes
 	/// to be stored in or retrieved from the database
 	/// </summary>
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
 #else
@@ -69,7 +69,7 @@ namespace System.Data.SqlTypes
 		private bool notNull;
 
 		// FIXME: locale id is not working yet
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		int lcid;
 #else
 		CultureInfo lcid;
@@ -99,7 +99,7 @@ namespace System.Data.SqlTypes
 		public SqlString (string data) 
 		{
 			this.value = data;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			lcid = CultureInfo.CurrentCulture.LCID;
 #else
 			lcid = CultureInfo.CurrentCulture;
@@ -113,7 +113,7 @@ namespace System.Data.SqlTypes
 				SqlCompareOptions.IgnoreWidth;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		// init with a string data and locale id values.
 		public SqlString (string data, int lcid) 
 		{
@@ -139,7 +139,7 @@ namespace System.Data.SqlTypes
 		{
 			this.value = data;
 			this.lcid = 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				lcid;
 #else
 				CultureInfo.CurrentCulture;
@@ -151,7 +151,7 @@ namespace System.Data.SqlTypes
 				notNull = false;
 		}
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 		SqlString(string data, CultureInfo culture, SqlCompareOptions compareOptions)
 			: this (data, 0, compareOptions)
 		{
@@ -161,12 +161,12 @@ namespace System.Data.SqlTypes
 
 		// init with locale id, compare options, array of bytes data,
 		// and whether unicode is encoded or not
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public 
 #endif
 		SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Encoding encoding = (fUnicode ? Encoding.Unicode : Encoding.ASCII);
 #else
 			Encoding encoding = Encoding.Unicode;
@@ -175,7 +175,7 @@ namespace System.Data.SqlTypes
 				value = String.Empty;
 			else
 				value = encoding.GetString (data, 0, data.Length);
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			this.lcid = lcid;
 #else
 			this.lcid = CultureInfo.CurrentCulture;
@@ -197,18 +197,18 @@ namespace System.Data.SqlTypes
 		// init with locale id, compare options, array of bytes data,
 		// starting index in the byte array, number of byte to copy,
 		// and whether unicode is encoded or not
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public 
 #endif
 		SqlString(int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode)
 		{		       
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Encoding encoding = (fUnicode ? Encoding.Unicode : Encoding.ASCII);
 #else
 			Encoding encoding = Encoding.Unicode;
 #endif
 			this.value = encoding.GetString (data, index, count);
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			this.lcid = lcid;
 #else
 			this.lcid = CultureInfo.CurrentCulture;
@@ -233,7 +233,7 @@ namespace System.Data.SqlTypes
 
 		public CultureInfo CultureInfo {
 			get { 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				return new CultureInfo (lcid);
 #else
 				return (CultureInfo) lcid.Clone ();
@@ -245,7 +245,7 @@ namespace System.Data.SqlTypes
 			get { return !notNull; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		// geographics location and language (locale id)
 		public int LCID {
 			get { 
@@ -372,7 +372,7 @@ namespace System.Data.SqlTypes
 			return result;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public byte[] GetNonUnicodeBytes() 
 		{
 			return Encoding.ASCII.GetBytes (value);
@@ -660,7 +660,7 @@ namespace System.Data.SqlTypes
 
 		#endregion // Public Methods
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			if (schemaSet != null && schemaSet.Count == 0) {

@@ -75,7 +75,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets the total number of elements in a collection.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public virtual int Count {
@@ -85,7 +85,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets a value indicating whether the InternalDataCollectionBase is read-only.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsReadOnly {
@@ -95,7 +95,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets a value indicating whether the InternalDataCollectionBase is synchronized.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsSynchronized {
@@ -105,7 +105,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets the items of the collection as a list.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected 
 #else
 		internal
@@ -117,7 +117,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets an object that can be used to synchronize the collection.
 		/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public object SyncRoot {

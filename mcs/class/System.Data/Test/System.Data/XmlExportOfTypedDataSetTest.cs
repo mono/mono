@@ -1,32 +1,14 @@
-using System.Xml.Serialization;
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
-using NUnit.Framework;
-#endif // USE_MSUNITTEST
-
-namespace MonoTests.System.Data
-{
-	[TestFixture]
-	public class XmlExportOfTypedDataSetTest
-	{
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
+
+using System.Xml.Serialization;
+using NUnit.Framework;
+
+namespace MonoTests.System.Data {
+
+	[TestFixture]
+	public class XmlExportOfTypedDataSetTest {
+
 		[Test]
 		public void ExportXmlSerializable_NestedClassMapping () {
 
@@ -49,9 +31,9 @@ namespace MonoTests.System.Data
 				new XmlReflectionMember [] { xmlReflectionMember }, true);
 
 			xmlSchemaExporter.ExportMembersMapping (xmlMembersMapping);
-
 		}
-#endif
-#endif
 	}
 }
+
+#endif
+#endif

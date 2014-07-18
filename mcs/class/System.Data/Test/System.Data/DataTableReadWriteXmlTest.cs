@@ -29,28 +29,20 @@ using System.Data;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
+using System.Linq;
+using System.Xml.Linq;
+#endif
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
-using NUnit.Framework; 
-#endif // USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
-using System.Linq;
-using System.Xml.Linq;
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
+using NUnit.Framework;
 #endif
 
 namespace MonoTests.System.Data
@@ -60,7 +52,7 @@ namespace MonoTests.System.Data
     {
         void StandardizeXmlFormat(ref string xml)
         {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
 #else
@@ -180,7 +172,7 @@ namespace MonoTests.System.Data
             // in the element for the dataset schema definition.  We remove that
             // extra attribute and then check to see if the rest of the xml is
             // identical.
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmlDTWriteSchema);
             XmlNode node = doc.DocumentElement.FirstChild.FirstChild;
@@ -263,7 +255,7 @@ namespace MonoTests.System.Data
             // there's a fake <DocumentElement> tag surrounding tbe table
             // in the second case.  We replace it with the name of the
             // dataset for testing purposes.
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             doc.LoadXml(xmlDTNoneNoDS);
             Assert.AreEqual("DocumentElement", doc.DocumentElement.Name, "Test#07");
 #else
@@ -283,7 +275,7 @@ namespace MonoTests.System.Data
             // Now check the DiffGram.
             Assert.AreEqual(xmlDSDiffGram, xmlDTDiffGramInDS, "Test#09");
             
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             doc.LoadXml(xmlDTDiffGramNoDS);
             Assert.AreEqual("DocumentElement", doc.DocumentElement.FirstChild.Name, "Test#10");
 #else
@@ -298,7 +290,7 @@ namespace MonoTests.System.Data
             // Finally we check the WriteSchema version of the data.  First
             // we remove the extra "msdata:MainDataTable" attribute from
             // the schema declaration part of the DataTable xml.
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             doc = new XmlDocument();
             doc.LoadXml(xmlDTWriteSchemaInDS);
             node = doc.DocumentElement.FirstChild.FirstChild;
@@ -322,7 +314,7 @@ namespace MonoTests.System.Data
             
             // Remove the extra "msdata:MainDataTable" for the other test case.
             // Also make sure we have "NewDataSet" in the appropriate locations.
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             doc = new XmlDocument();
             doc.LoadXml(xmlDTWriteSchemaNoDS);
             node = doc.DocumentElement.FirstChild.FirstChild;
@@ -339,7 +331,7 @@ namespace MonoTests.System.Data
             sw.GetStringBuilder().Length = 0;
             doc.Save(sw);
             
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
             Assert.AreEqual("NewDataSet", doc.DocumentElement.Name, "Test#17");
             Assert.AreEqual("NewDataSet", doc.DocumentElement.FirstChild.Attributes["id"].Value, "Test#18");
             Assert.AreEqual("NewDataSet", doc.DocumentElement.FirstChild.FirstChild.Attributes["name"].Value, "Test#19");

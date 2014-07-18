@@ -34,7 +34,7 @@ using System.Runtime.Serialization;
 
 namespace System.ComponentModel
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public class InvalidEnumArgumentException : ArgumentException
@@ -61,7 +61,7 @@ namespace System.ComponentModel
 		{
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected InvalidEnumArgumentException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

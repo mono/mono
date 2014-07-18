@@ -46,11 +46,7 @@ namespace System.Data.Common
 #if ONLY_1_1
 	abstract
 #endif
-	class DataAdapter : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		Component, 
-#endif
-		IDataAdapter, IDisposable
+	class DataAdapter : Component, IDataAdapter, IDisposable
 	{
 		#region Fields
 
@@ -106,7 +102,7 @@ namespace System.Data.Common
 
 		#region Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Fill")]
 #endif
 #if !NET_2_0
@@ -126,7 +122,7 @@ namespace System.Data.Common
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Update")]
 #endif
 #if !NET_2_0
@@ -139,7 +135,7 @@ namespace System.Data.Common
 		}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public LoadOption FillLoadOption {
@@ -155,7 +151,7 @@ namespace System.Data.Common
 			get { return TableMappings; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Mapping")]
 #endif
 #if !NET_2_0
@@ -170,7 +166,7 @@ namespace System.Data.Common
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Mapping")]
 #endif
 #if !NET_2_0
@@ -193,13 +189,13 @@ namespace System.Data.Common
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Mapping")]
 #endif
 #if !NET_2_0
 		[DataSysDescription ("How to map source table to DataSet table.")]
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
 		public DataTableMappingCollection TableMappings {
@@ -231,19 +227,8 @@ namespace System.Data.Common
 		}
 
 		[MonoTODO]
-		protected 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		override 
-#else
-		virtual
-#endif
-		void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
-#if WINDOWS_PHONE || NETFX_CORE
-			EventHandler eh = (EventHandler) Events [disposedEvent];
-			if (eh != null)
-				eh (this, EventArgs.Empty);
-#endif
 		}
 
 		protected virtual bool ShouldSerializeTableMappings ()
@@ -679,27 +664,6 @@ namespace System.Data.Common
 		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
 		public abstract IDataParameter[] GetFillParameters ();
 		public abstract int Update (DataSet dataSet);
-#endif
-
-#if WINDOWS_PHONE || NETFX_CORE
-		EventHandlerList event_handlers = null;
-		static readonly object disposedEvent = new object ();
-		protected EventHandlerList Events {
-			get {
-				if (null == event_handlers)
-					event_handlers = new EventHandlerList ();
-				return event_handlers;
-			}
-		}
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public event EventHandler Disposed {
-			add { Events.AddHandler (disposedEvent, value); }
-			remove { Events.RemoveHandler (disposedEvent, value); }
-		}
-
-		public void Dispose() {
-			Dispose (true);
-		}
 #endif
 
 		#endregion

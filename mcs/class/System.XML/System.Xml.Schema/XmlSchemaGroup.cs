@@ -28,11 +28,9 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Xml;
-#if WINDOWS_PHONE || NETFX_CORE
-using Stack = System.Collections.Generic.Stack<System.Object>;
-#endif
 
 #if !INCLUDE_MONO_XML_SCHEMA
 namespace System.Xml.Schema
@@ -145,7 +143,7 @@ namespace Mono.Xml.Schema
 				Particle.parentIsGroupDefinition = true;
 
 				try {
-					Particle.CheckRecursion (new Stack (), h, schema);
+					Particle.CheckRecursion (new Stack<XmlSchemaParticle> (), h, schema);
 				} catch (XmlSchemaException ex) {
 					error (h, ex.Message, ex);
 					this.isCircularDefinition = true;

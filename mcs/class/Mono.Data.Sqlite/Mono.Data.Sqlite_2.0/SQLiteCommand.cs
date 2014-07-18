@@ -16,7 +16,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbCommand.
   /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
   [Designer ("SQLite.Designer.SqliteCommandDesigner, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139")]
   [ToolboxItem (true)]
 #endif
@@ -295,7 +295,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue ("")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [RefreshProperties (RefreshProperties.All)]
     [Editor ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
@@ -344,7 +344,7 @@ namespace Mono.Data.Sqlite
     /// The type of the command.  SQLite only supports CommandType.Text
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [RefreshProperties (RefreshProperties.All)]
 #endif
     [DefaultValue (CommandType.Text)]
@@ -387,7 +387,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue ((string)null)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
 #endif
@@ -432,7 +432,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the SqliteParameterCollection for the given command
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
     public new SqliteParameterCollection Parameters
@@ -455,7 +455,7 @@ namespace Mono.Data.Sqlite
     /// The transaction associated with this command.  SQLite only supports one transaction per connection, so this property forwards to the
     /// command's underlying connection.
 	/// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -626,7 +626,7 @@ namespace Mono.Data.Sqlite
     /// Determines if the command is visible at design time.  Defaults to True.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [DesignOnly (true)]
     [Browsable (false)]
 #endif
@@ -642,7 +642,7 @@ namespace Mono.Data.Sqlite
       set
       {
         _designTimeVisible = value;
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
         TypeDescriptor.Refresh(this);
 #endif
       }

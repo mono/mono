@@ -34,7 +34,7 @@ using System.Runtime.Serialization;
 
 namespace System.Data
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public class DuplicateNameException : DataException
@@ -56,7 +56,7 @@ namespace System.Data
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected DuplicateNameException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

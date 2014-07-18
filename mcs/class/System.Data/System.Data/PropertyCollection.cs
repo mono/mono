@@ -44,7 +44,7 @@ namespace System.Data
 	/// retrieve a PropertyCollection.
 	/// </summary>
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 #endif
@@ -55,7 +55,7 @@ namespace System.Data
 		}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected PropertyCollection(System.Runtime.Serialization.SerializationInfo info,
 					     System.Runtime.Serialization.StreamingContext context)
 			: base (info, context)

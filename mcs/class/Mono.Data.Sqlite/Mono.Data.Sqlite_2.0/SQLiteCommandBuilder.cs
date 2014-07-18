@@ -170,7 +170,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
 #endif
     public override CatalogLocation CatalogLocation
@@ -188,7 +188,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
 #endif
     public override string CatalogSeparator
@@ -206,7 +206,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
 #endif
     [DefaultValue ("[")]
@@ -225,7 +225,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
 #endif
     public override string QuoteSuffix
@@ -277,7 +277,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Overridden to hide its property from the designer
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
 #endif
     public override string SchemaSeparator

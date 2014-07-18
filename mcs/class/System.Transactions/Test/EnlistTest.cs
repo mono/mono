@@ -15,26 +15,17 @@
 
 using System;
 using System.Transactions;
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+#else
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-#endif // USE_MSUNITTEST
+#endif
 
 namespace MonoTests.System.Transactions {
 	
@@ -293,12 +284,9 @@ namespace MonoTests.System.Transactions {
 		/* >1vol + 1 durable 
 		 * durable doesn't complete SPC
 		 */
+		// Correct this test, it should throw TimeOutException or something
 		[Test]
-		[Ignore (
-#if !USE_MSUNITTEST
-			"Correct this test, it should throw TimeOutException or something" 
-#endif
-		)]
+		[Ignore]
 		public void Vol2_Dur1_Fail2 ()
 		{
 			TransactionAbortedException exception = null;
@@ -342,12 +330,9 @@ namespace MonoTests.System.Transactions {
 		}
 
 		/* Same as Vol2_Dur1_Fail2, but with a volatile manager timming out */
+		// Correct this test, it should throw TimeOutException or something
 		[Test]
-		[Ignore(
-#if !USE_MSUNITTEST
-			"Correct this test, it should throw TimeOutException or something" 
-#endif
-		)]
+		[Ignore]
 		public void Vol2_Dur1_Fail2b()
 		{
 			TransactionAbortedException exception = null;
@@ -1381,7 +1366,7 @@ namespace MonoTests.System.Transactions {
 
 		private static void AssertIsInstanceOfType(Type exceptionType, Exception exception, string message)
 		{
-#if USE_MSUNITTEST
+#if WINDOWS_STORE_APP
 			Assert.IsInstanceOfType(exception, exceptionType, message);
 #else
 			Assert.That (exception, new InstanceOfTypeConstraint(exceptionType), message);

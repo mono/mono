@@ -36,14 +36,22 @@ using System.Runtime.InteropServices;
 
 namespace System.ComponentModel {
 
+#if !WINDOWS_STORE_APP
 	[DesignerCategory ("Component")]
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-	public class Component : MarshalByRefObject, IComponent, IDisposable
+#endif
+	public class Component : 
+#if !WINDOWS_STORE_APP
+		MarshalByRefObject, IComponent, 
+#endif
+		IDisposable
 	{
 
 		private EventHandlerList event_handlers;
+#if !WINDOWS_STORE_APP
 		private ISite mySite;
+#endif
 		static readonly object disposedEvent = new object ();
 
 		public Component ()
@@ -55,6 +63,7 @@ namespace System.ComponentModel {
 			get { return false; }
 		}
 
+#if !WINDOWS_STORE_APP
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual ISite Site
 		{
@@ -79,6 +88,7 @@ namespace System.ComponentModel {
 				return mySite.DesignMode;
 			}
 		}
+#endif
 
 		protected EventHandlerList Events {
 			get {
@@ -127,14 +137,17 @@ namespace System.ComponentModel {
 		protected virtual void Dispose (bool release_all)
 		{
 			if (release_all) {
+#if !WINDOWS_STORE_APP
 				if (mySite != null && mySite.Container != null)
 					mySite.Container.Remove (this);
+#endif
 				EventHandler eh = (EventHandler) Events [disposedEvent];
 				if (eh != null)
 					eh (this, EventArgs.Empty);
 			}
 		}
 
+#if !WINDOWS_STORE_APP
 		protected virtual object GetService (Type service)
 		{
 			if (mySite != null) {
@@ -149,8 +162,12 @@ namespace System.ComponentModel {
 				return GetType ().ToString ();
 			return String.Format ("{0} [{1}]", mySite.Name, GetType ().ToString ());
 		}
+#endif
 
-		[Browsable (false), EditorBrowsable (EditorBrowsableState.Advanced)]
+#if !WINDOWS_STORE_APP
+		[Browsable (false)]
+#endif
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler Disposed {
 			add { Events.AddHandler (disposedEvent, value); }
 			remove { Events.RemoveHandler (disposedEvent, value); }

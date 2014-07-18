@@ -31,8 +31,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Schema;
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
@@ -40,19 +39,11 @@ using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
 using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
+#endif
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using System.Xml.Linq;
 using XmlNode = System.Xml.Linq.XNode;
 #endif
@@ -141,7 +132,7 @@ namespace Monotests_System.Data
 			Assert.IsTrue (ds.Tables["CustomTypesTable"].Rows[0][1].ToString().StartsWith("<Func "), "XDR4");
 		}
 		
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable]
 #endif
 		public class CustomTypeXml : IXmlSerializable {
@@ -154,7 +145,7 @@ namespace Monotests_System.Data
 
 		    public CustomTypeXml(string str)
 		    {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		        XmlDocument doc = new XmlDocument ();
 		        doc.LoadXml (str);
 		        mFuncXmlNode = (XmlNode)(doc.DocumentElement);
@@ -179,7 +170,7 @@ namespace Monotests_System.Data
 		    #region ToString
 		    public override string ToString ()
 		    {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		        return this.Node.OuterXml;
 #else
 				return this.Node.ToString ();
@@ -191,7 +182,7 @@ namespace Monotests_System.Data
 		    #region WriteXml
 		    void IXmlSerializable.WriteXml (XmlWriter writer)
 		    {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		        XmlDocument doc = new XmlDocument ();
 		        doc.LoadXml (mFuncXmlNode.OuterXml);
 
@@ -251,7 +242,7 @@ namespace Monotests_System.Data
 		    #region ReadXml
 		    void IXmlSerializable.ReadXml (XmlReader reader)
 		    {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		        XmlDocument doc = new XmlDocument ();
 		        string str = reader.ReadString ();
 		        try {
@@ -275,7 +266,7 @@ namespace Monotests_System.Data
 
 		    /* Private utils */
 		    #region private UpgradeSchema
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		    void UpgradeSchema (XmlNode xNode)
 		    {
 		        // Attribute removals (cleanup)

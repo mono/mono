@@ -31,7 +31,7 @@
 //
 
 namespace System.Data {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public enum KeyRestrictionBehavior

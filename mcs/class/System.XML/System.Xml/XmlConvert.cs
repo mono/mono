@@ -38,7 +38,7 @@ using System.Xml.Schema;
 
 namespace System.Xml {
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	public class XmlConvert {
 #else
 	class XmlConvertUtil {
@@ -304,7 +304,7 @@ namespace System.Xml {
 
 		public static char ToChar(string s)
 		{
-#if !NET_2_1 && !WINDOWS_PHONE && !NETFX_CORE
+#if !NET_2_1 && !WINDOWS_STORE_APP
 			return Char.Parse(s);
 #else
 			if (s == null)

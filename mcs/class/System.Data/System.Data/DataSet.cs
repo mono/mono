@@ -44,7 +44,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.IO;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using XmlConvertUtil = System.Xml.XmlConvert;
@@ -60,17 +60,16 @@ using System.Data.Common;
 
 namespace System.Data
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[Serializable]
 #endif
-	public partial class DataSet : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent, IListSource, ISerializable, ISupportInitialize,
+	public partial class DataSet : MarshalByValueComponent, IXmlSerializable, IDisposable
+#if !WINDOWS_STORE_APP
+		, IListSource, ISerializable, ISupportInitialize
 #endif
-		IXmlSerializable, IDisposable
 	{
 		string dataSetName;
 		string _namespace = string.Empty;
@@ -82,7 +81,7 @@ namespace System.Data
 		PropertyCollection properties;
 		DataViewManager defaultView;
 		CultureInfo locale;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		internal XmlDataDocument _xmlDataDocument;
 #endif
 
@@ -107,7 +106,7 @@ namespace System.Data
 			prefix = String.Empty;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected DataSet (SerializationInfo info, StreamingContext context)
 			: this ()
 		{
@@ -130,7 +129,7 @@ namespace System.Data
 
 		#region Public Properties
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -155,7 +154,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -170,7 +169,7 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates a custom \"view\" of the data contained by the DataSet. This view allows filtering, searching, and navigating through the custom data view.")]
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public DataViewManager DefaultViewManager {
@@ -190,7 +189,7 @@ namespace System.Data
 			set { InternalEnforceConstraints (value, true); }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 #endif
@@ -201,7 +200,7 @@ namespace System.Data
 			get { return properties; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 #if !NET_2_0
@@ -217,7 +216,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -334,7 +333,7 @@ namespace System.Data
 			return false;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -353,7 +352,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -377,7 +376,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
@@ -388,7 +387,7 @@ namespace System.Data
 			get { return relationCollection; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override ISite Site {
@@ -397,7 +396,7 @@ namespace System.Data
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 #endif
@@ -423,7 +422,7 @@ namespace System.Data
 		/// </summary>
 		public void Clear ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			if (_xmlDataDocument != null)
 				throw new NotSupportedException ("Clear function on dataset and datatable is not supported when XmlDataDocument is bound to the DataSet.");
 #endif
@@ -722,7 +721,6 @@ namespace System.Data
 			WriteXml (writer);
 		}
 
-#if !NETFX_CORE
 		///<summary>
 		/// Writes the current data for the DataSet to the specified file.
 		/// </summary>
@@ -736,7 +734,6 @@ namespace System.Data
 				writer.WriteEndDocument ();
 			}
 		}
-#endif
 
 		public void WriteXml (TextWriter writer)
 		{
@@ -749,7 +746,6 @@ namespace System.Data
 			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
-#if !NETFX_CORE
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
 			using (Stream file = File.Create (fileName))
@@ -759,7 +755,6 @@ namespace System.Data
 				writer.WriteEndDocument ();
 			}
 		}
-#endif
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
@@ -816,7 +811,6 @@ namespace System.Data
 			WriteXmlSchema (writer);
 		}
 
-#if !NETFX_CORE
 		public void WriteXmlSchema (string fileName)
 		{
 			using (Stream file = File.Create (fileName))
@@ -826,7 +820,6 @@ namespace System.Data
 				writer.WriteEndDocument ();
 			}
 		}
-#endif
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
@@ -932,7 +925,7 @@ namespace System.Data
 			if (reader.EOF)
 				return mode;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			if (reader is XmlTextReader) {
 				// we dont need whitespace
 				((XmlTextReader) reader).WhitespaceHandling = WhitespaceHandling.None;
@@ -998,7 +991,7 @@ namespace System.Data
 			int depth = (reader.NodeType == XmlNodeType.Element) ? reader.Depth : -1;
 
 			XmlDocument doc = new XmlDocument ();
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			XmlElement root = doc.CreateElement(reader.Prefix, reader.LocalName, reader.NamespaceURI);
 			if (reader.HasAttributes) {
 				for (int i = 0; i < reader.AttributeCount; i++) {
@@ -1123,7 +1116,7 @@ namespace System.Data
 
 		#region Public Events
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Action")]
 #endif
 #if !NET_2_0
@@ -1133,7 +1126,7 @@ namespace System.Data
 
 		#endregion // Public Events
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		#region IListSource methods
 		IList IListSource.GetList ()
 		{
@@ -1183,7 +1176,7 @@ namespace System.Data
 		}
 		#endregion
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		#region ISerializable
 #if NET_2_0
 		public virtual
@@ -1219,7 +1212,7 @@ namespace System.Data
 #endif
 
 		#region Protected Methods
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
 			string s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
@@ -1253,7 +1246,7 @@ namespace System.Data
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			if (GetType() == typeof(DataSet))
 				return null;
 			MemoryStream stream = new MemoryStream();
@@ -1605,35 +1598,23 @@ namespace System.Data
 		}
 
 		#endregion //Private Xml Serialisation
-
-#if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-
-		protected virtual void Dispose(bool release_all)
-		{
-
-		}
-#endif
 	}
 
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[XmlSchemaProvider ("GetDataSetSchema")]
 #else
 	[XmlRoot ("DataSet")]
 #endif
 	partial class DataSet
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		: ISupportInitializeNotification 
 #endif
 	{
 		bool dataSetInitialized = true;
 		public event EventHandler Initialized;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected DataSet (SerializationInfo info, StreamingContext context, bool ConstructSchema)
 			: this ()
 		{
@@ -1664,14 +1645,14 @@ namespace System.Data
 			set { remotingFormat = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 #endif
 		public bool IsInitialized {
 			get { return dataSetInitialized; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 #endif
@@ -1694,7 +1675,7 @@ namespace System.Data
 			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
 		{
 			return new XmlSchemaComplexType ();
@@ -1745,7 +1726,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		void BinarySerialize (SerializationInfo si)
 		{
 			Version vr = new Version(2, 0);
@@ -1872,7 +1853,7 @@ namespace System.Data
 			return SchemaSerializationMode.IncludeSchema;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected SchemaSerializationMode DetermineSchemaSerializationMode (SerializationInfo info, StreamingContext context)
 		{
 			SerializationInfoEnumerator e = info.GetEnumerator ();

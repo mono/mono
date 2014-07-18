@@ -33,29 +33,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+using System;
+using System.Data;
+using System.Xml;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
 using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
-using System;
-using System.Data;
-using System.Xml;
-using MonoTests.System.Data.Utils;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -96,12 +88,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Column1", C.Caption, "test#05");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#06");
 			Assert.AreEqual ("Column1", C.ColumnName, "test#07");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#08");
 #endif
 			Assert.AreEqual (typeof (string), C.DataType, "test#09");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#10");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#11");
 #endif
 			Assert.AreEqual ("", C.Expression, "test#12");
@@ -111,7 +103,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, C.Ordinal, "test#16");
 			Assert.AreEqual ("", C.Prefix, "test#17");
 			Assert.IsFalse (C.ReadOnly, "test#18");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#19");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#20");
@@ -126,12 +118,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Column2", C.Caption, "test#27");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#28");
 			Assert.AreEqual ("Column2", C.ColumnName, "test#29");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#30");
 #endif
 			Assert.AreEqual (typeof (string), C.DataType, "test#31");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#32");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#33");
 #endif
 			Assert.AreEqual ("", C.Expression, "test#34");
@@ -141,7 +133,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, C.Ordinal, "test#38");
 			Assert.AreEqual ("", C.Prefix, "test#39");
 			Assert.IsFalse (C.ReadOnly, "test#40");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#41");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#42");
@@ -159,12 +151,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("test1", C.Caption, "test#49");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#50");
 			Assert.AreEqual ("test1", C.ColumnName, "test#51");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#52");
 #endif
 			Assert.AreEqual (typeof (int), C.DataType, "test#53");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#54");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#55");
 #endif
 			Assert.AreEqual ("", C.Expression, "test#56");
@@ -174,7 +166,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, C.Ordinal, "test#60");
 			Assert.AreEqual ("", C.Prefix, "test#61");
 			Assert.IsFalse (C.ReadOnly, "test#62");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#63");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#64");
@@ -189,12 +181,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("test2", C.Caption, "test#71");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#72");
 			Assert.AreEqual ("test2", C.ColumnName, "test#73");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#74");
 #endif
 			Assert.AreEqual (typeof (string), C.DataType, "test#75");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#76");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#77");
 #endif
 			Assert.AreEqual ("Column1 + Column2", C.Expression, "test#78");
@@ -204,7 +196,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (3, C.Ordinal, "test#82");
 			Assert.AreEqual ("", C.Prefix, "test#83");
 			Assert.IsTrue (C.ReadOnly, "test#84");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#85");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#86");
@@ -222,12 +214,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("test3", C.Caption, "test#93");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#94");
 			Assert.AreEqual ("test3", C.ColumnName, "test#95");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#96");
 #endif
 			Assert.AreEqual (typeof (int), C.DataType, "test#97");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#98");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#99");
 #endif
 			Assert.AreEqual ("", C.Expression, "test#100");
@@ -237,7 +229,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (4, C.Ordinal, "test#104");
 			Assert.AreEqual ("", C.Prefix, "test#105");
 			Assert.IsFalse (C.ReadOnly, "test#106");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#107");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#108");
@@ -390,12 +382,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("test1", C.Caption, "test#05");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#06");
 			Assert.AreEqual ("test1", C.ColumnName, "test#07");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#08");
 #endif
 			Assert.AreEqual (typeof (string), C.DataType, "test#09");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#10");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#11");
 #endif
 			Assert.AreEqual ("", C.Expression, "test#12");
@@ -405,7 +397,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, C.Ordinal, "test#16");
 			Assert.AreEqual ("", C.Prefix, "test#17");
 			Assert.IsFalse (C.ReadOnly, "test#18");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#19");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#20");
@@ -420,12 +412,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Test_caption", C.Caption, "test#05");
 			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#06");
 			Assert.AreEqual ("test2", C.ColumnName, "test#07");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Container, "test#08");
 #endif
 			Assert.AreEqual (typeof (XmlReader), C.DataType, "test#09");
 			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#10");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsFalse (C.DesignMode, "test#11");
 #endif
 			Assert.AreEqual ("", C.Expression, "test#12");
@@ -435,7 +427,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, C.Ordinal, "test#16");
 			Assert.AreEqual ("", C.Prefix, "test#17");
 			Assert.IsFalse (C.ReadOnly, "test#18");
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			Assert.IsNull (C.Site, "test#19");
 #endif
 			Assert.AreEqual ("test_table", C.Table.TableName, "test#20");

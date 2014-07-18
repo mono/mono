@@ -26,8 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if USE_MSUNITTEST
-#if WINDOWS_PHONE || NETFX_CORE
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Collections;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Schema;
+using System.IO;
+using System.Globalization;
+using MonoTests.System.Data.Utils;
+#if WINDOWS_STORE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
 using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
@@ -35,28 +44,9 @@ using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.
 using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
 using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
 using AssertionException = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.UnitTestAssertException;
-#else // !WINDOWS_PHONE && !NETFX_CORE
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
-using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
-using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
-using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
-using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
-using AssertionException = Microsoft.VisualStudio.TestTools.UnitTesting.UnitTestAssertException;
-#endif // WINDOWS_PHONE || NETFX_CORE
-#else // !USE_MSUNITTEST
+#else
 using NUnit.Framework;
-#endif // USE_MSUNITTEST
-using System;
-using System.ComponentModel;
-using System.Data;
-using MonoTests.System.Data.Utils;
-using System.Collections;
-using System.Runtime.Serialization;
-using System.Xml;
-using System.Xml.Schema;
-using System.IO;
-using System.Globalization;
+#endif
 
 namespace MonoTests.System.Data
 {
@@ -223,7 +213,7 @@ namespace MonoTests.System.Data
                        ds1.DataTable1.AddDataTable1Row("test");
                        ds1.DataTable1.AddDataTable1Row("test2");
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
                        global::System.Runtime.Serialization.Formatters.Binary.BinaryFormatter formatter =
                          new global::System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 #else
@@ -295,7 +285,7 @@ namespace MonoTests.System.Data
 			EventStatus += "B";
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Serializable()]
 		[DesignerCategoryAttribute("code")]
 		[ToolboxItem(true)]
@@ -316,7 +306,7 @@ namespace MonoTests.System.Data
 				this.Relations.CollectionChanged += schemaChangedHandler;
 			}
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			protected myTypedDataSet(SerializationInfo info, StreamingContext context) 
 			{
 				string strSchema = ((string)(info.GetValue("XmlSchema", typeof(string))));
@@ -352,7 +342,7 @@ namespace MonoTests.System.Data
 			}
 #endif
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			[Browsable(false)]
 			[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Content)]
 #endif
@@ -364,7 +354,7 @@ namespace MonoTests.System.Data
 				}
 			}
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			[Browsable(false)]
 			[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Content)]
 #endif
@@ -416,7 +406,7 @@ namespace MonoTests.System.Data
 				this.InitVars();
 			}
         
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			protected override XmlSchema GetSchemaSerializable() 
 			{
 				MemoryStream stream = new MemoryStream();
@@ -528,7 +518,7 @@ namespace MonoTests.System.Data
 					this.DisplayExpression = table.DisplayExpression;
 				}
             
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				[Browsable(false)]
 #endif
 				public int Count 
@@ -913,7 +903,7 @@ namespace MonoTests.System.Data
 					this.DisplayExpression = table.DisplayExpression;
 				}
             
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 				[Browsable(false)]
 #endif
 				public int Count 

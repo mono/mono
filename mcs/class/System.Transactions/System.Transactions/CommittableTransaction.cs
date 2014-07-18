@@ -15,11 +15,11 @@ using System.Threading;
 
 namespace System.Transactions
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public sealed class CommittableTransaction : Transaction,
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		ISerializable, 
 #endif
 		IDisposable, System.IAsyncResult
@@ -81,7 +81,7 @@ namespace System.Transactions
 			CommitInternal ();
 		}
 		
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[MonoTODO ("Not implemented")]
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)

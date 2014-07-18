@@ -35,7 +35,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml.Schema
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	internal class XsdKeyEntryCollection : CollectionBase
 	{
 		public void Add (XsdKeyEntry entry)
@@ -61,7 +61,7 @@ namespace Mono.Xml.Schema
 		private XmlQualifiedName qname;
 		private XmlQualifiedName refKeyName;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public XsdKeyEntryCollection Entries =
 			new XsdKeyEntryCollection ();
 		public XsdKeyEntryCollection FinishedEntries =

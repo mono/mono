@@ -37,7 +37,7 @@ namespace System.Data.SqlTypes
 	/// Specifies the compare option values for a SqlString structure.
 	/// </summary>
 	[Flags]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public enum SqlCompareOptions {

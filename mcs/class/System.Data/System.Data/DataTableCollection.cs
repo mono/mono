@@ -38,7 +38,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
@@ -47,7 +47,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents the collection of tables for the DataSet.
 	/// </summary>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.TablesCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
@@ -84,7 +84,7 @@ namespace System.Data
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected 
 #else
 		internal
@@ -371,7 +371,7 @@ namespace System.Data
 
 		#region Events
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 #endif
 		public event CollectionChangeEventHandler CollectionChanged;
@@ -458,7 +458,7 @@ namespace System.Data
 			CopyTo ((Array) array, index);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		internal void BinarySerialize_Schema (SerializationInfo si)
 		{
 			si.AddValue ("DataSet.Tables.Count", Count);
@@ -491,7 +491,7 @@ namespace System.Data
 #endif
 	}
 #else
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	partial class DataTableCollection {

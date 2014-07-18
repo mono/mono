@@ -44,7 +44,7 @@ using System.Runtime.Serialization;
 namespace System.Data.SqlTypes
 {
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
 #else
@@ -479,7 +479,7 @@ namespace System.Data.SqlTypes
 		}
 		
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("unsignedByte", "http://www.w3.org/2001/XMLSchema");

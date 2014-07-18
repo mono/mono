@@ -45,7 +45,7 @@ namespace System.Data.SqlTypes
 	/// Represents a variable-length stream of binary data to be stored in or retrieved from a database.
 	/// </summary>
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
 #else
@@ -355,7 +355,7 @@ namespace System.Data.SqlTypes
 			return 0;
 		}
 #if NET_2_0
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("base64Binary", "http://www.w3.org/2001/XMLSchema");

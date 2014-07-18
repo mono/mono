@@ -55,20 +55,16 @@ namespace System.Data {
 	/// Summary description for DataColumn.
 	/// </summary>
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataColumnEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[ToolboxItem (false)]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
 #endif
-	public class DataColumn : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		MarshalByValueComponent,
-#endif
-		IDisposable
-	{
-#region Events
+	public class DataColumn : MarshalByValueComponent, IDisposable {
+
+		#region Events
 		EventHandlerList _eventHandlers = new EventHandlerList ();
 
 		//used for constraint validation
@@ -176,7 +172,7 @@ namespace System.Data {
 #if NET_2_0
 		DataSetDateTime _datetimeMode = DataSetDateTime.UnspecifiedLocal;
 		[DefaultValue (DataSetDateTime.UnspecifiedLocal)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public DataSetDateTime DateTimeMode {
@@ -210,7 +206,7 @@ namespace System.Data {
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -244,7 +240,7 @@ namespace System.Data {
 		///		(that is, the Expression property is set.) The incremented value is used only if the row's value for this column,
 		///		when added to the columns collection, is equal to the default value.
 		///	</remarks>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[RefreshProperties (RefreshProperties.All)]
 #endif
@@ -273,7 +269,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -288,7 +284,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -333,7 +329,7 @@ namespace System.Data {
 				DataContainer.CopyValue (Table.DefaultValuesRowIndex, index);
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -353,13 +349,13 @@ namespace System.Data {
 			set { _columnMapping = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
 		[DataSysDescription ("Indicates the name used to look up this column in the Columns collection of a DataTable.")]
 #endif
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		[DefaultValue ("")]
@@ -383,7 +379,7 @@ namespace System.Data {
 					RaisePropertyChanging ("ColumnName");
 					_columnName = value;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
 #endif
@@ -391,7 +387,7 @@ namespace System.Data {
 					RaisePropertyChanging ("ColumnName");
 					_columnName = value;
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 					if (Table != null)
 						Table.ResetPropertyDescriptorsCache ();
 #endif
@@ -399,7 +395,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[RefreshProperties (RefreshProperties.All)]
 		[TypeConverterAttribute (typeof (ColumnTypeConverter))]
@@ -454,7 +450,7 @@ namespace System.Data {
 		/// <remarks>When AutoIncrement is set to true, there can be no default value.</remarks>
 		/// <exception cref="System.InvalidCastException"></exception>
 		/// <exception cref="System.ArgumentException"></exception>
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[TypeConverterAttribute (typeof (System.Data.DefaultValueTypeConverter))]
 #endif
@@ -496,7 +492,7 @@ namespace System.Data {
 				DataContainer [Table.DefaultValuesRowIndex] = _defaultValue;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[RefreshProperties (RefreshProperties.All)]
 #endif
@@ -564,7 +560,7 @@ namespace System.Data {
 			get { return _compiledExpression; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 #endif
@@ -578,7 +574,7 @@ namespace System.Data {
 #endif
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -598,7 +594,7 @@ namespace System.Data {
 			}
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -616,7 +612,7 @@ namespace System.Data {
 		}
 
 		//Need a good way to set the Ordinal when the column is added to a columnCollection.
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -646,7 +642,7 @@ namespace System.Data {
 		}
 #endif
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -658,7 +654,7 @@ namespace System.Data {
 			set { _prefix = value == null ? String.Empty : value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 #endif
 #if !NET_2_0
@@ -670,7 +666,7 @@ namespace System.Data {
 			set { _readOnly = value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -685,7 +681,7 @@ namespace System.Data {
 #endif
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[DataCategory ("Data")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -1001,19 +997,6 @@ namespace System.Data {
 #endif
 			return DBNull.Value;
 		}
-
-#if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-
-		protected virtual void Dispose(bool release_all)
-		{
-
-		}
-#endif
-
 		#endregion // Methods
 	}
 }

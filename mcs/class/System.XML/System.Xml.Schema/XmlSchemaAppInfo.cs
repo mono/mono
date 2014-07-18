@@ -25,7 +25,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using XmlNode = System.Xml.Linq.XNode;
 using System.Xml.Linq;
 using System.Linq;
@@ -110,7 +110,7 @@ namespace Mono.Xml.Schema
 
 			//Content {any}*
 			//FIXME: This is a pure Quick Hack; There must be a another method;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 			XmlDocument xmldoc = new XmlDocument();
 			xmldoc.AppendChild(xmldoc.ReadNode(reader));
 			XmlNode root = xmldoc.FirstChild;

@@ -12,22 +12,22 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Generic;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
 #endif
 using System.Runtime.Serialization;
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 using System.Threading.Tasks;
 #endif
 using System.Threading;
 
 namespace System.Transactions
 {
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
 	public class Transaction : IDisposable
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		, ISerializable
 #endif
 	{
@@ -96,7 +96,7 @@ namespace System.Transactions
 			pspe = other.Pspe;
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)
@@ -159,7 +159,7 @@ namespace System.Transactions
 		}
 
 		[MonoTODO ("Only SinglePhase commit supported for durable resource managers.")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
 #endif
 		public Enlistment EnlistDurable (Guid manager,
@@ -170,7 +170,7 @@ namespace System.Transactions
 		}
 
 		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction. Only EnlistmentOptions.None supported yet.")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
 #endif
 		public Enlistment EnlistDurable (Guid manager,
@@ -453,7 +453,7 @@ namespace System.Transactions
 			foreach (IEnlistmentNotification enlist in Volatiles)
 			{
 				PreparingEnlistment pe = new PreparingEnlistment (this, enlist);
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 				Task.Run(() => PrepareCallbackWrapper(pe));
 #else
 				ThreadPool.QueueUserWorkItem (new WaitCallback(PrepareCallbackWrapper), pe);
@@ -463,7 +463,7 @@ namespace System.Transactions
 				TimeSpan timeout = Scope != null ? Scope.Timeout : TransactionManager.DefaultTimeout;
 
 				// FIXME: Should we managers in parallel or on-by-one?
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 				if (!pe.WaitHandle.WaitOne(timeout))
 #else
 				if (!pe.WaitHandle.WaitOne(timeout, true))

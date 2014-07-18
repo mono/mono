@@ -32,7 +32,9 @@
 
 using System;
 using System.ComponentModel;
+#if !WINDOWS_STORE_APP
 using System.ComponentModel.Design;
+#endif
 using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
@@ -40,13 +42,20 @@ namespace System.ComponentModel
 	/// <summary>
 	/// Implements IComponent and provides the base implementation for remotable components that are marshaled by value (a copy of the serialized object is passed).
 	/// </summary>
+#if !WINDOWS_STORE_APP
 	[DesignerCategory ("Component"), TypeConverter (typeof (ComponentConverter))]
     	[Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, " + Consts.AssemblySystem_Design, typeof (IRootDesigner))]
 	[ComVisible (true)]
-	public class MarshalByValueComponent : IComponent, IDisposable, IServiceProvider
+#endif
+	public class MarshalByValueComponent : IDisposable
+#if !WINDOWS_STORE_APP
+		, IComponent, IServiceProvider
+#endif
 	{
 		private EventHandlerList eventList;
+#if !WINDOWS_STORE_APP
 		private ISite mySite;
+#endif
 		private object disposedEvent = new object ();
 
 		public MarshalByValueComponent ()
@@ -77,6 +86,7 @@ namespace System.ComponentModel
 		}
 #endif	
 
+#if !WINDOWS_STORE_APP
 		public virtual object GetService (Type service) 
 		{
 			if (mySite != null) {
@@ -115,6 +125,7 @@ namespace System.ComponentModel
 				return GetType ().ToString ();
 			return String.Format ("{0} [{1}]", mySite.Name, GetType ().ToString ());
 		}
+#endif
 
 		protected EventHandlerList Events {
 			get {

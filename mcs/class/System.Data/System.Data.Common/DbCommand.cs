@@ -39,11 +39,7 @@ using System.Threading.Tasks;
 #endif
 
 namespace System.Data.Common {
-	public abstract class DbCommand : 
-#if !WINDOWS_PHONE && !NETFX_CORE
-		Component, 
-#endif
-		IDbCommand, IDisposable
+	public abstract class DbCommand : Component, IDbCommand, IDisposable
 	{
 		protected DbCommand ()
 		{
@@ -52,7 +48,7 @@ namespace System.Data.Common {
 		#region Properties
 
 		[DefaultValue ("")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public abstract string CommandText { get; set; }
@@ -60,13 +56,13 @@ namespace System.Data.Common {
 		public abstract int CommandTimeout { get; set; }
 
 		[DefaultValue (CommandType.Text)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[RefreshProperties (RefreshProperties.All)]
 #endif
 		public abstract CommandType CommandType { get; set; }
 
 		[DefaultValue (null)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -81,7 +77,7 @@ namespace System.Data.Common {
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DefaultValue (true)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignOnly (true)]
 #endif
@@ -101,7 +97,7 @@ namespace System.Data.Common {
 			set { Transaction = (DbTransaction) value; }
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -110,7 +106,7 @@ namespace System.Data.Common {
 		}
 
 		[DefaultValue (null)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -254,18 +250,6 @@ namespace System.Data.Common {
 
 #endif
 
-#if WINDOWS_PHONE || NETFX_CORE
-		public void Dispose ()
-		{
-			Dispose(true);
-		}
-
-		protected virtual void Dispose (bool release_all)
-		{
-
-		}
-#endif
-		
 		#endregion // Methods
 
 	}

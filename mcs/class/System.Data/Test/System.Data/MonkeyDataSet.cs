@@ -32,7 +32,7 @@ public class MonkeyDataSet : System.Data.DataSet, System.Xml.Serialization.IXmlS
         this.Relations.CollectionChanged += handler;
     }
     
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     protected MonkeyDataSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext ctx) {
         // TODO: implement
         throw new System.NotImplementedException();
@@ -51,7 +51,7 @@ public class MonkeyDataSet : System.Data.DataSet, System.Xml.Serialization.IXmlS
         return set;
     }
     
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     protected override System.Xml.Schema.XmlSchema GetSchemaSerializable() {
         System.IO.StringWriter sw = new System.IO.StringWriter();
         this.WriteXmlSchema(sw);

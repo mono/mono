@@ -51,23 +51,23 @@ using System.Security;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 #endif
 [assembly: AllowPartiallyTrustedCallers]
 
 #if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
-#if WINDOWS_PHONE || NETFX_CORE
+#if WINDOWS_STORE_APP
 	[assembly: AssemblyDelaySign (false)]
 	[assembly: AssemblyKeyFile("../mono.snk")]
 #else
 	[assembly: AssemblyDelaySign (true)]
 	[assembly: AssemblyKeyFile("../ecma.pub")]
-#endif // WINDOWS_PHONE || NETFX_CORE
+#endif // WINDOWS_STORE_APP
 #endif // !TARGET_JVM
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 [assembly: BestFitMapping (false)]
 #endif

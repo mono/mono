@@ -663,7 +663,7 @@ namespace Mono.Data.Sqlite
     /// </remarks>
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue("")]
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
     [RefreshProperties(RefreshProperties.All)]
     [Editor("SQLite.Designer.SqliteConnectionStringEditor, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
@@ -707,7 +707,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the filename without extension or path
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
     public override string DataSource
@@ -721,7 +721,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns an empty string
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
     public override string Database
@@ -1019,7 +1019,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the version of the underlying SQLite database engine
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -1045,7 +1045,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the state of the connection.
     /// </summary>
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
     [Browsable (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -1127,7 +1127,7 @@ namespace Mono.Data.Sqlite
 
 #if PLATFORM_COMPACTFRAMEWORK
         dataDirectory = Path.GetDirectoryName (System.Reflection.Assembly.GetCallingAssembly ().GetName ().CodeBase);
-#elif WINDOWS_PHONE || NETFX_CORE
+#elif WINDOWS_STORE_APP
         dataDirectory = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #else
         dataDirectory = AppDomain.CurrentDomain.GetData ("DataDirectory") as string;
@@ -1150,7 +1150,7 @@ namespace Mono.Data.Sqlite
         sourceFile = Path.Combine(dataDirectory, sourceFile);
       }
 
-#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_PHONE && !NETFX_CORE
+#if !PLATFORM_COMPACTFRAMEWORK && !WINDOWS_STORE_APP
       sourceFile = Path.GetFullPath(sourceFile);
 #endif
 

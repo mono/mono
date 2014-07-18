@@ -34,7 +34,7 @@
 
 using System.Collections;
 using System.Security;
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 using System.Security.Permissions;
 #endif
 
@@ -95,7 +95,7 @@ namespace System.Data.Common {
 			throw CreateNotImplementedException ();
 		}
 
-#if !WINDOWS_PHONE && !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		public virtual CodeAccessPermission CreatePermission (PermissionState state)
 		{
 			throw CreateNotImplementedException ();

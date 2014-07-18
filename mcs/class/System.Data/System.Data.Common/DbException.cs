@@ -35,15 +35,10 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 	[Serializable]
 #endif
-	public abstract class DbException : 
-#if !NETFX_CORE
-		ExternalException
-#else
-		Exception
-#endif
+	public abstract class DbException : ExternalException
 	{
 		protected DbException ()
 		{
@@ -58,23 +53,16 @@ namespace System.Data.Common {
 		{
 		}
 
-#if !NETFX_CORE
+#if !WINDOWS_STORE_APP
 		protected DbException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
-#else
-		public virtual int ErrorCode { get; private set; }
 #endif
 
 		protected DbException (string message, int errorCode) 
-#if !NETFX_CORE
 			: base(message, errorCode) 
-#endif
 		{
-#if NETFX_CORE
-			this.ErrorCode = errorCode;
-#endif
 		}
 	}
 }
